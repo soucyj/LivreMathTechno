@@ -9,7 +9,7 @@ du chapitre 5 (`05-acp.qmd`).
   dans le nuage, et afficher les vecteurs propres v₁, v₂, v₃.
 - À droite : la projection (l'« ombre ») du nuage sur ce plan, mise à plat,
   qui suit la rotation en direct.
-- Une jauge affiche la part de la variance conservée par le plan
+- En haut, une barre affiche la part de la variance conservée par le plan
   (92,3 % au mieux, pour v₁ et v₂ ; 33,2 % au pire, pour v₂ et v₃).
 - Raccourcis : les trois plans de vecteurs propres et les trois plans de
   coordonnées ; la caméra pivote pour se placer face au plan choisi.

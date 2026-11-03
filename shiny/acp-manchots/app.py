@@ -236,7 +236,7 @@ carte_raccourcis = ui.div(
 
 explications = ui.accordion(
     ui.accordion_panel(
-        "Que mesure la jauge « variance conservée » ?",
+        "Que veut dire « variance conservée par le plan » ?",
         remplir(r"""
 <p>Projeter, c'est perdre de l'information : deux manchots différents peuvent avoir la même
 ombre. Pour mesurer ce qu'on garde, on regarde <strong>à quel point l'ombre est
@@ -247,7 +247,8 @@ les autres.</p>
 la variance de l'ombre vaut</p>
 \[\vec e_1^{\mathsf T} R\, \vec e_1 + \vec e_2^{\mathsf T} R\, \vec e_2 ,\]
 <p>où \(R\) est la matrice de corrélation, c'est-à-dire la matrice de covariance des données
-réduites. La jauge affiche cette variance divisée par \(3\), en pourcentage.</p>
+réduites. Le pourcentage affiché en haut de la page est cette variance divisée
+par \(3\) : c'est la part de l'étalement total du nuage que l'ombre conserve.</p>
 <p>Ce que l'on perd, c'est l'étalement du nuage dans la direction du regard \(\vec n\),
 perpendiculaire au plan : \(\vec n^{\mathsf T} R\, \vec n\). C'est aussi, par le théorème de
 Pythagore, la moyenne des carrés des distances des points au plan.
@@ -304,7 +305,7 @@ garanti en général.</p>
 \(\vec v_3\) ? Pourquoi le voit-on réduit à un point ?</li>
 <li>Désactivez « Le plan suit votre regard », puis faites tourner le nuage : où se trouve le
 meilleur plan par rapport au nuage ? Décrivez-le avec vos mots.</li>
-<li>Pourquoi la jauge ne peut-elle jamais descendre sous
+<li>Pourquoi la variance conservée ne peut-elle jamais descendre sous
 \(\frac{\lambda_2+\lambda_3}{3}\) ?</li>
 <li>Le graphique de gauche est dessiné en projection orthogonale, sans effet de
 perspective. Pourquoi regarder un objet de très loin revient-il (presque) à le projeter ?</li>

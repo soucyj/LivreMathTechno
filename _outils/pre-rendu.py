@@ -268,10 +268,18 @@ def compiler(src):
 def figures():
     WEB.mkdir(parents=True, exist_ok=True)
     sources = sorted(TIKZ.glob("*.tikz"))
+    echecs = []
     with cf.ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as ex:
         for nom, etat in ex.map(compiler, sources):
             if etat != "à jour":
                 log("figure %-28s %s" % (nom, etat))
+            if etat.startswith("ÉCHEC"):
+                echecs.append(nom)
+    # Sur GitHub Actions (CI=true), une figure qui ne compile pas arrête la
+    # publication : sinon le site serait mis en ligne avec des images brisées.
+    if echecs and os.environ.get("CI"):
+        sys.exit("[pre-rendu] %d figure(s) en échec : %s"
+                 % (len(echecs), ", ".join(echecs)))
     infos = {}
     for src in sources:
         svg = WEB / (src.stem + ".svg")

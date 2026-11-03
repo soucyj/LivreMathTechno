@@ -187,8 +187,8 @@ formule \eqref{eq:D-angle},
 $$
   r_{xy} = \frac{\vec{a}\cdot\vec{b}}{\norme{\vec{a}}\,\norme{\vec{b}}} = \cos\theta,
 $$
-où $\theta$ est l'angle entre $\vec{a}$ et $\vec{b}$. L'inégalité de
-Cauchy--Schwarz montre donc que $-1 \leq r_{xy} \leq 1$. On a $r_{xy} =
+où $\theta$ est l'angle entre $\vec{a}$ et $\vec{b}$. Comme tout
+cosinus, $r_{xy}$ vérifie donc $-1 \leq r_{xy} \leq 1$. On a $r_{xy} =
 \pm 1$ exactement lorsque $\vec{a}$ et $\vec{b}$ sont colinéaires,
 c'est-à-dire lorsque les points du nuage sont parfaitement alignés, et
 $r_{xy} = 0$ lorsque ces deux vecteurs sont orthogonaux : on dit alors

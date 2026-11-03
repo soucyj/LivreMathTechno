@@ -30,6 +30,17 @@ jobs:
       - name: Installer TinyTeX
         run: quarto install tinytex --update-path
 
+      # Les figures TikZ sont compilées par _outils/pre-rendu.py avec lualatex
+      # lancé directement : contrairement au rendu du PDF par Quarto, il
+      # n'installe pas les paquets manquants. On les installe donc ici.
+      - name: Installer les paquets LaTeX des figures
+        run: |
+          tlmgr install standalone pgf pgfplots xkeyval xstring mathtools \
+            fontspec unicode-math luaotfload lualibs lua-uni-algos luatex85 \
+            babel-french hyphen-french siunitx translations tipa interval \
+            carlisle etoolbox epstopdf-pkg xcolor tools amsmath l3packages \
+            tex-gyre fira newcomputermodern
+
       - name: Installer Poppler
         run: |
           sudo apt-get update
