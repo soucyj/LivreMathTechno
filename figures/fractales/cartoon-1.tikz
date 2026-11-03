@@ -1,0 +1,4 @@
+% Cartoon de Mandelbrot, étape 1
+% Fichier généré par generer.py : ne pas modifier à la main.
+\draw[courbe]
+  (0,0) -- (0.4444,0.6667) -- (0.5556,0.3333) -- (1,1);

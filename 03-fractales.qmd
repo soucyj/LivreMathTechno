@@ -1,0 +1,2207 @@
+# Fractales et systèmes itératifs de fonctions {#chap:fractales}
+
+Les notions des deux chapitres précédents vont maintenant être
+utilisées pour étudier les fractales. Au
+chapitre \ref{chap:transformations}, nous avons décrit les
+transformations affines du plan à l'aide de six nombres et étudié
+les similitudes et les contractions. Au chapitre \ref{chap:metriques},
+nous avons muni l'ensemble des compacts non vides du plan d'une
+distance, obtenant ainsi l'espace $\big(\Comp{\R^2}, \dH\big)$,
+puis démontré le théorème du point fixe de Banach. Nous verrons
+comment quelques transformations affines permettent de définir des
+figures comme un flocon au contour infiniment dentelé ou une fougère.
+L'existence de ces figures sera justifiée par le théorème de Banach,
+appliqué à l'espace des compacts du plan.
+
+::: {#fig:flocon-intro}
+![](figures/tikz/fig-flocon-intro.tikz)
+
+Le *flocon de von Koch*, à la quatrième étape de sa construction, superposé au triangle équilatéral dont il est issu (en pointillé). À la limite, son contour a une longueur infinie, alors qu'il délimite une région d'aire finie : cette propriété en fait un exemple classique de *fractale*.
+:::
+
+Benoît Mandelbrot a introduit le mot *fractale* en 1975, à partir
+du latin *fractus*, qui signifie « brisé » [@Mandelbrot1975].
+Les objets ainsi désignés présentent des irrégularités à toutes les
+échelles : l'agrandissement ne les fait pas apparaître lisses.
+Plusieurs étaient pourtant connus depuis la fin du \siecle{19} ou le
+début du \siecle{20}. Ils avaient été construits pour fournir des
+*contre-exemples*, comme des courbes continues sans tangente ou
+des ensembles comportant une infinité de trous. Leurs propriétés leur
+avaient valu le nom de *monstres*. Avec le développement de
+l'informatique, il est devenu plus facile de les représenter et
+d'étudier leur intérêt pour décrire des formes naturelles : côtes,
+nuages, végétaux ou réseaux sanguins, que les figures de la géométrie
+classique représentent moins bien.
+
+Nous étudierons d'abord la courbe de von Koch et le triangle de
+Sierpiński. Ces exemples permettront d'introduire l'*autosimilarité*
+et la *dimension de similitude*. Nous définirons ensuite les
+*systèmes itératifs de fonctions* (SIF) et montrerons comment le
+théorème de Banach justifie les constructions qui leur sont associées.
+Après avoir présenté deux algorithmes de dessin, nous reviendrons sur
+les travaux de Karl Weierstrass et de Benoît Mandelbrot pour situer
+l'évolution de ces objets, depuis les contre-exemples de l'analyse
+jusqu'aux modèles de phénomènes naturels et financiers.
+
+## Des monstres mathématiques {#sec:monstres}
+
+### La courbe de von Koch {#sec:koch}
+
+Considérons d'abord un segment de longueur $1$, que nous appellerons l'étape
+$K_0$. Pour obtenir l'étape $K_1$, on partage ce segment en trois
+parties égales, on remplace la partie du milieu par les deux autres
+côtés d'un triangle équilatéral construit sur elle, et on obtient une
+ligne brisée formée de quatre segments de longueur $\tfrac13$. On
+recommence ensuite la même opération sur chacun des quatre segments,
+ce qui donne $K_2$, formée de $16$ segments de longueur $\tfrac19$, et
+ainsi de suite (figure \ref{fig:koch-etapes}). La [courbe de von
+Koch]{.defi} $K$ est la figure limite de ce processus, lorsque le nombre
+d'étapes tend vers l'infini. Nous verrons à la
+section \ref{sec:sif} comment justifier l'existence de cette limite dans
+l'espace $\big(\Comp{\R^2}, \dH\big)$.
+
+::: {#fig:koch-etapes}
+![](figures/tikz/fig-koch-etapes.tikz)
+
+Les premières étapes de la construction de la courbe de von Koch. À chaque étape, chaque segment est remplacé par quatre segments trois fois plus courts ; dès l'étape $K_5$, formée de $4^5 = 1024$ segments, la ligne brisée se distingue difficilement de la courbe limite à l'échelle du dessin.
+:::
+
+Deux propriétés de la courbe de von Koch la distinguent des courbes
+habituellement étudiées au secondaire et en calcul différentiel.
+
+##### Sa longueur est infinie.
+
+À chaque étape, chaque segment est
+remplacé par quatre segments dont la longueur est le tiers de la
+sienne : la longueur totale est donc multipliée par $\tfrac43$. La
+longueur de $K_n$ est ainsi
+$$
+  L_n = \left(\frac43\right)^{\!n},
+$$
+le terme général d'une suite géométrique de raison $\tfrac43 > 1$, qui
+tend vers l'infini. Aucune longueur finie ne peut donc être attribuée à
+$K$ : la courbe limite est plus longue que chacune des lignes brisées
+$K_n$, dont les longueurs dépassent toute borne. Pour donner une idée de cette
+croissance, on a $L_{10} \approx \num{17.8}$, $L_{50}
+\approx \num{1.8e6}$. Si le segment de départ mesurait un centimètre,
+$K_{50}$ serait plus longue que la distance de Québec à Montréal,
+bien que la figure puisse être dessinée sur un timbre-poste.
+
+##### Elle n'a de tangente en aucun point.
+
+Une courbe lisse,
+comme le graphe d'une fonction dérivable, finit toujours par ressembler
+à un segment de droite, sa tangente, quand on l'observe de suffisamment
+près. Pour la courbe de von Koch, l'agrandissement reproduit au contraire
+les mêmes irrégularités : le petit morceau encadré à la
+figure \ref{fig:koch-zoom}, agrandi trois fois, est une copie exacte de
+la courbe entière, avec ses pointes et ses creux. On peut démontrer
+qu'en aucun point de $K$ il n'existe de tangente ; c'est la propriété que von
+Koch cherchait à illustrer (note historique \ref{hist:koch}).
+
+::: {#fig:koch-zoom}
+![](figures/tikz/fig-koch-zoom.tikz)
+
+L'agrandissement d'une courbe lisse (en haut) fait apparaître localement sa tangente. Agrandir trois fois le premier quart de la courbe de von Koch (en bas) reproduit exactement la courbe de départ : aucune échelle d'observation ne la rend lisse.
+:::
+
+En disposant trois courbes de von Koch sur les côtés d'un triangle
+équilatéral, pointes vers l'extérieur, on obtient le [flocon de
+von Koch]{.defi} de la figure \ref{fig:flocon-intro}. Son contour, formé de
+trois courbes de longueur infinie, est lui aussi de longueur infinie.
+L'aire qu'il délimite, au contraire, est finie : le flocon tient dans
+n'importe quel disque qui contient le triangle de départ. Le calcul exact de
+cette aire se fait à l'aide d'une série géométrique
+(exercice \ref{exo:flocon-koch}).
+
+:::: {.historical #hist:koch title="Helge von Koch" needspace="18"}
+::: {.portrait src="figures/portraits/helge-von-koch.jpg" legende="Helge von Koch (1870--1924)." credit="Domaine public, *Wikimedia Commons*."}
+Niels Fabian Helge von Koch (1870--1924) est né à Stockholm, dans une
+famille de la noblesse suédoise. Élève de Gösta Mittag-Leffler, lui-même
+disciple de Karl Weierstrass, il soutient en 1892 une thèse sur les
+déterminants infinis et les équations différentielles linéaires, sujets de ses
+premiers travaux. Il enseigne ensuite à
+l'Institut royal de technologie de Stockholm, puis succède en 1911 à
+Mittag-Leffler à l'université de Stockholm. En théorie des nombres, il établit
+en 1901 le résultat suivant : l'hypothèse de Riemann, le
+plus célèbre problème ouvert des mathématiques, équivaut à une
+estimation précise de l'erreur commise quand on compte les nombres
+premiers à l'aide du logarithme intégral.
+:::
+
+\medskip
+
+La courbe qui porte son nom paraît en 1904, dans un article intitulé : « Sur
+une courbe continue sans tangente, obtenue par une
+construction géométrique élémentaire » [@Koch1904]. Trente ans
+plus tôt, Weierstrass avait exhibé une fonction continue qui n'est
+dérivable nulle part (section \ref{sec:weierstrass}), mais son exemple,
+défini par une série de fonctions trigonométriques, se prêtait moins
+facilement à une interprétation géométrique. Von Koch souhaitait présenter ce
+phénomène à l'aide d'une
+construction géométrique que l'on puisse effectuer à la règle et au
+compas. Trois quarts de siècle plus tard, son flocon allait devenir
+l'une des figures les plus connues de la géométrie fractale [@MacTutorKoch].
+::::
+
+### Le triangle et le tapis de Sierpiński {#sec:sierpinski}
+
+Le deuxième exemple repose sur le retrait successif de parties d'une figure.
+Partons d'un triangle équilatéral plein
+$S_0$, de côté $1$. Relions les milieux de ses trois côtés : on le
+découpe ainsi en quatre triangles équilatéraux de côté $\tfrac12$, et
+on retire (l'intérieur de) celui du centre, qui pointe vers le bas. Il
+reste trois triangles pleins, qui forment $S_1$. On répète l'opération
+dans chacun d'eux pour obtenir $S_2$, formé de $9$ triangles de côté
+$\tfrac14$, et ainsi de suite (figure \ref{fig:sierpinski-etapes}). Le
+[triangle de Sierpiński]{.defi} $S$ est la limite de la suite
+$S_0, S_1, S_2, \ldots$ :
+$$
+  S = \lim_{n\to\infty} S_n .
+$$
+Il faut toutefois préciser le sens de cette limite, puisque les $S_n$ sont
+des ensembles et non des nombres. C'est précisément ce que permet la
+distance de Hausdorff du chapitre \ref{chap:metriques} : les $S_n$
+sont des compacts du plan, donc des « points » de l'espace métrique
+$\big(\Comp{\R^2}, \dH\big)$, et dire que $S_n$ tend vers $S$, c'est
+dire que $\dH(S_n, S) \to 0$, au sens de la
+définition \ref{def:suite-convergente}. Nous démontrerons à la
+section \ref{sec:sif} que cette limite existe. Comme chaque étape est
+contenue dans la précédente ($S_{n+1} \subseteq S_n$), on peut aussi décrire
+la limite de la façon suivante : c'est l'ensemble des points qui
+ne sont jamais retirés, c'est-à-dire l'intersection
+$S_0 \cap S_1 \cap S_2 \cap \cdots$ de toutes les étapes.
+
+::: {#fig:sierpinski-etapes}
+![](figures/tikz/fig-sierpinski-etapes.tikz)
+
+Construction du triangle de Sierpiński par retraits successifs. L'étape $S_n$ est formée de $3^n$ triangles pleins de côté $\big(\tfrac12\big)^n$.
+:::
+
+À chaque étape, chaque triangle plein est remplacé par trois triangles
+dont les côtés sont deux fois plus courts, donc dont l'aire est quatre
+fois plus petite (selon le facteur $k^2$ de la proposition \ref{cor:aires}).
+L'aire est donc multipliée par
+$\tfrac34$ à chaque étape :
+$$
+  \Aire(S_n) = \left(\frac34\right)^{\!n} \Aire(S_0)
+  = \left(\frac34\right)^{\!n} \frac{\sqrt3}{4}
+  \xrightarrow[n\to\infty]{} 0 .
+$$
+Puisque $S$ est contenu dans chacun des $S_n$, son aire est plus petite
+que toutes ces quantités : elle est nulle. Le triangle de Sierpiński
+n'est pas vide pour autant. Il contient les trois sommets du triangle
+de départ, les sommets de tous les petits triangles de toutes les
+étapes, et les côtés de tous ces triangles, qu'aucune étape ne vient
+jamais retirer. Il contient donc une infinité de segments, dont la
+longueur totale est infinie : les $3^n$ triangles de $S_n$ ont des
+côtés de longueur $\big(\tfrac12\big)^n$, et leurs contours, qui sont
+tous contenus dans $S$, totalisent déjà une longueur de
+$3^n \cdot 3 \cdot \big(\tfrac12\big)^n = 3\big(\tfrac32\big)^n$, une
+quantité qui tend vers l'infini. Ainsi, ni l'aire ni la longueur ne donnent
+une mesure finie et non nulle du triangle de Sierpiński. La dimension de
+similitude, introduite à la section \ref{sec:dimension}, permettra de mieux
+comprendre cette situation.
+
+En appliquant un procédé analogue à un carré, on obtient le [tapis de
+Sierpiński]{.defi} : on partage le carré unité en neuf carrés de côté
+$\tfrac13$, on retire celui du centre, et on recommence dans chacun
+des huit carrés restants (figure \ref{fig:tapis-etapes}). À chaque
+étape, l'aire est multipliée par $\tfrac89$ ; elle tend donc vers
+zéro, elle aussi.
+
+::: {#fig:tapis-etapes}
+![](figures/tikz/fig-tapis-etapes.tikz)
+
+Construction du tapis de Sierpiński par retraits successifs. L'étape $T_n$ est formée de $8^n$ carrés pleins de côté $\big(\tfrac13\big)^n$ ; son aire, $\big(\tfrac89\big)^n$, tend vers zéro.
+:::
+
+::: {.remark #rem:cantor title="L'ensemble de Cantor"}
+Une construction analogue sur un segment avait été proposée
+antérieurement. Retirons du segment $\intff{0}{1}$ son tiers central ouvert
+$\intoo{\tfrac13}{\tfrac23}$, puis le tiers central de chacun des deux
+segments restants, et ainsi de suite. L'ensemble obtenu à la limite est
+l'[ensemble de Cantor]{.defi}, décrit par Georg Cantor en 1883. Sa
+longueur totale est nulle, puisqu'à l'étape $n$ il reste $2^n$ segments
+de longueur $\big(\tfrac13\big)^n$, soit une longueur
+$\big(\tfrac23\big)^n \to 0$. Il contient pourtant une infinité de
+points, et même « autant » de points que le segment entier : on
+démontre qu'il est formé exactement des nombres de $\intff{0}{1}$ qui
+s'écrivent en base $3$ sans utiliser le chiffre $1$. L'exercice \ref{exo:decimales-paires}
+propose une construction analogue en base $10$.
+
+![](figures/tikz/rem-cantor.tikz)
+:::
+
+:::: {.historical #hist:sierpinski title="Wacław Sierpiński" needspace="18"}
+::: {.portrait src="figures/portraits/waclaw-sierpinski.jpg" legende="Wacław Sierpiński (1882--1969), en 1928." credit="Domaine public, *Wikimedia Commons*."}
+Wacław Sierpiński (1882--1969) est né à Varsovie, alors sous
+domination russe. Il y étudie les mathématiques auprès du
+mathématicien russe Gueorgui Voronoï, enseigne les mathématiques et la
+physique dans une école secondaire de filles, puis obtient son doctorat
+à Cracovie en 1906. Nommé
+à l'université de Lwów, il y donne en 1909 l'un des tout premiers cours
+universitaires entièrement consacrés à la théorie des ensembles, dont les
+fondements faisaient encore l'objet de débats. Surpris en Russie par la
+Première
+Guerre mondiale, il est interné comme ressortissant ennemi, d'abord à
+Viatka, puis à Moscou, où il poursuit ses recherches avec Nikolaï
+Louzine.
+:::
+
+\medskip
+
+C'est durant cette période qu'il publie le triangle (1915) et le tapis
+(1916) qui portent son nom [@Sierpinski1915; @Sierpinski1916]. Ces
+constructions lui permettaient d'étudier certaines propriétés
+topologiques : le triangle est une courbe dont chaque point est
+un point de « ramification », d'où partent plusieurs branches, et le
+tapis est
+*universel*, en ce sens qu'il contient une copie de toute courbe
+plane imaginable. De retour à Varsovie en 1918, Sierpiński devient
+l'un des principaux représentants de l'école mathématique polonaise de
+l'entre-deux-guerres. Avec Stefan Mazurkiewicz, et sur une idée de
+Zygmunt Janiszewski, il fonde en 1920 la revue *Fundamenta
+Mathematicae*, consacrée à la théorie des ensembles et à la topologie,
+où Stefan Banach (note historique \ref{hist:banach}) publiera plusieurs
+de ses travaux. Pendant l'occupation allemande, il enseigne dans
+l'université clandestine de Varsovie, et perd sa bibliothèque et ses
+manuscrits dans l'incendie de sa maison, en 1944. Auteur de plus de
+$700$ articles et d'une cinquantaine de livres, il a aussi laissé son
+nom à une famille de nombres entiers, les *nombres de
+Sierpiński* [@MacTutorSierpinski].
+::::
+
+::: {.secondaire #sec:classe-suites title="Les suites géométriques dans les constructions fractales"}
+Les calculs précédents donnent un sens géométrique à la raison d'une
+suite : la longueur est multipliée par $\tfrac43$, ou l'aire par
+$\tfrac34$. En quatrième ou cinquième secondaire, on peut demander
+aux élèves de construire les étapes $K_0$ à $K_3$ de la courbe de von
+Koch sur du papier pointé isométrique. Ils peuvent ensuite calculer
+les longueurs, reconnaître une suite géométrique et prévoir son
+comportement. Le fait que la longueur augmente sans borne alors que
+la figure reste dans une région bornée fournit une occasion de
+discuter de la notion de limite avant d'en donner une définition
+formelle.
+:::
+
+::: {.outil #outil:koch-geogebra title="Construire la courbe de von Koch dans GeoGebra"}
+GeoGebra permet de créer un *outil personnalisé* à partir d'une
+construction : on part d'un segment $[AB]$, on place les points situés
+au tiers et aux deux tiers, on construit le sommet du triangle
+équilatéral par une rotation de $60^\circ$, puis on trace les quatre
+segments de $K_1$. Le menu *Outils $\to$ Créer un nouvel outil*
+transforme cette construction en un outil qui prend deux points et
+produit les quatre segments. Appliqué à chacun des segments obtenus, il
+donne $K_2$, puis $K_3$. L'activité rend concrète l'idée de
+*remplacer chaque segment par une copie réduite de la figure*,
+qui est au cœur des SIF (section \ref{sec:sif}), et elle montre
+rapidement pourquoi on a besoin d'un programme pour aller plus loin :
+le nombre de segments est multiplié par $4$ à chaque étape.
+:::
+
+## Autosimilarité {#sec:autosimilarite}
+
+Revenons à la figure \ref{fig:koch-zoom} : le premier quart de la
+courbe de von Koch, agrandi trois fois, redonne la courbe entière. Il
+en va de même des trois autres quarts, à condition de les faire aussi
+tourner. Autrement dit, la courbe $K$ est formée de *quatre copies
+réduites d'elle-même*. De même, le triangle de Sierpiński est formé de
+trois copies de lui-même, deux fois plus petites, placées dans ses
+trois coins. Ces observations concernent les figures obtenues à la limite. Pour
+les exprimer plus précisément, utilisons le langage du
+chapitre \ref{chap:transformations}. Rappelons qu'une similitude de
+rapport $r$ multiplie toutes les distances par $r$
+(définition \ref{def:similitude}) ; lorsque $0 < r < 1$, c'est en
+particulier une contraction de rapport $r$ au sens de la
+définition \ref{def:contraction}.
+
+::: {.definition #def:autosimilaire title="Ensemble autosimilaire"}
+Soit $E$ un sous-ensemble compact non vide du plan. On dit que $E$ est
+[autosimilaire]{.defi} s'il existe un nombre fini $N \geq 2$ de
+similitudes $w_1, w_2, \dots, w_N$, de rapports $r_1, r_2, \dots, r_N$
+compris strictement entre $0$ et $1$, telles que
+$$
+  E = w_1(E) \cup w_2(E) \cup \cdots \cup w_N(E).
+$$
+Chacun des ensembles $w_i(E)$ est une [copie réduite]{.defi} de $E$.
+:::
+
+La définition exige que $E$ soit *exactement* la réunion de ses
+copies : les deux ensembles doivent être égaux. Elle n'interdit
+pas, en revanche, que deux copies se touchent, ni même qu'elles se
+chevauchent ; nous reviendrons sur ce point à la
+section \ref{sec:dim-generalisee}. Examinons d'abord cette propriété sur des figures familières.
+
+::: {.example #ex:autosim-carre title="Le segment et le carré"}
+Le segment $\intff{0}{1}$ est la réunion de ses deux moitiés,
+$h_{1/2}\big(\intff{0}{1}\big) = \intff{0}{\tfrac12}$ et
+$h_{1/2}\big(\intff{0}{1}\big) + \tfrac12 = \intff{\tfrac12}{1}$ : il est autosimilaire,
+avec deux similitudes de rapport $\tfrac12$ (il l'est aussi avec trois
+similitudes de rapport $\tfrac13$, ou $m$ de rapport $\tfrac1m$). Pour le
+carré unité, on a de même que $C = \intff{0}{1}\times\intff{0}{1}$ est la
+réunion de quatre carrés de côté $\tfrac12$ : $C = w_1(C) \cup w_2(C)
+\cup w_3(C) \cup w_4(C)$, où
+$$
+  w_i\col{x}{y} = \mat{\tfrac12}{0}{0}{\tfrac12}\col{x}{y} + \vec{t}_i,
+$$
+les vecteurs $\vec{t}_i$ étant $(0,0)$, $\big(\tfrac12,0\big)$,
+$\big(0,\tfrac12\big)$ et $\big(\tfrac12,\tfrac12\big)$.
+:::
+
+::: {.example #ex:autosim-triangle title="Tout triangle est autosimilaire"}
+Soit $T$ un triangle plein quelconque, de sommets $A$, $B$ et $C$. En
+joignant les milieux de ses côtés, on le découpe en quatre triangles
+semblables à $T$, de rapport $\tfrac12$
+(figure \ref{fig:autosim-triangle}). Les trois triangles situés aux sommets
+sont les images de $T$ par les homothéties $h_{A,1/2}$, $h_{B,1/2}$
+et $h_{C,1/2}$ de la proposition \ref{prop:homothetie-centre}. Le
+quatrième, celui du centre, a subi un demi-tour : c'est l'image de $T$
+par l'homothétie $h_{G,-1/2}$ de centre le centre de gravité $G$ de
+$T$ et de rapport $-\tfrac12$, qui combine une réduction de moitié et
+un demi-tour. C'est donc une similitude de rapport $\tfrac12$, et
+$T = h_{A,1/2}(T) \cup h_{B,1/2}(T) \cup h_{C,1/2}(T) \cup h_{G,-1/2}(T)$.
+:::
+
+::: {#fig:autosim-triangle}
+![](figures/tikz/fig-autosim-triangle.tikz)
+
+Décomposition d'un triangle $T$ en quatre copies de rapport un demi : les trois copies de coin $T_A = h_{A,1/2}(T)$, $T_B = h_{B,1/2}(T)$ et $T_C = h_{C,1/2}(T)$, images de $T$ par des homothéties de rapport $\tfrac12$ centrées aux sommets, et la copie centrale $T_G = h_{G,-1/2}(T)$, image de $T$ par l'homothétie de rapport $-\tfrac12$ centrée au centre de gravité $G$.
+:::
+
+Ces exemples montrent que l'autosimilarité ne suffit pas à
+caractériser une fractale : les carrés et les triangles possèdent
+aussi cette propriété. Examinons maintenant les deux constructions
+introduites au début du chapitre.
+
+::: {.example #ex:autosim-sierpinski title="Le triangle de Sierpiński"}
+Notons $S_1 = (0,0)$, $S_2 = (1,0)$ et $S_3 = \big(\tfrac12,
+\tfrac{\sqrt3}{2}\big)$ les sommets du triangle de départ, et
+$w_i = h_{S_i,1/2}$ l'homothétie de centre $S_i$ et de rapport
+$\tfrac12$. Par la proposition \ref{prop:homothetie-centre},
+$w_i(P) = \tfrac12 P + \tfrac12 S_i$, c'est-à-dire
+\begin{align*}
+  w_1\col{x}{y} &= \frac12\col{x}{y}, &
+  w_2\col{x}{y} &= \frac12\col{x}{y} + \col{\tfrac12}{0}, \\
+  w_3\col{x}{y} &= \frac12\col{x}{y} + \col{\tfrac14}{\tfrac{\sqrt3}{4}} .
+\end{align*}
+Le triangle de Sierpiński vérifie $S = w_1(S) \cup w_2(S) \cup
+w_3(S)$ (figure \ref{fig:pieces-sierpinski-koch}, à gauche) : il est
+autosimilaire, avec trois similitudes de rapport $\tfrac12$. Il l'est
+aussi avec neuf similitudes de rapport $\tfrac14$, les composées
+$w_i \circ w_j$, en décomposant à son tour chacune des trois copies en trois parties
+semblables.
+:::
+
+::: {.example #ex:autosim-koch title="La courbe de von Koch"}
+La courbe de von Koch, construite sur le segment joignant $(0,0)$ à
+$(1,0)$, est la réunion de quatre copies d'elle-même, de rapport
+$\tfrac13$ (figure \ref{fig:pieces-sierpinski-koch}, à droite). Les
+deux copies extrêmes sont obtenues par une homothétie de rapport
+$\tfrac13$, suivie ou non d'une translation ; les deux copies du
+centre, qui forment la « pointe », sont en plus tournées de
+$\pm 60^\circ$. En utilisant les matrices de rotation $r_\theta$ de la
+définition \ref{def:rotation}, on trouve
+\begin{align*}
+  w_1\col{x}{y} &= \frac13\col{x}{y}, &
+  w_2\col{x}{y} &= \frac13\, r_{\pi/3}\col{x}{y} + \col{\tfrac13}{0}, \\
+  w_3\col{x}{y} &= \frac13\, r_{-\pi/3}\col{x}{y} + \col{\tfrac12}{\tfrac{\sqrt3}{6}}, &
+  w_4\col{x}{y} &= \frac13\col{x}{y} + \col{\tfrac23}{0}.
+\end{align*}
+On vérifie par exemple que $w_2$ envoie les extrémités $(0,0)$ et
+$(1,0)$ de la courbe sur $\big(\tfrac13, 0\big)$ et sur
+$\tfrac13\big(\cos\tfrac\pi3, \sin\tfrac\pi3\big) + \big(\tfrac13,0\big)
+= \big(\tfrac12, \tfrac{\sqrt3}{6}\big)$, le sommet de la pointe : la copie
+$w_2(K)$ correspond donc à la partie montante située à gauche. On procède de
+la même
+façon pour $w_3$, qui envoie $(0,0)$ sur la pointe et $(1,0)$ sur
+$\big(\tfrac23, 0\big)$.
+:::
+
+::: {#fig:pieces-sierpinski-koch}
+![](figures/tikz/fig-pieces-sierpinski-koch.tikz)
+
+À gauche, le triangle de Sierpiński, réunion de ses trois copies $w_1(S)$, $w_2(S)$ et $w_3(S)$ ; à droite, la courbe de von Koch, réunion de ses quatre copies $w_1(K), …, w_4(K)$. Les copies colorées sont les images de la figure entière par une similitude de rapport $\tfrac12$ (à gauche) ou $\tfrac13$ (à droite).
+:::
+
+On retrouve une décomposition analogue pour le tapis de Sierpiński.
+Les huit homothéties de rapport $\tfrac13$ qui envoient le carré unité
+sur les carrés entourant le carré central donnent huit copies dont
+la réunion est le tapis. Pour l'ensemble de Cantor, les deux copies
+de rapport $\tfrac13$ sont obtenues par $\tfrac13 x$ et
+$\tfrac13 x + \tfrac23$.
+
+::: {.remark #rem:autosim-statistique title="Une autosimilarité parfois seulement statistique"}
+Les objets naturels auxquels on compare souvent les fractales (une
+côte rocheuse, un chou-fleur, un réseau de rivières) ne sont jamais
+exactement autosimilaires au sens de la
+définition \ref{def:autosimilaire}. Un morceau de côte agrandi ne
+reproduit pas exactement la côte entière ; il peut cependant présenter des
+caractéristiques statistiques comparables. De plus,
+cette ressemblance ne vaut que sur une plage d'échelles limitée : à l'échelle
+du grain de sable, la description de la côte par le même
+modèle n'est plus appropriée. On parle
+alors d'autosimilarité *statistique*, une notion que Mandelbrot a
+placée au cœur de ses travaux (section \ref{sec:mandelbrot}).
+:::
+
+::: {.secondaire #sec:classe-semblables title="Une figure semblable à une partie d'elle-même"}
+Au secondaire, deux figures sont *semblables* lorsqu'on peut
+passer de l'une à l'autre par une similitude, et le rapport de
+similitude intervient dans de nombreux problèmes de mesure. Une figure
+autosimilaire est simplement une figure semblable à chacune de ses
+parties. L'exemple \ref{ex:autosim-triangle} en fournit une version
+accessible aux élèves qui étudient les figures semblables. Les élèves
+savent repérer le milieu des côtés d'un triangle, qu'ils utilisent déjà
+pour tracer les médianes. En reliant deux à deux ces trois milieux, ils
+découpent le triangle en quatre petits triangles ; en mesurant les
+côtés, ils constatent que chacun est semblable au grand, dans un
+rapport de $\tfrac12$, et que les quatre sont isométriques. Le triangle
+est donc formé de quatre copies réduites de lui-même. Demander aux
+élèves de refaire ce découpage dans chacun des petits triangles, puis
+de noircir celui du centre, permet d'amorcer la construction du triangle de Sierpiński.
+:::
+
+## La dimension de similitude {#sec:dimension}
+
+À la section \ref{sec:sierpinski}, nous avons constaté que le triangle de
+Sierpiński a une aire nulle et contient des segments de longueur totale
+infinie. La courbe de von Koch présente une situation analogue : sa longueur
+est infinie, mais son aire est
+nulle. En effet, la courbe construite sur un segment de longueur
+$\ell$ est contenue dans le triangle isocèle qui a ce segment pour base
+et des angles de $30^\circ$ à la base, d'aire $\tfrac{\sqrt3}{12}\ell^2$.
+En appliquant cette remarque à chacun des $4^n$ segments de $K_n$, on
+voit que $K$ est contenue dans une réunion de triangles d'aire totale
+$4^n \cdot \tfrac{\sqrt3}{12}\big(\tfrac13\big)^{2n}
+= \tfrac{\sqrt3}{12}\big(\tfrac49\big)^n$, qui tend vers $0$.
+La notion de dimension que nous allons introduire permet de situer
+ces objets entre les courbes et les surfaces, du point de vue de la
+mesure.
+
+### Compter les copies
+
+Découpons un segment, un carré et un cube en morceaux semblables à
+l'objet entier, en divisant chaque arête en $s$ parties égales
+(figure \ref{fig:segment-carre-cube}). On obtient respectivement
+$N = s$, $N = s^2$ et $N = s^3$ copies, chacune de rapport
+$r = \tfrac1s$. L'exposant qui apparaît est, chaque fois, la dimension
+usuelle de l'objet :
+$$
+  N = s^d, \qquad\text{c'est-à-dire}\qquad
+  N = \left(\frac1r\right)^{\!d}
+  \qquad\text{ou encore}\qquad
+  d = \frac{\ln N}{\ln(1/r)} .
+$$
+Cette relation correspond au facteur $k^2$ de la remarque \ref{rem:k-carre},
+utilisé dans le sens inverse. Réduire un carré d'un
+facteur $r$ divise son aire par $(1/r)^2$, et il faut donc $(1/r)^2$
+copies réduites pour reconstituer l'aire de départ ; de même, il en
+faut $(1/r)^3$ pour un cube, puisque les volumes sont multipliés par
+$r^3$.
+
+::: {#fig:segment-carre-cube}
+![](figures/tikz/fig-segment-carre-cube.tikz)
+
+En divisant chaque arête en $s = 3$ parties égales, on découpe un segment en $3$ copies, un carré en $9$ copies et un cube en $27$ copies, toutes de rapport $\tfrac13$. Le nombre de copies est $s^d$, où $d$ est la dimension usuelle de l'objet.
+:::
+
+La formule $d = \ln N / \ln(1/r)$ ne fait intervenir que le nombre de
+copies et leur rapport. Nous pouvons donc l'appliquer à la courbe
+de von Koch ou au triangle de Sierpiński.
+
+::: {.definition #def:dim-similitude title="Dimension de similitude"}
+Soit $E$ un ensemble autosimilaire, réunion de $N$ copies
+$w_1(E), \dots, w_N(E)$ qui ont toutes le même rapport $r \in
+\intoo{0}{1}$, et qui ne se chevauchent pas (elles peuvent se toucher,
+en un sens que la section \ref{sec:dim-generalisee} précisera). On
+appelle [dimension de similitude]{.defi} de $E$ le nombre
+$$
+  \dims(E) = \frac{\ln N}{\ln(1/r)} ,
+$$
+c'est-à-dire l'unique nombre réel $d$ tel que $N r^d = 1$.
+:::
+
+::: {.example #ex:dimensions title="Quelques dimensions de similitude"}
+| Ensemble | $N$ | $r$ | $\dims(E) = \ln N / \ln(1/r)$ |
+|:--|:-:|:-:|:-:|
+| Ensemble de Cantor | $2$ | $\tfrac13$ | $\ln 2/\ln 3 \approx \num{0.6309}$ |
+| Segment | $3$ | $\tfrac13$ | $1$ |
+| Courbe de von Koch | $4$ | $\tfrac13$ | $\ln 4/\ln 3 \approx \num{1.2619}$ |
+| Triangle de Sierpiński | $3$ | $\tfrac12$ | $\ln 3/\ln 2 \approx \num{1.5850}$ |
+| Tapis de Sierpiński | $8$ | $\tfrac13$ | $\ln 8/\ln 3 \approx \num{1.8928}$ |
+| Carré | $9$ | $\tfrac13$ | $2$ |
+
+Ces valeurs permettent de comparer les ensembles avec des figures familières.
+La dimension de l'ensemble de Cantor est comprise entre $0$, dimension d'un
+point, et $1$, dimension d'un segment. Celle de la courbe de von Koch dépasse
+la dimension usuelle d'une courbe, tandis que celle du tapis de Sierpiński se
+rapproche de la dimension d'une surface, malgré son aire nulle.
+:::
+
+Une question se pose au sujet de la définition \ref{def:dim-similitude} : un même
+ensemble peut se décomposer de plusieurs façons. Le triangle de
+Sierpiński est formé de $3$ copies de rapport $\tfrac12$, mais aussi de
+$9$ copies de rapport $\tfrac14$ (exemple \ref{ex:autosim-sierpinski}).
+Pour ces deux découpages, le calcul donne la même dimension :
+$$
+  \frac{\ln 9}{\ln 4} = \frac{\ln 3^2}{\ln 2^2}
+  = \frac{2\ln 3}{2\ln 2} = \frac{\ln 3}{\ln 2}.
+$$
+Plus généralement, si $E$ est formé de $N$ copies de rapport $r$, en
+redécoupant chaque copie on obtient $N^m$ copies de rapport $r^m$, et
+$\ln N^m / \ln(1/r^m) = \ln N/\ln(1/r)$ : la dimension de similitude
+est la même pour tous ces découpages.
+
+### Ce que mesure la dimension {#sec:dim-mesure}
+
+Pour comprendre pourquoi ce nombre est appelé une dimension, nous
+allons proposer un raisonnement heuristique. Il permet aussi
+d'interpréter la longueur infinie et l'aire nulle des exemples
+précédents. Imaginons que nous disposions,
+pour chaque nombre $d \geq 0$, d'une façon de mesurer la « taille
+$d$-dimensionnelle » $M_d(E)$ d'un ensemble $E$ : la longueur pour
+$d = 1$, l'aire pour $d = 2$, le volume pour $d = 3$. Ces trois mesures
+ont en commun la façon dont elles réagissent à une similitude de
+rapport $r$ : elles sont multipliées par $r$, $r^2$ et $r^3$
+respectivement. Exigeons la même chose de $M_d$ :
+$$
+  M_d\big(w(E)\big) = r^d\, M_d(E)
+  \qquad\text{pour toute similitude $w$ de rapport $r$.}
+$$
+Si $E$ est la réunion de $N$ copies de rapport $r$ qui ne se
+chevauchent pas, la taille de $E$ est la somme des tailles des copies :
+$$
+  M_d(E) = N\, r^d\, M_d(E).
+$$
+Examinons les possibilités compatibles avec cette égalité. Si $N r^d = 1$,
+c'est-à-dire si $d = \dims(E)$, elle est satisfaite quelle que soit la
+valeur de $M_d(E)$. Sinon, il faut que $M_d(E)$ soit nulle, ou infinie.
+Pour la courbe de von Koch, par exemple :
+
+- avec $d = 1$ (la longueur), $N r^d = 4 \cdot \tfrac13 = \tfrac43
+  \neq 1$ ; la longueur doit donc être nulle ou infinie, et elle
+  ne peut être nulle, puisque $K$ contient deux points à distance
+  $1$. Elle est infinie, comme nous l'avons calculé ;
+- avec $d = 2$ (l'aire), $N r^d = 4 \cdot \tfrac19 = \tfrac49 \neq
+  1$ ; l'aire doit donc être nulle ou infinie, et elle ne peut
+  être infinie, puisque $K$ est borné. Elle est nulle ;
+- la seule « mesure » susceptible de donner une valeur finie et
+  non nulle à $K$ est celle de dimension $d = \ln 4/\ln 3$.
+
+On peut faire une analogie avec les unités habituelles : chercher
+à mesurer une surface au moyen d'une longueur conduit à une valeur
+infinie, tandis que l'aire d'un fil idéal est nulle. La
+dimension de similitude est l'unique exposant pour lequel la mesure
+n'est ni nulle ni infinie.
+
+::: {.remark #rem:dim-hausdorff title="La dimension de Hausdorff"}
+Le raisonnement précédent demeure heuristique : nous n'avons pas construit
+les mesures $M_d$. Felix Hausdorff (note historique \ref{hist:hausdorff})
+les a construites en 1918, pour tous les sous-ensembles de $\R^n$ et
+tous les $d \geq 0$, sans supposer que les ensembles sont autosimilaires. Il en tire
+la [dimension de Hausdorff]{.defi}, qui a un sens pour n'importe quel
+ensemble. Pour les ensembles autosimilaires dont les copies ne se
+chevauchent pas, elle coïncide avec la dimension de
+similitude [@Hutchinson1981] : c'est ce qui justifie, a posteriori,
+le raisonnement ci-dessus. La définition de Hausdorff dépasse le cadre
+de ce cours ; on la trouvera, par exemple, dans [@Falconer2014].
+:::
+
+Nous pouvons maintenant préciser ce que nous entendrons par
+« fractale ». Mandelbrot a proposé de réserver ce nom aux ensembles
+dont la dimension de Hausdorff dépasse strictement la dimension
+topologique (qui vaut $0$ pour un ensemble de points isolés, $1$ pour
+une courbe, $2$ pour une surface) [@Mandelbrot1982]. Il a lui-même
+reconnu que cette définition excluait des objets qu'on voudrait
+appeler fractals, et aucune définition entièrement satisfaisante n'a
+été retenue depuis. Pour nos besoins, une [fractale]{.defi} sera un
+ensemble irrégulier à toutes les échelles, dont la forme se reproduit,
+exactement ou approximativement, dans ses parties, et dont la dimension
+est typiquement fractionnaire. Il faut cependant conserver cette réserve : le
+tétraèdre de Sierpiński est une fractale de dimension
+exactement $2$ (exercice \ref{exo:menger}).
+
+::: {.secondaire #sec:classe-log title="Logarithmes et échelles de mesure"}
+Le calcul d'une dimension de similitude est une application concrète
+de la résolution d'équations exponentielles enseignée en cinquième
+secondaire. L'équation $3^d = 4$ n'a pas de solution entière ; on la
+résout en passant aux logarithmes, dans la base de son choix, on peut ainsi vérifier que
+$\log 4 / \log 3 = \ln 4/\ln 3 = \log_3 4$, ce qui illustre la formule de
+changement de base. La dimension de similitude est un
+*exposant* : elle répond à la question « à quelle puissance
+faut-il élever le facteur de réduction pour obtenir le nombre de
+copies ? ».
+
+L'utilisation d'un exposant comme mesure se retrouve dans les
+*échelles logarithmiques*, que les élèves rencontrent en sciences
+sans toujours en saisir le fonctionnement. La magnitude d'un séisme sur
+l'échelle de Richter est le logarithme en base $10$ de l'amplitude des
+ondes enregistrées par un sismographe, comparée à une amplitude de
+référence : un séisme de magnitude $6$ produit des ondes dix fois plus
+amples qu'un séisme de magnitude $5$, et libère environ
+$10^{1{,}5} \approx 32$ fois plus d'énergie. Le pH d'une solution et
+le niveau sonore en décibels fonctionnent de la même façon. Dans chaque
+cas, le logarithme ramène à une échelle commode des grandeurs qui
+varient sur plusieurs ordres de grandeur, et il transforme les
+multiplications en additions : ajouter $1$ à la magnitude, c'est
+multiplier l'amplitude par $10$. Faire calculer aux élèves la
+magnitude de quelques séismes historiques, puis la dimension de
+quelques fractales, permet de rapprocher deux applications d'un même outil mathématique.
+:::
+
+## Systèmes itératifs de fonctions {#sec:sif}
+
+Jusqu'à présent, nous avons reconnu des copies semblables à l'intérieur
+d'une figure donnée. Posons maintenant la question dans l'autre sens.
+Si on se donne des contractions $w_1, \dots, w_N$ du plan, existe-t-il
+un ensemble $E$ tel que $E = w_1(E) \cup \cdots \cup w_N(E)$?
+Peut-on établir son unicité et proposer une méthode pour le construire?
+Le théorème du point fixe de Banach permet de répondre à ces
+questions, à condition de l'appliquer à l'ensemble $\Comp{\R^2}$
+des compacts non vides du plan, muni de la distance de Hausdorff
+introduite au chapitre \ref{chap:metriques}.
+
+::: {.definition #def:sif title="Système itératif de fonctions"}
+Un [système itératif de fonctions]{.defi} (SIF) du plan est une famille
+finie $\{w_1, w_2, \dots, w_N\}$ de contractions $w_i : \R^2 \to \R^2$,
+de rapports respectifs $k_1, k_2, \dots, k_N$. Le nombre
+$k = \max\{k_1, \dots, k_N\}$ s'appelle le [rapport de
+contraction]{.defi} du SIF. On associe au SIF la fonction $W$ qui, à un
+ensemble compact non vide $B$, fait correspondre la réunion de ses
+images :
+$$
+  W(B) = w_1(B) \cup w_2(B) \cup \cdots \cup w_N(B).
+$$
+On appelle $W$ l'[opérateur de Hutchinson]{.defi} du SIF.
+:::
+
+Dans ce cours, les $w_i$ seront toujours des applications affines
+(définition \ref{def:affine}). L'opérateur de Hutchinson agit sur des
+*figures*. À partir d'une figure $B$, il forme $N$ images par les
+applications du système, puis prend leur réunion. C'est un « photocopieur à
+plusieurs lentilles », selon l'image de Barnsley [@Barnsley1993] :
+chaque lentille réduit et déplace l'original, et la page de sortie
+superpose toutes les réductions. En anglais, on parle d'*iterated
+function system* (IFS).
+
+::: {.remark #rem:rapport-affine title="Le rapport de contraction d'une application affine"}
+Pour une similitude, le rapport de contraction est simplement son
+rapport de similitude. Pour une application affine
+$w(\vec{x}) = A\vec{x} + \vec{t}$ quelconque, c'est le plus grand
+facteur par lequel $A$ peut allonger un vecteur, c'est-à-dire le
+maximum de $\norme{A\vec{u}}$ lorsque $\vec{u}$ parcourt les vecteurs
+unitaires. Pour une matrice diagonale $\mat{a}{0}{0}{b}$, c'est
+$\max\{|a|, |b|\}$ : on retrouve le rapport $\tfrac23$ de
+l'exemple \ref{ex:contractions-plan}. Plus généralement, si $A$ est
+symétrique, c'est la plus grande valeur absolue de ses valeurs propres.
+Cette caractérisation ne s'étend toutefois pas à une matrice quelconque : les valeurs propres
+de $A$ ne suffisent pas. Le cisaillement $\mat{\tfrac12}{1}{0}{\tfrac12}$
+a pour seule valeur propre $\tfrac12$, mais il envoie le vecteur
+unitaire $(0,1)$ sur $\big(1, \tfrac12\big)$, de norme
+$\tfrac{\sqrt5}{2} > 1$ : ce n'est pas une contraction. Dans le cas
+général, le rapport cherché est la racine carrée de la plus grande
+valeur propre de la matrice symétrique $A^{\mathsf{T}}A$, mais nous
+n'en aurons pas besoin.
+:::
+
+### L'opérateur de Hutchinson est une contraction
+
+Pour appliquer le théorème de Banach à $W$, nous devons vérifier deux
+propriétés : que $W$ envoie bien $\Comp{\R^2}$ dans lui-même, et que c'est
+une contraction pour la distance de Hausdorff. Pour le premier point, nous
+utiliserons sans démonstration les
+propriétés suivantes : une contraction est continue (voir la
+démonstration du lemme \ref{lem:limite-point-fixe}), l'image d'un
+compact par une fonction continue est un compact, et une réunion finie
+de compacts (donc d'ensembles fermés et bornés) est encore un compact.
+Le second est l'objet du théorème suivant, dont la démonstration,
+fondée sur les $\varepsilon$-voisinages de la
+définition \ref{def:eps-voisinage}, est présentée à
+l'[annexe C](#annexe:theorie).
+
+::: {.theorem #thm:W-contraction title="L'opérateur de Hutchinson est une contraction"}
+Soit $\{w_1, \dots, w_N\}$ un SIF de rapport de contraction $k$. Alors
+son opérateur de Hutchinson $W$ est une contraction de rapport $k$ de
+l'espace métrique $\big(\Comp{\R^2}, \dH\big)$ :
+$$
+  \dH\big(W(A), W(B)\big) \leq k\, \dH(A,B)
+  \qquad\text{pour tous } A, B \in \Comp{\R^2}.
+$$
+:::
+
+Voir l'[annexe C](#annexe:theorie).
+
+### Le théorème de Hutchinson
+
+Il reste à vérifier la complétude de l'espace pour pouvoir appliquer
+le théorème de Banach. Nous admettrons le résultat suivant, dû à
+Hausdorff; une démonstration se trouve notamment
+dans [@Barnsley1993].
+
+::: {.theorem #thm:K-complet title="Complétude de l'espace des compacts"}
+L'espace métrique $\big(\Comp{\R^2}, \dH\big)$ est complet.
+:::
+
+Nous pouvons maintenant réunir les résultats précédents pour énoncer
+le théorème de John Hutchinson [@Hutchinson1981]. Il donne le lien
+recherché entre un système de contractions et une figure invariante.
+
+::: {.theorem #thm:hutchinson title="Hutchinson, 1981"}
+Soit $\{w_1, \dots, w_N\}$ un SIF du plan, de rapport de contraction
+$k$, et soit $W$ son opérateur de Hutchinson. Alors :
+
+(i) il existe un unique compact non vide $A \subseteq \R^2$ tel
+    que
+    $$
+      A = W(A) = w_1(A) \cup w_2(A) \cup \cdots \cup w_N(A) ;
+    $$
+(ii) pour tout compact non vide $B$, la suite de compacts
+     $B, W(B), W^2(B), \ldots$ converge vers $A$ au sens de la
+     distance de Hausdorff ;
+(iii) on dispose de plus de la majoration
+      $$
+        \dH\big(W^n(B), A\big) \leq \frac{k^n}{1-k}\, \dH\big(B, W(B)\big).
+      $$
+
+L'ensemble $A$ s'appelle l'[attracteur]{.defi} du SIF.
+:::
+
+Voir l'[annexe C](#annexe:theorie).
+
+La démonstration, présentée à l'[annexe C](#annexe:theorie),
+est une application directe du théorème de Banach : l'opérateur $W$
+est une contraction (théorème \ref{thm:W-contraction}) de l'espace
+complet $\big(\Comp{\R^2}, \dH\big)$ (théorème \ref{thm:K-complet}).
+La démonstration est courte parce qu'elle s'appuie sur les résultats
+développés dans les deux premiers chapitres. Il faut cependant
+préciser ce que représente ici le point fixe. Le « point
+fixe » dont Banach garantit l'existence n'est pas ici un point du plan,
+mais une figure entière, l'attracteur ; et la suite qui y converge
+n'est pas une suite de points, mais une suite de figures. Le point
+(ii) affirme de plus que la limite ne dépend pas de la figure de départ :
+c'est ce qu'illustre la figure \ref{fig:hutchinson}, où le
+SIF du triangle de Sierpiński, appliqué à un carré, au motif « F » du
+chapitre \ref{chap:transformations} ou à un disque, fait apparaître
+chaque fois le même attracteur.
+
+::: {#fig:hutchinson}
+![](figures/tikz/fig-hutchinson.tikz)
+
+Le SIF du triangle de Sierpiński (exemple \ref{ex:autosim-sierpinski}) appliqué à trois figures de départ $B$ : un carré, le motif « F » et un disque. Le triangle gris rappelle la position du triangle de départ de la section \ref{sec:sierpinski}. Quelle que soit la figure initiale, la suite $W^n(B)$ converge vers le même attracteur, le triangle de Sierpiński : conformément au point (ii) du théorème \ref{thm:hutchinson}.
+:::
+
+::: {.remark #rem:construction-justifiee title="Justification des constructions de la section \ref{sec:monstres}"}
+Le théorème \ref{thm:hutchinson} répond aux deux questions laissées ouvertes
+à la section \ref{sec:monstres}. D'abord, le sens de la « figure
+limite » : en appliquant l'opérateur de Hutchinson du SIF de
+l'exemple \ref{ex:autosim-koch} au segment $K_0$, on obtient
+exactement la ligne brisée $K_1$, puis $K_2 = W(K_1)$, et ainsi de
+suite ; la courbe de von Koch est donc la limite, au sens de $\dH$, de
+la suite $K_n = W^n(K_0)$. Il en va de même pour le triangle de
+Sierpiński, avec $S_n = W^n(S_0)$. Ensuite, l'autosimilarité : un
+ensemble autosimilaire $E = w_1(E) \cup \cdots \cup w_N(E)$ est un
+point fixe de l'opérateur $W$ ; par l'unicité du point (i), c'est
+*l'*attracteur du SIF $\{w_1, \dots, w_N\}$. Les ensembles
+autosimilaires sont donc exactement les attracteurs des SIF formés de
+similitudes.
+:::
+
+::: {.example #ex:etapes-pixel title="Le nombre d'étapes requis pour le dessin"}
+On veut dessiner le triangle de Sierpiński $S$ sur une page, dans un
+triangle de $10$ cm de côté, à l'aide des triangles pleins de l'étape
+$S_n = W^n(S_0)$. Déterminons le nombre d'étapes nécessaire pour que l'image ne diffère
+de $S$ que de moins d'un dixième de millimètre, la taille d'un point
+d'encre, c'est-à-dire de $\num{0.001}$ fois le côté.
+
+Calculons d'abord $\dH(S_0, W(S_0)) = \dH(S_0, S_1)$. Puisque
+$S_1 \subseteq S_0$, il suffit de considérer l'éloignement des points de $S_0$ par
+rapport à $S_1$ (formule \eqref{eq:hausdorff-sup}). Le point de $S_0$
+le plus éloigné de $S_1$ est le centre du triangle central retiré, et
+sa distance à $S_1$ est le rayon du cercle inscrit dans ce triangle de
+côté $\tfrac12$, soit $\tfrac12 \cdot \tfrac{\sqrt3}{6} =
+\tfrac{\sqrt3}{12}$. Avec $k = \tfrac12$, le point (iii) du
+théorème \ref{thm:hutchinson} donne
+$$
+  \dH(S_n, S) \leq \frac{(1/2)^n}{1 - 1/2} \cdot \frac{\sqrt3}{12}
+  = \left(\frac12\right)^{\!n-1} \frac{\sqrt3}{12}.
+$$
+Ce majorant vaut environ $\num{0.00113}$ pour $n = 8$ et
+$\num{0.00056}$ pour $n = 9$ : neuf étapes suffisent, soit
+$3^9 = \num{19683}$ petits triangles à dessiner.
+:::
+
+::: {.remark #rem:points-fixes-attracteur title="Les points fixes des $w_i$ appartiennent à l'attracteur"}
+Chaque $w_i$ possède, par le théorème de Banach, un unique point fixe
+$\overline{x}_i$, et ce point appartient à l'attracteur $A$ : partant
+d'un point $a \in A$, la suite $a, w_i(a), w_i^2(a), \ldots$ reste dans
+$A$, puisque $w_i(A) \subseteq W(A) = A$, et converge vers
+$\overline{x}_i$ ; comme $A$ est fermé, cette limite est dans $A$. Pour
+le triangle de Sierpiński, ce sont les trois sommets $S_1$, $S_2$ et
+$S_3$. En appliquant des composées des $w_i$ à ces points fixes, on obtient
+encore des points de $A$. C'est ce procédé qui sera utilisé dans l'algorithme
+de la section \ref{sec:algo-deterministe}.
+:::
+
+### Trouver un SIF : le théorème du collage {#sec:collage}
+
+Le théorème de Hutchinson associe un attracteur à un SIF donné. Pour
+les applications, on peut aussi se poser le problème inverse : à
+partir d'une image de feuille, d'arbre ou de texture, comment trouver
+un SIF dont l'attracteur s'en approche? Le théorème du collage,
+présenté par Michael Barnsley au milieu des années
+1980 [@Barnsley1993], fournit une estimation utile pour cette
+recherche.
+
+::: {.theorem #thm:collage title="Théorème du collage"}
+Soit $L$ un compact non vide du plan, et soit $\{w_1, \dots, w_N\}$ un
+SIF de rapport de contraction $k$, d'attracteur $A$ et d'opérateur de
+Hutchinson $W$, de sorte que
+$W(L) = w_1(L) \cup \cdots \cup w_N(L)$. Alors
+$$
+  \dH(L, A) \leq \frac{1}{1-k}\, \dH\big(L, W(L)\big).
+$$
+:::
+
+::: {.proof}
+Il suffit d'appliquer le point (iii) du théorème \ref{thm:hutchinson}, avec $B = L$ et
+$n = 0$.
+:::
+
+L'interprétation est la suivante : si on recouvre $L$, aussi
+fidèlement que possible, par des copies réduites et déformées de
+lui-même, $w_1(L), \dots, w_N(L)$, c'est-à-dire à réaliser un
+*collage* de $L$ à l'aide de ses propres photocopies réduites,
+alors l'attracteur du SIF ainsi obtenu ressemblera à $L$. Plus le
+collage est fidèle (plus $\dH(L, W(L))$ est petit), plus l'estimation de
+l'écart est petite. Elle devient toutefois moins
+précise lorsque le rapport
+$k$ s'approche de $1$, à cause du facteur $1/(1-k)$.
+
+Reste à trouver chaque $w_i$. Nous pouvons utiliser pour cela un résultat du
+chapitre \ref{chap:transformations} : par le
+théorème \ref{thm:trois-points}, une application affine est entièrement
+déterminée par les images de trois points non alignés. Il suffit donc
+de repérer trois points caractéristiques de la figure $L$ (par exemple
+la base de la tige, la pointe et l'extrémité d'une feuille) et leurs
+positions sur la pièce $L_i$ qu'on veut obtenir, puis de résoudre les
+deux systèmes $3\times3$ de l'équation \eqref{eq:trois-points-systeme}.
+
+::: {.example #ex:arbre title="Un arbre"}
+Cherchons un SIF dont l'attracteur ressemble à un arbre. Représentons un arbre
+stylisé par un tronc et une couronne dont
+les branches ressemblent à des arbres plus petits. On
+recouvre donc l'arbre par quatre pièces (figure \ref{fig:arbre}) :
+
+- le tronc, image de l'arbre entier par
+  $w_1\col{x}{y} = \mat{\num{0.03}}{0}{0}{\num{0.42}}\col{x}{y}$,
+  qui le réduit presque à un mince segment vertical ;
+- deux grosses branches, images de l'arbre par des similitudes de
+  rapport $\num{0.58}$, tournées de $38^\circ$ vers la gauche et
+  vers la droite, et posées au sommet du tronc :
+  $w_{2,3}\col{x}{y} = \num{0.58}\, r_{\pm 38^\circ}\col{x}{y} +
+  \col{0}{\num{0.42}}$ ;
+- une cime, image de l'arbre par une homothétie de rapport
+  $\num{0.42}$, posée un peu plus haut :
+  $w_4\col{x}{y} = \num{0.42}\col{x}{y} + \col{0}{\num{0.6}}$.
+
+Le SIF $\{w_1, w_2, w_3, w_4\}$ a pour rapport de contraction
+$\num{0.58}$ ; son attracteur est représenté à la
+figure \ref{fig:arbre}, chaque pièce $w_i(A)$ dans sa couleur. On
+remarque que $w_1$ n'est pas une similitude : l'attracteur d'un SIF
+n'a pas à être autosimilaire au sens de la
+définition \ref{def:autosimilaire}.
+:::
+
+::: {#fig:arbre}
+![](figures/tikz/fig-arbre.tikz)
+
+L'attracteur du SIF de l'exemple \ref{ex:arbre} (à gauche) et sa décomposition en quatre pièces (à droite) : chaque point est coloré selon la dernière application utilisée pour l'obtenir. Les deux branches et la cime sont des copies réduites et tournées de l'arbre entier ; le tronc correspond à une copie fortement comprimée horizontalement.
+:::
+
+::: {.example #ex:fougere title="La fougère de Barnsley"}
+Un exemple connu de cette méthode est la fougère de Barnsley,
+publiée en 1988 [@Barnsley1993]. Elle est l'attracteur du SIF de
+quatre applications affines
+$w_i\col{x}{y} = \mat{a_i}{b_i}{c_i}{d_i}\col{x}{y} + \col{e_i}{f_i}$
+dont les coefficients sont donnés dans le tableau suivant (la colonne
+$p_i$ servira à la section \ref{sec:chaos}) :
+
+| $i$ | $a_i$ | $b_i$ | $c_i$ | $d_i$ | $e_i$ | $f_i$ | $p_i$ |
+|:-:|--:|--:|--:|--:|--:|--:|--:|
+| $1$ | $0$ | $0$ | $0$ | $\num{0.16}$ | $0$ | $0$ | $\num{0.01}$ |
+| $2$ | $\num{0.85}$ | $\num{0.04}$ | $\num{-0.04}$ | $\num{0.85}$ | $0$ | $\num{1.6}$ | $\num{0.85}$ |
+| $3$ | $\num{0.20}$ | $\num{-0.26}$ | $\num{0.23}$ | $\num{0.22}$ | $0$ | $\num{1.6}$ | $\num{0.07}$ |
+| $4$ | $\num{-0.15}$ | $\num{0.28}$ | $\num{0.26}$ | $\num{0.24}$ | $0$ | $\num{0.44}$ | $\num{0.07}$ |
+
+\medskip
+
+Examinons l'effet de chaque application (figure \ref{fig:fougere}). La
+première écrase toute la fougère sur un petit segment vertical : c'est
+la base de la tige. Sa matrice est de déterminant nul ; c'est une
+application affine non inversible, comme celles de la
+section \ref{sec:non-inversible}, ce que la définition \ref{def:sif}
+n'interdit pas. La deuxième, une similitude de rapport
+$\sqrt{\num{0.85}^2 + \num{0.04}^2} \approx \num{0.851}$, qui tourne
+légèrement le plan (d'environ $3^\circ$ dans le sens horaire), envoie la fougère entière
+sur toute la fougère privée de sa première paire de folioles : c'est
+elle qui crée l'autosimilarité le long de la tige. Les deux dernières
+applications donnent les deux folioles du bas, à gauche et à droite ; la
+quatrième a un déterminant négatif, elle retourne la fougère, ce qui reproduit
+la disposition des folioles de part et d'autre
+de la tige.
+:::
+
+::: {#fig:fougere}
+![](figures/tikz/fig-fougere.tikz)
+
+La fougère de Barnsley (à gauche), attracteur d'un SIF de quatre applications affines, décrites par vingt-quatre coefficients. À droite, les quatre pièces $w_i(A)$ : la base de la tige (en rouge), la fougère privée de ses folioles du bas (en bleu), et les deux folioles du bas (en or et en vert), qui sont elles-mêmes de petites fougères.
+:::
+
+::: {.remark #rem:compression title="La compression fractale d'images"}
+Au début du chapitre \ref{chap:transformations}, nous avons mentionné la
+possibilité de représenter une image par quelques transformations affines. La
+fougère
+de la figure \ref{fig:fougere} en est l'illustration : vingt-quatre
+nombres suffisent à la décrire, alors qu'une image matricielle de la
+même fougère en demande des centaines de milliers. À la fin des années
+1980, Barnsley et son étudiant Arnaud Jacquin ont tiré de cette idée
+une méthode de *compression fractale* des images : l'image est
+découpée en petits blocs, et on cherche, pour chacun, une application
+affine qui l'obtient à partir d'un bloc plus grand de la même image,
+suivant le principe du théorème du collage. La méthode a été
+utilisée commercialement, notamment dans l'encyclopédie
+*Encarta* de Microsoft, avant d'être supplantée par la norme
+JPEG [@Kominek1997].
+:::
+
+## La dimension de similitude généralisée {#sec:dim-generalisee}
+
+La définition \ref{def:dim-similitude} exigeait que toutes les copies
+aient le même rapport. Les SIF formés de similitudes de rapports
+différents donnent aussi des ensembles autosimilaires, comme ceux de la
+figure \ref{fig:chevauchements}. L'argument heuristique de la
+section \ref{sec:dim-mesure} peut être repris dans ce cas : si
+$E = w_1(E) \cup \cdots \cup w_N(E)$, où $w_i$ est une similitude de
+rapport $r_i$, et si les copies ne se chevauchent pas, la « taille
+$d$-dimensionnelle » de $E$ doit vérifier
+$$
+  M_d(E) = r_1^d\, M_d(E) + r_2^d\, M_d(E) + \cdots + r_N^d\, M_d(E),
+$$
+ce qui n'est possible, avec une taille finie et non nulle, que si
+$r_1^d + \cdots + r_N^d = 1$.
+
+::: {.proposition #prop:moran title="L'équation de Moran"}
+Soient $N \geq 2$ et $r_1, \dots, r_N \in \intoo{0}{1}$. L'équation
+\begin{equation}\label{eq:moran}
+  r_1^d + r_2^d + \cdots + r_N^d = 1
+\end{equation}
+possède une unique solution $d > 0$.
+:::
+
+::: {.proof}
+Posons $\varphi(d) = r_1^d + \cdots + r_N^d$. Chaque terme
+$r_i^d = \eu^{d \ln r_i}$ est une fonction continue et strictement
+décroissante de $d$, puisque $\ln r_i < 0$ ; la fonction $\varphi$ est
+donc continue et strictement décroissante. De plus, $\varphi(0) = N
+\geq 2 > 1$ et $\varphi(d) \to 0$ lorsque $d \to \infty$. Par le
+théorème des valeurs intermédiaires, $\varphi$ prend la valeur $1$ ; sa
+stricte décroissance assure que cette valeur est atteinte une
+seule fois.
+:::
+
+::: {.outil #outil:moran title="Résoudre l'équation de Moran"}
+L'équation \eqref{eq:moran} ne se résout généralement pas
+algébriquement, mais elle se résout bien graphiquement. Dans Desmos, on
+trace $y = 2(1/2)^x + 3(1/3)^x$ et $y = 1$ : l'abscisse du point
+d'intersection, obtenue d'un clic, est la dimension cherchée
+(exercice \ref{exo:sif-rapports}). Le graphe illustre aussi la
+démonstration précédente : la courbe est décroissante, part de $N$ en
+$x = 0$ et tend vers $0$. Dans WolframAlpha, la requête
+`solve 2(1/2)^d + 3(1/3)^d = 1` donne directement une valeur
+approchée. Pour des élèves de cinquième secondaire, comparer cette
+résolution graphique avec la résolution par logarithmes du cas
+$N r^d = 1$ (section \ref{sec:classe-log}) montre ce que les logarithmes
+permettent de faire, et ce qu'ils ne permettent pas.
+:::
+
+Lorsque tous les rapports sont égaux à $r$, l'équation \eqref{eq:moran}
+devient $N r^d = 1$, et on retrouve la
+définition \ref{def:dim-similitude}. Il reste à préciser ce que veut
+dire « ne pas se chevaucher ». Les copies peuvent avoir des points communs sur leur frontière,
+comme les trois copies du triangle de Sierpiński, qui se touchent en
+des sommets ; on veut cependant exclure un recouvrement de leurs parties
+intérieures. La
+condition suivante, due à Moran [@Moran1946], rend cette idée
+précise.
+
+::: {.definition #def:ouvert-moran title="Condition de l'ouvert"}
+On dit que le SIF $\{w_1, \dots, w_N\}$ satisfait la [condition de
+l'ouvert]{.defi} s'il existe un ensemble ouvert borné non vide $V$ tel que
+
+(a) $w_i(V) \subseteq V$ pour tout $i$ ;
+(b) les ensembles $w_1(V), \dots, w_N(V)$ sont deux à deux
+    disjoints.
+:::
+
+Pour le triangle de Sierpiński, on peut prendre pour $V$ l'intérieur du
+triangle de départ : ses trois images sont les intérieurs des trois
+triangles de $S_1$, qui sont disjoints, parce que les triangles ne se
+touchent que par leurs sommets, qui sont sur leurs frontières. La distinction
+entre un ouvert et sa frontière, étudiée au chapitre \ref{chap:metriques},
+intervient donc directement : les copies peuvent avoir des sommets communs
+tout en ayant des intérieurs disjoints.
+
+::: {.definition #def:dim-generalisee title="Dimension de similitude généralisée"}
+Soit $E$ l'attracteur d'un SIF formé de similitudes
+$w_1, \dots, w_N$ de rapports $r_1, \dots, r_N$, qui satisfait la
+condition de l'ouvert. On appelle [dimension de similitude
+généralisée]{.defi} de $E$ l'unique solution $d$ de
+l'équation \eqref{eq:moran}.
+:::
+
+::: {#fig:chevauchements}
+![](figures/tikz/fig-chevauchements.tikz)
+
+Comparaison de trois SIF de similitudes. Le carré unité ouvert est indiqué en pointillé et noté $V$. En (a) et en (b), les images de $V$ sont contenues dans $V$ et deux à deux disjointes : la condition de l'ouvert est satisfaite, et on a représenté l'attracteur. En (c), on a représenté les cinq images du carré (quatre coins et un carré central) : la cinquième chevauche les quatre autres, et l'attracteur est le carré plein tout entier.
+:::
+
+::: {.example #ex:chevauchement title="Pourquoi la condition de l'ouvert est nécessaire"}
+Considérons le SIF formé des cinq homothéties de rapport $\tfrac12$ de
+la figure \ref{fig:chevauchements} (c), qui envoient le carré unité $C$
+sur ses quatre quarts et sur le carré de côté $\tfrac12$ centré en
+$\big(\tfrac12, \tfrac12\big)$. Les quatre coins suffisent déjà à
+reconstituer $C$, et la cinquième copie est contenue dans $C$ : on a
+donc $W(C) = C$, et l'attracteur est le carré plein, de dimension $2$.
+L'équation de Moran, elle, donne $5\big(\tfrac12\big)^d = 1$,
+c'est-à-dire $d = \ln 5/\ln 2 \approx \num{2.32}$. Cette valeur supérieure à
+$2$ ne peut représenter la dimension de l'ensemble plan considéré. Le
+chevauchement de la cinquième copie conduit en effet à compter plusieurs fois
+certaines parties du carré.
+:::
+
+::: {.example #ex:moran-newton title="Le calcul numérique d'une dimension"}
+L'attracteur de la figure \ref{fig:chevauchements} (b) est formé de
+deux copies de rapport $\tfrac12$ et d'une copie de rapport $\num{0.4}$,
+qui se touchent sans se chevaucher (on prend pour $V$ le carré unité
+ouvert). Sa dimension de similitude généralisée est la solution de
+$$
+  f(d) = 2\left(\frac12\right)^{\!d} + (\num{0.4})^d - 1 = 0 .
+$$
+On ne peut pas isoler $d$ par les manipulations algébriques usuelles.
+Utilisons donc la méthode de Newton de la section \ref{sec:newton} pour en
+obtenir une approximation. Avec
+$f'(d) = 2\left(\tfrac12\right)^{d}\ln\tfrac12 + (\num{0.4})^d
+\ln(\num{0.4})$ et $d_0 = 1$, l'itération
+$d_{n+1} = d_n - f(d_n)/f'(d_n)$ donne :
+
+| $n$ | $d_n$ | $f(d_n)$ |
+|:-:|:-:|:-:|
+| $0$ | $\num{1.000000000}$ | $\num{4.0e-1}$ |
+| $1$ | $\num{1.377478332}$ | $\num{5.3e-2}$ |
+| $2$ | $\num{1.444094153}$ | $\num{1.3e-3}$ |
+| $3$ | $\num{1.445852445}$ | $\num{8.9e-7}$ |
+| $4$ | $\num{1.445853630}$ | $\num{4.0e-13}$ |
+
+La dimension cherchée est donc $d \approx \num{1.44585}$. Elle est
+comprise entre celle de trois copies de rapport $\num{0.4}$,
+$\ln 3/\ln(\num{2.5}) \approx \num{1.199}$, et celle de trois copies de
+rapport $\tfrac12$, $\ln 3/\ln 2 \approx \num{1.585}$, comme on
+pouvait s'y attendre.
+:::
+
+::: {.remark #rem:dim-affine title="Et pour les SIF qui ne sont pas des similitudes ?"}
+La définition \ref{def:dim-generalisee} ne s'applique qu'aux SIF formés
+de similitudes. Pour l'arbre de l'exemple \ref{ex:arbre}, pour la
+fougère, ou pour tout attracteur d'un SIF d'applications affines
+quelconques, l'argument de la section \ref{sec:dim-mesure} ne s'applique plus :
+une application qui écrase davantage dans une direction que dans
+l'autre ne multiplie pas une « taille $d$-dimensionnelle » par un
+facteur bien défini. Le calcul de la dimension de tels ensembles,
+qu'on dit *auto-affines*, demande d'autres outils, et fait
+encore aujourd'hui l'objet de recherches actives [@Falconer2014].
+:::
+
+## Dessiner un attracteur à l'ordinateur {#sec:algorithmes}
+
+Après avoir établi l'existence de l'attracteur, nous allons voir
+comment en produire une image. Les figures fractales de ce chapitre
+ont été obtenues par deux algorithmes. Le premier applique directement
+l'opérateur de Hutchinson; le second utilise des choix aléatoires et
+demande généralement moins de calculs. Nous présenterons chacun en
+pseudo-code, puis en Python, avec les conventions de
+l'[annexe A](#annexe:python). Un nuage de points est représenté
+par un tableau $2 \times n$, dont chaque colonne contient les
+coordonnées d'un point, et une application affine par un couple
+$(A, \vec{t})$.
+
+### L'algorithme déterministe {#sec:algo-deterministe}
+
+Le point (ii) du théorème \ref{thm:hutchinson} suggère la méthode suivante :
+partir d'une figure $B$ quelconque et lui appliquer $W$
+un nombre suffisant de fois. À l'ordinateur, la figure la plus simple
+est un ensemble fini de points ; on peut même se limiter à un point, puisqu'un singleton est un
+compact non vide.
+
+::: {.algorithme #algo:deterministe title="Algorithme déterministe"}
+**Données :** un SIF $\{w_1, \dots, w_N\}$ ; un nombre d'étapes $n$.
+
+1. Choisir un point de départ $P_0$, et poser $\mathcal{P} = \{P_0\}$.
+2. Répéter $n$ fois : remplacer $\mathcal{P}$ par
+   $W(\mathcal{P}) = w_1(\mathcal{P}) \cup \cdots \cup w_N(\mathcal{P})$.
+3. Dessiner les points de $\mathcal{P}$.
+:::
+
+```{.python caption="L'algorithme déterministe, appliqué au triangle de Sierpiński."}
+import numpy as np
+import matplotlib.pyplot as plt
+
+def applique(A, t, pts):
+    """A : matrice 2x2, t : vecteur (2,), pts : tableau 2 x n."""
+    A = np.asarray(A, dtype=float)
+    t = np.asarray(t, dtype=float).reshape(2, 1)
+    return A @ np.asarray(pts, dtype=float) + t
+
+# Le SIF du triangle de Sierpinski : trois homothéties de rapport 1/2,
+# centrées aux sommets S1, S2, S3 (partie translation : S_i / 2).
+M = [[0.5, 0], [0, 0.5]]
+SIF = [(M, [0, 0]), (M, [0.5, 0]), (M, [0.25, np.sqrt(3)/4])]
+
+def W(pts):
+    """Opérateur de Hutchinson : réunion des images par chaque w_i."""
+    return np.hstack([applique(A, t, pts) for A, t in SIF])
+
+pts = np.array([[0.], [0.]])      # un seul point de départ
+for n in range(8):
+    pts = W(pts)                  # 3^8 = 6561 points à la fin
+plt.plot(pts[0], pts[1], ",", color="navy")
+plt.axis("equal"); plt.axis("off"); plt.show()
+```
+
+Le point de départ choisi, l'origine, est le point fixe de $w_1$ ; par
+la remarque \ref{rem:points-fixes-attracteur}, il appartient à
+l'attracteur, et tous les points calculés aussi. Le dessin est donc constitué
+de $3^8$ points appartenant tous à $S$. Il approche l'ensemble par un
+échantillon de ses propres points. Ces points sont de plus répartis sur tout
+le triangle : chaque
+point de $S$ se trouve à une distance d'au plus
+$\big(\tfrac12\big)^8 \approx \num{0.004}$ de l'un des points calculés.
+En effet, $W^8$ est une contraction de rapport $\big(\tfrac12\big)^8$
+(théorème \ref{thm:W-contraction}, appliqué huit fois), et
+$W^8(S) = S$ ; comme tous les points de $S$ sont à distance au plus $1$
+de l'origine,
+$\dH\big(W^8(\{O\}), S\big) = \dH\big(W^8(\{O\}), W^8(S)\big)
+\leq \big(\tfrac12\big)^8 \dH(\{O\}, S) \leq \big(\tfrac12\big)^8$.
+
+La principale limite de cet algorithme est le nombre de points
+à calculer. L'étape $n$
+compte $N^n$ points, et le nombre d'étapes nécessaires dépend du
+rapport de contraction $k$. Pour le triangle de Sierpiński,
+$N = 3$ et $k = \tfrac12$, et une dizaine d'étapes suffisent. Pour la
+fougère de Barnsley, en revanche, $N = 4$ et la deuxième application a
+un rapport voisin de $\num{0.85}$ : pour que $\num{0.85}^n$ devienne
+inférieur à un millième, il faut environ $n = 40$ étapes, soit
+$4^{40} \approx \num{1.2e24}$ points. Un tel nombre de points rend le calcul
+impraticable. L'algorithme
+aléatoire présenté ci-dessous permet d'éviter cette difficulté.
+
+### Le jeu du chaos {#sec:chaos}
+
+Le procédé peut d'abord être présenté comme un jeu en classe, à
+l'aide d'une feuille, d'une règle et d'un dé. On marque les trois sommets $A$, $B$ et $C$ d'un
+triangle équilatéral, et un point de départ $P_0$ quelconque. On lance
+le dé : sur $1$ ou $2$, on choisit le sommet $A$ ; sur $3$ ou $4$, le
+sommet $B$ ; sur $5$ ou $6$, le sommet $C$. On marque alors le point
+$P_1$ situé *à mi-chemin* entre $P_0$ et le sommet choisi. On
+relance le dé, et on marque $P_2$ à mi-chemin entre $P_1$ et le
+nouveau sommet choisi, et ainsi de suite
+(figure \ref{fig:chaos-premiers}).
+
+::: {#fig:chaos-premiers}
+![](figures/tikz/fig-chaos-premiers.tikz)
+
+Les six premières étapes du jeu du chaos, avec le point de départ $P_0$ (placé ici hors du triangle, ce qui est permis) et la suite de sommets $A, B, B, C, A, C$. Chaque flèche rouge mène au milieu du segment (en pointillé) qui joint le point courant au sommet choisi.
+:::
+
+Bien que les sommets soient choisis au hasard, on voit apparaître
+une figure déterminée : après quelques milliers
+de coups, les points dessinent le triangle de Sierpiński
+(figure \ref{fig:chaos-nuages}). Pour comprendre ce résultat, reprenons la
+définition de l'homothétie.
+Avancer à mi-chemin vers le sommet $S_i$, c'est appliquer au point
+courant l'homothétie de centre $S_i$ et de rapport $\tfrac12$, puisque
+$h_{S_i,1/2}(P) = \tfrac12 P + \tfrac12 S_i$ est exactement le milieu
+de $P$ et de $S_i$ (proposition \ref{prop:homothetie-centre}). Or ces
+trois homothéties sont les trois applications $w_1$, $w_2$, $w_3$ du
+SIF du triangle de Sierpiński (exemple \ref{ex:autosim-sierpinski}).
+Le jeu du chaos consiste donc à appliquer, à chaque coup, *une*
+des applications du SIF, choisie au hasard, plutôt que toutes à la
+fois comme dans l'algorithme déterministe.
+
+::: {#fig:chaos-nuages}
+![](figures/tikz/fig-chaos-nuages.tikz)
+
+Les points obtenus par le jeu du chaos pour le triangle de Sierpiński après $200$, $\num{2000}$ et $\num{15000}$ coups. Les vingt premiers points ont été omis.
+:::
+
+<!-- Figure interactive : version web seulement (le PDF garde la figure
+     ci-dessus). Code Observable JS exécuté dans le navigateur du lecteur. -->
+:::: {.content-visible when-format="html"}
+::: {.figure-interactive}
+**À vous de jouer.** Choisissez un SIF et faites varier le nombre de
+coups du jeu du chaos. Chaque point est coloré selon la dernière
+application tirée, comme à la figure \ref{fig:arbre}.
+
+```{ojs}
+//| echo: false
+viewof choix = Inputs.radio(
+  ["Triangle de Sierpiński", "Tapis de Sierpiński", "Arbre", "Fougère de Barnsley"],
+  {value: "Triangle de Sierpiński"})
+viewof n = Inputs.range([100, 60000],
+  {value: 3000, step: 100, label: "Nombre de points"})
+viewof couleurs = Inputs.toggle({label: "Couleur selon la pièce", value: true})
+```
+
+```{ojs}
+//| echo: false
+// Chaque application : [a, b, c, d, e, f, p] pour
+// w(x, y) = (a x + b y + e, c x + d y + f), tirée avec la probabilité p.
+SIF = {
+  const r3 = Math.sqrt(3), rad = 38 * Math.PI / 180;
+  const c = 0.58 * Math.cos(rad), s = 0.58 * Math.sin(rad);
+  const tapis = [];
+  for (const i of [0, 1, 2]) for (const j of [0, 1, 2])
+    if (i !== 1 || j !== 1) tapis.push([1/3, 0, 0, 1/3, i/3, j/3, 1/8]);
+  return {
+    "Triangle de Sierpiński": [[.5, 0, 0, .5, 0, 0, 1/3], [.5, 0, 0, .5, .5, 0, 1/3],
+                               [.5, 0, 0, .5, .25, r3/4, 1/3]],
+    "Tapis de Sierpiński": tapis,
+    "Arbre": [[.03, 0, 0, .42, 0, 0, .04], [c, -s, s, c, 0, .42, .33],
+              [c, s, -s, c, 0, .42, .33], [.42, 0, 0, .42, 0, .6, .30]],
+    "Fougère de Barnsley": [[0, 0, 0, .16, 0, 0, .01], [.85, .04, -.04, .85, 0, 1.6, .85],
+                            [.2, -.26, .23, .22, 0, 1.6, .07], [-.15, .28, .26, .24, 0, .44, .07]]
+  };
+}
+```
+
+```{ojs}
+//| echo: false
+{
+  const ws = SIF[choix];
+  const cumul = []; let t = 0;
+  for (const w of ws) { t += w[6]; cumul.push(t); }
+  const pts = new Float64Array(2 * n), piece = new Uint8Array(n);
+  let x = 0, y = 0;
+  for (let k = 0; k < n + 20; k++) {
+    const u = Math.random() * t;
+    let i = 0; while (cumul[i] < u) i++;
+    const [a, b, c, d, e, f] = ws[i];
+    [x, y] = [a * x + b * y + e, c * x + d * y + f];
+    if (k >= 20) { pts[2 * (k - 20)] = x; pts[2 * (k - 20) + 1] = y; piece[k - 20] = i; }
+  }
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  for (let k = 0; k < n; k++) {
+    x0 = Math.min(x0, pts[2*k]); x1 = Math.max(x1, pts[2*k]);
+    y0 = Math.min(y0, pts[2*k+1]); y1 = Math.max(y1, pts[2*k+1]);
+  }
+  const W = Math.min(width, 560), H = 420, m = 12;
+  const e = Math.min((W - 2*m) / (x1 - x0), (H - 2*m) / (y1 - y0));
+  const ox = (W - e * (x1 - x0)) / 2, oy = (H - e * (y1 - y0)) / 2;
+  const ctx = DOM.context2d(W, H);
+  const teintes = ["#CD3333", "#36648B", "#C48E3A", "#3A7D44"];
+  const taille = n > 20000 ? 0.9 : 1.4;
+  for (let k = 0; k < n; k++) {
+    ctx.fillStyle = couleurs ? teintes[piece[k] % 4] : "#1C3F6E";
+    ctx.fillRect(ox + e * (pts[2*k] - x0), H - oy - e * (pts[2*k+1] - y0), taille, taille);
+  }
+  return ctx.canvas;
+}
+```
+:::
+::::
+
+::: {.proposition #prop:chaos-rapproche title="Le jeu du chaos se rapproche de l'attracteur"}
+Soit $A$ l'attracteur d'un SIF $\{w_1, \dots, w_N\}$ de rapport de
+contraction $k$, et soit $P_0$ un point quelconque du plan. Si
+$P_{m+1} = w_{i_m}(P_m)$ pour tout $m$, où les indices $i_0, i_1,
+\ldots$ sont choisis de façon arbitraire, alors
+$$
+  d(P_m, A) \leq k^m\, d(P_0, A) \qquad\text{pour tout } m \in \N,
+$$
+où $d(P, A) = \min_{a \in A} \dE(P, a)$ désigne la distance d'un point
+à un ensemble.
+:::
+
+::: {.proof}
+Montrons d'abord que $d(w_i(P), A) \leq k\, d(P, A)$ pour tout
+point $P$ et tout $i$ ; le résultat s'obtient ensuite par récurrence
+sur $m$. Soit $a \in A$ un point de $A$ le plus proche de $P$, de
+sorte que $\dE(P, a) = d(P, A)$. Puisque $w_i(a) \in w_i(A) \subseteq
+W(A) = A$,
+$$
+  d\big(w_i(P), A\big) \leq \dE\big(w_i(P), w_i(a)\big)
+  \leq k\, \dE(P, a) = k\, d(P, A). \qedhere
+$$
+:::
+
+La distance à l'attracteur est donc divisée au moins par deux à chaque
+coup du jeu du chaos pour le triangle de Sierpiński, quels que soient
+les sommets tirés : après vingt coups, elle a été multipliée par
+$2^{-20} \approx 10^{-6}$, et le point est, à l'échelle d'une page,
+indiscernable d'un point de $S$. On omet donc les premiers points du dessin afin de réduire
+l'influence du point de départ.
+
+La proposition \ref{prop:chaos-rapproche} explique pourquoi les points
+se rapprochent de l'attracteur ; elle n'explique pas pourquoi ils le
+recouvrent *en entier*. Pour comprendre la répartition des points, il faut aussi tenir
+compte des probabilités. L'attracteur est la réunion des
+$N^m$ petites pièces $w_{j_1} \circ w_{j_2} \circ \cdots \circ
+w_{j_m}(A)$, de taille au plus $k^m$ fois celle de $A$. Chaque fois
+que les $m$ derniers tirages ont été $j_m, \dots, j_2, j_1$, dans cet
+ordre, le point courant tombe (à une erreur négligeable près) dans la
+pièce correspondante. Or, à chaque coup, cette suite de $m$ tirages a
+une probabilité strictement positive de se produire ; sur un grand
+nombre de coups, elle se produira donc, et même régulièrement. Toutes
+les petites pièces de l'attracteur finissent ainsi par être visitées,
+et le nuage de points le recouvre, aussi finement qu'on le souhaite.
+
+::: {.algorithme #algo:chaos title="Jeu du chaos"}
+**Données :** un SIF $\{w_1, \dots, w_N\}$ ; des probabilités
+$p_1, \dots, p_N > 0$ de somme $1$ ; un nombre de points $n$.
+
+1. Choisir un point de départ $P$ quelconque.
+2. Répéter $n + 20$ fois :
+   (a) tirer un indice $i$ au hasard, la valeur $i$ ayant la
+       probabilité $p_i$ d'être choisie ;
+   (b) remplacer $P$ par $w_i(P)$ ;
+   (c) si plus de vingt tirages ont déjà eu lieu, dessiner $P$.
+:::
+
+Le coût de cet algorithme est proportionnel au nombre $n$ de points
+dessinés, et non plus exponentiel en le nombre d'étapes : quelques dizaines de
+milliers de calculs suffisent pour représenter
+la fougère, ce qui peut être effectué en une fraction de seconde.
+
+```{.python caption="Le jeu du chaos, appliqué à la fougère de Barnsley. La fonction applique est celle du programme précédent."}
+rng = np.random.default_rng()
+
+def jeu_du_chaos(SIF, probas, n=50_000, rejet=20):
+    """n points P_(k+1) = w_i(P_k), avec w_i tirée au hasard."""
+    p = np.zeros((2, 1))                     # départ : l'origine
+    pts = np.empty((2, n))
+    choix = rng.choice(len(SIF), size=n + rejet, p=probas)
+    for k, i in enumerate(choix):
+        A, t = SIF[i]
+        p = applique(A, t, p)
+        if k >= rejet:                       # on oublie les premiers
+            pts[:, k - rejet] = p[:, 0]
+    return pts
+
+# La fougère de Barnsley : une ligne (A, t) par application.
+FOUGERE = [([[ 0.00,  0.00], [ 0.00, 0.16]], [0, 0.00]),
+           ([[ 0.85,  0.04], [-0.04, 0.85]], [0, 1.60]),
+           ([[ 0.20, -0.26], [ 0.23, 0.22]], [0, 1.60]),
+           ([[-0.15,  0.28], [ 0.26, 0.24]], [0, 0.44])]
+pts = jeu_du_chaos(FOUGERE, [0.01, 0.85, 0.07, 0.07])
+plt.plot(pts[0], pts[1], ",", color="darkgreen")
+plt.axis("equal"); plt.axis("off"); plt.show()
+```
+
+### Choisir les probabilités {#sec:probas}
+
+Les probabilités $p_i$ n'ont aucune influence sur la figure limite :
+tant qu'elles sont toutes strictement positives, l'argument précédent
+garantit que le nuage finit par recouvrir tout l'attracteur. Elles ont
+en revanche une grande influence sur la *vitesse* à laquelle il
+le recouvre. Pour le triangle de Sierpiński, les trois pièces sont de
+même taille, et le choix $p_1 = p_2 = p_3 = \tfrac13$ est naturel. Pour la
+fougère, un tirage uniforme ($p_i = \tfrac14$) donnerait une répartition peu efficace : un
+point sur quatre tomberait sur la minuscule base de la tige, tandis
+que les folioles, qui occupent presque toute l'image, resteraient
+clairsemées.
+
+Une façon de choisir les probabilités consiste à prendre $p_i$ proportionnelle à la
+proportion de l'aire que la pièce $w_i(A)$ occupe dans l'image. Par la
+proposition \ref{prop:aire-det}, une application affine de partie
+linéaire $A_i$ multiplie les aires par $\lvert\dete(A_i)\rvert$ ; on
+pose donc
+$$
+  p_i \approx \frac{\lvert\dete(A_i)\rvert}
+  {\lvert\dete(A_1)\rvert + \cdots + \lvert\dete(A_N)\rvert},
+$$
+en remplaçant un déterminant nul par une petite valeur positive, pour
+que la pièce correspondante soit tout de même visitée. Pour la
+fougère, les déterminants valent $0$, $\num{0.7241}$, $\num{0.1038}$ et
+$\num{-0.1088}$, ce qui donne des probabilités voisines de $\num{0.77}$,
+$\num{0.11}$ et $\num{0.12}$ pour les trois dernières pièces : ce sont,
+à peu de chose près, les valeurs $\num{0.85}$, $\num{0.07}$ et
+$\num{0.07}$ retenues par Barnsley, qui avait réservé $\num{0.01}$ à la
+tige. Un SIF muni de telles probabilités s'appelle un [SIF avec
+probabilités]{.defi} ; Barnsley et Demko ont montré qu'il décrit, en plus de
+la figure, une répartition des points sur celle-ci [@BarnsleyDemko1985],
+un point de vue utile pour
+représenter des images en niveaux de gris.
+
+::: {.secondaire #sec:classe-chaos title="Le jeu du chaos en classe"}
+Le jeu du chaos permet de réunir trois sujets étudiés au secondaire : la géométrie (le point milieu,
+l'homothétie), les probabilités (un dé équilibré, des événements
+équiprobables) et la notion de limite. Chaque élève joue une vingtaine
+de coups sur un transparent où le même triangle est tracé ; on omet
+les cinq premiers points, puis on superpose les transparents de toute
+la classe. Le triangle de Sierpiński apparaît, ce qui peut surprendre les
+élèves qui avaient prévu une répartition
+uniforme dans le triangle. La question « pourquoi n'y a-t-il jamais de point dans
+le grand trou central ? » admet une réponse accessible : le milieu
+d'un segment qui joint un point du triangle à l'un de ses sommets tombe
+toujours dans le petit triangle de coin associé à ce sommet, jamais
+dans le trou central. Une variante avec les quatre sommets d'un carré, qui
+conduit à un autre résultat, fait l'objet de
+l'exercice \ref{exo:chaos-carre}.
+:::
+
+## Des monstres aux modèles {#sec:monstres-modeles}
+
+Pour terminer, revenons sur deux moments de l'histoire des fractales :
+la construction de contre-exemples en analyse au \siecle{19}, puis
+l'utilisation de ces objets pour modéliser des phénomènes dans la
+seconde moitié du \siecle{20}.
+
+### La fonction de Weierstrass {#sec:weierstrass}
+
+Jusqu'au milieu du \siecle{19}, la plupart des mathématiciens
+tenaient pour acquis qu'une fonction continue est dérivable, sauf
+peut-être en quelques points isolés, comme la valeur absolue en $0$.
+Cette idée correspond à une intuition familière : le graphe d'une fonction continue se trace
+« sans lever le crayon », et un trait de crayon a, presque partout, une
+direction. Le 18 juillet 1872, devant l'Académie royale des sciences
+de Prusse, Karl Weierstrass présente un contre-exemple à cette intuition avec la fonction
+$$
+  W(x) = \sum_{n=0}^{\infty} a^n \cos\big(b^n \uppi x\big),
+$$
+où $0 < a < 1$ et où $b$ est un entier impair assez grand. Chaque terme
+est une fonction lisse ; la série converge, car ses termes
+sont majorés en valeur absolue par ceux de la série géométrique
+$\sum a^n$ ; et sa somme est une fonction continue. Pourtant,
+Weierstrass démontre qu'elle n'est dérivable en *aucun*
+point^[Weierstrass exigeait $ab > 1 + \tfrac32\uppi$. Le mathématicien anglais G. H. Hardy a montré en 1916 que la condition $ab \geq 1$ suffit, ce qui autorise le choix $a = \tfrac12$, $b = 3$ de la figure \ref{fig:weierstrass}.]. Pour interpréter ce comportement, observons
+que les termes ajoutés
+ont des amplitudes $a^n$ qui décroissent, mais des fréquences $b^n$
+qui croissent beaucoup plus vite : chaque terme ajoute au graphe des
+oscillations plus petites, mais proportionnellement plus raides, et
+la pente ne se stabilise jamais.
+
+::: {#fig:weierstrass}
+![](figures/tikz/fig-weierstrass.tikz)
+
+Le graphe de la fonction de Weierstrass $W(x) = \sum a^n \cos(b^n\uppi x)$ pour $a = \tfrac12$ et $b = 3$ (somme des dix-huit premiers termes), et un agrandissement de la portion encadrée. L'agrandissement n'est pas une copie exacte du graphe entier, mais il présente des irrégularités comparables : aucune échelle ne laisse apparaître de tangente.
+:::
+
+La fonction de Weierstrass partage avec la courbe de von Koch
+l'irrégularité à toutes les échelles, et elle en partage aussi une
+forme d'autosimilarité. En isolant le premier terme de la série et en
+remarquant que les suivants forment encore une fonction de
+Weierstrass, on obtient en effet l'identité
+$$
+  W(x) = \cos(\uppi x) + a\, W(bx).
+$$
+Au terme lisse $\cos(\uppi x)$ près, le graphe de $W$ au-dessus d'un
+intervalle de longueur $\ell$ est donc une copie de son graphe
+au-dessus d'un intervalle de longueur $b\ell$, comprimée d'un facteur
+$b$ horizontalement, mais seulement d'un facteur $1/a$ verticalement.
+Une telle copie, obtenue par une application affine qui n'est pas une
+similitude, est dite *auto-affine*. Il a été démontré en 2018, que le
+graphe de $W$ est une fractale de dimension de Hausdorff
+$2 + \ln a/\ln b$, soit environ $\num{1.37}$ pour la
+figure \ref{fig:weierstrass} [@Shen2018].
+
+Ces fonctions ont suscité des réactions marquées chez plusieurs
+mathématiciens. Charles Hermite écrit en 1893 à son collègue Thomas
+Stieltjes : « Je me détourne avec effroi et horreur de cette plaie
+lamentable des fonctions continues qui n'ont point de dérivées. »
+Henri Poincaré, en 1908, exprime lui aussi des réserves :
+
+::: {.extrait}
+La logique parfois engendre des monstres. Depuis un demi-siècle on a
+vu surgir une foule de fonctions bizarres qui semblent s'efforcer de
+ressembler aussi peu que possible aux honnêtes fonctions qui servent à
+quelque chose. […] Autrefois, quand on inventait une fonction
+nouvelle, c'était en vue de quelque but pratique ; aujourd'hui, on les
+invente tout exprès pour mettre en défaut les raisonnements de nos
+pères, et on n'en tirera jamais que cela. [@Poincare1908]
+:::
+
+Les applications développées une soixantaine d'années plus tard
+allaient toutefois donner un autre rôle à ces objets : ils serviraient
+à représenter des côtes, des montagnes et des variations boursières.
+
+:::: {.historical #hist:weierstrass title="Karl Weierstrass" needspace="18"}
+::: {.portrait src="figures/portraits/karl-weierstrass.jpg" legende="Karl Weierstrass (1815--1897), portrait de Conrad Fehr (1895)." credit="Domaine public, *Wikimedia Commons*."}
+Karl Weierstrass (1815--1897) est né en Westphalie. Son père, un
+fonctionnaire, l'envoie étudier le droit et l'administration publique à
+Bonn ; il y passe quatre ans, surtout à faire de l'escrime et à
+fréquenter les tavernes, et en repart sans diplôme. Il se tourne
+alors vers l'enseignement, et passe près de quinze ans comme
+enseignant au secondaire dans de petites villes de Prusse, à enseigner
+non seulement les mathématiques et la physique, mais aussi l'allemand, la botanique,
+la géographie, la gymnastique et la calligraphie. Il poursuit ses
+recherches seul, le soir, sans contact avec le milieu mathématique.
+Avant d'occuper une place majeure en analyse, Weierstrass a donc
+exercé pendant plusieurs années le métier auquel vous vous préparez.
+:::
+
+\medskip
+
+En 1854, un article sur les fonctions abéliennes, publié dans une importante
+revue mathématique allemande, attire
+l'attention sur ses travaux :
+l'université de Königsberg lui décerne un doctorat honorifique, et il
+est appelé à Berlin en 1856, à quarante ans. Il y devient l'un
+des professeurs les plus influents de son siècle. Ses travaux ont contribué à
+préciser les exigences de rigueur de
+l'analyse moderne, et en particulier les
+définitions de la limite et de la continuité au moyen des
+$\varepsilon$ et des $\delta$, celles-là mêmes que nous avons utilisées
+au chapitre \ref{chap:metriques}. Parmi ses élèves figurent Georg
+Cantor, Hermann Schwarz, Gösta Mittag-Leffler (le directeur de thèse
+de von Koch) et Sofia Kovalevskaïa, à qui il donna des leçons privées
+pendant quatre ans, puisque l'université de Berlin refusait alors les
+femmes ; elle deviendra en 1889, à Stockholm, l'une des premières
+femmes en Europe à occuper une chaire de professeure de mathématiques. Sa fonction
+continue nulle part dérivable, présentée en 1872, n'a été publiée qu'en
+1875, par son collègue Paul du Bois-Reymond [@MacTutorWeierstrass].
+::::
+
+### Benoît Mandelbrot et la géométrie de la nature {#sec:mandelbrot}
+
+En 1967, Benoît Mandelbrot publie dans la revue *Science* un article
+intitulé : « Combien mesure la côte de la
+Grande-Bretagne ? » [@Mandelbrot1967]. Il y reprend des mesures
+faites par le physicien Lewis Fry Richardson, qui avait remarqué que la
+longueur mesurée d'une côte dépend de l'unité de mesure : plus le
+compas avec lequel on la parcourt a une petite ouverture $\varepsilon$,
+plus il épouse de baies et de caps, et plus la longueur trouvée est
+grande. Richardson avait observé que cette longueur croît comme une
+puissance, $L(\varepsilon) \approx C\,\varepsilon^{1-D}$, avec
+$D \approx \num{1.25}$ pour la côte ouest de la Grande-Bretagne.
+Mandelbrot y reconnaît une dimension fractionnaire : on retrouve un
+comportement analogue pour la courbe de von Koch, dont la longueur
+« mesurée » avec des segments de longueur $\big(\tfrac13\big)^n$ vaut
+$\big(\tfrac43\big)^n$, soit $\varepsilon^{1 - D}$ avec $D = \ln4/\ln3$.
+Une côte n'est pas autosimilaire au sens strict, mais elle l'est au sens
+statistique de la remarque \ref{rem:autosim-statistique}, et sa
+dimension mesure son degré d'irrégularité.
+
+Mandelbrot généralise ensuite cette idée à plusieurs phénomènes :
+les montagnes, les nuages, la répartition des galaxies, les turbulences,
+les réseaux de rivières. Son livre de 1982, *The Fractal Geometry
+of Nature* [@Mandelbrot1982], s'ouvre sur une phrase restée
+célèbre : « Les nuages ne sont pas des sphères, les montagnes ne sont
+pas des cônes, les côtes ne sont pas des cercles, l'écorce n'est pas
+lisse, et l'éclair ne se propage pas en ligne droite » (notre
+traduction). C'est aussi lui qui a fait connaître, à partir de 1980,
+l'ensemble qui porte son nom, obtenu en itérant la fonction
+$z \mapsto z^2 + c$ dans le plan complexe, qui allait devenir l'une des
+représentations les plus connues de
+la géométrie fractale. L'étude de cet ensemble, qui ne
+provient pas d'un SIF, dépasse toutefois le cadre de ce chapitre.
+
+:::: {.historical #hist:mandelbrot title="Benoît Mandelbrot" needspace="18"}
+::: {.portrait src="figures/portraits/benoit-mandelbrot.jpg" legende="Benoît Mandelbrot (1924--2010), en 2010." credit="Photo : Steve Jurvetson, licence CC BY 2.0, *Wikimedia Commons*."}
+Benoît Mandelbrot (1924--2010) est né à Varsovie, dans une famille
+juive d'origine lituanienne qui émigre en France en 1936. Son oncle,
+Szolem Mandelbrojt, est professeur de mathématiques au Collège de
+France. Pendant l'Occupation, la famille survit en se cachant dans le
+centre de la France, et la scolarité de Mandelbrot est constamment
+interrompue ; il racontera plus tard avoir développé, faute de
+formation régulière, une approche des problèmes fondée sur la visualisation
+géométrique. Admis en 1944 à l'École normale supérieure et à l'École
+polytechnique, il choisit la seconde, étudie ensuite l'aéronautique au
+California Institute of Technology, puis soutient à Paris, en 1952, une
+thèse sur la distribution statistique des mots dans les textes.
+:::
+
+\medskip
+
+En 1958, il choisit de poursuivre ses recherches chez IBM, près de
+New York, plutôt que dans une université. Il y restera trente-cinq
+ans et pourra s'intéresser à des domaines variés : linguistique, économie,
+hydrologie, physique, astronomie. Ces déplacements entre les disciplines
+suscitent parfois la méfiance
+des spécialistes. Ils lui permettent toutefois de reconnaître des
+structures communes dans des phénomènes étudiés séparément. Il forge le mot «
+fractal » en 1975, pour le titre de
+son livre *Les objets fractals : forme, hasard et
+dimension* [@Mandelbrot1975]. Il reçoit plusieurs distinctions à la fin de
+sa vie (prix Wolf de physique en 1993, prix du Japon en 2003) et obtient en
+1999, à $75$ ans, un poste de professeur titulaire à l'université
+Yale. Il meurt à Cambridge, au Massachusetts, en
+2010 [@MacTutorMandelbrot].
+::::
+
+### Les fractales et la finance {#sec:finance}
+
+Les applications financières des travaux de Mandelbrot ont fait
+l'objet de nombreuses discussions. Il s'est intéressé à ce domaine
+dès le début des années 1960, avant même d'introduire le mot
+« fractal ».
+
+##### Le modèle classique.
+
+En 1900, dans sa thèse *Théorie
+de la spéculation* [@Bachelier1900], le mathématicien français
+Louis Bachelier propose de modéliser le cours d'une action comme une
+marche au hasard : chaque jour, le prix varie d'une quantité aléatoire,
+indépendante des variations précédentes et distribuée selon une loi
+normale. À la limite, on obtient ce que les physiciens appelleront le
+*mouvement brownien*. Ce modèle, oublié pendant un
+demi-siècle, devient dans les années 1950 à 1970 le fondement de la
+finance moderne : la théorie du portefeuille et la formule de Black et Scholes
+(1973), qui sert à fixer le prix des options, s'appuient sur ce cadre.
+
+##### Ce que Mandelbrot observe.
+
+En 1963, Mandelbrot étudie les
+variations du prix du coton sur plusieurs décennies [@Mandelbrot1963].
+Il fait deux observations qui s'accordent mal avec le modèle
+de Bachelier.
+
+- *Les grandes variations sont beaucoup trop fréquentes.*
+  Dans une loi normale, un écart de plus de cinq écarts-types est
+  si rare qu'on ne devrait pratiquement jamais l'observer ; dans
+  les données réelles, de tels sauts se produisent régulièrement.
+  Les distributions observées ont des « queues épaisses », que
+  Mandelbrot propose de décrire par les lois stables de Paul Lévy.
+  Il appellera ce phénomène l'*effet Noé*, en souvenir du
+  déluge : des changements brusques et de grande ampleur.
+- *La forme des variations ne dépend pas de l'échelle de
+  temps.* Après une simple mise à l'échelle, la distribution des
+  variations quotidiennes a la même forme que celle des variations
+  mensuelles. Autrement dit, le graphe du cours est
+  statistiquement autosimilaire, ou plutôt auto-affine, puisque
+  les échelles de temps et de prix ne se dilatent pas du même
+  facteur : sans les étiquettes des axes, il est impossible de
+  dire si un graphique boursier couvre une journée, un mois ou
+  une année.
+
+Mandelbrot relèvera plus tard un troisième fait : les périodes agitées,
+comme les périodes calmes, tendent à se prolonger et à se regrouper,
+ce qui suggère une forme de mémoire dans les variations. Il parle cette fois de
+l'*effet Joseph*, en souvenir des sept années d'abondance
+suivies de sept années de famine du récit biblique.
+
+##### Un SIF pour représenter des variations boursières.
+
+Pour faire
+comprendre ses modèles à un large public, Mandelbrot a imaginé des
+« caricatures » (*cartoons*) de cours boursiers, construites selon un
+procédé analogue à celui de la courbe de von Koch [@Mandelbrot1999]. On
+part
+d'une tendance, le segment joignant $(0,0)$ à $(1,1)$, et d'un
+*générateur*, une ligne brisée qui monte, redescend, puis
+remonte : $(0,0)$, $\big(\tfrac49, \tfrac23\big)$,
+$\big(\tfrac59, \tfrac13\big)$, $(1,1)$. On remplace ensuite chaque
+segment par une copie du générateur, ajustée à ses extrémités, et on
+recommence (figure \ref{fig:cartoon}). Dans le langage de ce chapitre,
+la courbe limite est l'attracteur du SIF formé des trois applications
+affines
+\begin{align*}
+  w_1\col{x}{y} &= \mat{\tfrac49}{0}{0}{\tfrac23}\col{x}{y}, &
+  w_2\col{x}{y} &= \mat{\tfrac19}{0}{0}{-\tfrac13}\col{x}{y} + \col{\tfrac49}{\tfrac23}, \\
+  w_3\col{x}{y} &= \mat{\tfrac49}{0}{0}{\tfrac23}\col{x}{y} + \col{\tfrac59}{\tfrac13},
+\end{align*}
+qui ne sont pas des similitudes : elles compriment davantage le temps
+que les prix. Les rapports ont été choisis pour que chaque morceau
+vérifie $|\Delta y| = \sqrt{\Delta x}$ : $\tfrac23 = \sqrt{4/9}$ et
+$\tfrac13 = \sqrt{1/9}$. On retrouve ainsi le comportement moyen des
+variations du mouvement brownien de Bachelier, dont
+l'amplitude sur une durée $\Delta t$ est proportionnelle à
+$\sqrt{\Delta t}$.
+
+::: {#fig:cartoon}
+![](figures/tikz/fig-cartoon.tikz)
+
+Une « caricature » de cours boursier à la Mandelbrot. À chaque étape, chaque segment est remplacé par une copie du générateur (à gauche). La courbe obtenue (troisième panneau) est trop régulière pour ressembler à un vrai cours ; en tirant au hasard, pour chaque segment, l'ordre dans lequel on place les trois morceaux du générateur, on obtient une courbe (à droite, en rouge) dont l'allure rappelle celle d'un graphique boursier.
+:::
+
+La version déterministe est trop régulière, mais il suffit, à chaque
+remplacement, de mélanger au hasard l'ordre des trois morceaux du
+générateur pour obtenir une courbe dont l'allure est plus proche de celle d'un cours boursier
+(figure \ref{fig:cartoon}, à droite). En modifiant le générateur, par
+exemple en déplaçant ses deux points intérieurs, Mandelbrot obtenait
+des courbes où alternent périodes calmes et périodes de forte
+agitation, comme dans les marchés réels : c'est l'idée de son
+*modèle multifractal* des rendements financiers, développé en 1997
+avec Laurent Calvet et Adlai Fisher.
+
+##### Les conséquences.
+
+Mandelbrot souligne une limite des modèles
+utilisés en finance : les modèles gaussiens sous-estiment
+systématiquement le risque de catastrophe. Le 19 octobre 1987, l'indice
+Dow Jones a perdu près de $23\,\%$ de sa valeur en une seule séance, un
+événement auquel un modèle gaussien, calibré sur les variations
+habituelles, n'attribue qu'une probabilité extrêmement faible, incompatible avec la fréquence
+des événements observés. Dans
+*The (Mis)behavior of Markets*, écrit avec le journaliste Richard
+Hudson en 2004 [@MandelbrotHudson2004], il plaide pour des modèles
+qui tiennent compte de les queues épaisses et la mémoire des marchés.
+Ces idées ont été reçues avec prudence : les modèles fractals sont plus
+difficiles à manipuler, et la formule de Black et Scholes reste un
+outil de base. La crise financière de 2008 a cependant ravivé
+l'intérêt pour ses travaux, et les « queues épaisses » font aujourd'hui
+partie du vocabulaire courant de la gestion des risques.
+
+## Exercices {.unnumbered .exercices}
+
+:::: {.exercice #exo:flocon-koch}
+Considérons la construction du flocon de von Koch à partir d'un
+triangle équilatéral de côté $1$ : à chaque étape, on remplace
+chaque segment du contour par les quatre segments de la construction de
+la section \ref{sec:koch}, la pointe étant dirigée vers l'extérieur.
+
+![](figures/tikz/exo-flocon-koch.tikz)
+
+a) Montrer que le périmètre du flocon est infini.
+b) Déterminer l'aire du flocon.
+
+::: {.solution}
+a) À chaque étape, chaque segment du contour est remplacé par quatre
+   segments trois fois plus courts : le périmètre est multiplié par
+   $\tfrac43$. Le périmètre à l'étape $n$ vaut donc $P_n =
+   3\big(\tfrac43\big)^n$, qui tend vers l'infini ; le périmètre du flocon
+   est infini.
+b) Notons $A_0 = \tfrac{\sqrt3}{4}$ l'aire du triangle de départ. À
+   l'étape $n \geq 1$, on ajoute un petit triangle équilatéral sur chacun
+   des $3\cdot4^{n-1}$ segments de l'étape précédente ; ces triangles ont
+   un côté de $\big(\tfrac13\big)^n$, donc une aire de
+   $\big(\tfrac19\big)^n A_0$. En additionnant les aires ajoutées, nous obtenons
+   \begin{align*}
+     A &= A_0 + \sum_{n=1}^{\infty} 3\cdot4^{n-1}\Big(\frac19\Big)^{\!n} A_0
+        = A_0\bigg(1 + \frac34\sum_{n=1}^{\infty}\Big(\frac49\Big)^{\!n}\bigg) \\
+       &= A_0\bigg(1 + \frac34 \cdot \frac{4/9}{1 - 4/9}\bigg)
+        = \frac85\, A_0 .
+   \end{align*}
+   Pour un triangle de côté $1$, l'aire du flocon est donc
+   $\tfrac85\cdot\tfrac{\sqrt3}{4} = \tfrac{2\sqrt3}{5} \approx \num{0.693}$.
+:::
+::::
+
+:::: {.exercice #exo:flocon-carre}
+On construit un flocon de neige à partir d'un carré plein de côté $a$,
+qui forme l'étape $1$. À chacune des étapes suivantes, on
+découpe chaque carré en neuf carrés égaux, et on ne conserve que les
+quatre carrés de coin et le carré central.
+
+![](figures/tikz/exo-flocon-carre.tikz)
+
+a) Trouver l'aire $A_n$ de la figure obtenue à l'étape $n$.
+b) Déterminer la dimension de similitude du flocon de neige.
+
+::: {.solution}
+a) À chaque étape, chaque carré est remplacé par $5$ carrés dont
+   l'aire est $9$ fois plus petite : l'aire est multipliée par
+   $\tfrac59$. Puisque $A_1 = a^2$, on a
+   $A_n = \big(\tfrac59\big)^{n-1} a^2$, qui tend vers $0$.
+b) Le flocon est formé de $N = 5$ copies de lui-même, de rapport
+   $r = \tfrac13$, dont les seuls points communs sont des sommets. Sa dimension
+   de similitude est $\ln 5/\ln 3 \approx \num{1.465}$.
+:::
+::::
+
+:::: {.exercice #exo:decimales-paires}
+Soit $E$ l'ensemble des nombres réels de l'intervalle $\intff{0}{1}$
+qui possèdent une écriture décimale dont toutes les décimales sont
+paires.
+
+a) Décrire une construction de l'ensemble $E$ en
+   débutant avec l'intervalle $\intff{0}{1}$, duquel on retranche,
+   à chaque étape, des intervalles.
+b) Expliquer pourquoi $E$ est autosimilaire, puis calculer sa
+   dimension de similitude.
+
+::: {.solution}
+a) À la première étape, on découpe $\intff{0}{1}$ en dix intervalles
+   de longueur $\tfrac1{10}$, et on retire ceux où la première décimale
+   est impaire : il reste les cinq intervalles $[0 \mathbin{;} \num{0.1}]$,
+   $[\num{0.2} \mathbin{;} \num{0.3}]$, …, $[\num{0.8} \mathbin{;} \num{0.9}]$
+   (on sépare les bornes par un point-virgule pour éviter la confusion
+   avec la virgule décimale).
+   À l'étape $n$, on découpe de même chacun des intervalles restants en dix,
+   et on retire ceux où la $n$\ap{e} décimale est impaire. Il reste $5^n$
+   intervalles de longueur $10^{-n}$, et $E$ est l'intersection de toutes
+   les étapes, comme dans la construction de l'ensemble de Cantor
+   (remarque \ref{rem:cantor}).
+b) Les nombres de $E$ dont la première décimale est $j \in \{0, 2, 4,
+   6, 8\}$ s'obtiennent à partir d'un nombre de $E$ en déplaçant ses décimales
+   d'un rang vers la droite, puis en insérant $j$ à la première position : ils
+   forment l'ensemble
+   $w_j(E)$, où $w_j(x) = \tfrac{1}{10}x + \tfrac{j}{10}$. Ainsi
+   $E = w_0(E) \cup w_2(E) \cup w_4(E) \cup w_6(E) \cup w_8(E)$ est
+   autosimilaire, formé de $5$ copies de rapport $\tfrac1{10}$. Sa
+   dimension de similitude est $\ln 5/\ln 10 \approx \num{0.699}$.
+:::
+::::
+
+:::: {.exercice #exo:sierpinski-aire}
+Pour chacun des ensembles autosimilaires suivants, calculer l'aire et la dimension de similitude.
+
+a) Le triangle de Sierpiński construit à partir d'un triangle
+   équilatéral dont les côtés sont de longueur $1$.
+b) Le tapis de Sierpiński construit à partir d'un carré dont
+   les côtés sont de longueur $1$.
+
+::: {.solution}
+a) L'aire de l'étape $n$ est $\big(\tfrac34\big)^n\tfrac{\sqrt3}{4}$,
+   qui tend vers $0$ : l'aire du triangle de Sierpiński est nulle. Sa
+   dimension de similitude est $\ln 3/\ln 2 \approx \num{1.585}$ ($3$
+   copies de rapport $\tfrac12$).
+b) L'aire de l'étape $n$ est $\big(\tfrac89\big)^n$, qui tend vers
+   $0$ : l'aire du tapis est nulle. Sa dimension de similitude est
+   $\ln 8/\ln 3 \approx \num{1.893}$ ($8$ copies de rapport $\tfrac13$).
+:::
+::::
+
+:::: {.exercice #exo:menger}
+Pour chacun des ensembles autosimilaires suivants, de l'espace à trois
+dimensions, calculer le volume et la dimension de similitude.
+
+a) L'[éponge de Menger]{.defi}, construite à partir d'un cube
+   dont les arêtes sont de longueur $1$ : on découpe le cube en
+   $27$ cubes égaux, on retire le cube central et les six cubes
+   situés au centre des faces, puis on recommence dans chacun des
+   cubes restants.
+b) Le [tétraèdre de Sierpiński]{.defi}, construit à partir d'un
+   tétraèdre régulier dont les arêtes sont de longueur $1$ : en
+   joignant les milieux des arêtes, on ne conserve que les quatre
+   tétraèdres situés aux sommets, puis on recommence dans chacun
+   d'eux.
+
+::: {.solution}
+a) À chaque étape, on conserve $27 - 7 = 20$ cubes sur $27$ : le volume
+   de l'étape $n$ est $\big(\tfrac{20}{27}\big)^n$, qui tend vers $0$. Le
+   volume de l'éponge est nul, et sa dimension de similitude est
+   $\ln 20/\ln 3 \approx \num{2.727}$.
+b) Chaque tétraèdre conservé a des arêtes deux fois plus courtes, donc
+   un volume $2^3 = 8$ fois plus petit (remarque \ref{rem:k-carre}) ; on en
+   conserve $4$, et le volume est multiplié par $\tfrac48 = \tfrac12$ à
+   chaque étape. Le volume est nul, et la dimension de similitude est
+   $\ln 4/\ln 2 = 2$. Cet exemple donne donc une fractale de dimension entière : elle a la
+   dimension d'une surface sans en être une.
+:::
+::::
+
+:::: {.exercice #exo:hausdorff-paires}
+Pour chacune des paires d'ensembles ci-dessous, trouver $\dH(A,B)$, où
+$\dH$ est la distance de Hausdorff (définition \ref{def:hausdorff}).
+
+a) $A = \{(x_1,y_1)\}$ et $B = \{(x_2,y_2)\}$.
+b) $A = \{(1,1)\}$ et $B = \{(x,y) : x^2 + y^2 \leq r^2\}$.
+c) $A = \{(x,0) : -1 \leq x \leq 1\}$ et
+   $B = \{(0,y) : -2 \leq y \leq 2\}$.
+d) $A = \{(x,y) : (x - h_1)^2 + (y - k_1)^2 \leq r_1^2\}$ et
+   $B = \{(x,y) : (x - h_2)^2 + (y - k_2)^2 \leq r_2^2\}$.
+
+::: {.solution}
+Appliquons la formule \eqref{eq:hausdorff-sup}.
+
+a) $\dH(A,B) = \sqrt{(x_2-x_1)^2 + (y_2-y_1)^2}$ : pour deux
+   singletons, la distance de Hausdorff est la distance euclidienne.
+b) Le point de $B$ le plus éloigné de $(1,1)$ est le point du cercle
+   diamétralement opposé, $\big(-\tfrac{r}{\sqrt2}, -\tfrac{r}{\sqrt2}\big)$,
+   à distance $r + \sqrt2$ ; la distance de $(1,1)$ à $B$ est, elle,
+   $\max\{0, \sqrt2 - r\}$, qui est plus petite. Ainsi
+   $\dH(A,B) = r + \sqrt2$.
+c) Les points de $B$ les plus éloignés de $A$ sont $(0, \pm2)$, à
+   distance $2$ de $A$ ; les points de $A$ les plus éloignés de $B$ sont
+   $(\pm1, 0)$, à distance $1$ de $B$. Ainsi $\dH(A,B) = 2$.
+d) Posons $\delta = \sqrt{(h_2-h_1)^2 + (k_2-k_1)^2}$, la distance entre
+   les centres. Le point de $B$ le plus éloigné de $A$ est sur la droite
+   des centres, du côté opposé à $A$, à distance
+   $\max\{0, \delta + r_2 - r_1\}$ de $A$ ; symétriquement, les points de
+   $A$ sont à distance au plus $\max\{0, \delta + r_1 - r_2\}$ de $B$. Le
+   plus grand de ces deux nombres est
+   $\dH(A,B) = \delta + |r_2 - r_1|$.
+:::
+::::
+
+:::: {.exercice #exo:sif-rapports}
+Un SIF est formé de deux similitudes de rapport $\tfrac12$ et de trois
+similitudes de rapport $\tfrac14$, et satisfait la condition de
+l'ouvert.
+
+a) Quel est le rapport de contraction du SIF ?
+b) Quelle est la dimension de similitude généralisée de
+   l'attracteur du SIF ?
+c) Si le SIF avait plutôt été formé de deux similitudes de
+   rapport $\tfrac12$ et de trois similitudes de rapport
+   $\tfrac13$, quelle aurait été la dimension de similitude
+   généralisée de son attracteur ?
+
+::: {.solution}
+a) Le rapport de contraction est le plus grand des rapports, soit
+   $\tfrac12$.
+b) L'équation de Moran s'écrit $2\big(\tfrac12\big)^d +
+   3\big(\tfrac14\big)^d = 1$. En posant $u = \big(\tfrac12\big)^d$, elle
+   devient $3u^2 + 2u - 1 = 0$, c'est-à-dire $(3u - 1)(u + 1) = 0$. Comme
+   $u > 0$, $u = \tfrac13$, d'où $2^d = 3$ et $d = \ln 3/\ln 2 \approx
+   \num{1.585}$.
+c) L'équation $2\big(\tfrac12\big)^d + 3\big(\tfrac13\big)^d = 1$ ne se résout
+   pas par les méthodes algébriques usuelles. La méthode
+   de Newton (ou une simple recherche par dichotomie) en donne une valeur
+   approchée : $d \approx \num{1.788}$.
+:::
+::::
+
+:::: {.exercice .python #exo:six-fractales}
+Chacun des ensembles $E$ ci-dessous, tracés dans le carré unité, est
+l'attracteur d'un SIF formé d'applications affines. Pour chacun :
+
+a) trouver des applications affines $w_1, \dots, w_n$ telles
+   que $E$ soit l'attracteur du SIF $\{w_1, \dots, w_n\}$ ;
+b) utiliser un ordinateur pour construire une image qui
+   ressemble à $E$ ;
+c) trouver, si elle existe, la dimension de similitude de $E$ ;
+d) trouver, si elle existe, la dimension de similitude
+   généralisée de $E$.
+
+![](figures/tikz/exo-six-fractales.tikz)
+
+::: {.solution}
+Dans chaque cas, on écrit $w(\vec{x}) = A\vec{x} + \vec{t}$, puis on utilise
+le quadrillage pour déterminer les images des
+points repères. Pour la partie b), on adapte l'un
+des deux programmes de la section \ref{sec:algorithmes}.
+
+(a\) Le flocon de l'exercice \ref{exo:flocon-carre} : cinq homothéties
+de rapport $\tfrac13$, $w_i(\vec{x}) = \tfrac13\vec{x} + \vec{t}_i$
+avec $\vec{t}_i \in \big\{(0,0), (\tfrac23,0), (\tfrac13,\tfrac13),
+(0,\tfrac23), (\tfrac23,\tfrac23)\big\}$. La dimension de similitude et sa
+version généralisée valent toutes
+deux $\ln 5/\ln 3 \approx \num{1.465}$.
+
+(b\) Trois similitudes de rapport $\tfrac12$ : $w_1(\vec{x}) =
+\tfrac12\vec{x}$, $w_2(\vec{x}) = \tfrac12\vec{x} + (\tfrac12, 0)$ et
+$w_3(\vec{x}) = \tfrac12\, r_{\pi/2}\,\vec{x} + (\tfrac12, \tfrac12)$,
+la copie du coin supérieur gauche étant tournée d'un quart de tour dans
+le sens antihoraire. Les deux dimensions valent $\ln 3/\ln 2 \approx
+\num{1.585}$ : la rotation de la copie modifie la forme de l'attracteur sans
+modifier sa dimension.
+
+(c\) $w_1(\vec{x}) = \tfrac12\vec{x}$, $w_2(\vec{x}) = \tfrac12\vec{x} +
+(\tfrac12,\tfrac12)$, $w_3(\vec{x}) = \tfrac14\vec{x} + (\tfrac34,0)$
+et $w_4(\vec{x}) = \tfrac14\vec{x} + (0,\tfrac34)$. Puisque les rapports sont
+différents, on ne peut pas utiliser la
+définition initiale de la dimension de similitude. La dimension
+généralisée vérifie $2\big(\tfrac12\big)^d + 2\big(\tfrac14\big)^d = 1$,
+soit $2u^2 + 2u - 1 = 0$ avec $u = \big(\tfrac12\big)^d$, d'où
+$u = \tfrac{\sqrt3 - 1}{2}$ et $d = \ln(1+\sqrt3)/\ln 2 \approx
+\num{1.450}$.
+
+(d\) Quatre homothéties de rapport $\tfrac14$, dont les images se trouvent dans les quatre coins :
+$w_i(\vec{x}) = \tfrac14\vec{x} + \vec{t}_i$, avec $\vec{t}_i \in
+\big\{(0,0), (\tfrac34,0), (0,\tfrac34), (\tfrac34,\tfrac34)\big\}$. Les
+deux dimensions valent $\ln 4/\ln 4 = 1$ : cette « poussière » de
+points isolés a la même dimension qu'un segment.
+
+(e\) $w_i(\vec{x}) = \mat{1/3}{0}{0}{1/2}\vec{x} + \vec{t}_i$, avec
+$\vec{t}_i \in \big\{(0,0), (\tfrac23,0), (\tfrac13,\tfrac12)\big\}$.
+Les facteurs de réduction horizontale et verticale sont différents;
+ces applications ne sont donc pas des similitudes : ni la dimension de similitude, ni
+la dimension généralisée ne sont définies
+(remarque \ref{rem:dim-affine}).
+
+(f\) $w_1(\vec{x}) = \tfrac12\vec{x}$, et trois homothéties de rapport
+$\tfrac13$, $w_i(\vec{x}) = \tfrac13\vec{x} + \vec{t}_i$, les vecteurs
+$\vec{t}_i$ étant $\big(\tfrac23,0\big)$, $\big(0,\tfrac23\big)$ et
+$\big(\tfrac23,\tfrac23\big)$.
+La dimension de similitude n'existe pas ; la dimension généralisée est
+la solution de $\big(\tfrac12\big)^d + 3\big(\tfrac13\big)^d = 1$, que l'on
+approche par la méthode de Newton. En partant de $d_0 = \num{1.5}$, on obtient
+en trois itérations : $d \approx \num{1.4243}$.
+:::
+::::
+
+:::: {.exercice #exo:f123}
+Soit $\mathcal{S}$ le SIF dont l'attracteur $A$ est représenté
+ci-dessous.
+
+![](figures/tikz/exo-f123.tikz)
+
+a) Trouver trois fonctions $f_1$, $f_2$ et $f_3$ telles que
+   $\mathcal{S} = \{f_1,f_2,f_3\}$.
+b) Quelle est la dimension de similitude généralisée de $A$ ?
+
+::: {.solution}
+a) L'attracteur est contenu dans le rectangle $R = \intff{0}{16} \times
+   \intff{0}{10}$, et il est formé de trois copies de lui-même, contenues
+   dans les trois quarts de $R$ autres que le quart supérieur gauche. Les
+   deux copies du bas sont des réductions de moitié :
+   $$
+     f_1\col{x}{y} = \mat{\tfrac12}{0}{0}{\tfrac12}\col{x}{y}, \qquad
+     f_2\col{x}{y} = \mat{\tfrac12}{0}{0}{\tfrac12}\col{x}{y} + \col{8}{0}.
+   $$
+   La copie du haut, contenue dans $\intff{8}{16} \times \intff{5}{10}$,
+   est orientée horizontalement. Pour l'obtenir, on applique d'abord la rotation
+   $r_{\pi/2} = \mat{0}{-1}{1}{0}$, qui envoie $R$ sur le rectangle
+   $\intff{-10}{0} \times \intff{0}{16}$, puis la contraction non uniforme
+   $c = \mat{4/5}{0}{0}{5/16}$, qui ramène ce rectangle, de dimensions
+   $10 \times 16$, aux dimensions $8 \times 5$, et enfin la translation
+   $t$ de vecteur $(16, 5)$. Ainsi
+   $$
+     f_3\col{x}{y} = c\, r_{\pi/2}\col{x}{y} + \col{16}{5}
+     = \mat{0}{-\tfrac45}{\tfrac{5}{16}}{0}\col{x}{y} + \col{16}{5}.
+   $$
+   On vérifie par exemple que $f_3(0,0) = (16,5)$ et $f_3(16,10) = (8,10)$.
+b) La dimension de similitude généralisée n'est pas définie, puisque
+   $f_3$ n'est pas une similitude : elle réduit les distances horizontales
+   d'un facteur $\tfrac{5}{16}$ et les distances verticales d'un facteur
+   $\tfrac45$. Les méthodes de ce chapitre ne permettent donc pas de calculer la dimension de $A$.
+:::
+::::
+
+:::: {.exercice #exo:hutchinson-carre}
+Considérons le SIF formé des contractions
+$$
+  w_1\col{x}{y} = \frac13\col{x}{y}, \qquad
+  w_2\col{x}{y} = \frac13\col{x}{y} + \col{\tfrac23}{0},
+$$
+et soit $C = \{(x,y) : 0 \leq x \leq 1,\ 0 \leq y \leq 1\}$.
+
+a) Représenter $C$ dans le plan.
+b) Trouver $W(C)$ et le représenter dans le plan.
+c) Trouver $W^2(C)$ et le représenter dans le plan.
+d) Que vaut $\dH\big(W(C),C\big)$ ?
+e) Que vaut le rapport de contraction du SIF ?
+f) Soit $A$ l'attracteur du SIF. Utiliser le théorème de
+   Hutchinson pour trouver une valeur de $n$ telle que
+   $\dH\big(W^n(C), A\big) \leq \num{0.01}$.
+
+::: {.solution}
+a), b) et c) On a $W(C) = \intff{0}{\tfrac13}\times\intff{0}{\tfrac13}
+\,\cup\, \intff{\tfrac23}{1}\times\intff{0}{\tfrac13}$, et $W^2(C)$ est
+formé de quatre carrés de côté $\tfrac19$, posés sur l'axe des $x$ et
+dont les bases sont $\intff{0}{\tfrac19}$, $\intff{\tfrac29}{\tfrac13}$,
+$\intff{\tfrac23}{\tfrac79}$ et $\intff{\tfrac89}{1}$.
+
+![](figures/tikz/sol-hutchinson-carre.tikz)
+
+d) Puisque $W(C) \subseteq C$, il suffit de mesurer l'éloignement des points de
+   $C$ par rapport à $W(C)$. Le point de $C$ le plus éloigné de $W(C)$ est
+   $P = \big(\tfrac12, 1\big)$, au milieu du côté supérieur (dernier
+   panneau) ; les points de $W(C)$ les plus proches de lui sont
+   $\big(\tfrac13,\tfrac13\big)$ et $\big(\tfrac23,\tfrac13\big)$. Ainsi
+   $\dH\big(W(C),C\big) = \sqrt{\big(\tfrac16\big)^2 + \big(\tfrac23\big)^2}
+   = \tfrac{\sqrt{17}}{6} \approx \num{0.687}$. (Le coin $(0,1)$, par
+   exemple, n'est qu'à distance $\tfrac23 = \tfrac{\sqrt{16}}{6}$ de
+   $W(C)$.)
+e) Les deux applications sont des homothéties de rapport $\tfrac13$ :
+   le rapport de contraction est $k = \tfrac13$.
+f) Le théorème \ref{thm:hutchinson} donne
+   $\dH\big(W^n(C), A\big) \leq \dfrac{(1/3)^n}{1 - 1/3}\cdot
+   \dfrac{\sqrt{17}}{6} = \dfrac{\sqrt{17}}{4}\Big(\dfrac13\Big)^{\!n}$.
+   Ce majorant vaut environ $\num{0.0127}$ pour $n = 4$ et $\num{0.0042}$
+   pour $n = 5$ : il suffit de choisir $n \geq 5$.
+:::
+::::
+
+:::: {.exercice #exo:chaos-carre}
+Considérons le jeu du chaos associé aux les quatre sommets $(0,0)$, $(1,0)$,
+$(1,1)$ et $(0,1)$ du carré unité, chacun étant choisi avec une
+probabilité de $\tfrac14$.
+
+a) Écrire le SIF correspondant si, à chaque coup, on avance à
+   mi-chemin vers le sommet choisi. Quel est son attracteur ?
+   Qu'observera-t-on à l'écran ?
+b) Même question si, à chaque coup, on avance plutôt des deux
+   tiers du chemin vers le sommet choisi. Calculer la dimension de
+   similitude de l'attracteur.
+
+::: {.solution}
+a) Avancer à mi-chemin vers le sommet $S_i$, c'est appliquer
+   l'homothétie $h_{S_i, 1/2}$. Le SIF est formé des quatre homothéties
+   de rapport $\tfrac12$ centrées aux sommets, qui envoient le carré unité
+   $C$ sur ses quatre quarts. On a donc $W(C) = C$, et par unicité,
+   l'attracteur est le carré plein $C$ : les points remplissent
+   uniformément le carré, et l'attracteur obtenu n'est pas fractal.
+b) Avancer des deux tiers du chemin vers $S_i$ mène au point
+   $P + \tfrac23(S_i - P) = \tfrac13 P + \tfrac23 S_i$ : c'est
+   l'homothétie $h_{S_i,1/3}$. Les quatre copies de rapport $\tfrac13$ sont
+   les carrés de coin de côté $\tfrac13$ ; l'attracteur est une
+   « poussière de Cantor » formée de points isolés, de dimension de
+   similitude $\ln 4/\ln 3 \approx \num{1.262}$, la même que celle de la
+   courbe de von Koch.
+:::
+::::
+
+:::: {.exercice .python #exo:fougere-defi}
+*(Défi facultatif.)* Sans consulter le tableau de
+l'exemple \ref{ex:fougere}, répondre aux sous-questions de
+l'exercice \ref{exo:six-fractales} pour la fougère de Barnsley de la
+figure \ref{fig:fougere}.
+
+::: {.solution}
+Un SIF possible est celui du tableau de l'exemple \ref{ex:fougere}. On
+le retrouve par la méthode du collage : on repère trois points de la
+fougère (la base de la tige, la pointe de la fronde et l'extrémité de
+la foliole inférieure gauche, par exemple) et leurs positions sur
+chacune des quatre pièces de la figure \ref{fig:fougere}, puis on
+résout, pour chaque pièce, les systèmes du
+théorème \ref{thm:trois-points}. Les coefficients obtenus dépendent de
+la précision des mesures, mais l'attracteur, lui, dépend continûment des
+coefficients : de petites variations des coefficients modifient peu la fougère
+obtenue. Comme $w_1$ n'est pas une similitude (elle est même non
+inversible), ni la dimension de similitude, ni la dimension
+généralisée de la fougère ne sont définies.
+:::
+::::
+
+:::: {.exercice .classe #exo:reflexion-ch3}
+Les fractales n'apparaissent pas explicitement dans le
+programme du secondaire, mais elles sont souvent présentées aux élèves
+comme activité d'enrichissement.
+
+a) Dresser la liste des notions du programme du secondaire qui
+   peuvent être réinvesties dans l'étude du flocon de von Koch
+   (exercice \ref{exo:flocon-koch}) ou du triangle de Sierpiński.
+   Préciser le niveau correspondant à chacune.
+b) Le résultat « périmètre infini, aire finie » étonne les élèves.
+   Comment le présenter sans disposer de la notion de limite ?
+   Quelles précautions faut-il prendre ?
+c) Quels sont les avantages et les limites d'une activité où les
+   élèves jouent au jeu du chaos à la main, puis le programment ?
+
+::: {.solution}
+Plusieurs réponses sont possibles ; en voici une.
+
+a) Les figures semblables et le rapport de similitude (deuxième et
+   troisième secondaire) ; les rapports $k$ et $k^2$ pour les longueurs et
+   les aires (troisième secondaire) ; les régularités et les suites, puis les
+   fonctions exponentielles (quatrième et cinquième secondaire) ; les
+   logarithmes, pour calculer une dimension de similitude (cinquième
+   secondaire, section \ref{sec:classe-log}) ; les probabilités, pour le jeu
+   du chaos.
+b) On peut faire dresser un tableau des périmètres et des aires des
+   premières étapes, puis demander aux élèves de prévoir la suite. Le
+   périmètre est multiplié par $\tfrac43$ à chaque étape et dépasse tout
+   nombre fixé à l'avance ; l'aire, elle, reste toujours inférieure à
+   l'aire d'un cercle qui contient la figure. Cet argument géométrique
+   suffit à montrer que l'aire est bornée, sans calculer la somme d'une
+   série. Il faut toutefois éviter de laisser croire que le flocon
+   « s'arrête » à l'étape dessinée : les figures tracées sont des
+   approximations de l'objet limite. Il faut aussi éviter de présenter le
+   paradoxe comme une contradiction, car le périmètre et l'aire mesurent des
+   grandeurs différentes.
+c) Le jeu à la main, avec un dé et une règle, rend le procédé
+   transparent : chaque élève comprend la règle et contribue quelques points.
+   En regroupant les feuilles de la classe, on voit apparaître un début de
+   structure. Il faut en revanche des milliers de points pour voir apparaître
+   le triangle de Sierpiński, d'où l'intérêt de programmer ensuite la même
+   règle (section \ref{sec:classe-chaos}). Le programme permet aussi de
+   modifier facilement un paramètre (la fraction du chemin, le nombre de
+   sommets). La limite principale est que l'apparition d'une figure
+   déterministe à partir d'un procédé aléatoire paraît « magique » ; sans le
+   théorème de Hutchinson, l'enseignant ne peut que l'expliquer partiellement,
+   par exemple en remarquant que le point ne tombe jamais dans le triangle
+   central.
+:::
+::::

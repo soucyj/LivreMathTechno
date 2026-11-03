@@ -1,0 +1,94 @@
+% ═══════════════════════════════════════════════════════════════════════
+%  Macros et styles TikZ du volume — partagés par le livre (PDF) et
+%  les figures autonomes converties en SVG pour le web.
+%  Repris tel quel du préambule de Livre.tex.
+% ═══════════════════════════════════════════════════════════════════════
+% ── Bibliothèques TikZ utilisées dans les figures ────────────────────
+\usetikzlibrary{calc, arrows.meta, angles, quotes, patterns, positioning,
+                decorations.markings, backgrounds, fit, shapes.geometric}
+
+% ── Raccourcis propres à ce volume ───────────────────────────────────
+\newcommand{\Plan}{\Pi}                       % le plan euclidien
+\newcommand{\Transf}{\mathcal{T}}             % groupe des transformations
+\newcommand{\Aff}{\mathcal{A}}                % groupe des affinités
+\newcommand{\Sim}{\mathcal{S}}                % groupe des similitudes
+\newcommand{\Iso}{\mathcal{I}}                % groupe des isométries
+\newcommand{\mat}[4]{\begin{pmatrix}#1 & #2\\ #3 & #4\end{pmatrix}}
+\newcommand{\col}[2]{\begin{pmatrix}#1\\ #2\end{pmatrix}}
+\newcommand{\coliii}[3]{\begin{pmatrix}#1\\ #2\\ #3\end{pmatrix}}
+\newcommand{\norme}[1]{\lVert #1 \rVert}
+\newcommand{\Aire}{\operatorname{Aire}}
+\newcommand{\dete}{\operatorname{det}}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+
+% ── Raccourcis propres au chapitre 2 (espaces métriques) ─────────────
+\newcommand{\dE}{d_E}                         % distance euclidienne
+\newcommand{\dT}{d_T}                         % taxi-distance (Manhattan)
+\newcommand{\dS}{d_S}                         % distance sphérique (grand cercle)
+\newcommand{\dHam}{d_{\mathrm{Ham}}}          % distance de Hamming (erreur)
+\newcommand{\dH}{d_H}                         % distance de Hausdorff
+\newcommand{\boule}[2]{B(#1, #2)}             % boule ouverte
+\newcommand{\Vois}[2]{#1^{\oplus #2}}         % epsilon-voisinage de A (Minkowski)
+\newcommand{\Comp}[1]{\mathcal{K}(#1)}        % ensemble des compacts non vides de E
+
+% ── Raccourcis propres au chapitre 3 (fractales et SIF) ──────────────
+\newcommand{\dims}{\dim_{\mathrm{sim}}}       % dimension de similitude
+\definecolor{vertpiece}{RGB}{58, 125, 68}     % 4e couleur des « pièces »
+
+% ── Raccourcis propres à l'annexe D (algèbre linéaire) ──────────────
+\DeclareMathOperator{\Span}{span}          % espace engendré
+\DeclareMathOperator{\rang}{rang}          % rang d'une matrice
+\DeclareMathOperator{\Ima}{Im}             % image d'une matrice
+% Vue 3D en perspective cavalière : x vers l'avant, y à droite, z en haut.
+\tikzset{vue3d/.style={x={(-0.42cm,-0.32cm)}, y={(1cm,0cm)}, z={(0cm,1cm)}}}
+
+% ── Styles TikZ communs à toutes les figures du volume ───────────────
+\tikzset{
+  axe/.style        = {-{Stealth[length=2mm]}, gray!70, thin},
+  quadrillage/.style= {gray!22, very thin},
+  fig/.style        = {fill=steelblue4!22, draw=steelblue4, thick,
+                       line join=round},
+  figim/.style      = {fill=firebrick3!22, draw=firebrick3, thick,
+                       line join=round},
+  figaux/.style     = {fill=coveraccent!22, draw=coveraccent!85!black,
+                       thick, line join=round},
+  pt/.style         = {circle, fill=sectioncolor, inner sep=1.1pt},
+  ptim/.style       = {circle, fill=firebrick3, inner sep=1.1pt},
+  fleche/.style     = {-{Stealth[length=2.4mm]}, sectioncolor, thick},
+  etiq/.style       = {font=\scriptsize, inner sep=1.5pt},
+  droite/.style     = {sectioncolor!70, thick, dashed},
+  % Figures du chapitre 3, générées par figures/fractales/generer.py
+  fractale/.style   = {fill=sectioncolor},
+  nuage/.style      = {fill=sectioncolor},
+  courbe/.style     = {sectioncolor, thin, line join=round},
+  piece1/.style     = {fill=firebrick3},
+  piece2/.style     = {fill=steelblue4},
+  piece3/.style     = {fill=coveraccent},
+  piece4/.style     = {fill=vertpiece},
+  trait1/.style     = {firebrick3, thick, line join=round},
+  trait2/.style     = {steelblue4, thick, line join=round},
+  trait3/.style     = {coveraccent, thick, line join=round},
+  trait4/.style     = {vertpiece, thick, line join=round},
+  chaosvers/.style  = {gray!60, dashed, thin},
+  chaospas/.style   = {-{Stealth[length=2.2mm]}, firebrick3, thick},
+  % Chapitre 4 : états d'une chaîne de Markov, pages d'un mini-web, liens
+  etat/.style       = {circle, draw=sectioncolor, thick, fill=steelblue4!10,
+                       minimum size=9mm, inner sep=1pt, font=\small},
+  pageweb/.style    = {etat, minimum size=7.5mm},
+  lien/.style       = {-{Stealth[length=2.2mm]}, thick, sectioncolor!85!black},
+  lien2/.style      = {{Stealth[length=2.2mm]}-{Stealth[length=2.2mm]}, thick,
+                       sectioncolor!85!black},
+  proba/.style      = {font=\scriptsize, fill=white, inner sep=1pt},
+}
+
+% Repère quadrillé : \repere{xmin}{xmax}{ymin}{ymax}
+\newcommand{\repere}[4]{%
+  \draw[quadrillage] (#1,#3) grid (#2,#4);
+  \draw[axe] (#1,0) -- (#2+0.35,0) node[etiq, below] {$x$};
+  \draw[axe] (0,#3) -- (0,#4+0.35) node[etiq, left] {$y$};}
+
+% Le motif « F », tracé dans le carré unité : sert à voir d'un coup d'œil
+% si une transformation retourne le plan ou non.
+\newcommand{\motifF}{(0,0) -- (0.3,0) -- (0.3,0.55) -- (0.6,0.55) --
+  (0.6,0.75) -- (0.3,0.75) -- (0.3,0.85) -- (0.75,0.85) -- (0.75,1) --
+  (0,1) -- cycle}

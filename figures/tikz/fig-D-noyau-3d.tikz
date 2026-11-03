@@ -1,0 +1,16 @@
+\begin{tikzpicture}[scale=1.0, vue3d]
+  \draw[axe] (0,0,0) -- (2.6,0,0) node[etiq, below left] {$x$};
+  \draw[axe] (0,0,0) -- (0,3.4,0) node[etiq, right] {$y$};
+  \draw[axe] (0,0,0) -- (0,0,2.4) node[etiq, above] {$z$};
+  % noyau : t(-1,-1,1)
+  \draw[trait1] (1.2,1.2,-1.2) -- (-1.6,-1.6,1.6)
+    node[etiq, above left] {$\ker A$};
+  % solutions : (1,2,0) + t(-1,-1,1)
+  \draw[trait2] (2.2,3.2,-1.2) -- (-0.6,0.4,1.6)
+    node[etiq, above] {solutions de $A\vec{x} = \vec{b}$};
+  \node[pt, fill=steelblue4, label={[etiq]right:$\vec{x}_p = (1,2,0)$}] at (1,2,0) {};
+  \draw[fleche, coveraccent] (0,0,0) -- (1,2,0);
+  \draw[fleche, firebrick3] (0,0,0) -- (-1,-1,1)
+    node[etiq, left] {$(-1,-1,1)$};
+  \draw[gray!60, dashed] (1,2,0) -- (0,1,1) -- (-1,-1,1);
+\end{tikzpicture}

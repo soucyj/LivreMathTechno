@@ -1,0 +1,13 @@
+\begin{tikzpicture}[scale=1.25]
+  \repere{-1.35}{1.6}{-1.35}{1.6}
+  \draw[gray!45, thin] (0,0) circle (1);
+  \draw[fleche] (0,0) -- (1,0) node[etiq, below right] {$\vec{e}_1$};
+  \draw[fleche] (0,0) -- (0,1) node[etiq, below left] {$\vec{e}_2$};
+  \draw[fleche, firebrick3] (0,0) -- (37:1)
+    node[etiq, right] {$\col{\cos\theta}{\sin\theta}$};
+  \draw[fleche, firebrick3] (0,0) -- (127:1)
+    node[etiq, above left] {$\col{-\sin\theta}{\cos\theta}$};
+  \draw[firebrick3, thin] (0.42,0) arc (0:37:0.42);
+  \node[etiq, firebrick3] at (20:0.62) {$\theta$};
+  \draw[firebrick3, thin] (0,0.42) arc (90:127:0.42);
+\end{tikzpicture}

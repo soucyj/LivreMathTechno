@@ -1,0 +1,7 @@
+\begin{tikzpicture}[scale=1.7]
+  \draw[axe] (-1.6,0) -- (1.6,0) node[right, etiq]{$x$};
+  \node[pt, label={[etiq, align=center]below:$x_1,x_3,x_5,\ldots$}] (m1) at (-1,0) {};
+  \node[pt, label={[etiq, align=center]below:$x_2,x_4,x_6,\ldots$}] (p1) at (1,0) {};
+  \draw[fleche, firebrick3, {Stealth[length=2mm]}-{Stealth[length=2mm]}]
+    (m1) to[bend left=35] node[midway, above, etiq, firebrick3]{toujours $2$} (p1);
+\end{tikzpicture}

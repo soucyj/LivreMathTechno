@@ -1,0 +1,145 @@
+/* Couleurs du livre (latex/livrejs-couleurs.sty) */
+:root {
+  --section: rgb(28, 63, 110);
+  --or: rgb(196, 142, 58);
+  --adelie: #CD3333;
+  --jugulaire: #36648B;
+  --papou: rgb(196, 142, 58);
+  --fleche-a: #2E8B57;
+  --fleche-b: #8E44AD;
+  --fond: #f5f6f8;
+  --texte: #1d1d1f;
+  --gris: #6b7280;
+  --bord: #e3e6eb;
+}
+
+body {
+  background: var(--fond);
+  color: var(--texte);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+}
+.container-fluid { max-width: 1400px; padding: 0 16px 2rem; }
+
+/* En-tête */
+.entete { padding: 1.6rem 0 0.6rem; }
+.surtitre {
+  font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--or); font-weight: 600;
+}
+.entete h1 {
+  font-family: Georgia, "STIX Two Text", "Times New Roman", serif;
+  color: var(--section); font-size: 2rem; margin: 0.2rem 0 0.5rem;
+}
+.chapeau { max-width: 62rem; font-size: 1.02rem; line-height: 1.5; margin-bottom: 0.8rem; }
+.etapes { display: flex; flex-wrap: wrap; gap: 0.6rem 1.6rem; font-size: 0.92rem; }
+.etapes > div { display: flex; align-items: center; gap: 0.5rem; }
+.etapes .num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.6rem; height: 1.6rem; border-radius: 50%; flex: none;
+  background: var(--section); color: white; font-weight: 700; font-size: 0.85rem;
+}
+
+/* Cartes */
+.carte {
+  background: white; border: 1px solid var(--bord); border-radius: 10px;
+  padding: 1rem 1.1rem; margin-bottom: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+.carte h3 {
+  font-family: Georgia, "STIX Two Text", serif;
+  color: var(--section); font-size: 1.2rem; margin: 0 0 0.25rem;
+}
+.aide { color: var(--gris); font-size: 0.86rem; margin-bottom: 0.5rem; }
+.centre { text-align: center; margin: 0.3rem 0 0; }
+.petit { color: var(--gris); font-size: 0.8rem; }
+.graphe { width: 100%; height: 470px; overflow: hidden; }
+
+/* Jauge */
+.jauge { padding: 0.8rem 1.1rem 0.4rem; margin-top: 0.6rem; }
+.jauge-haut { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 1rem; }
+.jauge-titre { font-weight: 600; color: var(--section); }
+.jauge-valeur { font-size: 1.7rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.jauge-msg { color: var(--gris); font-size: 0.9rem; }
+.jauge-barre {
+  position: relative; height: 14px; border-radius: 7px; background: #eceef2;
+  margin: 0.5rem 0 0.2rem; overflow: visible;
+}
+.jauge-rempli {
+  height: 100%; border-radius: 7px; background: #9aa5b4;
+  transition: width 0.25s ease, background 0.25s ease;
+}
+.jauge.moyen .jauge-rempli { background: #6f8fb8; }
+.jauge.bien .jauge-rempli { background: #3c8d5a; }
+.jauge.top .jauge-rempli { background: #2E8B57; }
+.jauge.top .jauge-valeur { color: #2E8B57; }
+.repere {
+  position: absolute; top: -4px; width: 2px; height: 22px; background: var(--texte);
+  opacity: 0.55; transform: translateX(-1px);
+}
+.jauge-legende { position: relative; height: 1.4rem; font-size: 0.75rem; color: var(--gris); }
+.jauge-legende span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.jauge-legende span:last-child { transform: translateX(-85%); }
+
+/* Boutons */
+.rangee-boutons { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.4rem 0; }
+.btn-primary { background: var(--section); border-color: var(--section); }
+.btn-primary:hover, .btn-primary:focus { background: #142e52; border-color: #142e52; }
+.btn-vp {
+  background: var(--or); border: 1px solid var(--or); color: white; font-weight: 600;
+  min-width: 7.5rem;
+}
+.btn-vp:hover, .btn-vp:focus { background: #a8772c; border-color: #a8772c; color: white; }
+.options { display: flex; flex-wrap: wrap; gap: 0 1.4rem; margin-top: 0.5rem; font-size: 0.9rem; }
+.options .form-group { margin-bottom: 0; }
+
+/* Flèches */
+.deux-colonnes { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+@media (max-width: 640px) { .deux-colonnes { grid-template-columns: 1fr; } }
+.bloc-fleche { border-left: 4px solid; padding-left: 0.8rem; }
+.fleche-a { border-color: var(--fleche-a); }
+.fleche-b { border-color: var(--fleche-b); }
+.bloc-fleche h4 { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 0.45rem; }
+.pastille {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.5rem; height: 1.5rem; border-radius: 50%; color: white;
+  font-style: italic; font-family: Georgia, serif;
+}
+.fleche-a .pastille { background: var(--fleche-a); }
+.fleche-b .pastille { background: var(--fleche-b); }
+.fleche-a .irs--shiny .irs-bar, .fleche-a .irs--shiny .irs-single { background: var(--fleche-a); border-color: var(--fleche-a); }
+.fleche-b .irs--shiny .irs-bar, .fleche-b .irs--shiny .irs-single { background: var(--fleche-b); border-color: var(--fleche-b); }
+.bloc-fleche .control-label { font-size: 0.82rem; color: var(--gris); font-weight: 500; }
+.composantes { font-size: 0.86rem; }
+.composantes code { color: var(--texte); background: #f1f3f6; padding: 0.05rem 0.35rem; border-radius: 4px; }
+
+.alerte {
+  background: #fff4e0; border: 1px solid #f0c987; color: #7a4f00;
+  border-radius: 6px; padding: 0.45rem 0.7rem; font-size: 0.85rem; margin-bottom: 0.4rem;
+}
+
+/* Tableaux des vecteurs propres */
+.table-vp { border-collapse: collapse; font-size: 0.86rem; margin: 0.5rem 0; font-variant-numeric: tabular-nums; }
+.table-vp th, .table-vp td { padding: 0.25rem 0.7rem; text-align: right; border-bottom: 1px solid var(--bord); }
+.table-vp th { color: var(--gris); font-weight: 600; font-size: 0.78rem; }
+.table-vp td:first-child { text-align: left; font-weight: 600; }
+.vp-rappel { background: #fbf6ee; border-radius: 6px; padding: 0.3rem 0.7rem; margin-top: 0.5rem; overflow-x: auto; }
+
+/* Accordéon */
+.accordion-button { font-weight: 600; color: var(--section); }
+.accordion-button:not(.collapsed) { background: #eef2f8; color: var(--section); }
+.accordion-body { line-height: 1.55; }
+
+.pied { color: var(--gris); font-size: 0.78rem; text-align: center; margin-top: 0.5rem; }
+
+@media (max-width: 767px) {
+  .graphe { height: 380px; }
+  .entete h1 { font-size: 1.55rem; }
+}
+
+/* Raccourcis */
+.raccourcis { display: grid; grid-template-columns: auto 1fr; gap: 0.4rem 2rem; }
+@media (max-width: 900px) { .raccourcis { grid-template-columns: 1fr; } }
+.etiquette { font-size: 0.78rem; font-weight: 600; color: var(--gris); text-transform: uppercase;
+             letter-spacing: 0.04em; margin-top: 0.3rem; }
+.composantes { margin-top: 0.4rem; }

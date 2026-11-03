@@ -1,0 +1,65 @@
+name: Publier le site Quarto
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer les sources
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installer Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Installer TinyTeX
+        run: quarto install tinytex --update-path
+
+      - name: Installer Poppler
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes poppler-utils
+
+      - name: Exporter l'application interactive
+        run: |
+          python -m venv shiny/acp-manchots/.venv
+          shiny/acp-manchots/.venv/bin/python -m pip install \
+            -r shiny/acp-manchots/requirements.txt shinylive
+          ./shiny/exporter.sh acp-manchots
+
+      - name: Générer le site et le PDF
+        run: quarto render
+
+      - name: Préparer l'artefact Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _book
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Publier sur GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

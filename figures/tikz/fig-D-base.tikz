@@ -1,0 +1,16 @@
+\begin{tikzpicture}[scale=0.62]
+  \begin{scope}
+    \clip (-2.3,-1.3) rectangle (6.3,8.3);
+    % quadrillage oblique engendré par u = (2,1) et v = (1,3)
+    \foreach \k in {-4,...,4}{
+      \draw[steelblue4!30] ($\k*(2,1) + -4*(1,3)$) -- ($\k*(2,1) + 4*(1,3)$);
+      \draw[steelblue4!30] ($-4*(2,1) + \k*(1,3)$) -- ($4*(2,1) + \k*(1,3)$);}
+  \end{scope}
+  \draw[axe] (-2.3,0) -- (6.5,0) node[etiq, below] {$x$};
+  \draw[axe] (0,-1.3) -- (0,8.5) node[etiq, left] {$y$};
+  \draw[fleche] (0,0) -- (2,1) node[etiq, below right] {$\vec{u}$};
+  \draw[fleche] (0,0) -- (1,3) node[etiq, left] {$\vec{v}$};
+  \draw[fleche, coveraccent] (2,1) -- (3,4);
+  \draw[fleche, coveraccent] (3,4) -- (4,7);
+  \node[ptim, label={[etiq]right:$(4,7) = \vec{u} + 2\vec{v}$}] at (4,7) {};
+\end{tikzpicture}

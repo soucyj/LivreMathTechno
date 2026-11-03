@@ -1,0 +1,45 @@
+# ── Produits par le rendu (quarto render) ───────────────────────────────
+/_book/
+/.quarto/
+/_etiquettes.json
+/_bibliographie-web.json
+/figures/web/
+/sol-ch*.tex
+**/*.quarto_ipynb
+
+# ── Fichiers intermédiaires de LaTeX (compilation du PDF) ───────────────
+/*.tex
+/*.pdf
+/*.aux
+/*.bbl
+/*.bcf
+/*.blg
+/*.log
+/*.out
+/*.run.xml
+/*.toc
+/*.fls
+/*.fdb_latexmk
+/*.synctex.gz
+# Quarto compile sous le nom index.* : on garde seulement index.qmd
+/index.*
+!/index.qmd
+
+# ── Applications Shiny ───────────────────────────────────────────────────
+# Environnements Python (à recréer : voir README.md)
+**/.venv/
+# Version shinylive exportée (régénérée par shiny/exporter.sh)
+/applications/
+
+# ── Python ───────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+
+# ── Système et éditeurs ──────────────────────────────────────────────────
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+# Copies de conflit d'iCloud (« fichier 2.tex », « fichier 3.qmd »...)
+* [0-9].*

@@ -1,0 +1,22 @@
+\begin{tikzpicture}
+  \begin{axis}[
+    width=5.6cm, height=5.6cm, scale only axis,
+    tick label style={font=\scriptsize}, label style={font=\scriptsize},
+    title style={font=\small, sectioncolor},
+    axis line style={gray!70}, tick style={gray!70},
+    grid=major, grid style={gray!18, very thin},
+    xmin=55, xmax=85, ymin=60, ymax=90,
+    xtick={55,60,...,85}, ytick={60,65,...,90},
+    xlabel={Note en mathématiques}, ylabel={Note en sciences}]
+    \node[pt, label={[etiq]above left:$A$}] at (axis cs:60,72) {};
+    \node[pt, label={[etiq]below right:$B$}] at (axis cs:63,66) {};
+    \node[pt, label={[etiq]below right:$C$}] at (axis cs:67,67) {};
+    \node[pt, label={[etiq]above left:$D$}] at (axis cs:75,84) {};
+    \node[pt, label={[etiq]right:$E$}] at (axis cs:76,82) {};
+    \node[pt, label={[etiq]below right:$F$}] at (axis cs:79,79) {};
+    \draw[gray!60, dashed] (axis cs:70,60) -- (axis cs:70,90);
+    \draw[gray!60, dashed] (axis cs:55,75) -- (axis cs:85,75);
+    \node[circle, draw=firebrick3, fill=white, thick, inner sep=1.6pt,
+      label={[etiq, firebrick3]below right:$M = (70,75)$}] at (axis cs:70,75) {};
+  \end{axis}
+\end{tikzpicture}

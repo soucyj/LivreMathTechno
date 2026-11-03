@@ -1,0 +1,27 @@
+\begin{tikzpicture}
+  \begin{axis}[
+    width=11.8cm, height=6.8cm, scale only axis,
+    tick label style={font=\scriptsize}, label style={font=\scriptsize},
+    title style={font=\small, sectioncolor},
+    axis line style={gray!70}, tick style={gray!70},
+    grid=major, grid style={gray!18, very thin},
+    xmin=-4.6, xmax=5.4, ymin=-3.6, ymax=4.4,
+    xlabel={première composante $y_1$}, ylabel={deuxième composante $y_2$}]
+    \addplot[only marks, mark=*, mark size=1.2pt, color=sectioncolor, fill opacity=0.7]
+      coordinates {
+      (0.79,0.77) (1.23,0.57) (1.36,0.48) (-0.61,-0.87) (-0.59,2.13) (0.36,-1.68) (0.27,-1.09) (0.59,0.23)
+      (-2,0.56) (-1.55,0.49) (-1.34,-0.31) (-2.34,-1.97) (-3.98,0.2) (4.04,1.37) (3.92,0.84) (4.62,0.04)
+      (2.23,1.04) (2.17,-1.8) (0.93,1.17) (0.89,-0.62) (0.3,-1.55) (1.91,-0.09) (0.08,-1.35) (0.54,0.77)
+      (0.11,-0.04) (0,0.36) (0.87,1.06) (0.35,-1.56) (0.38,-0.77) (-0.48,-1.06) (-0.43,-0.33) (-0.25,-3.08)
+      (-1.07,2.09) (-0.68,0.54) (-0.29,-1.2) (-1.54,0.43) (-2.41,-1.58) (-1.99,-0.29) (-0.96,2.07) (-2.56,0.25)
+      (-2.86,3.8)};
+    \node[etiq, below right, text=black!75] at (axis cs:-3.98,0.2) {Bourguignon};
+    \node[etiq, above, text=black!75] at (axis cs:4.04,1.37) {Sebrle};
+    \node[etiq, left, text=black!75] at (axis cs:3.92,0.84) {Clay};
+    \node[etiq, below, text=black!75] at (axis cs:4.62,0.04) {Karpov};
+    \node[etiq, above, text=black!75] at (axis cs:2.23,1.04) {Macey};
+    \node[etiq, below, text=black!75] at (axis cs:2.17,-1.8) {Warners};
+    \node[etiq, right, text=black!75] at (axis cs:-0.25,-3.08) {Drews};
+    \node[etiq, right, text=black!75] at (axis cs:-2.86,3.8) {Casarsa};
+  \end{axis}
+\end{tikzpicture}

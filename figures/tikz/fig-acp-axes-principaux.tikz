@@ -1,0 +1,50 @@
+\begin{tikzpicture}
+  \begin{axis}[
+    width=5.4cm, height=5.4cm, scale only axis,
+    tick label style={font=\scriptsize}, label style={font=\scriptsize},
+    title style={font=\small, sectioncolor},
+    axis line style={gray!70}, tick style={gray!70},
+    grid=major, grid style={gray!18, very thin},
+    title={Ellipse et vecteurs propres},
+    xmin=55, xmax=85, ymin=60, ymax=90,
+    xtick={55,60,...,85}, ytick={60,65,...,90},
+    xlabel={Mathématiques}, ylabel={Sciences}]
+    \draw[figaux, fill opacity=0.35, rotate around={45:(axis cs:70,75)}]
+      (axis cs:70,75) ellipse [x radius=18.974, y radius=6.325];
+    \node[pt] at (axis cs:60,72) {};
+    \node[pt] at (axis cs:63,66) {};
+    \node[pt] at (axis cs:67,67) {};
+    \node[pt] at (axis cs:75,84) {};
+    \node[pt] at (axis cs:76,82) {};
+    \node[pt] at (axis cs:79,79) {};
+    \draw[fleche, firebrick3] (axis cs:70,75) -- (axis cs:76.708,81.708)
+      node[etiq, pos=0.45, above left] {$\sqrt{90}\,\vec{v}_1$};
+    \draw[fleche, firebrick3] (axis cs:70,75) -- (axis cs:72.236,72.764)
+      node[etiq, pos=0.6, below left] {$\sqrt{10}\,\vec{v}_2$};
+  \end{axis}
+  \begin{axis}[
+    width=5.4cm, height=5.4cm, scale only axis,
+    tick label style={font=\scriptsize}, label style={font=\scriptsize},
+    title style={font=\small, sectioncolor},
+    axis line style={gray!70}, tick style={gray!70},
+    grid=major, grid style={gray!18, very thin},
+    xshift=6.9cm, title={Trois droites},
+    xmin=55, xmax=85, ymin=60, ymax=90,
+    xtick={55,60,...,85}, ytick={60,65,...,90},
+    xlabel={Mathématiques}, ylabel={Sciences},
+    legend pos=south east, legend cell align=left,
+    legend style={font=\scriptsize, draw=gray!40, fill=white}]
+    \addplot[steelblue4, very thick, domain=55:85, samples=2] {x + 5};
+    \addlegendentry{axe principal}
+    \addplot[firebrick3, thick, dashed, domain=55:85, samples=2] {0.8*x + 19};
+    \addlegendentry{$y$ selon $x$}
+    \addplot[coveraccent, thick, densely dashdotted, domain=58:81.6, samples=2] {1.25*x - 12.5};
+    \addlegendentry{$x$ selon $y$}
+    \node[pt] at (axis cs:60,72) {};
+    \node[pt] at (axis cs:63,66) {};
+    \node[pt] at (axis cs:67,67) {};
+    \node[pt] at (axis cs:75,84) {};
+    \node[pt] at (axis cs:76,82) {};
+    \node[pt] at (axis cs:79,79) {};
+  \end{axis}
+\end{tikzpicture}

@@ -1,0 +1,14 @@
+\begin{tikzpicture}[scale=0.95]
+  \repere{-0.6}{4.6}{-0.6}{3.6}
+  \draw[droite] (-0.8,-0.4) -- (4.8,2.4) node[etiq, right] {$\Span\{\vec{u}\}$};
+  \draw[gray!70, dashed] (1,3) -- (2,1);
+  % angle droit au pied de la perpendiculaire
+  \draw[gray!70] ($(2,1)!0.28cm!(1,3)$) -- ++($0.125*(2,1)$) -- ($(2,1)!0.28cm!(4,2)$);
+  \draw[fleche] (0,0) -- (1,3) node[etiq, above left] {$\vec{v}$};
+  \draw[fleche, firebrick3, very thick] (0,0) -- (2,1)
+    node[etiq, below right] {$\operatorname{proj}_{\vec{u}}\vec{v} = \vec{u}$};
+  \draw[fleche, coveraccent] (2,1) -- (1,3)
+    node[etiq, pos=0.5, right] {$\vec{v} - \operatorname{proj}_{\vec{u}}\vec{v}$};
+  \draw[sectioncolor, thin] (0.7,0.35) arc[start angle=26.57, end angle=71.57, radius=0.78];
+  \node[etiq] at (0.95,0.95) {$\theta$};
+\end{tikzpicture}

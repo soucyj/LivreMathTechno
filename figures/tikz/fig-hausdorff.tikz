@@ -1,0 +1,13 @@
+\begin{tikzpicture}[scale=1.15]
+  \draw[firebrick3, thick, fill=firebrick3, fill opacity=0.3] (0,0) circle (1.3);
+  \node[etiq, firebrick3] at (-0.75,0.95) {$B$};
+  \draw[sectioncolor, thick, fill=steelblue4, fill opacity=0.3,
+        rotate around={10:(1.8,0.2)}] (1.8,0.2) ellipse (1.6 and 0.85);
+  \node[etiq, sectioncolor] at (2.55,1.15) {$A$};
+  \node[pt, label={[etiq]above right:$a^\star$}] (astar) at (3.38,0.48) {};
+  \node[ptim, label={[etiq]left:$b^\star$}] (bstar) at (-1.3,0) {};
+  \draw[sectioncolor!70, thick, dashed, {Stealth[length=2mm]}-{Stealth[length=2mm]}]
+    (astar) -- node[midway, below, etiq]{$d(a^\star,B)$} (1.29,0.18);
+  \draw[firebrick3!70, thick, dashed, {Stealth[length=2mm]}-{Stealth[length=2mm]}]
+    (bstar) -- node[midway, above, etiq]{$d(b^\star,A)$} (0.22,-0.08);
+\end{tikzpicture}

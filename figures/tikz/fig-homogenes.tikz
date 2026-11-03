@@ -1,0 +1,17 @@
+\begin{tikzpicture}[scale=0.95]
+  % plan z=1 en perspective
+  \draw[sectioncolor!45, fill=steelblue4!10]
+    (0,1.6) -- (4.2,1.6) -- (5.4,2.9) -- (1.2,2.9) -- cycle;
+  \node[etiq, sectioncolor] at (5.05,2.55) {$z=1$};
+  \draw[gray!55, fill=gray!8]
+    (0,-0.5) -- (4.2,-0.5) -- (5.4,0.8) -- (1.2,0.8) -- cycle;
+  \node[etiq, gray!70!black] at (5.05,0.45) {$z=0$};
+  \node[pt] (O) at (2.1,0.15) {};
+  \node[etiq] at (1.75,-0.05) {$(0,0,0)$};
+  \node[pt, label={[etiq]above right:$(x,y,1)$}] (P) at (2.85,2.1) {};
+  \draw[fleche, dashed] (O) -- (P);
+  \node[etiq, align=left, sectioncolor] at (7.9,2.1)
+    {le plan des points,\\relevé à la hauteur~1};
+  \node[etiq, align=left, gray!70!black] at (7.9,0.15)
+    {le plan des vecteurs\\(directions)};
+\end{tikzpicture}

@@ -1,0 +1,8 @@
+\begin{tikzpicture}[scale=0.62]
+  \draw[quadrillage, xstep=2, ystep=2.5] (0,0) grid (16,10);
+  \input{figures/fractales/exo-f123.tikz}
+  \draw[axe] (0,0) -- (16.8,0) node[etiq, right] {$x$};
+  \draw[axe] (0,0) -- (0,10.8) node[etiq, above] {$y$};
+  \foreach \x in {0,4,8,12,16} \node[etiq, below] at (\x,0) {$\x$};
+  \foreach \y in {5,10} \node[etiq, left] at (0,\y) {$\y$};
+\end{tikzpicture}

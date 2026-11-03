@@ -1,0 +1,18 @@
+\begin{tikzpicture}[scale=0.95]
+  \node[pt, label={[etiq]left:$x$}] (x0) at (0,3.6) {};
+  \node[pt, label={[etiq]right:$y$}] (y0) at (4.6,3.6) {};
+  \draw[sectioncolor, thick] (x0) -- (y0);
+  \node[etiq, sectioncolor, above] at (2.3,3.6) {$\dE(x,y)$};
+  \node[pt, label={[etiq]left:$f(x)$}] (x1) at (1.15,2.1) {};
+  \node[pt, label={[etiq]right:$f(y)$}] (y1) at (3.45,2.1) {};
+  \draw[sectioncolor, thick] (x1) -- (y1);
+  \node[etiq, sectioncolor, above] at (2.3,2.1) {$k\,\dE(x,y)$};
+  \node[pt, label={[etiq]below:$f^2(x)$}] (x2) at (1.6,0.6) {};
+  \node[pt, label={[etiq]below:$f^2(y)$}] (y2) at (3.0,0.6) {};
+  \draw[sectioncolor, thick] (x2) -- (y2);
+  \node[etiq, sectioncolor, above] at (2.3,1.05) {$k^2\dE(x,y)$};
+  \draw[fleche, sectioncolor!60] (x0) -- (x1);
+  \draw[fleche, sectioncolor!60] (y0) -- (y1);
+  \draw[fleche, sectioncolor!60] (x1) -- (x2);
+  \draw[fleche, sectioncolor!60] (y1) -- (y2);
+\end{tikzpicture}

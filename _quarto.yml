@@ -1,0 +1,97 @@
+# ═══════════════════════════════════════════════════════════════════════
+#  MAT-2901 — Mathématiques et technologie (source Quarto)
+#  Une seule source, deux sorties :
+#    quarto render             → le site web ET le PDF dans _book/ (à utiliser
+#                                pour publier : la couverture du site renvoie
+#                                au PDF)
+#    quarto render --to pdf    → le livre seul, mis en page par latex/livrejs.cls
+#    quarto render --to html   → le site seul (attention : vide _book/, donc
+#                                efface le PDF)
+#    quarto preview            → aperçu web qui se met à jour en direct
+# ═══════════════════════════════════════════════════════════════════════
+project:
+  type: book
+  output-dir: _book
+  pre-render: _outils/pre-rendu.py
+  resources:
+    - styles/polices/STIXTwoText-*.otf
+    - images/couverture-web.jpg
+    - images/licence/*.svg
+    - figures/acp/*.csv
+    # Applications shinylive (exportées par shiny/exporter.sh)
+    - applications/**
+
+lang: fr
+language:
+  title-block-author-single: "Auteur"
+  title-block-published: "Mise à jour"
+
+book:
+  title: "Mathématiques et technologie"
+  subtitle: "Des notions du secondaire aux applications modernes"
+  author: "Jérôme Soucy"
+  date: today
+  date-format: "D MMMM YYYY"
+  chapters:
+    - index.qmd
+    - 01-transformations.qmd
+    - 02-metriques.qmd
+    - 03-fractales.qmd
+    - 04-markov.qmd
+    - 05-acp.qmd
+  # Annexes : numérotées A, B, C, D (\appendix dans le PDF) ; les solutions
+  # et la bibliographie suivent, sans numéro.
+  appendices:
+    - annexe-a-python.qmd
+    - annexe-b-ia.qmd
+    - annexe-c-theorie.qmd
+    - annexe-d-algebre.qmd
+    - solutions.qmd
+    - references.qmd
+  downloads: [pdf]
+  page-footer:
+    center: |
+      <a href="https://creativecommons.org/licenses/by/4.0/deed.fr" rel="license" title="Licence Creative Commons Attribution 4.0 International" style="text-decoration:none;"><img src="images/licence/cc.svg" alt="Creative Commons" style="height:1.4em; vertical-align:middle;"> <img src="images/licence/by.svg" alt="Attribution" style="height:1.4em; vertical-align:middle;"></a>&nbsp; © 2026 Jérôme Soucy — texte et figures sous licence <a href="https://creativecommons.org/licenses/by/4.0/deed.fr" rel="license">CC BY 4.0</a>, code sous licence MIT.
+  search: true
+  page-navigation: true
+
+bibliography: references.bib
+
+number-sections: true
+number-depth: 3
+
+# Le filtre passe avant Quarto (pre-ast) : il traduit lui-même les blocs
+# .remark, .proof, .solution... que Quarto interpréterait autrement.
+filters:
+  - path: _filtres/livrejs.lua
+    at: pre-ast
+
+format:
+  html:
+    theme: [cosmo, styles/livrejs.scss]
+    css: styles/polices.css
+    include-in-header: styles/mathjax-config.html
+    include-after-body: styles/toc-actif.html
+    # MathJax 4, version « nofont » : la police des formules (STIX Two Math,
+    # assortie au texte en STIX Two Text) est choisie dans mathjax-config.html.
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml-nofont.js"
+    toc: true
+    toc-title: "Dans ce chapitre"
+    toc-location: left
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    highlight-style: github
+    reference-location: margin
+    citation-location: document
+    link-citations: true
+    csl: styles/alphabetique.csl
+    bibliography: _bibliographie-web.json
+  pdf:
+    template: latex/gabarit.tex
+    pdf-engine: lualatex
+    cite-method: biblatex
+    keep-tex: true
+    number-sections: true

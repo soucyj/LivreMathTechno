@@ -1,0 +1,199 @@
+# La rédaction du chapitre 2 avec l'assistance d'une intelligence artificielle {#annexe:ia}
+
+Cette annexe décrit la démarche suivie pour rédiger le
+chapitre \ref{chap:metriques}, à partir d'échanges avec Claude,
+un assistant conversationnel développé par
+Anthropic^[Plus précisément, le modèle Claude Sonnet 5.].
+L'auteur a fourni les documents de départ, précisé les attentes,
+relu les versions et demandé les corrections. L'assistant a produit
+le texte et les figures, puis appliqué ces demandes. La responsabilité
+du contenu mathématique et des choix pédagogiques appartient à
+l'auteur. Les extraits qui suivent reproduisent les demandes ayant
+guidé ce travail, avec quelques corrections de frappe et de langue.
+
+### Les documents de départ {.unnumbered}
+
+Deux documents ont servi de base à la rédaction. Le fichier
+`prompt.pdf`, préparé par l'auteur, précisait les notions à
+traiter et leur importance relative. Il contenait aussi une
+démonstration manuscrite du théorème de Banach à reprendre dans le
+chapitre. Le fichier `EspacesMetriquesan.pdf` était une version
+antérieure des notes de l'auteur sur les espaces métriques. Plusieurs
+définitions, exemples et figures en ont été tirés.
+
+### Le mandat initial {.unnumbered}
+
+La demande initiale précisait les objectifs et les grandes lignes
+du chapitre.
+
+::: {.extrait}
+Je veux que tu rédiges le chapitre 2 sur les espaces métriques, pour en
+arriver à présenter la distance de Hausdorff et le théorème de Banach.
+Il faudra présenter un peu plus de métriques appliquées ; tu verras que
+j'ai mentionné une métrique sphérique et une autre pour mesurer les
+erreurs dans les chaînes binaires. Commence par comprendre le PDF
+`prompt.pdf` et pose-moi des questions pour valider ta
+compréhension. J'ai aussi une ébauche de notes sur les espaces
+métriques (`EspacesMetriquesan.pdf`) que tu peux regarder pour
+te donner une idée. Ça doit être très bien illustré et vulgarisé, pour
+des étudiantes et étudiants du baccalauréat en enseignement. En termes
+de répartition : un tiers sur la notion d'espace métrique, avec
+exemples ; un tiers sur tout ce qui touche à Hausdorff et Minkowski ;
+un tiers sur la notion de point fixe et le théorème du point fixe de
+Banach. Je t'ai fourni la démonstration que je juge la plus appropriée
+pour ce cours ; j'attends ton avis à ce sujet. On s'attend
+probablement à une trentaine de pages pour ce chapitre. N'oublie pas
+la biographie de Félix Hausdorff et, tant qu'à y être, une sur Banach.
+Ce serait bien de parler de l'historique de ce théorème, qui a des
+applications dans plusieurs domaines.
+:::
+
+### Valider la compréhension avant d'écrire {.unnumbered}
+
+Après avoir lu les deux documents, l'assistant a posé des questions
+sur l'organisation du travail : emplacement du chapitre dans le
+fichier source, illustration des biographies et contenu des exemples
+de métriques appliquées. D'autres questions ont suivi la rédaction
+d'une première version et sa relecture. Les deux réponses ci-dessous,
+formulées librement plutôt que choisies parmi des options, montrent
+le type de précisions apportées.
+
+::: {.extrait}
+En gros, je veux que tu évites le tiret cadratin dans une phrase où il
+y a des maths (en mode mathématique). Tu peux mettre des virgules, des
+deux-points, ou un autre arrangement.
+:::
+
+::: {.extrait}
+Je veux qu'on traite la métrique sphérique de manière qualitative
+seulement : des explications du fait qu'on ne peut pas traverser la
+Terre, qu'on doit se déplacer à sa surface, avec une représentation
+graphique (en s'assurant que l'arc de grand cercle est bien au-dessus
+de la corde sur le graphique).
+:::
+
+### Une relecture détaillée {.unnumbered}
+
+La première version complète a ensuite été relue section par section.
+Les commentaires portaient à la fois sur des corrections locales et
+sur l'organisation du contenu. Les extraits suivants en donnent
+quelques exemples.
+
+::: {.extrait}
+Le texte en bleu dans la figure devrait être en haut, car il chevauche
+les courbes.
+:::
+
+::: {.extrait}
+Ne fais pas la définition formelle, mais présente seulement la
+distance sphérique avec la figure (partie de gauche) ; la partie de
+droite peut être retirée. Enlève l'exemple numérique : on le gardera,
+tout comme la définition rigoureuse, pour le chapitre sur le
+positionnement, où les coordonnées sphériques seront présentées.
+:::
+
+::: {.extrait}
+Pour les boules ouvertes et les ensembles ouverts en général, la
+frontière doit être en pointillé.
+:::
+
+::: {.extrait}
+Pour l'exemple sur la complétude de $\R$, il faut construire une suite
+convergente sans utiliser la méthode de Newton-Raphson, puisqu'elle
+n'est pas encore vue à ce stade. Un raisonnement basé sur les décimales
+de la racine de $2$ suffira peut-être.
+:::
+
+::: {.extrait}
+Illustrons, pour les fonctions réelles d'une variable réelle,
+graphiquement ce que signifie être un point fixe.
+:::
+
+::: {.extrait}
+Il faut réécrire le théorème de Banach dans le cas particulier où
+l'espace est $\R^2$ avec la distance euclidienne, mais en ajoutant une
+remarque précisant que la démonstration reste la même si on remplace
+$\R^2$ par un espace métrique quelconque. On procède ainsi par souci
+pédagogique, pour pouvoir introduire des images, notamment pour
+l'application répétée de l'inégalité triangulaire et pour le lemme
+selon lequel une contraction de rapport $k$, itérée $n$ fois, en est
+une de rapport $k^n$.
+:::
+
+::: {.extrait}
+Pour la méthode de Newton-Raphson, en plus de l'exemple théorique,
+ajoute un problème plus concret : un problème d'optimisation qui mène
+à une équation polynomiale de degré $3$ dont les racines ne sont pas
+évidentes à trouver. Je pense à un problème d'optimisation des
+dimensions d'un solide, avec une condition d'aire minimale, ou à une
+clôture avec contrainte de périmètre.
+:::
+
+### Raffiner les figures {.unnumbered}
+
+Les figures ont aussi fait l'objet de plusieurs échanges. Une capture
+d'écran annotée permettait souvent de désigner précisément l'élément
+à modifier.
+
+::: {.extrait}
+Pour la figure du $\varepsilon$-voisinage, mets une double flèche avec
+$\varepsilon$ en dessous, à peu près où j'ai mis l'annotation : ce
+sera plus clair que ta flèche à sens unique.
+:::
+
+::: {.extrait}
+Je pense que ça devrait être un peu plus gros comme graphique ; les
+étiquettes ne devraient pas se superposer aux courbes, et peut-être
+que l'utilisation du package `subfigure` de \LaTeX{} serait
+appropriée pour gérer les trois volets (i), (ii) et (iii).
+:::
+
+### Restructurer le contenu {.unnumbered}
+
+Les deux demandes suivantes ont conduit à revoir plus largement
+l'organisation du chapitre.
+
+::: {.extrait}
+Ce serait mieux d'utiliser un carré pour représenter $\R^2$ qu'une
+forme irrégulière.
+:::
+
+::: {.extrait}
+Toutes les discussions entourant les fractales doivent être déplacées
+au chapitre 3. Tu peux simplement mentionner que les fractales seront
+définies comme des objets dans l'ensemble des compacts du plan, ce qui
+motive cette construction.
+:::
+
+### Les détails techniques {.unnumbered}
+
+D'autres échanges concernaient la production du document, notamment
+la compilation et les conventions typographiques.
+
+::: {.extrait}
+Peux-tu t'assurer, dans la configuration de VS Code et dans ta propre
+façon de faire, de toujours compiler avec LuaLaTeX et avec SyncTeX ?
+Ce n'est pas le cas actuellement.
+:::
+
+::: {.extrait}
+Assure-toi que les blocs de définition, lemme, corollaire et théorème
+soient non sécables (*unbreakable*), car présentement un des
+lemmes déborde d'une page à l'autre.
+:::
+
+::: {.extrait}
+Je veux utiliser la commande `\num` du package
+`siunitx`, car en français, c'est la virgule qui doit servir de
+séparateur décimal.
+:::
+
+### En rétrospective {.unnumbered}
+
+Cette démarche a permis de relire et de corriger les sections au fur
+et à mesure de leur rédaction. Elle a aussi demandé une vérification
+suivie de la part de l'auteur. La rapidité de production de l'assistant
+ne dispense pas d'examiner les raisonnements, les figures et la
+pertinence des explications pour les étudiants. Les décisions
+mathématiques et pédagogiques demeurent donc sous la responsabilité
+de l'auteur.

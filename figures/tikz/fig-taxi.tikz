@@ -1,0 +1,10 @@
+\begin{tikzpicture}[scale=0.62]
+  \draw[quadrillage] (-0.4,-0.4) grid (7.4,5.4);
+  \node[pt, label={[etiq]below left:$A$}] (A) at (1,1) {};
+  \node[pt, label={[etiq]above right:$B$}] (B) at (6,4) {};
+  \draw[sectioncolor, thick] (A) -- (B);
+  \node[etiq, sectioncolor] at (3.5,5.0) {$\dE(A,B) = \sqrt{5^2+3^2}=\sqrt{34}$};
+  \draw[firebrick3, very thick]
+    (1,1) -- (2,1) -- (2,2) -- (3,2) -- (3,3) -- (4,3) -- (5,3) -- (5,4) -- (6,4);
+  \node[etiq, firebrick3] at (3.5,0.5) {$\dT(A,B) = 5 + 3 = 8$};
+\end{tikzpicture}

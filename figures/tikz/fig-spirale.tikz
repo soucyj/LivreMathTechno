@@ -1,0 +1,13 @@
+\begin{tikzpicture}[scale=1.35]
+  \foreach \i/\col in {0/sectioncolor, 1/steelblue4, 2/coveraccent,
+                       3/firebrick3} {
+    \begin{scope}[scale={(0.531)^\i}, rotate={\i*41.2}]
+      \draw[\col, thick, fill=\col, fill opacity=0.16]
+        (0,0) -- (0.9,0) -- (0.9,1.65) --
+        (1.8,1.65) -- (1.8,2.25) -- (0.9,2.25) -- (0.9,2.55) --
+        (2.25,2.55) -- (2.25,3) -- (0,3) -- cycle;
+    \end{scope}
+  }
+  \node[ptim] at (0,0) {};
+  \node[etiq, firebrick3, below right] at (0,0) {$\overline{x}=(0,0)$};
+\end{tikzpicture}

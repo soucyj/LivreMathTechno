@@ -1,0 +1,21 @@
+\begin{tikzpicture}[scale=1.15, vue3d]
+  \coordinate (O) at (0,0,0);
+  \coordinate (A) at (2,0,0);
+  \coordinate (B) at (0.4,2,0);
+  \coordinate (C) at (0.5,0.6,1.5);
+  \draw[axe] (O) -- (2.9,0,0) node[etiq, below left] {$x$};
+  \draw[axe] (O) -- (0,3.3,0) node[etiq, right] {$y$};
+  \draw[axe] (O) -- (0,0,2.4) node[etiq, above] {$z$};
+  % faces visibles
+  \fill[steelblue4!12] (O) -- (A) -- ($(A)+(B)$) -- (B) -- cycle;
+  \fill[steelblue4!22, draw=steelblue4!70]
+    (C) -- ($(C)+(A)$) -- ($(C)+(A)+(B)$) -- ($(C)+(B)$) -- cycle;
+  \fill[steelblue4!30, draw=steelblue4!70]
+    (A) -- ($(A)+(B)$) -- ($(A)+(B)+(C)$) -- ($(A)+(C)$) -- cycle;
+  \fill[steelblue4!18, draw=steelblue4!70]
+    (A) -- ($(A)+(C)$) -- (C) -- (O) -- cycle;
+  \draw[steelblue4!70, dashed] (B) -- ($(B)+(C)$) (O) -- (B) -- ($(A)+(B)$);
+  \draw[fleche, firebrick3] (O) -- (A) node[etiq, below left] {$\vec{a}_1$};
+  \draw[fleche, firebrick3] (O) -- (B) node[etiq, below right] {$\vec{a}_2$};
+  \draw[fleche, firebrick3] (O) -- (C) node[etiq, left] {$\vec{a}_3$};
+\end{tikzpicture}

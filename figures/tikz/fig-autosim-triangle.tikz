@@ -1,0 +1,20 @@
+\begin{tikzpicture}[scale=1.15]
+  \coordinate (A) at (0,0); \coordinate (B) at (4.2,0.3); \coordinate (C) at (1.3,2.6);
+  \coordinate (MAB) at ($(A)!0.5!(B)$); \coordinate (MBC) at ($(B)!0.5!(C)$);
+  \coordinate (MCA) at ($(C)!0.5!(A)$);
+  \fill[firebrick3!30] (A) -- (MAB) -- (MCA) -- cycle;
+  \fill[steelblue4!35] (MAB) -- (B) -- (MBC) -- cycle;
+  \fill[coveraccent!45] (MCA) -- (MBC) -- (C) -- cycle;
+  \fill[vertpiece!30] (MAB) -- (MBC) -- (MCA) -- cycle;
+  \draw[sectioncolor, thick, line join=round] (A) -- (B) -- (C) -- cycle;
+  \draw[sectioncolor, thin] (MAB) -- (MBC) -- (MCA) -- cycle;
+  \coordinate (G) at ($1/3*(A)+1/3*(B)+1/3*(C)$);
+  \node[pt, label={[etiq]below left:$A$}] at (A) {};
+  \node[pt, label={[etiq]below right:$B$}] at (B) {};
+  \node[pt, label={[etiq]above:$C$}] at (C) {};
+  \node[ptim, label={[etiq]above:$G$}] at (G) {};
+  \node[etiq] at ($1/3*(A)+1/3*(MAB)+1/3*(MCA)$) {$T_A$};
+  \node[etiq] at ($1/3*(MAB)+1/3*(B)+1/3*(MBC)$) {$T_B$};
+  \node[etiq] at ($1/3*(MCA)+1/3*(MBC)+1/3*(C)$) {$T_C$};
+  \node[etiq] at ($(G)+(0,-0.3)$) {$T_G$};
+\end{tikzpicture}

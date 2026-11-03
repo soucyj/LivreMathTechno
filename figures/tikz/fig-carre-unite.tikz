@@ -1,0 +1,19 @@
+\begin{tikzpicture}[scale=1.0]
+  \begin{scope}
+    \repere{-0.6}{2.6}{-0.6}{2.6}
+    \fill[fig] (0,0) rectangle (1,1);
+    \draw[fleche] (0,0) -- (1,0) node[etiq, below right] {$\vec{e}_1$};
+    \draw[fleche] (0,0) -- (0,1) node[etiq, above left] {$\vec{e}_2$};
+    \node[etiq] at (1.3,-1.15) {le carré unité};
+  \end{scope}
+  \begin{scope}[xshift=5.2cm]
+    \repere{-0.6}{2.6}{-0.6}{2.6}
+    % A = [[1.5, 0.5],[0.4, 1.3]]
+    \fill[figim] (0,0) -- (1.5,0.4) -- (2.0,1.7) -- (0.5,1.3) -- cycle;
+    \draw[fleche, firebrick3] (0,0) -- (1.5,0.4)
+      node[etiq, right] {$A\vec{e}_1 = \col{a}{c}$};
+    \draw[fleche, firebrick3] (0,0) -- (0.5,1.3)
+      node[etiq, above left] {$A\vec{e}_2 = \col{b}{d}$};
+    \node[etiq] at (1.3,-1.15) {son image par la matrice $A$};
+  \end{scope}
+\end{tikzpicture}

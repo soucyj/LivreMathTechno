@@ -1,0 +1,1484 @@
+# Rappels d'algèbre linéaire {#annexe:algebre}
+
+Cette annexe rassemble les notions d'algèbre linéaire sur lesquelles
+s'appuient les chapitres du livre. Il ne s'agit pas d'un cours complet :
+la plupart des démonstrations sont omises, et nous renvoyons à un manuel
+d'algèbre linéaire pour les détails. L'objectif est plutôt de rafraîchir
+la mémoire, de fixer les notations et, surtout, de redonner une
+*image géométrique* à des calculs qui ont souvent été appris comme
+des recettes.
+
+L'ordre de présentation suit la façon dont les notions s'appuient les
+unes sur les autres. Nous partirons des vecteurs, que nous apprendrons à
+combiner et à comparer à l'aide du produit scalaire. Nous rangerons
+ensuite des vecteurs dans des matrices, ce qui nous permettra de
+résoudre des systèmes linéaires par la méthode de Gauss--Jordan. Les
+systèmes nous mèneront à l'indépendance linéaire, aux bases et au noyau.
+Nous verrons ensuite comment le déterminant mesure l'effet d'une matrice
+sur les aires et les volumes, et quand une matrice est inversible. Nous
+terminerons par les valeurs propres et la diagonalisation, qui
+répondent à une question très géométrique : quelles directions une
+matrice laisse-t-elle inchangées ?
+
+Les exemples sont volontairement courts et presque toujours en
+dimension $2$ ou $3$, où l'on peut faire un dessin. Dès que les
+calculs deviennent longs, nous les confierons à Python, avec les
+bibliothèques `numpy` et `sympy` déjà présentées à
+l'[annexe A](#annexe:python).
+
+## Vecteurs de $\R^n$ {#sec:D-vecteurs}
+
+::: {.definition #def:D-vecteur title="Vecteur, opérations"}
+Un [vecteur]{.defi} de $\R^n$ est une colonne de $n$ nombres réels,
+appelés ses [composantes]{.defi} :
+$$
+  \vec{u} = \begin{pmatrix} u_1 \\ \vdots \\ u_n \end{pmatrix},
+  \qquad\text{que l'on écrit aussi } \vec{u} = (u_1, \dots, u_n).
+$$
+L'[addition]{.defi} de deux vecteurs et la [multiplication par un
+scalaire]{.defi} $c \in \R$ se font composante par composante :
+$$
+  \vec{u} + \vec{v} = (u_1 + v_1, \dots, u_n + v_n),
+  \qquad
+  c\,\vec{u} = (c u_1, \dots, c u_n).
+$$
+Le [vecteur nul]{.defi} est $\vec{0} = (0, \dots, 0)$.
+:::
+
+Ces deux opérations obéissent aux règles de calcul habituelles :
+l'addition est commutative et associative, $\vec{u} + \vec{0} =
+\vec{u}$, et l'on a $c(\vec{u} + \vec{v}) = c\vec{u} + c\vec{v}$ ainsi
+que $(c+d)\vec{u} = c\vec{u} + d\vec{u}$. Un ensemble muni de deux
+opérations qui respectent ces règles s'appelle un *espace
+vectoriel*. Les polynômes, les fonctions continues ou les images
+numériques (vues comme des tableaux de nombres) en sont d'autres
+exemples, mais $\R^n$ nous suffira ici.
+
+Géométriquement, comme à la remarque \ref{rem:points-vecteurs}, on
+représente $\vec{u} \in \R^2$ ou $\R^3$ par une flèche partant de
+l'origine, ou par le point situé au bout de cette flèche. L'addition
+correspond alors à la *règle du parallélogramme* (ou, ce qui
+revient au même, à la mise bout à bout des flèches), et la
+multiplication par $c$ allonge ou raccourcit la flèche d'un facteur
+$|c|$, en la retournant si $c < 0$ (figure \ref{fig:D-vecteurs}).
+
+::: {#fig:D-vecteurs}
+![](figures/tikz/fig-D-vecteurs.tikz)
+
+À gauche, dans $\R^2$ : la somme de $\vec{u} = (2,1)$ et de $\vec{v} = (1,3)$ est la diagonale du parallélogramme qu'ils engendrent ; $-\vec{u}$ a la même longueur que $\vec{u}$, mais pointe dans le sens opposé. À droite, dans $\R^3$ : les trois composantes d'un vecteur se lisent sur les arêtes d'une boîte.
+:::
+
+::: {.secondaire title="Les vecteurs au secondaire"}
+En cinquième secondaire (séquence SN), les élèves manipulent déjà les
+vecteurs du plan : somme par la règle du parallélogramme ou de Chasles,
+multiplication par un scalaire, combinaisons linéaires et produit
+scalaire. Ils les notent souvent $\overrightarrow{AB}$ et les
+représentent d'abord par des flèches, avant de passer aux composantes.
+Tout ce qui suit prolonge donc des notions familières ; la nouveauté
+tient surtout au passage à $\R^n$, où l'on ne peut plus dessiner, mais où
+les calculs restent les mêmes.
+:::
+
+## Combinaisons linéaires et espace engendré {#sec:D-combinaisons}
+
+::: {.definition #def:D-combinaison title="Combinaison linéaire, espace engendré"}
+Une [combinaison linéaire]{.defi} des vecteurs $\vec{v}_1, \dots,
+\vec{v}_k$ est un vecteur de la forme
+$$
+  c_1 \vec{v}_1 + c_2 \vec{v}_2 + \dots + c_k \vec{v}_k,
+  \qquad c_1, \dots, c_k \in \R.
+$$
+L'ensemble de toutes ces combinaisons s'appelle l'[espace engendré]{.defi}
+par $\vec{v}_1, \dots, \vec{v}_k$ ; on le note
+$\Span\{\vec{v}_1, \dots, \vec{v}_k\}$.
+:::
+
+::: {.remark #rem:D-vect-span title="Span ou Vect ?"}
+La notation $\Span$ n'est pas un acronyme : c'est le mot anglais
+*span*, qui signifie « étendue » ou « envergure ». L'espace
+engendré, c'est tout ce que les vecteurs permettent d'atteindre. Elle
+est d'usage courant au Québec, même dans les textes rédigés en
+français. En France, on écrit plutôt
+$\operatorname{Vect}\{\vec{v}_1, \dots, \vec{v}_k\}$, abréviation de
+« sous-espace *vect*oriel engendré ». Certains manuels utilisent
+aussi $\langle \vec{v}_1, \dots, \vec{v}_k \rangle$. Toutes ces
+notations désignent le même ensemble.
+:::
+
+L'espace engendré par un seul vecteur non nul est la droite qui passe
+par l'origine dans sa direction. L'espace engendré par deux vecteurs non
+parallèles de $\R^3$ est un plan passant par l'origine : on s'y déplace
+en avançant « un peu selon $\vec{u}$ et un peu selon $\vec{v}$ »
+(figure \ref{fig:D-vect}). Dans tous les cas, un espace engendré contient
+$\vec{0}$ (on prend tous les $c_i$ nuls) et reste stable par addition
+et par multiplication par un scalaire ; on dit que c'est un
+[sous-espace vectoriel]{.defi}.
+
+::: {.example #ex:D-combinaison title="Est-ce une combinaison linéaire ?"}
+Dans $\R^2$, le vecteur $\vec{w} = (4,7)$ est-il une combinaison
+linéaire de $\vec{u} = (2,1)$ et de $\vec{v} = (1,3)$ ? On cherche
+$a$ et $b$ tels que $a\vec{u} + b\vec{v} = \vec{w}$, c'est-à-dire
+$$
+  \left\{\begin{aligned} 2a + b &= 4\\ a + 3b &= 7. \end{aligned}\right.
+$$
+La première équation donne $b = 4 - 2a$ ; en substituant, $a + 12 - 6a
+= 7$, d'où $a = 1$ et $b = 2$. Ainsi, $\vec{w} = \vec{u} + 2\vec{v}$.
+
+Dans $\R^3$, prenons maintenant $\vec{u} = (1,0,1)$ et
+$\vec{v} = (0,1,1)$. Une combinaison $a\vec{u} + b\vec{v} = (a, b, a+b)$
+a toujours sa troisième composante égale à la somme des deux premières.
+Le vecteur $(1,1,2)$ est donc dans $\Span\{\vec{u}, \vec{v}\}$, mais pas
+$(1,1,3)$ : ce plan est celui d'équation $z = x + y$.
+:::
+
+::: {#fig:D-vect}
+![](figures/tikz/fig-D-vect.tikz)
+
+Les combinaisons linéaires de $\vec{u} = (1,0,1)$ et de $\vec{v} = (0,1,1)$ remplissent le plan $z = x + y$. Le vecteur $(1,1,3)$ sort de ce plan : ce n'est pas une combinaison linéaire de $\vec{u}$ et de $\vec{v}$.
+:::
+
+Il faut bien voir que la question de l'exemple \ref{ex:D-combinaison}
+s'est ramenée à un *système d'équations linéaires* dont les
+inconnues sont les coefficients. C'est le fil conducteur de toute
+l'annexe : presque toutes les questions sur les vecteurs finissent par
+se traduire en systèmes, que nous apprendrons à résoudre efficacement à
+la section \ref{sec:D-gauss}.
+
+## Produit scalaire, norme et angle {#sec:D-produit-scalaire}
+
+::: {.definition #def:D-produit-scalaire title="Produit scalaire, norme"}
+Le [produit scalaire]{.defi} de $\vec{u}, \vec{v} \in \R^n$ est le nombre
+$$
+  \vec{u} \cdot \vec{v} = u_1 v_1 + u_2 v_2 + \dots + u_n v_n .
+$$
+La [norme]{.defi} (ou longueur) de $\vec{u}$ est
+$\norme{\vec{u}} = \sqrt{\vec{u} \cdot \vec{u}}$. Deux vecteurs sont
+[orthogonaux]{.defi} si $\vec{u} \cdot \vec{v} = 0$, et un vecteur de
+norme $1$ est dit [unitaire]{.defi}.
+:::
+
+Le produit scalaire est symétrique ($\vec{u} \cdot \vec{v} = \vec{v}
+\cdot \vec{u}$), linéaire en chacun de ses arguments, et
+$\vec{u} \cdot \vec{u} > 0$ dès que $\vec{u} \neq \vec{0}$. Dans $\R^2$
+et $\R^3$, la norme n'est rien d'autre que la longueur de la flèche,
+calculée par Pythagore ; c'est la distance euclidienne $\dE$ du
+chapitre \ref{chap:metriques}. Pour rendre unitaire un vecteur non nul, il suffit
+de le diviser par sa norme : $\vec{u}/\norme{\vec{u}}$.
+
+L'intérêt géométrique du produit scalaire vient de la formule
+\begin{equation}\label{eq:D-angle}
+  \vec{u} \cdot \vec{v} = \norme{\vec{u}}\,\norme{\vec{v}}\cos\theta,
+\end{equation}
+où $\theta \in [0, \pi]$ est l'angle entre les deux vecteurs. Elle
+découle de la loi des cosinus appliquée au triangle de côtés $\vec{u}$,
+$\vec{v}$ et $\vec{u} - \vec{v}$. Puisque $|\cos\theta| \leq 1$, on en
+tire l'[inégalité de Cauchy--Schwarz]{.defi},
+$|\vec{u} \cdot \vec{v}| \leq \norme{\vec{u}}\,\norme{\vec{v}}$, qui
+reste vraie dans $\R^n$ et sert justement à *définir* l'angle quand
+on ne peut plus le dessiner. Le signe du produit scalaire indique
+d'un coup d'œil si l'angle est aigu ($>0$), droit ($=0$) ou obtus
+($<0$).
+
+::: {.definition #def:D-projection title="Projection orthogonale"}
+La [projection orthogonale]{.defi} de $\vec{v}$ sur la droite engendrée par
+un vecteur $\vec{u} \neq \vec{0}$ est
+$$
+  \operatorname{proj}_{\vec{u}} \vec{v}
+  = \frac{\vec{v} \cdot \vec{u}}{\vec{u} \cdot \vec{u}}\,\vec{u}.
+$$
+Le vecteur $\vec{v} - \operatorname{proj}_{\vec{u}} \vec{v}$ est
+orthogonal à $\vec{u}$.
+:::
+
+::: {.example #ex:D-projection title="Un angle et une projection"}
+Reprenons $\vec{u} = (2,1)$ et $\vec{v} = (1,3)$. On a
+$\vec{u} \cdot \vec{v} = 2 + 3 = 5$, $\norme{\vec{u}} = \sqrt5$ et
+$\norme{\vec{v}} = \sqrt{10}$, d'où
+$$
+  \cos\theta = \frac{5}{\sqrt5\,\sqrt{10}} = \frac{1}{\sqrt2},
+  \qquad \theta = \frac{\pi}{4}.
+$$
+La projection de $\vec{v}$ sur la droite de $\vec{u}$ vaut
+$\tfrac55\,\vec{u} = (2,1)$ : ici, le hasard fait bien les choses, et le
+pied de la perpendiculaire tombe exactement au bout de $\vec{u}$. On
+vérifie que $\vec{v} - \vec{u} = (-1,2)$ est bien orthogonal à
+$\vec{u}$ : $(-1)(2) + (2)(1) = 0$ (figure \ref{fig:D-projection}).
+:::
+
+::: {#fig:D-projection}
+![](figures/tikz/fig-D-projection.tikz)
+
+La projection orthogonale de $\vec{v}$ sur la droite engendrée par $\vec{u}$. Le vecteur « résidu » $\vec{v} - \operatorname{proj}_{\vec{u}}\vec{v}$ est perpendiculaire à cette droite : la projection est le point de la droite le plus proche de $\vec{v}$.
+:::
+
+La projection orthogonale apparaît partout : pour calculer la distance
+d'un point à une droite, pour décomposer une force en composantes, ou
+encore, en statistique, pour ajuster une droite de régression par la
+méthode des moindres carrés, qui revient à projeter un vecteur de données
+sur un sous-espace.
+
+## Matrices et opérations matricielles {#sec:D-matrices}
+
+Une [matrice]{.defi} $m \times n$ est un tableau de nombres à $m$ lignes et
+$n$ colonnes. On note $a_{ij}$ le coefficient situé à la ligne $i$ et à
+la colonne $j$, et $A = (a_{ij})$. Une matrice $n \times n$ est dite
+[carrée]{.defi} ; la [matrice identité]{.defi} $I_n$ est la matrice carrée
+qui a des $1$ sur la diagonale et des $0$ ailleurs. On peut voir une
+matrice comme une rangée de $n$ vecteurs colonnes de $\R^m$, et c'est
+souvent le point de vue le plus éclairant :
+$$
+  A = \big(\, \vec{a}_1 \;\big|\; \vec{a}_2 \;\big|\; \cdots \;\big|\; \vec{a}_n \,\big).
+$$
+
+L'addition de deux matrices de même taille et la multiplication par un
+scalaire se font coefficient par coefficient, exactement comme pour les
+vecteurs. La [transposée]{.defi} $A^{\mathsf{T}}$ est la matrice
+$n \times m$ obtenue en échangeant les lignes et les colonnes :
+$(A^{\mathsf{T}})_{ij} = a_{ji}$. Une matrice carrée est
+[symétrique]{.defi} si $A^{\mathsf{T}} = A$.
+
+### Le produit d'une matrice par un vecteur
+
+Si $A$ est $m \times n$ et $\vec{x} \in \R^n$, on définit
+\begin{equation}\label{eq:D-Ax}
+  A\vec{x} = x_1 \vec{a}_1 + x_2 \vec{a}_2 + \dots + x_n \vec{a}_n \in \R^m .
+\end{equation}
+Autrement dit, *$A\vec{x}$ est la combinaison linéaire des colonnes
+de $A$ dont les coefficients sont les composantes de $\vec{x}$*. En
+pratique, on calcule la $i$^e^ composante de $A\vec{x}$
+en faisant le produit scalaire de la $i$^e^ ligne de $A$
+avec $\vec{x}$ ; les deux lectures donnent évidemment le même résultat.
+Par exemple,
+$$
+  \mat{2}{1}{1}{3}\col{1}{2}
+  = 1\col{2}{1} + 2\col{1}{3} = \col{4}{7},
+$$
+ce qui n'est rien d'autre que le calcul de
+l'exemple \ref{ex:D-combinaison}, écrit autrement.
+
+L'application $T(\vec{x}) = A\vec{x}$ est [linéaire]{.defi} :
+$T(\vec{x} + \vec{y}) = T(\vec{x}) + T(\vec{y})$ et $T(c\vec{x}) =
+cT(\vec{x})$. Réciproquement, toute application linéaire de $\R^n$ dans
+$\R^m$ s'écrit ainsi, et ses colonnes sont les images des vecteurs de la
+base standard, $\vec{a}_j = T(\vec{e}_j)$. C'est exactement ce que
+montrait la figure \ref{fig:carre-unite} du premier chapitre : pour
+comprendre ce que fait une matrice $2 \times 2$, il suffit de regarder
+où elle envoie le carré unité.
+
+### Le produit de deux matrices
+
+::: {.definition #def:D-produit title="Produit matriciel"}
+Si $A$ est $m \times n$ et $B$ est $n \times p$, le produit $AB$ est la
+matrice $m \times p$ dont le coefficient $(i,j)$ est le produit scalaire
+de la ligne $i$ de $A$ par la colonne $j$ de $B$ :
+$$
+  (AB)_{ij} = \sum_{k=1}^{n} a_{ik}\, b_{kj}.
+$$
+De façon équivalente, la colonne $j$ de $AB$ est $A\vec{b}_j$.
+:::
+
+Cette définition, qui paraît arbitraire la première fois qu'on la
+rencontre, est taillée sur mesure pour la *composition* :
+$(AB)\vec{x} = A(B\vec{x})$. Appliquer $AB$, c'est d'abord appliquer
+$B$, puis $A$. On retrouve ainsi une idée centrale du
+chapitre \ref{chap:transformations} : composer des transformations
+linéaires, c'est multiplier leurs matrices (et c'est pour garder cette
+règle avec les translations qu'on passe aux coordonnées homogènes de
+la section \ref{sec:homogenes}).
+
+::: {.example #ex:D-noncommutatif title="L'ordre compte"}
+Soit $C = \mat{1}{2}{0}{1}$ (un cisaillement) et $R = \mat{0}{-1}{1}{0}$
+(la rotation d'un quart de tour). Alors
+\begin{align*}
+  CR &= \mat{1}{2}{0}{1}\mat{0}{-1}{1}{0} = \mat{2}{-1}{1}{0},\\[2pt]
+  RC &= \mat{0}{-1}{1}{0}\mat{1}{2}{0}{1} = \mat{0}{-1}{1}{2}.
+\end{align*}
+Tourner puis cisailler ne donne pas le même résultat que cisailler puis
+tourner : le produit matriciel n'est pas commutatif.
+:::
+
+Retenons les règles de calcul suivantes, valables dès que les tailles
+sont compatibles : le produit est associatif, $(AB)C = A(BC)$ ; il est
+distributif, $A(B + C) = AB + AC$ ; $I_m A = A I_n = A$ ; et
+$(AB)^{\mathsf{T}} = B^{\mathsf{T}} A^{\mathsf{T}}$, avec un
+changement d'ordre à ne pas oublier. En revanche, il faut se méfier de
+deux réflexes hérités des nombres : en général $AB \neq BA$, et
+$AB = 0$ n'entraîne pas que $A = 0$ ou $B = 0$ (essayez avec
+$A = B = \mat{0}{1}{0}{0}$).
+
+## Systèmes linéaires et méthode de Gauss--Jordan {#sec:D-gauss}
+
+Un [système linéaire]{.defi} de $m$ équations à $n$ inconnues s'écrit
+$$
+  \left\{\begin{aligned}
+  a_{11}x_1 + a_{12}x_2 + \dots + a_{1n}x_n &= b_1\\
+  &\;\;\vdots\\
+  a_{m1}x_1 + a_{m2}x_2 + \dots + a_{mn}x_n &= b_m ,
+  \end{aligned}\right.
+  \qquad\text{ou, en abrégé,}\qquad A\vec{x} = \vec{b}.
+$$
+D'après \eqref{eq:D-Ax}, résoudre ce système revient à chercher comment
+écrire $\vec{b}$ comme combinaison linéaire des colonnes de $A$. On peut
+aussi le lire ligne par ligne : chaque équation décrit une droite (si
+$n = 2$) ou un plan (si $n = 3$), et les solutions sont les points
+communs à toutes ces figures.
+
+### Ce que la géométrie nous apprend
+
+Deux droites du plan se coupent en un point, sont parallèles et
+distinctes, ou sont confondues. Un système de deux équations à deux
+inconnues a donc une solution unique, aucune solution, ou une infinité
+de solutions (figure \ref{fig:D-trois-cas}). En dimension $3$, les
+configurations de plans sont plus variées (figure \ref{fig:D-plans}),
+mais la conclusion est la même, et elle reste vraie en toute dimension :
+*un système linéaire a zéro, une ou une infinité de solutions*,
+jamais exactement deux ou trois.
+
+::: {#fig:D-trois-cas}
+![](figures/tikz/fig-D-trois-cas.tikz)
+
+Les trois comportements possibles d'un système de deux équations à deux inconnues : droites sécantes, parallèles distinctes ou confondues.
+:::
+
+::: {#fig:D-plans}
+![](figures/tikz/fig-D-plans.tikz)
+
+Trois équations à trois inconnues : trois plans de $\R^3$. Ils peuvent se couper en un seul point, partager une droite (comme les pages d'un livre ouvert), ou n'avoir aucun point commun à tous les trois (comme les faces d'un prisme), même si deux d'entre eux se coupent toujours. D'autres configurations existent, avec des plans parallèles ou confondus.
+:::
+
+::: {.outil #outil:plans-3d title="Voir les plans en trois dimensions"}
+Les calculatrices 3D de GeoGebra et de Desmos tracent un plan dès qu'on
+entre son équation. Pour le système de
+l'exercice \ref{exo:D-gauss-parametre}, on entre les trois équations en
+remplaçant $k$ et $h$ par des curseurs. En déplaçant les curseurs, on
+voit le troisième plan pivoter : les trois plans se coupent en un point
+tant que $k \neq 5$, puis forment un prisme ou un livre ouvert lorsque
+$k = 5$, selon la valeur de $h$. Pour vérifier une réduction faite à
+la main, WolframAlpha calcule la forme échelonnée réduite d'une matrice
+augmentée : `row reduce {{1,2,1,1},{2,5,3,2},{-1,1,4,1}}`
+donne le résultat de l'exercice \ref{exo:D-gauss-unique}. Il ne fournit
+toutefois pas les opérations effectuées : il permet de contrôler une
+réponse, pas de remplacer la démarche.
+:::
+
+### La méthode de Gauss--Jordan
+
+Pour résoudre un système, on travaille sur sa [matrice augmentée]{.defi}
+$(A \mid \vec{b})$, à laquelle on applique des [opérations
+élémentaires sur les lignes]{.defi} :
+
+1. échanger deux lignes, $L_i \leftrightarrow L_j$ ;
+2. multiplier une ligne par un scalaire non nul, $L_i \leftarrow cL_i$ ;
+3. ajouter à une ligne un multiple d'une autre, $L_i \leftarrow L_i + cL_j$.
+
+Ces opérations ne changent pas l'ensemble des solutions, puisqu'on peut
+toujours les défaire. Le but est d'arriver à une matrice
+[échelonnée réduite]{.defi} : dans chaque ligne non nulle, le premier
+coefficient non nul (le [pivot]{.defi}) vaut $1$, il est le seul
+coefficient non nul de sa colonne, et chaque pivot est situé à droite
+de celui de la ligne précédente. Les lignes nulles, s'il y en a, sont
+placées en bas.
+
+::: {.algorithme #alg:D-gauss-jordan title="Méthode de Gauss--Jordan"}
+Partant de la matrice augmentée, on traite les colonnes de gauche à
+droite.
+
+1. Dans la colonne courante, choisir une ligne (parmi celles qui ne
+   contiennent pas encore de pivot) dont le coefficient est non nul,
+   et l'amener en position par un échange. Si aucun coefficient ne
+   convient, passer à la colonne suivante.
+2. Diviser cette ligne par son premier coefficient, pour que le
+   pivot vaille $1$.
+3. Soustraire des multiples de cette ligne à *toutes* les
+   autres lignes, pour annuler le reste de la colonne.
+4. Recommencer avec la colonne suivante.
+:::
+
+La méthode de *Gauss* proprement dite s'arrête à une forme
+échelonnée (des zéros sous les pivots seulement) et termine par une
+remontée ; Gauss--Jordan fait aussi le ménage au-dessus des pivots, de
+sorte que la solution se lit directement.
+
+::: {.example #ex:D-gauss-unique title="Une solution unique"}
+Résolvons
+$$
+  \left\{\begin{aligned}
+  x + y + z &= 6\\ 2x + y - z &= 1\\ x - y + 2z &= 5 .
+  \end{aligned}\right.
+$$
+On écrit la matrice augmentée et on enchaîne les opérations, indiquées
+à droite :
+\begin{align*}
+  &\left(\begin{array}{rrr|r} 1 & 1 & 1 & 6\\ 2 & 1 & -1 & 1\\ 1 & -1 & 2 & 5 \end{array}\right)
+  && \begin{array}{l} L_2 \leftarrow L_2 - 2L_1\\ L_3 \leftarrow L_3 - L_1 \end{array}\\[4pt]
+  \sim\ &\left(\begin{array}{rrr|r} 1 & 1 & 1 & 6\\ 0 & -1 & -3 & -11\\ 0 & -2 & 1 & -1 \end{array}\right)
+  && \begin{array}{l} L_2 \leftarrow -L_2,\ \text{puis}\\ L_1 \leftarrow L_1 - L_2,\ L_3 \leftarrow L_3 + 2L_2 \end{array}\\[4pt]
+  \sim\ &\left(\begin{array}{rrr|r} 1 & 0 & -2 & -5\\ 0 & 1 & 3 & 11\\ 0 & 0 & 7 & 21 \end{array}\right)
+  && \begin{array}{l} L_3 \leftarrow \tfrac17 L_3,\ \text{puis}\\ L_1 \leftarrow L_1 + 2L_3,\ L_2 \leftarrow L_2 - 3L_3 \end{array}\\[4pt]
+  \sim\ &\left(\begin{array}{rrr|r} 1 & 0 & 0 & 1\\ 0 & 1 & 0 & 2\\ 0 & 0 & 1 & 3 \end{array}\right).
+\end{align*}
+La solution est $(x,y,z) = (1,2,3)$ ; on la vérifie en la substituant
+dans les trois équations. Les trois plans se coupent en un seul point.
+:::
+
+::: {.example #ex:D-gauss-infini title="Une infinité de solutions, ou aucune"}
+Considérons maintenant
+$$
+  \left\{\begin{aligned}
+  x + y + 2z &= 3\\ x + 2y + 3z &= 5\\ 2x + 3y + 5z &= 8 .
+  \end{aligned}\right.
+$$
+Les opérations $L_2 \leftarrow L_2 - L_1$, $L_3 \leftarrow L_3 - 2L_1$,
+puis $L_3 \leftarrow L_3 - L_2$ et $L_1 \leftarrow L_1 - L_2$ mènent à
+$$
+  \left(\begin{array}{rrr|r} 1 & 0 & 1 & 1\\ 0 & 1 & 1 & 2\\ 0 & 0 & 0 & 0 \end{array}\right).
+$$
+La dernière ligne, $0 = 0$, ne dit plus rien : la troisième équation
+était la somme des deux premières. La colonne de $z$ ne contient pas de
+pivot ; $z$ est une [variable libre]{.defi}, que l'on remplace par un
+paramètre $t$. Les deux autres lignes donnent $x = 1 - t$ et
+$y = 2 - t$, soit
+$$
+  (x,y,z) = (1,2,0) + t\,(-1,-1,1), \qquad t \in \R.
+$$
+C'est l'équation paramétrique d'une droite de $\R^3$ : les trois plans
+forment un « livre ouvert ». Si l'on remplace le second membre $8$ par
+$9$, les mêmes opérations mènent à la ligne
+$(0\ 0\ 0 \mid 1)$, c'est-à-dire à l'équation impossible $0 = 1$ : le
+système n'a alors aucune solution.
+:::
+
+Ces deux exemples illustrent la règle générale. Une fois la matrice
+augmentée échelonnée réduite, le système est *incompatible* si une
+ligne de la forme $(0 \cdots 0 \mid c)$, avec $c \neq 0$, apparaît ;
+sinon, il a une solution unique s'il n'y a pas de variable libre, et une
+infinité de solutions, décrites par autant de paramètres qu'il y a de
+variables libres, dans le cas contraire. Le nombre de pivots de la forme
+échelonnée de $A$ s'appelle le [rang]{.defi} de $A$, noté $\rang A$.
+
+::: {.secondaire title="La méthode de réduction, en plus grand"}
+Au secondaire, les systèmes $2 \times 2$ se résolvent par comparaison,
+par substitution ou par *réduction*. Cette dernière, qui consiste à
+additionner des multiples des équations pour faire disparaître une
+inconnue, est exactement une opération élémentaire du type
+$L_i \leftarrow L_i + cL_j$. La méthode de Gauss--Jordan n'est donc
+rien d'autre que la réduction, appliquée de façon systématique et
+écrite sans les inconnues. Les trois cas de la
+figure \ref{fig:D-trois-cas} (droites sécantes, parallèles ou
+confondues) sont eux aussi étudiés en troisième et quatrième secondaire ;
+on peut les faire apparaître graphiquement dans GeoGebra avant de les
+retrouver par le calcul.
+:::
+
+::: {.historical title="Une méthode bien plus ancienne que Gauss"}
+La méthode d'élimination figure déjà dans les *Neuf chapitres sur
+l'art du calcul*, un ouvrage chinois compilé il y a environ deux mille
+ans. Son huitième chapitre, *fangcheng* (« disposition
+rectangulaire »), résout des systèmes de plusieurs équations en
+disposant les coefficients en colonnes de bâtonnets sur une planche à
+calculer, puis en les combinant, ce qui revient à travailler sur la
+matrice augmentée. En Europe, Gauss utilise l'élimination au début du
+\siecle{19} pour ses calculs d'orbites
+(notamment celle de l'astéroïde Pallas) par la méthode des moindres
+carrés. Le nom de Jordan est celui de Wilhelm Jordan, un géodésien
+allemand qui popularise la variante « réduite » en 1888 dans un manuel
+d'arpentage, et non celui du mathématicien Camille Jordan. Le nom
+« élimination de Gauss » lui-même ne s'impose qu'au
+\siecle{20} [@Grcar2011].
+:::
+
+Pour des systèmes de taille raisonnable, on délègue ce travail à
+l'ordinateur. La bibliothèque `sympy` fournit la forme
+échelonnée réduite exacte, ce qui permet de vérifier un calcul fait à
+la main.
+
+```{.python caption="Gauss--Jordan, noyau et image avec `sympy` (exemple \ref{ex:D-gauss-infini})."}
+import sympy as sp
+
+M = sp.Matrix([[1, 1, 2],
+               [1, 2, 3],
+               [2, 3, 5]])
+b = sp.Matrix([3, 5, 8])
+
+R, pivots = M.row_join(b).rref()   # Gauss-Jordan sur [M | b]
+print(R, pivots)
+print("noyau :", M.nullspace())
+print("image :", M.columnspace())
+```
+
+```{.python caption="Sortie (mise en forme légèrement condensée)."}
+Matrix([[1, 0, 1, 1], [0, 1, 1, 2], [0, 0, 0, 0]]) (0, 1)
+noyau : [Matrix([[-1], [-1], [1]])]
+image : [Matrix([[1], [1], [2]]), Matrix([[1], [2], [3]])]
+```
+
+Le tuple `(0, 1)` donne les colonnes des pivots (Python numérote
+à partir de $0$). Nous reviendrons sur le noyau et l'image à la
+section \ref{sec:D-noyau}.
+
+## Indépendance linéaire, bases et dimension {#sec:D-bases}
+
+::: {.definition #def:D-independance title="Indépendance linéaire"}
+Les vecteurs $\vec{v}_1, \dots, \vec{v}_k$ sont [linéairement
+indépendants]{.defi} si la seule combinaison linéaire nulle est la combinaison
+triviale :
+$$
+  c_1\vec{v}_1 + \dots + c_k\vec{v}_k = \vec{0}
+  \quad\Longrightarrow\quad c_1 = \dots = c_k = 0 .
+$$
+Sinon, ils sont [linéairement dépendants]{.defi}.
+:::
+
+Dire que des vecteurs sont dépendants revient à dire que l'un d'eux est
+une combinaison linéaire des autres : il est « de trop », puisqu'il
+n'ajoute aucune direction nouvelle à l'espace engendré. Deux vecteurs
+sont dépendants exactement lorsqu'ils sont parallèles ; trois vecteurs
+de $\R^3$ le sont exactement lorsqu'ils sont dans un même plan passant
+par l'origine.
+
+Pour tester l'indépendance, on place les vecteurs en colonnes dans une
+matrice $A$ et on résout le système homogène $A\vec{c} = \vec{0}$ :
+les vecteurs sont indépendants si et seulement si ce système n'admet que
+la solution nulle, c'est-à-dire si chaque colonne contient un pivot. Par
+exemple, les colonnes $(1,1,2)$, $(1,2,3)$ et $(2,3,5)$ de la matrice de
+l'exemple \ref{ex:D-gauss-infini} sont dépendantes, car la troisième
+colonne n'a pas de pivot. La forme échelonnée donne même la relation :
+la troisième colonne est la somme des deux premières. Retenons aussi
+qu'on ne peut pas trouver plus de $n$ vecteurs indépendants dans $\R^n$,
+puisqu'une matrice à $n$ lignes a au plus $n$ pivots.
+
+::: {.definition #def:D-base title="Base, dimension, coordonnées"}
+Une [base]{.defi} d'un sous-espace $V$ est une famille de vecteurs
+linéairement indépendants qui engendrent $V$. Toutes les bases de $V$
+ont le même nombre d'éléments, appelé la [dimension]{.defi} de $V$. Si
+$(\vec{b}_1, \dots, \vec{b}_k)$ est une base de $V$, tout $\vec{x} \in V$
+s'écrit *de façon unique*
+$\vec{x} = c_1\vec{b}_1 + \dots + c_k\vec{b}_k$ ; les nombres
+$c_1, \dots, c_k$ sont les [coordonnées]{.defi} de $\vec{x}$ dans cette base.
+:::
+
+La [base standard]{.defi} $(\vec{e}_1, \dots, \vec{e}_n)$ de $\R^n$ est
+formée des colonnes de $I_n$ ; dans cette base, les coordonnées d'un
+vecteur sont simplement ses composantes. Mais il existe une infinité
+d'autres bases, et changer de base revient à changer de quadrillage.
+Dans l'exemple \ref{ex:D-combinaison}, nous avons trouvé que
+$(4,7) = 1\cdot\vec{u} + 2\cdot\vec{v}$ : dans la base $(\vec{u},
+\vec{v})$, le vecteur $(4,7)$ a pour coordonnées $(1,2)$
+(figure \ref{fig:D-base}).
+
+::: {#fig:D-base}
+![](figures/tikz/fig-D-base.tikz)
+
+Le quadrillage associé à la base $(\vec{u}, \vec{v})$, avec $\vec{u} = (2,1)$ et $\vec{v} = (1,3)$. Pour atteindre le point $(4,7)$, on avance d'un pas selon $\vec{u}$ et de deux pas selon $\vec{v}$ : ses coordonnées dans cette base sont $(1,2)$.
+:::
+
+Dans $\R^n$, une famille de $n$ vecteurs est une base dès qu'elle est
+indépendante, ou dès qu'elle engendre $\R^n$ : une seule des deux
+conditions suffit. Les bases les plus commodes sont les [bases
+orthonormées]{.defi}, formées de vecteurs unitaires deux à deux orthogonaux.
+Les coordonnées s'y calculent sans résoudre de système : la coordonnée
+de $\vec{x}$ selon $\vec{b}_i$ est simplement $\vec{x} \cdot \vec{b}_i$.
+
+## Noyau et image {#sec:D-noyau}
+
+::: {.definition #def:D-noyau title="Noyau, image"}
+Soit $A$ une matrice $m \times n$. Le [noyau]{.defi} de $A$ est
+l'ensemble des vecteurs que $A$ envoie sur $\vec{0}$ :
+$$
+  \ker A = \{\vec{x} \in \R^n : A\vec{x} = \vec{0}\}.
+$$
+L'[image]{.defi} de $A$ est l'ensemble des vecteurs atteints,
+$\Ima A = \{A\vec{x} : \vec{x} \in \R^n\}$. D'après \eqref{eq:D-Ax},
+c'est l'espace engendré par les colonnes de $A$.
+:::
+
+Le noyau est un sous-espace de $\R^n$, l'image un sous-espace de
+$\R^m$. On trouve une base du noyau en résolvant $A\vec{x} = \vec{0}$
+par Gauss--Jordan : chaque variable libre fournit un vecteur de base.
+Les colonnes de $A$ qui contiennent un pivot forment, quant à elles, une
+base de l'image. Il y a donc autant de vecteurs dans une base de l'image
+que de pivots, et autant dans une base du noyau que de variables libres,
+d'où le [théorème du rang]{.defi} :
+\begin{equation}\label{eq:D-rang}
+  \dim \ker A + \rang A = n .
+\end{equation}
+
+Ce théorème a une lecture géométrique très parlante : ce que la matrice
+« écrase » (le noyau) et ce qu'elle « conserve » (l'image) se partagent
+les $n$ dimensions de départ. Prenons $A = \mat{1}{2}{2}{4}$. Ses deux
+colonnes sont parallèles, donc son image est la droite engendrée par
+$(1,2)$, de dimension $1$. Son noyau est la droite engendrée par
+$(-2,1)$, puisque $A\col{-2}{1} = \vec{0}$. La matrice écrase le plan sur
+une droite : chaque droite parallèle au noyau est envoyée sur un seul
+point (figure \ref{fig:D-noyau-2d}).
+
+::: {#fig:D-noyau-2d}
+![](figures/tikz/fig-D-noyau-2d.tikz)
+
+La matrice $A = \mat{1}{2}{2}{4}$ envoie tout le plan sur la droite $\Ima A$. Les points d'une même droite parallèle au noyau (en bleu) ont tous la même image, ici le point $(1,2)$.
+:::
+
+Le noyau mesure donc exactement le défaut d'injectivité : $A\vec{x} =
+A\vec{y}$ si et seulement si $\vec{x} - \vec{y} \in \ker A$. C'est
+l'argument utilisé à la proposition \ref{prop:inversibilite} du premier
+chapitre. Il en découle une description complète des solutions d'un
+système : *si $\vec{x}_p$ est une solution particulière de
+$A\vec{x} = \vec{b}$, toutes les solutions s'écrivent
+$\vec{x}_p + \vec{h}$, avec $\vec{h} \in \ker A$*. L'ensemble des
+solutions est un translaté du noyau. Dans
+l'exemple \ref{ex:D-gauss-infini}, le noyau est la droite engendrée par
+$(-1,-1,1)$, et les solutions forment la droite parallèle passant par
+$(1,2,0)$ (figure \ref{fig:D-noyau-3d}).
+
+::: {#fig:D-noyau-3d}
+![](figures/tikz/fig-D-noyau-3d.tikz)
+
+L'ensemble des solutions de l'exemple \ref{ex:D-gauss-infini} (en bleu) est la droite parallèle au noyau (en rouge) qui passe par une solution particulière $\vec{x}_p$.
+:::
+
+## Le déterminant {#sec:D-determinant}
+
+Le déterminant d'une matrice carrée est un nombre qui résume, en un
+seul coup, l'effet de la matrice sur les aires (en dimension $2$) ou
+sur les volumes (en dimension $3$). Pour une matrice $2 \times 2$,
+$$
+  \dete\mat{a}{b}{c}{d} = ad - bc ,
+$$
+et nous avons vu à la proposition \ref{prop:aire-det} que
+$|\dete A|$ est l'aire du parallélogramme construit sur les colonnes de
+$A$, tandis que son signe indique si l'orientation est conservée.
+
+Pour une matrice $3 \times 3$, on développe selon la première ligne :
+\begin{align*}
+  \dete\begin{pmatrix} a_{11} & a_{12} & a_{13}\\ a_{21} & a_{22} & a_{23}\\ a_{31} & a_{32} & a_{33} \end{pmatrix}
+  &= a_{11}\dete\mat{a_{22}}{a_{23}}{a_{32}}{a_{33}}
+  - a_{12}\dete\mat{a_{21}}{a_{23}}{a_{31}}{a_{33}}\\
+  &\qquad + a_{13}\dete\mat{a_{21}}{a_{22}}{a_{31}}{a_{32}} .
+\end{align*}
+Chaque coefficient de la ligne est multiplié par le déterminant de la
+matrice obtenue en supprimant sa ligne et sa colonne, avec des signes
+alternés. Cette [expansion par cofacteurs]{.defi} se généralise à toute
+taille et peut se faire selon n'importe quelle ligne ou colonne (les
+signes suivent alors un damier $+,-,+,\dots$ qui commence par $+$ en
+haut à gauche). Pour la matrice de l'exemple \ref{ex:D-gauss-unique},
+$$
+  \dete\begin{pmatrix} 1 & 1 & 1\\ 2 & 1 & -1\\ 1 & -1 & 2 \end{pmatrix}
+  = 1\,(2 - 1) - 1\,(4 + 1) + 1\,(-2 - 1) = -7 .
+$$
+
+L'interprétation géométrique se prolonge : $|\dete A|$ est le volume du
+[parallélépipède]{.defi} construit sur les trois colonnes de $A$
+(figure \ref{fig:D-parallelepipede}), et le signe indique si ces
+colonnes, prises dans l'ordre, forment une base directe, c'est-à-dire
+qui respecte la « règle de la main droite ». Une application linéaire de
+matrice $A$ multiplie donc tous les volumes par $|\dete A|$.
+
+::: {#fig:D-parallelepipede}
+![](figures/tikz/fig-D-parallelepipede.tikz)
+
+Le parallélépipède construit sur les colonnes $\vec{a}_1, \vec{a}_2, \vec{a}_3$ d'une matrice $3 \times 3$ a pour volume $|\dete A|$. Si les trois vecteurs sont dans un même plan, le solide est aplati et son volume est nul.
+:::
+
+Cette image rend presque évidentes les propriétés suivantes, que nous
+admettrons.
+
+::: {.proposition #prop:D-det title="Propriétés du déterminant"}
+Soient $A$ et $B$ deux matrices $n \times n$.
+
+1. $\dete A \neq 0$ si et seulement si les colonnes de $A$ sont
+   linéairement indépendantes.
+2. $\dete(AB) = \dete(A)\,\dete(B)$ et
+   $\dete(A^{\mathsf{T}}) = \dete(A)$.
+3. Le déterminant d'une matrice triangulaire est le produit des
+   coefficients de sa diagonale.
+4. Échanger deux lignes change le signe du déterminant ;
+   multiplier une ligne par $c$ multiplie le déterminant par $c$ ;
+   ajouter à une ligne un multiple d'une autre ne le change pas.
+:::
+
+La propriété (1) est la plus importante : un déterminant nul signale un
+parallélépipède aplati, donc des colonnes dépendantes et un noyau non
+trivial. La propriété (2) traduit le fait que les facteurs de volume
+se multiplient quand on compose deux transformations. La
+propriété (4), enfin, fournit une méthode de calcul bien plus efficace
+que l'expansion par cofacteurs pour les grandes matrices : on
+échelonne par Gauss, en tenant compte des échanges de lignes, puis on
+multiplie les pivots. C'est ce que font les logiciels : l'expansion par
+cofacteurs d'une matrice $n \times n$ demande de l'ordre de $n!$
+opérations, ce qui la rend inutilisable dès que $n$ dépasse une
+quinzaine, alors que l'échelonnement en demande de l'ordre de $n^3$.
+
+## L'inverse d'une matrice {#sec:D-inverse}
+
+::: {.definition #def:D-inverse title="Matrice inversible"}
+Une matrice carrée $A$ de taille $n$ est [inversible]{.defi} s'il existe
+une matrice $B$ telle que $AB = BA = I_n$. Cette matrice est alors
+unique ; on l'appelle l'[inverse]{.defi} de $A$ et on la note $A^{-1}$.
+:::
+
+Géométriquement, $A^{-1}$ est la transformation qui défait ce que $A$
+a fait : si $A$ tourne de $30^\circ$, $A^{-1}$ tourne de $-30^\circ$ ; si
+$A$ étire d'un facteur $3$ dans une direction, $A^{-1}$ comprime d'un
+facteur $3$ dans cette même direction. Une matrice qui écrase l'espace
+(un noyau non trivial, un déterminant nul) ne peut pas avoir d'inverse,
+puisqu'on ne peut pas savoir de quel point venait l'image. Pour une
+matrice $2 \times 2$ de déterminant non nul, on vérifie directement que
+\begin{equation}\label{eq:D-inverse-2x2}
+  \mat{a}{b}{c}{d}^{-1} = \frac{1}{ad - bc}\mat{d}{-b}{-c}{a} :
+\end{equation}
+on échange les coefficients de la diagonale, on change le signe des deux
+autres, et on divise par le déterminant.
+
+::: {.example #ex:D-inverse title="Résoudre un système avec l'inverse"}
+Soit $A = \mat{2}{1}{5}{3}$, de déterminant $6 - 5 = 1$. Par la
+formule \eqref{eq:D-inverse-2x2}, $A^{-1} = \mat{3}{-1}{-5}{2}$, et on
+vérifie que $AA^{-1} = I_2$. Le système $2x + y = 4$, $5x + 3y = 11$
+s'écrit $A\vec{x} = \vec{b}$ ; en multipliant à gauche par $A^{-1}$,
+$$
+  \vec{x} = A^{-1}\vec{b} = \mat{3}{-1}{-5}{2}\col{4}{11} = \col{1}{2}.
+$$
+:::
+
+Deux règles méritent d'être retenues : $(A^{-1})^{-1} = A$ et
+$$
+  (AB)^{-1} = B^{-1}A^{-1}.
+$$
+L'ordre s'inverse, comme lorsqu'on s'habille : on enfile les
+chaussettes, puis les souliers, mais pour se déshabiller on retire
+d'abord les souliers. On retrouve ici la
+remarque \ref{rem:inverse-composee} du premier chapitre.
+
+Pour une matrice plus grande, on peut calculer l'inverse par
+Gauss--Jordan, en échelonnant la matrice $(A \mid I_n)$ : si l'on
+parvient à $(I_n \mid B)$, alors $B = A^{-1}$ ; si un pivot manque,
+$A$ n'est pas inversible. À la main, ce calcul devient vite fastidieux
+au-delà de la taille $3$, et il n'apporte pas grand-chose de plus que la
+méthode elle-même. *En pratique, nous ferons ces calculs
+numériquement, avec Python.*
+
+```{.python caption="Déterminant, inverse et résolution avec `numpy` (exemple \ref{ex:D-gauss-unique})."}
+import numpy as np
+
+A = np.array([[1,  1,  1],
+              [2,  1, -1],
+              [1, -1,  2]], dtype=float)
+b = np.array([6, 1, 5], dtype=float)
+
+print("det(A) =", np.linalg.det(A))
+print(np.linalg.inv(A))
+x = np.linalg.solve(A, b)      # résout Ax = b sans calculer l'inverse
+print("x =", x)
+print("vérification :", A @ x - b)
+```
+
+```{.python caption="Sortie."}
+det(A) = -6.999999999999999
+[[-0.14285714  0.42857143  0.28571429]
+ [ 0.71428571 -0.14285714 -0.42857143]
+ [ 0.42857143 -0.28571429  0.14285714]]
+x = [1. 2. 3.]
+vérification : [0. 0. 0.]
+```
+
+On retrouve le déterminant $-7$, à une erreur d'arrondi près, et
+la solution $(1,2,3)$. Les coefficients de l'inverse sont des septièmes
+($0{,}142857\ldots = \tfrac17$), ce qui n'a rien d'étonnant pour une
+matrice de déterminant $-7$. Si l'on tente d'inverser la matrice de
+l'exemple \ref{ex:D-gauss-infini}, `numpy` renvoie l'erreur
+`LinAlgError: Singular matrix`, et
+`np.linalg.matrix_rank` indique un rang de $2$.
+
+::: {.remark #rem:D-solve title="Résoudre plutôt qu'inverser"}
+Pour résoudre $A\vec{x} = \vec{b}$, il est préférable d'appeler
+`np.linalg.solve(A, b)` plutôt que de calculer
+`np.linalg.inv(A) @ b`. La fonction `solve` applique
+directement une élimination de Gauss (sous la forme d'une
+factorisation $LU$), ce qui demande environ trois fois moins
+d'opérations et accumule moins d'erreurs d'arrondi. L'inverse reste
+utile comme objet théorique, ou lorsqu'on doit réellement l'examiner,
+mais on le calcule rarement pour lui-même.
+:::
+
+Nous pouvons maintenant rassembler, en un seul énoncé, les liens entre
+les notions vues jusqu'ici. C'est probablement le résultat le plus utile
+de toute l'annexe.
+
+::: {.theorem #thm:D-inversible title="Caractérisations des matrices inversibles"}
+Pour une matrice carrée $A$ de taille $n$, les énoncés suivants sont
+équivalents :
+
+1. $A$ est inversible ;
+2. $\dete A \neq 0$ ;
+3. pour tout $\vec{b} \in \R^n$, le système $A\vec{x} = \vec{b}$ a
+   une solution unique ;
+4. $\ker A = \{\vec{0}\}$ ;
+5. $\rang A = n$, c'est-à-dire que la forme échelonnée réduite de
+   $A$ est $I_n$ ;
+6. les colonnes de $A$ forment une base de $\R^n$.
+:::
+
+Géométriquement, tous ces énoncés disent la même chose : la
+transformation $\vec{x} \mapsto A\vec{x}$ n'écrase aucune direction.
+
+## Valeurs propres et vecteurs propres {#sec:D-valeurs-propres}
+
+Une matrice $2 \times 2$ quelconque déforme le plan de façon parfois
+difficile à visualiser : les vecteurs changent à la fois de longueur et
+de direction. Mais certaines directions privilégiées sont simplement
+étirées ou comprimées, sans tourner. Les trouver, c'est souvent
+comprendre la transformation tout entière.
+
+::: {.definition #def:D-valeur-propre title="Valeur propre, vecteur propre"}
+Soit $A$ une matrice carrée. Un nombre $\lambda$ est une [valeur
+propre]{.defi} de $A$ s'il existe un vecteur *non nul* $\vec{v}$ tel que
+$$
+  A\vec{v} = \lambda\vec{v} .
+$$
+Un tel vecteur $\vec{v}$ est un [vecteur propre]{.defi} associé à
+$\lambda$. Les vecteurs propres associés à $\lambda$, auxquels on ajoute
+$\vec{0}$, forment un sous-espace appelé [sous-espace propre]{.defi}.
+:::
+
+Un vecteur propre est donc envoyé sur un multiple de lui-même : la
+droite qu'il engendre est *invariante* par la transformation. La
+valeur propre indique ce qui se passe le long de cette droite : un
+étirement si $|\lambda| > 1$, une compression si $|\lambda| < 1$, un
+retournement si $\lambda < 0$, et un écrasement sur l'origine si
+$\lambda = 0$. En particulier, $0$ est une valeur propre de $A$
+exactement lorsque $\ker A \neq \{\vec{0}\}$, ce qui ajoute un septième
+énoncé au théorème \ref{thm:D-inversible} : *$A$ est inversible si
+et seulement si $0$ n'est pas une valeur propre de $A$*.
+
+### Le polynôme caractéristique
+
+L'équation $A\vec{v} = \lambda\vec{v}$ s'écrit $(A - \lambda I)\vec{v}
+= \vec{0}$. Elle a une solution non nulle exactement lorsque la matrice
+$A - \lambda I$ n'est pas inversible, c'est-à-dire lorsque
+$$
+  \dete(A - \lambda I) = 0 .
+$$
+Le membre de gauche est un polynôme de degré $n$ en $\lambda$, appelé
+[polynôme caractéristique]{.defi} de $A$ ; ses racines sont les valeurs
+propres. Une fois une valeur propre trouvée, on obtient les vecteurs
+propres associés en calculant le noyau de $A - \lambda I$, par
+Gauss--Jordan.
+
+Pour une matrice $2 \times 2$, le calcul donne
+$\dete(A - \lambda I) = \lambda^2 - (a + d)\lambda + (ad - bc)$. La
+somme $a + d$ des coefficients diagonaux s'appelle la [trace]{.defi} de
+$A$ ; elle est égale à la somme des valeurs propres, tandis que le
+déterminant en est le produit. C'est une vérification rapide, qui évite
+bien des erreurs de calcul.
+
+::: {.example #ex:D-valeurs-propres title="Un étirement caché"}
+Soit $A = \mat{2}{1}{1}{2}$. Son polynôme caractéristique est
+$$
+  \dete\mat{2 - \lambda}{1}{1}{2 - \lambda} = (2 - \lambda)^2 - 1
+  = (\lambda - 1)(\lambda - 3),
+$$
+et les valeurs propres sont $\lambda_1 = 3$ et $\lambda_2 = 1$ (leur
+somme vaut bien la trace $4$, et leur produit le déterminant $3$). Pour
+$\lambda_1 = 3$, le noyau de $A - 3I = \mat{-1}{1}{1}{-1}$ est engendré
+par $\vec{v}_1 = (1,1)$ ; pour $\lambda_2 = 1$, celui de
+$A - I = \mat{1}{1}{1}{1}$ est engendré par $\vec{v}_2 = (1,-1)$.
+
+Géométriquement, $A$ étire le plan d'un facteur $3$ le long de la
+diagonale $y = x$ et laisse inchangée la direction perpendiculaire. Le
+cercle unité devient une ellipse dont les axes sont portés par les
+vecteurs propres (figure \ref{fig:D-valeurs-propres}). Un vecteur qui
+n'est pas propre, comme $\vec{e}_1$, change de direction : il est
+« attiré » vers la direction la plus étirée.
+:::
+
+::: {#fig:D-valeurs-propres}
+![](figures/tikz/fig-D-valeurs-propres.tikz)
+
+La matrice $A = \mat{2}{1}{1}{2}$ transforme le cercle unité en une ellipse. Les vecteurs propres $\vec{v}_1$ et $\vec{v}_2$ (ici normalisés) gardent leur direction : ils sont étirés d'un facteur $3$ et $1$ respectivement. Le vecteur $\vec{e}_1$, qui n'est pas propre, tourne vers la direction de $\vec{v}_1$.
+:::
+
+Les transformations du chapitre \ref{chap:transformations} fournissent
+des exemples qu'on peut deviner sans calcul. Une réflexion par rapport à
+une droite passant par l'origine a pour valeurs propres $1$ (les
+vecteurs de l'axe, qui ne bougent pas) et $-1$ (les vecteurs
+perpendiculaires à l'axe, qui sont retournés). Une homothétie de
+rapport $k$ a une seule valeur propre, $k$, et tous les vecteurs non nuls
+sont propres. Une rotation d'angle $\theta$ strictement compris entre
+$0$ et $\pi$ ne laisse aucune direction invariante : elle n'a aucune
+valeur propre réelle, et son polynôme caractéristique
+$\lambda^2 - 2\cos\theta\,\lambda + 1$ a un discriminant négatif. Ses
+valeurs propres sont les nombres complexes $e^{\pm i\theta}$, ce qui
+explique que Python affiche parfois des valeurs propres complexes.
+Enfin, le cisaillement $\mat{1}{1}{0}{1}$ a pour seule valeur propre
+$1$, mais ses vecteurs propres ne remplissent qu'une droite, l'axe des
+$x$ : nous verrons que c'est un obstacle à la diagonalisation.
+
+## Diagonalisation {#sec:D-diagonalisation}
+
+Les matrices les plus simples sont les matrices [diagonales]{.defi} : la
+matrice $D = \mat{\lambda_1}{0}{0}{\lambda_2}$ étire l'axe des $x$ d'un
+facteur $\lambda_1$ et l'axe des $y$ d'un facteur $\lambda_2$. C'est une
+contraction ou une dilatation non uniforme au sens de la
+définition \ref{def:contraction-nonunif}, et ses puissances se calculent
+sans effort : $D^k = \mat{\lambda_1^k}{0}{0}{\lambda_2^k}$.
+Diagonaliser une matrice, c'est montrer qu'elle se comporte comme une
+matrice diagonale, pourvu qu'on la regarde dans une base bien choisie,
+formée de vecteurs propres.
+
+::: {.definition #def:D-diagonalisable title="Matrice diagonalisable"}
+Une matrice carrée $A$ de taille $n$ est [diagonalisable]{.defi} s'il
+existe une matrice inversible $P$ et une matrice diagonale $D$ telles
+que
+$$
+  A = PDP^{-1} .
+$$
+:::
+
+::: {.theorem #thm:D-diagonalisation title="Critère de diagonalisation"}
+Une matrice $A$ de taille $n$ est diagonalisable si et seulement si elle
+possède $n$ vecteurs propres linéairement indépendants. Dans ce cas, on
+peut prendre pour $P$ la matrice dont les colonnes sont ces vecteurs
+propres, et pour $D$ la matrice diagonale des valeurs propres
+correspondantes, dans le même ordre. C'est en particulier le cas si $A$
+a $n$ valeurs propres distinctes.
+:::
+
+L'égalité $A = PDP^{-1}$ se lit de droite à gauche comme une recette en
+trois étapes (figure \ref{fig:D-diagonalisation}) : $P^{-1}$ calcule
+les coordonnées du vecteur dans la base propre ; $D$ étire chaque
+coordonnée par la valeur propre correspondante ; $P$ revient enfin à la
+base standard. Autrement dit, *une matrice diagonalisable n'est
+qu'un étirement non uniforme, vu dans une base oblique*. Le
+cisaillement $\mat{1}{1}{0}{1}$, qui n'a qu'une droite de vecteurs
+propres, n'est pas diagonalisable : aucun choix de base ne le
+transforme en un simple étirement.
+
+::: {.example #ex:D-diagonalisation title="Diagonaliser et calculer une puissance"}
+Pour $A = \mat{2}{1}{1}{2}$, l'exemple \ref{ex:D-valeurs-propres}
+fournit
+$$
+  P = \mat{1}{1}{1}{-1}, \qquad D = \mat{3}{0}{0}{1}, \qquad
+  P^{-1} = \frac12\mat{1}{1}{1}{-1}.
+$$
+On peut vérifier que $PDP^{-1} = A$. L'intérêt apparaît quand on
+calcule des puissances : les facteurs $P^{-1}P$ se simplifient au
+milieu, de sorte que
+$$
+  A^k = (PDP^{-1})(PDP^{-1})\cdots(PDP^{-1}) = PD^kP^{-1}
+  = \frac12\mat{3^k + 1}{3^k - 1}{3^k - 1}{3^k + 1}.
+$$
+Pour $k = 10$, on obtient $A^{10} = \mat{\num{29525}}{\num{29524}}{\num{29524}}{\num{29525}}$
+sans effectuer neuf produits matriciels.
+:::
+
+::: {#fig:D-diagonalisation}
+![](figures/tikz/fig-D-diagonalisation.tikz)
+
+Dans la base propre (vecteurs normalisés), l'action de $A = \mat{2}{1}{1}{2}$ se réduit à un étirement d'un facteur $3$ dans la direction de $\vec{v}_1$, sans aucune déformation dans la direction perpendiculaire. Le quadrillage oblique reste un quadrillage, et le « F » est simplement étiré.
+:::
+
+### Le cas des matrices symétriques
+
+La matrice de l'exemple \ref{ex:D-diagonalisation} est symétrique, et
+ses vecteurs propres $(1,1)$ et $(1,-1)$ sont orthogonaux. Ce n'est pas
+un hasard.
+
+::: {.theorem #thm:D-spectral title="Théorème spectral"}
+Toute matrice symétrique réelle $A$ est diagonalisable, ses valeurs
+propres sont réelles, et l'on peut choisir ses vecteurs propres de
+façon à former une base orthonormée. Autrement dit, il existe une
+matrice $Q$ dont les colonnes forment une base orthonormée, et une
+matrice diagonale $D$, telles que
+$$
+  A = QDQ^{\mathsf{T}} .
+$$
+:::
+
+Une matrice $Q$ dont les colonnes forment une base orthonormée vérifie
+$Q^{\mathsf{T}}Q = I$, donc $Q^{-1} = Q^{\mathsf{T}}$ : on l'appelle une
+matrice [orthogonale]{.defi}. C'est la matrice d'une rotation ou d'une
+réflexion, c'est-à-dire d'une isométrie. Le théorème spectral affirme
+donc qu'une matrice symétrique est un étirement non uniforme le long de
+directions *perpendiculaires*. On comprend mieux ainsi la
+remarque \ref{rem:rapport-affine} du chapitre \ref{chap:fractales} :
+pour une matrice symétrique, le plus grand facteur d'allongement est la
+plus grande valeur absolue d'une valeur propre. Les matrices symétriques
+apparaissent partout en pratique : ce sont notamment les matrices de
+covariance en statistique et les matrices d'inertie en mécanique. Le
+théorème spectral est ainsi l'un des plus utilisés de l'algèbre linéaire.
+
+### Diagonaliser avec Python
+
+Le calcul des valeurs propres par le polynôme caractéristique ne se
+fait bien à la main qu'en dimension $2$, parfois $3$. Au-delà, trouver
+les racines d'un polynôme de degré élevé est un problème numérique
+délicat, et les logiciels utilisent d'autres algorithmes, itératifs. En
+`numpy`, la fonction `np.linalg.eig` traite une matrice
+quelconque, et `np.linalg.eigh` une matrice symétrique.
+
+```{.python caption="Valeurs propres et diagonalisation avec `numpy` (exemple \ref{ex:D-diagonalisation})."}
+import numpy as np
+
+A = np.array([[2., 1.],
+              [1., 2.]])
+valeurs, P = np.linalg.eigh(A)  # eigh : pour une matrice symétrique
+print("valeurs propres :", valeurs)
+print(P)                        # les vecteurs propres, en colonnes
+
+D = np.diag(valeurs)
+print(np.allclose(P @ D @ P.T, A))       # A = P D P^T ?
+print(P @ np.diag(valeurs**10) @ P.T)    # A^10, par diagonalisation
+```
+
+```{.python caption="Sortie."}
+valeurs propres : [1. 3.]
+[[-0.70710678  0.70710678]
+ [ 0.70710678  0.70710678]]
+True
+[[29525. 29524.]
+ [29524. 29525.]]
+```
+
+Trois observations s'imposent. D'abord, `numpy` range les
+valeurs propres dans l'ordre croissant et renvoie des vecteurs propres
+*unitaires* : la seconde colonne est $\tfrac{1}{\sqrt2}(1,1)$, et
+la première est $\tfrac{1}{\sqrt2}(-1,1)$, un multiple de notre
+$(1,-1)$. Un vecteur propre n'est défini qu'à un facteur non nul près ;
+il ne faut donc pas s'inquiéter si le logiciel n'affiche pas les mêmes
+vecteurs que le calcul à la main. Ensuite, la fonction
+`np.allclose` compare deux tableaux en tolérant les erreurs
+d'arrondi, ce qui est la bonne façon de tester une égalité en calcul
+numérique. Enfin, pour une matrice non symétrique, la fonction
+`np.linalg.eig` peut renvoyer des nombres complexes, affichés
+avec un suffixe `j` (par exemple `3.+0.j`), même lorsque
+leur partie imaginaire est nulle.
+
+## Exercices {.unnumbered .exercices}
+
+:::: {.exercice #exo:D-vecteurs}
+Soit $\vec{u} = (1,-2,2)$ et $\vec{v} = (3,0,-4)$.
+
+a) Calculer $2\vec{u} - \vec{v}$, $\norme{\vec{u}}$ et $\norme{\vec{v}}$.
+b) Calculer $\vec{u} \cdot \vec{v}$ et l'angle entre $\vec{u}$ et
+   $\vec{v}$. Cet angle est-il aigu ou obtus ?
+c) Donner un vecteur unitaire de même direction et de même sens que
+   $\vec{v}$.
+d) Dans le plan, calculer la projection orthogonale du point
+   $P = (7,1)$ sur la droite passant par l'origine et dirigée par
+   $(3,4)$, puis la distance de $P$ à cette droite. Faire un dessin.
+
+::: {.solution}
+a) $2\vec{u} - \vec{v} = (2-3,\,-4-0,\,4+4) = (-1,-4,8)$ ;
+   $\norme{\vec{u}} = \sqrt{1+4+4} = 3$ et $\norme{\vec{v}} = \sqrt{9+0+16}
+   = 5$.
+b) $\vec{u} \cdot \vec{v} = 3 + 0 - 8 = -5$, d'où $\cos\theta =
+   -5/15 = -\tfrac13$ et $\theta = \arccos(-\tfrac13) \approx
+   \ang{109.47}$. Le produit scalaire est négatif : l'angle est obtus.
+c) $\vec{v}/\norme{\vec{v}} = \big(\tfrac35, 0, -\tfrac45\big)$.
+d) Avec $\vec{d} = (3,4)$, $\operatorname{proj}_{\vec{d}} P =
+   \frac{21 + 4}{25}\,(3,4) = (3,4)$. Le vecteur $P - (3,4) = (4,-3)$ est
+   orthogonal à $\vec{d}$, et la distance cherchée est sa norme,
+   $\sqrt{16+9} = 5$.
+:::
+::::
+
+:::: {.exercice #exo:D-combinaison}
+Soit $\vec{u} = (1,2,1)$ et $\vec{v} = (2,1,0)$.
+
+a) Écrire $\vec{w}_1 = (4,5,2)$ comme combinaison linéaire de $\vec{u}$
+   et de $\vec{v}$.
+b) Montrer que $\vec{w}_2 = (1,1,1)$ n'est pas une combinaison linéaire
+   de $\vec{u}$ et de $\vec{v}$.
+c) Interpréter géométriquement les résultats précédents.
+
+::: {.solution}
+a) On cherche $a, b$ tels que $a(1,2,1) + b(2,1,0) = (4,5,2)$. La
+   troisième composante donne $a = 2$ ; la première, $2 + 2b = 4$, d'où
+   $b = 1$. La deuxième est alors vérifiée : $4 + 1 = 5$. Donc
+   $\vec{w}_1 = 2\vec{u} + \vec{v}$.
+b) La troisième composante impose $a = 1$, la première $1 + 2b = 1$,
+   donc $b = 0$ ; mais la deuxième donnerait alors $2 = 1$. Le système est
+   incompatible.
+c) $\vec{u}$ et $\vec{v}$ ne sont pas parallèles ; ils engendrent un
+   plan passant par l'origine de $\R^3$. Le vecteur $\vec{w}_1$ est dans ce
+   plan, tandis que $\vec{w}_2$ en sort.
+:::
+::::
+
+:::: {.exercice #exo:D-matrices}
+Soit $A = \begin{pmatrix} 1 & 2 & 0\\ 0 & 1 & -1 \end{pmatrix}$ et
+$B = \begin{pmatrix} 1 & 0\\ 2 & 1\\ 0 & 3 \end{pmatrix}$.
+
+a) Calculer $AB$ et $BA$. Quelles sont leurs tailles ?
+b) Vérifier que $(AB)^{\mathsf{T}} = B^{\mathsf{T}}A^{\mathsf{T}}$.
+c) Soit $R = \mat{0}{-1}{1}{0}$. Calculer $R^2$ et $R^4$, et interpréter
+   géométriquement.
+
+::: {.solution}
+a) $AB = \mat{5}{2}{2}{-2}$ est $2 \times 2$, et
+   $BA = \begin{pmatrix} 1 & 2 & 0\\ 2 & 5 & -1\\ 0 & 3 & -3 \end{pmatrix}$
+   est $3 \times 3$. Les deux produits n'ont même pas la même taille.
+b) $B^{\mathsf{T}} = \begin{pmatrix} 1 & 2 & 0\\ 0 & 1 & 3 \end{pmatrix}$
+   et $A^{\mathsf{T}} = \begin{pmatrix} 1 & 0\\ 2 & 1\\ 0 & -1 \end{pmatrix}$,
+   d'où $B^{\mathsf{T}}A^{\mathsf{T}} = \mat{5}{2}{2}{-2}$, qui est bien la
+   transposée de $AB$ (cette matrice est d'ailleurs symétrique).
+c) $R^2 = -I_2$ et $R^4 = I_2$. La matrice $R$ est la rotation d'un
+   quart de tour ; deux quarts de tour font un demi-tour (l'homothétie de
+   rapport $-1$), et quatre quarts de tour ramènent chaque point à sa
+   place.
+:::
+::::
+
+:::: {.exercice #exo:D-gauss-unique}
+Résoudre par la méthode de Gauss--Jordan, en indiquant chaque opération
+élémentaire :
+$$
+  \left\{\begin{aligned}
+  x + 2y + z &= 1\\ 2x + 5y + 3z &= 2\\ -x + y + 4z &= 1 .
+  \end{aligned}\right.
+$$
+
+::: {.solution}
+\begin{align*}
+  &\left(\begin{array}{rrr|r} 1 & 2 & 1 & 1\\ 2 & 5 & 3 & 2\\ -1 & 1 & 4 & 1 \end{array}\right)
+  \xrightarrow[L_3 \leftarrow L_3 + L_1]{L_2 \leftarrow L_2 - 2L_1}
+  \left(\begin{array}{rrr|r} 1 & 2 & 1 & 1\\ 0 & 1 & 1 & 0\\ 0 & 3 & 5 & 2 \end{array}\right)
+  \xrightarrow[L_3 \leftarrow L_3 - 3L_2]{L_1 \leftarrow L_1 - 2L_2}
+  \left(\begin{array}{rrr|r} 1 & 0 & -1 & 1\\ 0 & 1 & 1 & 0\\ 0 & 0 & 2 & 2 \end{array}\right)\\
+  &\xrightarrow{L_3 \leftarrow \frac12 L_3}
+  \left(\begin{array}{rrr|r} 1 & 0 & -1 & 1\\ 0 & 1 & 1 & 0\\ 0 & 0 & 1 & 1 \end{array}\right)
+  \xrightarrow[L_2 \leftarrow L_2 - L_3]{L_1 \leftarrow L_1 + L_3}
+  \left(\begin{array}{rrr|r} 1 & 0 & 0 & 2\\ 0 & 1 & 0 & -1\\ 0 & 0 & 1 & 1 \end{array}\right).
+\end{align*}
+La solution unique est $(x,y,z) = (2,-1,1)$.
+:::
+::::
+
+:::: {.exercice #exo:D-gauss-parametre}
+On considère le système
+$$
+  \left\{\begin{aligned}
+  x + y + z &= 1\\ x + 2y + 3z &= 2\\ x + 3y + kz &= h ,
+  \end{aligned}\right.
+$$
+où $k$ et $h$ sont des paramètres réels.
+
+a) Pour quelles valeurs de $k$ et de $h$ le système a-t-il une solution
+   unique ? une infinité de solutions ? aucune solution ?
+b) Dans le cas d'une infinité de solutions, les décrire et donner
+   leur interprétation géométrique.
+
+::: {.solution}
+a) Les opérations $L_2 \leftarrow L_2 - L_1$, $L_3 \leftarrow L_3 - L_1$,
+   puis $L_3 \leftarrow L_3 - 2L_2$ donnent
+   $$
+     \left(\begin{array}{ccc|c} 1 & 1 & 1 & 1\\ 0 & 1 & 2 & 1\\ 0 & 0 & k-5 & h-3 \end{array}\right).
+   $$
+   Si $k \neq 5$, il y a trois pivots : solution unique, quel que soit
+   $h$. Si $k = 5$ et $h \neq 3$, la dernière ligne s'écrit $0 = h - 3 \neq
+   0$ : aucune solution. Si $k = 5$ et $h = 3$, la dernière ligne est
+   nulle et $z$ est libre : infinité de solutions.
+b) Pour $k = 5$, $h = 3$ : $z = t$, $y = 1 - 2t$ et $x = 1 - y - z =
+   t$, soit $(x,y,z) = (0,1,0) + t\,(1,-2,1)$. C'est une droite de $\R^3$ :
+   les trois plans se coupent selon une même droite (« livre ouvert »).
+   Lorsque $k = 5$ et $h \neq 3$, les plans se coupent deux à deux selon
+   trois droites parallèles, sans point commun (le « prisme »).
+:::
+::::
+
+:::: {.exercice #exo:D-independance}
+Les familles suivantes sont-elles linéairement indépendantes ? Si ce
+n'est pas le cas, donner une relation de dépendance.
+
+a) $(1,2,3)$, $(4,5,6)$, $(7,8,9)$.
+b) $(1,0,1)$, $(1,1,0)$, $(0,1,1)$.
+c) $(1,2,0)$, $(0,1,5)$, $(2,-1,3)$, $(4,4,4)$.
+
+::: {.solution}
+a) Dépendante. En échelonnant la matrice dont ce sont les colonnes, la
+   troisième colonne n'a pas de pivot ; on trouve
+   $(1,2,3) - 2\,(4,5,6) + (7,8,9) = \vec{0}$.
+b) Indépendante : le déterminant de la matrice dont ce sont les colonnes
+   vaut $2 \neq 0$ (proposition \ref{prop:D-det}).
+c) Dépendante, sans aucun calcul : on ne peut pas trouver quatre vecteurs
+   indépendants dans $\R^3$, puisqu'une matrice $3 \times 4$ a au plus
+   trois pivots. Une relation se trouve en résolvant le système homogène
+   (par exemple avec Python).
+:::
+::::
+
+:::: {.exercice #exo:D-bases}
+a) Montrer que $\vec{b}_1 = (1,1)$ et $\vec{b}_2 = (1,-1)$ forment une
+   base de $\R^2$, puis trouver les coordonnées de $(3,5)$ dans cette base
+   de deux façons : en résolvant un système, puis à l'aide de produits
+   scalaires (en tenant compte du fait que la base est orthogonale, mais
+   pas orthonormée).
+b) Trouver une base du plan d'équation $x - y + 2z = 0$ dans $\R^3$.
+   Quelle est sa dimension ?
+
+::: {.solution}
+a) Les deux vecteurs ne sont pas parallèles (le déterminant vaut
+   $-2 \neq 0$) ; deux vecteurs indépendants de $\R^2$ forment une base. On
+   résout $a + b = 3$, $a - b = 5$ : $a = 4$, $b = -1$. Par produits
+   scalaires, puisque $\vec{b}_1 \cdot \vec{b}_2 = 0$ :
+   $a = \frac{(3,5)\cdot\vec{b}_1}{\vec{b}_1\cdot\vec{b}_1} = \frac82 = 4$
+   et $b = \frac{(3,5)\cdot\vec{b}_2}{\vec{b}_2\cdot\vec{b}_2} =
+   \frac{-2}{2} = -1$. Ainsi $(3,5) = 4\vec{b}_1 - \vec{b}_2$.
+b) L'équation donne $x = y - 2z$, avec $y$ et $z$ libres :
+   $(x,y,z) = y\,(1,1,0) + z\,(-2,0,1)$. Les vecteurs $(1,1,0)$ et
+   $(-2,0,1)$ forment une base du plan, qui est de dimension $2$.
+:::
+::::
+
+:::: {.exercice #exo:D-noyau}
+Soit $A = \begin{pmatrix} 1 & 2 & -1\\ 2 & 4 & 1\\ 3 & 6 & 0 \end{pmatrix}$.
+
+a) Trouver une base du noyau et une base de l'image de $A$, et vérifier
+   le théorème du rang.
+b) Montrer que l'image de $A$ est le plan d'équation $x + y - z = 0$.
+   Les vecteurs $(1,1,2)$ et $(1,0,0)$ sont-ils dans l'image ?
+c) Résoudre $A\vec{x} = (1,1,2)$ et décrire géométriquement l'ensemble
+   des solutions.
+
+::: {.solution}
+a) La forme échelonnée réduite de $A$ est
+   $\begin{pmatrix} 1 & 2 & 0\\ 0 & 0 & 1\\ 0 & 0 & 0 \end{pmatrix}$ :
+   pivots dans les colonnes $1$ et $3$, $y$ libre. Le noyau est engendré
+   par $(-2,1,0)$ ; l'image par les colonnes $1$ et $3$ de $A$, soit
+   $(1,2,3)$ et $(-1,1,0)$. On a bien $\dim\ker A + \rang A = 1 + 2 = 3$.
+b) Les deux vecteurs de base vérifient $x + y - z = 0$, et ils engendrent
+   un plan : c'est donc ce plan. Le vecteur $(1,1,2)$ vérifie l'équation ;
+   il est dans l'image. Le vecteur $(1,0,0)$ ne la vérifie pas.
+c) Une solution particulière est $\vec{x}_p = \big(\tfrac23, 0,
+   -\tfrac13\big)$. L'ensemble des solutions est
+   $\big(\tfrac23, 0, -\tfrac13\big) + t\,(-2,1,0)$, $t \in \R$ : une
+   droite parallèle au noyau.
+:::
+::::
+
+:::: {.exercice #exo:D-determinant}
+a) Calculer le déterminant de
+   $M_k = \begin{pmatrix} k & 1 & 1\\ 1 & k & 1\\ 1 & 1 & k \end{pmatrix}$
+   et déterminer pour quelles valeurs de $k$ cette matrice est inversible.
+b) Pour $k = 1$, décrire l'image de $M_1$. Pourquoi est-il cohérent que
+   son déterminant soit nul ?
+c) Calculer le volume du parallélépipède construit sur $(2,0,0)$,
+   $(1,3,0)$ et $(1,1,4)$.
+d) Si $A$ est une matrice $3 \times 3$ de déterminant $5$, que valent
+   $\dete(2A)$, $\dete(A^{-1})$ et $\dete(A^{\mathsf{T}}A)$ ?
+
+::: {.solution}
+a) En développant, $\dete M_k = k(k^2 - 1) - (k - 1) + (1 - k) =
+   k^3 - 3k + 2 = (k-1)^2(k+2)$. La matrice est inversible si et seulement
+   si $k \neq 1$ et $k \neq -2$.
+b) Les trois colonnes de $M_1$ sont égales à $(1,1,1)$ : l'image est la
+   droite engendrée par ce vecteur. Le parallélépipède est aplati sur une
+   droite ; son volume est nul.
+c) La matrice formée de ces colonnes est triangulaire supérieure, de
+   diagonale $2, 3, 4$ : le volume vaut $24$.
+d) $\dete(2A) = 2^3 \cdot 5 = 40$ (chacune des trois lignes est
+   multipliée par $2$) ; $\dete(A^{-1}) = \tfrac15$, puisque
+   $\dete(A)\,\dete(A^{-1}) = \dete(I) = 1$ ; et
+   $\dete(A^{\mathsf{T}}A) = 5 \cdot 5 = 25$.
+:::
+::::
+
+:::: {.exercice #exo:D-inverse}
+a) Calculer l'inverse de $A = \mat{3}{2}{4}{3}$ et l'utiliser pour
+   résoudre $3x + 2y = 1$, $4x + 3y = 2$.
+b) Pour quelles valeurs de $a$ la matrice $\mat{a}{2}{2}{a}$ est-elle
+   inversible ?
+c) Soit $R_\theta$ la matrice de la rotation d'angle $\theta$
+   (définition \ref{def:rotation}). Montrer que $R_\theta^{-1} =
+   R_\theta^{\mathsf{T}} = R_{-\theta}$ et interpréter.
+
+::: {.solution}
+a) $\dete A = 9 - 8 = 1$, donc $A^{-1} = \mat{3}{-2}{-4}{3}$, et
+   $\vec{x} = A^{-1}\col{1}{2} = \col{-1}{2}$.
+b) $\dete = a^2 - 4$ : la matrice est inversible si et seulement si
+   $a \neq \pm 2$.
+c) $R_\theta = \mat{\cos\theta}{-\sin\theta}{\sin\theta}{\cos\theta}$ a
+   pour déterminant $\cos^2\theta + \sin^2\theta = 1$ ; la
+   formule \eqref{eq:D-inverse-2x2} donne
+   $R_\theta^{-1} = \mat{\cos\theta}{\sin\theta}{-\sin\theta}{\cos\theta}$,
+   qui est à la fois la transposée de $R_\theta$ et, puisque le cosinus est
+   pair et le sinus impair, la matrice $R_{-\theta}$. Pour défaire une
+   rotation, on tourne du même angle dans l'autre sens ; c'est l'exemple
+   type d'une matrice orthogonale.
+:::
+::::
+
+:::: {.exercice #exo:D-valeurs-propres}
+a) Sans calcul, trouver les valeurs propres et les vecteurs propres de
+   la réflexion d'axe $y = x$, de matrice $\mat{0}{1}{1}{0}$, puis vérifier
+   par le calcul.
+b) Trouver les valeurs propres et les vecteurs propres de
+   $A = \mat{4}{1}{2}{3}$. Vérifier avec la trace et le déterminant.
+c) Montrer que $\mat{1}{1}{0}{1}$ n'a qu'une valeur propre, et que ses
+   vecteurs propres forment une seule droite.
+
+::: {.solution}
+a) Les vecteurs de l'axe, multiples de $(1,1)$, sont fixes : valeur
+   propre $1$. Les vecteurs perpendiculaires, multiples de $(1,-1)$, sont
+   retournés : valeur propre $-1$. Par le calcul, $\lambda^2 - 1 = 0$, et
+   $\mat{0}{1}{1}{0}\col{1}{-1} = \col{-1}{1}$.
+b) $\dete(A - \lambda I) = \lambda^2 - 7\lambda + 10 = (\lambda - 2)(\lambda - 5)$.
+   Pour $\lambda = 5$, $A - 5I = \mat{-1}{1}{2}{-2}$ a pour noyau
+   $\Span\{(1,1)\}$ ; pour $\lambda = 2$, $A - 2I = \mat{2}{1}{2}{1}$ a pour
+   noyau $\Span\{(1,-2)\}$. Vérification : $5 + 2 = 7 = 4 + 3$ (la trace) et
+   $5 \cdot 2 = 10 = 12 - 2$ (le déterminant).
+c) Le polynôme caractéristique est $(1 - \lambda)^2$ : seule valeur
+   propre $1$. Le noyau de $\mat{0}{1}{0}{0}$ est $\Span\{(1,0)\}$, une
+   seule droite.
+:::
+::::
+
+:::: {.exercice #exo:D-diagonalisation}
+a) Diagonaliser la matrice $A = \mat{4}{1}{2}{3}$ de
+   l'exercice \ref{exo:D-valeurs-propres}, puis donner une formule pour
+   $A^k$.
+b) Soit $S = \mat{3}{4}{4}{-3}$. Trouver une matrice orthogonale $Q$ et
+   une matrice diagonale $D$ telles que $S = QDQ^{\mathsf{T}}$. Montrer que
+   $\tfrac15 S$ est une réflexion, dont on précisera l'axe.
+
+::: {.solution}
+a) Avec $P = \mat{1}{1}{1}{-2}$ et $D = \mat{5}{0}{0}{2}$, on a
+   $P^{-1} = \frac13\mat{2}{1}{1}{-1}$ et $A = PDP^{-1}$. Donc
+   $$
+     A^k = PD^kP^{-1} = \frac13\mat{2\cdot5^k + 2^k}{5^k - 2^k}{2\cdot 5^k - 2\cdot 2^k}{5^k + 2\cdot 2^k} ;
+   $$
+   pour $k = 1$, on retrouve bien $A$.
+b) Le polynôme caractéristique est $\lambda^2 - 25$ : valeurs propres
+   $5$ et $-5$, de vecteurs propres $(2,1)$ et $(1,-2)$, orthogonaux. En
+   les normalisant,
+   $Q = \frac{1}{\sqrt5}\mat{2}{1}{1}{-2}$ et $D = \mat{5}{0}{0}{-5}$. La
+   matrice $\tfrac15 S$ a pour valeurs propres $1$ et $-1$, avec des
+   directions propres perpendiculaires : elle fixe la droite engendrée par
+   $(2,1)$ et retourne la direction perpendiculaire. C'est la réflexion
+   d'axe $y = x/2$.
+:::
+::::
+
+:::: {.exercice .python #exo:D-python-systeme}
+On considère le système $A\vec{x} = \vec{b}$ avec
+$$
+  A = \begin{pmatrix} 2 & 1 & -1 & 3\\ 1 & 3 & 2 & -1\\ 4 & -1 & 1 & 2\\ 3 & 2 & -2 & 1 \end{pmatrix},
+  \qquad \vec{b} = \begin{pmatrix} 8\\ -1\\ 13\\ 0 \end{pmatrix}.
+$$
+
+a) Calculer $\dete A$ avec `numpy`. Que peut-on en conclure sur
+   le nombre de solutions ?
+b) Résoudre le système avec `np.linalg.solve`, puis vérifier le
+   résultat en calculant le résidu $A\vec{x} - \vec{b}$.
+c) Comparer avec `np.linalg.inv(A) @ b` et avec la solution
+   exacte fournie par `sympy` (méthode `rref` appliquée à la
+   matrice augmentée).
+
+::: {.solution}
+a) `np.linalg.det(A)` renvoie
+   `-125.00000000000004`, soit $-125$ à un arrondi près. Le
+   déterminant n'étant pas nul, le système a une solution unique
+   (théorème \ref{thm:D-inversible}).
+b) `x = np.linalg.solve(A, b)` donne `[ 1. -1.  2.  3.]`,
+   et `A @ x - b` renvoie un vecteur nul (ou de l'ordre de
+   $10^{-15}$, selon la machine).
+c) Les trois méthodes donnent $\vec{x} = (1,-1,2,3)$ ; la forme
+   échelonnée réduite exacte de $(A \mid \vec{b})$ est
+   $(I_4 \mid \vec{x})$. Pour une matrice aussi petite, les différences
+   d'arrondi entre `solve` et `inv` sont invisibles ; elles
+   deviennent sensibles pour de grandes matrices ou des matrices proches
+   d'être singulières (remarque \ref{rem:D-solve}).
+:::
+::::
+
+:::: {.exercice .python #exo:D-python-noyau}
+On considère le système de trois équations à quatre
+inconnues
+$$
+  \left\{\begin{aligned}
+  x_1 + 2x_2 - x_3 + x_4 &= 2\\
+  2x_1 + 4x_2 + x_3 - x_4 &= 1\\
+  x_1 + 2x_2 + 2x_3 - 2x_4 &= -1 .
+  \end{aligned}\right.
+$$
+
+a) Avec `sympy`, calculer la forme échelonnée réduite de la
+   matrice augmentée. Quelles sont les variables libres ?
+b) Calculer une base du noyau de la matrice des coefficients avec
+   `nullspace()`, ainsi que son rang, et vérifier le théorème du rang.
+c) Écrire l'ensemble des solutions sous la forme
+   $\vec{x}_p + \vec{h}$, avec $\vec{h} \in \ker A$. De quel type d'objet
+   géométrique s'agit-il ?
+
+::: {.solution}
+a) La commande `A.row_join(b).rref()` renvoie la matrice
+   $$
+     \left(\begin{array}{rrrr|r} 1 & 2 & 0 & 0 & 1\\ 0 & 0 & 1 & -1 & -1\\
+     0 & 0 & 0 & 0 & 0 \end{array}\right)
+   $$
+   et les pivots `(0, 2)` :
+   les pivots sont dans les colonnes de $x_1$ et de $x_3$, et $x_2$ et $x_4$
+   sont libres. La troisième équation était redondante
+   ($L_3 = L_2 - L_1$).
+b) `A.nullspace()` renvoie les vecteurs $(-2,1,0,0)$ et
+   $(0,0,1,1)$, et `A.rank()` renvoie $2$ ; on a bien $2 + 2 = 4$.
+c) En posant $x_2 = s$ et $x_4 = t$ : $x_1 = 1 - 2s$ et $x_3 = t - 1$,
+   soit
+   $$
+     \vec{x} = (1,0,-1,0) + s\,(-2,1,0,0) + t\,(0,0,1,1), \qquad s, t \in \R.
+   $$
+   C'est un plan (de dimension $2$) dans $\R^4$, parallèle au noyau et
+   passant par $(1,0,-1,0)$. La commande `sp.linsolve((A, b))`
+   fournit directement cette description paramétrique.
+:::
+::::
+
+:::: {.exercice .classe #exo:reflexion-chD}
+Plusieurs notions de cette annexe ont un équivalent
+plus élémentaire au secondaire : les systèmes de deux équations à deux
+inconnues (troisième et quatrième secondaire) et les vecteurs
+(cinquième secondaire, séquence SN).
+
+a) Au secondaire, les élèves résolvent un système d'équations par
+   comparaison, par substitution ou par réduction. Laquelle de ces
+   méthodes correspond à la méthode de Gauss--Jordan
+   (section \ref{sec:D-gauss}) ? Quel avantage y a-t-il à ce que
+   l'enseignant connaisse cette correspondance ?
+b) Relier les trois cas possibles pour un système de deux équations à
+   deux inconnues (solution unique, aucune solution, infinité de
+   solutions) à la position relative de deux droites, puis au
+   déterminant de la matrice des coefficients. Comment cette
+   connaissance peut-elle guider le choix des exemples en classe ?
+c) Le produit scalaire est au programme de la cinquième secondaire
+   (SN). Proposer une situation, accessible aux élèves, où il
+   intervient naturellement.
+
+::: {.solution}
+Plusieurs réponses sont possibles ; en voici une.
+
+a) La méthode de réduction : on additionne à une équation un multiple de
+   l'autre afin d'éliminer une inconnue, ce qui est exactement l'opération
+   élémentaire $L_i \leftarrow L_i + c\,L_j$. L'enseignant qui le sait peut
+   justifier la méthode (une opération élémentaire est inversible, donc ne
+   modifie pas l'ensemble des solutions) et répondre aux élèves qui se
+   demandent pourquoi on a « le droit » d'additionner des équations. Il
+   peut aussi présenter la réduction comme la méthode qui se généralise le
+   mieux à trois équations ou plus, contrairement à la comparaison.
+b) Chaque équation représente une droite. Des droites sécantes donnent
+   une solution unique ; des droites parallèles distinctes, aucune ; des
+   droites confondues, une infinité. Les deux derniers cas sont exactement ceux
+   où les droites ont la même pente, c'est-à-dire où le déterminant de la
+   matrice des coefficients est nul (théorème \ref{thm:D-inversible}).
+   L'enseignant peut ainsi construire volontairement des exemples des trois
+   types, au lieu de ne proposer que des systèmes à solution unique, et
+   amener les élèves à prévoir la nature des solutions en comparant les
+   coefficients avant de calculer.
+c) Le travail effectué par une force : pour tirer un traîneau à l'aide
+   d'une corde inclinée, seule la composante de la force parallèle au
+   déplacement est utile, et le travail vaut $\vec{F}\cdot\vec{d} =
+   \norme{\vec{F}}\,\norme{\vec{d}}\cos\theta$. On peut aussi utiliser le
+   produit scalaire pour vérifier qu'un quadrilatère tracé dans un plan
+   cartésien est un rectangle, en montrant que ses côtés consécutifs sont
+   perpendiculaires. Ces deux situations font le lien avec la physique et avec
+   la géométrie analytique de quatrième secondaire.
+:::
+::::

@@ -1,0 +1,22 @@
+\begin{tikzpicture}[scale=0.24]
+  \begin{scope}
+    \draw[quadrillage] (-12,-1) grid (3,16);
+    \draw[axe] (-12,0) -- (3.6,0) node[etiq, below] {$x$};
+    \draw[axe] (0,-1) -- (0,16.6) node[etiq, left] {$y$};
+    \fill[fig] (-11,3) -- (1,12) -- (-1,14) -- cycle;
+    \node[pt, label={[etiq]left:$A$}] at (-11,3) {};
+    \node[pt, label={[etiq]right:$B$}] at (1,12) {};
+    \node[pt, label={[etiq]above:$C$}] at (-1,14) {};
+  \end{scope}
+  \begin{scope}[xshift=16cm]
+    \begin{scope}[shift={(-77,59)}]
+      \draw[quadrillage] (68,-69) grid (91,-52);
+      \draw[axe] (68,-69) -- (91.6,-69);
+      \draw[axe] (68,-69) -- (68,-51.4);
+      \fill[figim] (90,-68) -- (69,-53) -- (83,-59) -- cycle;
+      \node[ptim, label={[etiq]right:$P$}] at (90,-68) {};
+      \node[ptim, label={[etiq]left:$Q$}] at (69,-53) {};
+      \node[ptim, label={[etiq]above right:$R$}] at (83,-59) {};
+    \end{scope}
+  \end{scope}
+\end{tikzpicture}

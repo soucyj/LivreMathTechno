@@ -1,0 +1,10 @@
+\begin{tikzpicture}[scale=0.52]
+  \input{figures/fractales/fougere.tikz}
+  \begin{scope}[shift={(7.4,0)}]
+    \input{figures/fractales/fougere-pieces.tikz}
+    \node[etiq, firebrick3, right] at (0.15,0.4) {$w_1(A)$};
+    \node[etiq, steelblue4, right] at (2.7,6) {$w_2(A)$};
+    \node[etiq, coveraccent!80!black, left] at (-2.4,2.2) {$w_3(A)$};
+    \node[etiq, vertpiece, right] at (2.6,1.7) {$w_4(A)$};
+  \end{scope}
+\end{tikzpicture}

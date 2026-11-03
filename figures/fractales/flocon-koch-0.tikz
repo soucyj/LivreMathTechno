@@ -1,0 +1,4 @@
+% Flocon de von Koch, étape 0
+% Fichier généré par generer.py : ne pas modifier à la main.
+\fill[fractale]
+  (0,0) -- (0.5,0.866) -- (1,0) -- cycle;

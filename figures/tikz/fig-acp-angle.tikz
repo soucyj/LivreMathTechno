@@ -1,0 +1,67 @@
+\begin{tikzpicture}
+  \begin{axis}[
+    width=5.2cm, height=5.2cm, scale only axis,
+    tick label style={font=\scriptsize}, label style={font=\scriptsize},
+    title style={font=\small, sectioncolor},
+    axis line style={gray!70}, tick style={gray!70},
+    grid=major, grid style={gray!18, very thin},
+    xmin=-14, xmax=14, ymin=-14, ymax=14,
+    xtick={-10,0,10}, ytick={-10,0,10},
+    xlabel={$x$ (centré)}, ylabel={$y$ (centré)}]
+    \addplot[steelblue4, thick, domain=-14:14, samples=2] {x};
+    \addplot[coveraccent, thick, domain=-14:14, samples=2] {-x};
+    \draw[steelblue4!70, thin, densely dotted] (axis cs:-10,-3) -- (axis cs:-6.5,-6.5);
+    \node[circle, fill=steelblue4, inner sep=1pt] at (axis cs:-6.5,-6.5) {};
+    \draw[steelblue4!70, thin, densely dotted] (axis cs:-7,-9) -- (axis cs:-8,-8);
+    \node[circle, fill=steelblue4, inner sep=1pt] at (axis cs:-8,-8) {};
+    \draw[steelblue4!70, thin, densely dotted] (axis cs:-3,-8) -- (axis cs:-5.5,-5.5);
+    \node[circle, fill=steelblue4, inner sep=1pt] at (axis cs:-5.5,-5.5) {};
+    \draw[steelblue4!70, thin, densely dotted] (axis cs:5,9) -- (axis cs:7,7);
+    \node[circle, fill=steelblue4, inner sep=1pt] at (axis cs:7,7) {};
+    \draw[steelblue4!70, thin, densely dotted] (axis cs:6,7) -- (axis cs:6.5,6.5);
+    \node[circle, fill=steelblue4, inner sep=1pt] at (axis cs:6.5,6.5) {};
+    \draw[steelblue4!70, thin, densely dotted] (axis cs:9,4) -- (axis cs:6.5,6.5);
+    \node[circle, fill=steelblue4, inner sep=1pt] at (axis cs:6.5,6.5) {};
+    \draw[coveraccent!70, thin, densely dotted] (axis cs:-10,-3) -- (axis cs:-3.5,3.5);
+    \node[circle, fill=coveraccent, inner sep=1pt] at (axis cs:-3.5,3.5) {};
+    \draw[coveraccent!70, thin, densely dotted] (axis cs:-7,-9) -- (axis cs:1,-1);
+    \node[circle, fill=coveraccent, inner sep=1pt] at (axis cs:1,-1) {};
+    \draw[coveraccent!70, thin, densely dotted] (axis cs:-3,-8) -- (axis cs:2.5,-2.5);
+    \node[circle, fill=coveraccent, inner sep=1pt] at (axis cs:2.5,-2.5) {};
+    \draw[coveraccent!70, thin, densely dotted] (axis cs:5,9) -- (axis cs:-2,2);
+    \node[circle, fill=coveraccent, inner sep=1pt] at (axis cs:-2,2) {};
+    \draw[coveraccent!70, thin, densely dotted] (axis cs:6,7) -- (axis cs:-0.5,0.5);
+    \node[circle, fill=coveraccent, inner sep=1pt] at (axis cs:-0.5,0.5) {};
+    \draw[coveraccent!70, thin, densely dotted] (axis cs:9,4) -- (axis cs:2.5,-2.5);
+    \node[circle, fill=coveraccent, inner sep=1pt] at (axis cs:2.5,-2.5) {};
+    \node[pt] at (axis cs:-10,-3) {};
+    \node[pt] at (axis cs:-7,-9) {};
+    \node[pt] at (axis cs:-3,-8) {};
+    \node[pt] at (axis cs:5,9) {};
+    \node[pt] at (axis cs:6,7) {};
+    \node[pt] at (axis cs:9,4) {};
+    \node[etiq, steelblue4, anchor=south east] at (axis cs:13,9.5) {$\theta = 45^\circ$};
+    \node[etiq, coveraccent!85!black, anchor=south west] at (axis cs:-13,9.5) {$\theta = 135^\circ$};
+  \end{axis}
+  \begin{axis}[
+    width=5.6cm, height=5.2cm, scale only axis,
+    tick label style={font=\scriptsize}, label style={font=\scriptsize},
+    title style={font=\small, sectioncolor},
+    axis line style={gray!70}, tick style={gray!70},
+    grid=major, grid style={gray!18, very thin},
+    xshift=6.6cm,
+    xmin=0, xmax=180, ymin=0, ymax=100,
+    xtick={0,45,90,135,180}, ytick={0,10,50,90},
+    xticklabel={$\pgfmathprintnumber{\tick}^\circ$},
+    xlabel={angle $\theta$ de la direction},
+    ylabel={variance des projections $f(\theta)$}]
+    \addplot[sectioncolor, very thick, domain=0:180, samples=91] {50 + 40*sin(2*x)};
+    \draw[gray!60, dashed] (axis cs:0,50) -- (axis cs:180,50);
+    \node[circle, fill=steelblue4, inner sep=1.6pt,
+      label={[etiq]above:$f(45^\circ) = 90$}] at (axis cs:45,90) {};
+    \node[circle, fill=coveraccent, inner sep=1.6pt,
+      label={[etiq]below:$f(135^\circ) = 10$}] at (axis cs:135,10) {};
+    \node[circle, fill=sectioncolor, inner sep=1.6pt,
+      label={[etiq]right:$f(0^\circ) = 50$}] at (axis cs:0,50) {};
+  \end{axis}
+\end{tikzpicture}

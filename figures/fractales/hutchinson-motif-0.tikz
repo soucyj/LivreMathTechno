@@ -1,0 +1,4 @@
+% W^0 appliqué au départ « motif »
+% Fichier généré par generer.py : ne pas modifier à la main.
+\fill[fractale]
+  (0,0) -- (0.3,0) -- (0.3,0.55) -- (0.6,0.55) -- (0.6,0.75) -- (0.3,0.75) -- (0.3,0.85) -- (0.75,0.85) -- (0.75,1) -- (0,1) -- cycle;

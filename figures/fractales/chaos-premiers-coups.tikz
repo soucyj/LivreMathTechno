@@ -1,0 +1,21 @@
+% Jeu du chaos : six premiers coups
+% Fichier généré par generer.py : ne pas modifier à la main.
+\draw[chaosvers] (0.1,0.375) -- (0,0);
+\draw[chaospas] (0.2,0.75) -- (0.1,0.375);
+\draw[chaosvers] (0.55,0.1875) -- (1,0);
+\draw[chaospas] (0.1,0.375) -- (0.55,0.1875);
+\draw[chaosvers] (0.775,0.0938) -- (1,0);
+\draw[chaospas] (0.55,0.1875) -- (0.775,0.0938);
+\draw[chaosvers] (0.6375,0.4799) -- (0.5,0.866);
+\draw[chaospas] (0.775,0.0938) -- (0.6375,0.4799);
+\draw[chaosvers] (0.3187,0.2399) -- (0,0);
+\draw[chaospas] (0.6375,0.4799) -- (0.3187,0.2399);
+\draw[chaosvers] (0.4094,0.553) -- (0.5,0.866);
+\draw[chaospas] (0.3187,0.2399) -- (0.4094,0.553);
+\node[ptim, label={[etiq]right:$P_{0}$}] at (0.2,0.75) {};
+\node[ptim, label={[etiq]left:$P_{1}$}] at (0.1,0.375) {};
+\node[ptim, label={[etiq]below:$P_{2}$}] at (0.55,0.1875) {};
+\node[ptim, label={[etiq]right:$P_{3}$}] at (0.775,0.0938) {};
+\node[ptim, label={[etiq]right:$P_{4}$}] at (0.6375,0.4799) {};
+\node[ptim, label={[etiq]below left:$P_{5}$}] at (0.3187,0.2399) {};
+\node[ptim, label={[etiq]above right:$P_{6}$}] at (0.4094,0.553) {};

@@ -1,0 +1,8 @@
+\begin{tikzpicture}
+  \node[etat] (B) at (0,0) {$B$};
+  \node[etat] (P) at (4,0) {$P$};
+  \draw[lien] (B) to[bend left=25] node[proba, above] {$\num{0.2}$} (P);
+  \draw[lien] (P) to[bend left=25] node[proba, below] {$\num{0.4}$} (B);
+  \draw[lien] (B) to[loop left, min distance=9mm] node[proba, left] {$\num{0.8}$} (B);
+  \draw[lien] (P) to[loop right, min distance=9mm] node[proba, right] {$\num{0.6}$} (P);
+\end{tikzpicture}

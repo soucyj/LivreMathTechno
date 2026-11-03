@@ -1,0 +1,22 @@
+\begin{tikzpicture}[courbe/.style={sectioncolor, line join=round, thick}]
+  \begin{scope}[scale=2.5]
+    \draw[gray!50, dashed] (0,0) -- (1,1);
+    \input{figures/fractales/cartoon-1.tikz}
+    \foreach \p/\t/\pos in {(0,0)/{$(0,0)$}/right, (0.4444,0.6667)/{$(\frac49,\frac23)$}/left,
+                          (0.5556,0.3333)/{$(\frac59,\frac13)$}/right, (1,1)/{$(1,1)$}/left}
+      \node[pt, label={[etiq]\pos:\t}] at \p {};
+    \node[etiq, sectioncolor] at (0.5,-0.18) {le générateur};
+  \end{scope}
+  \begin{scope}[shift={(3.4,0)}, scale=2.5]
+    \input{figures/fractales/cartoon-2.tikz}
+    \node[etiq, sectioncolor] at (0.5,-0.18) {deuxième étape};
+  \end{scope}
+  \begin{scope}[shift={(6.8,0)}, scale=2.5, courbe/.style={sectioncolor, line join=round, very thin}]
+    \input{figures/fractales/cartoon-7.tikz}
+    \node[etiq, sectioncolor] at (0.5,-0.18) {septième étape};
+  \end{scope}
+  \begin{scope}[shift={(10.2,0)}, scale=2.5, courbe/.style={firebrick3, line join=round, very thin}]
+    \input{figures/fractales/cartoon-melange.tikz}
+    \node[etiq, firebrick3, align=center] at (0.5,-0.22) {septième étape,\\ pièces mélangées};
+  \end{scope}
+\end{tikzpicture}

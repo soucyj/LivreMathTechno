@@ -1,0 +1,8 @@
+  \begin{tikzpicture}[scale=1.1]
+    \node[pageweb] (p1) at (0,2) {$1$};
+    \node[pageweb] (p2) at (2,2) {$2$};
+    \node[pageweb] (p3) at (2,0) {$3$};
+    \draw[lien] (p1) -- (p2);
+    \draw[lien] (p2) -- (p3);
+    \draw[lien] (p3) -- (p1);
+  \end{tikzpicture}

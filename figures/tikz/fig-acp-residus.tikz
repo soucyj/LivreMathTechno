@@ -1,0 +1,50 @@
+\begin{tikzpicture}
+  \begin{axis}[
+    width=5.4cm, height=5.4cm, scale only axis,
+    tick label style={font=\scriptsize}, label style={font=\scriptsize},
+    title style={font=\small, sectioncolor},
+    axis line style={gray!70}, tick style={gray!70},
+    grid=major, grid style={gray!18, very thin},
+    xshift=0cm, title={Écarts verticaux},
+    xmin=55, xmax=85, ymin=60, ymax=90,
+    xtick={55,60,...,85}, ytick={60,65,...,90},
+    xlabel={Mathématiques}, ylabel={Sciences}]
+    \addplot[steelblue4, very thick, domain=55:85, samples=2] {75 + 0.8*(x - 70)};
+    \draw[firebrick3, thick] (axis cs:60,72) -- (axis cs:60,67);
+    \draw[firebrick3, thick] (axis cs:63,66) -- (axis cs:63,69.4);
+    \draw[firebrick3, thick] (axis cs:67,67) -- (axis cs:67,72.6);
+    \draw[firebrick3, thick] (axis cs:75,84) -- (axis cs:75,79);
+    \draw[firebrick3, thick] (axis cs:76,82) -- (axis cs:76,79.8);
+    \draw[firebrick3, thick] (axis cs:79,79) -- (axis cs:79,82.2);
+    \node[pt] at (axis cs:60,72) {};
+    \node[pt] at (axis cs:63,66) {};
+    \node[pt] at (axis cs:67,67) {};
+    \node[pt] at (axis cs:75,84) {};
+    \node[pt] at (axis cs:76,82) {};
+    \node[pt] at (axis cs:79,79) {};
+  \end{axis}
+  \begin{axis}[
+    width=5.4cm, height=5.4cm, scale only axis,
+    tick label style={font=\scriptsize}, label style={font=\scriptsize},
+    title style={font=\small, sectioncolor},
+    axis line style={gray!70}, tick style={gray!70},
+    grid=major, grid style={gray!18, very thin},
+    xshift=6.9cm, title={Écarts perpendiculaires},
+    xmin=55, xmax=85, ymin=60, ymax=90,
+    xtick={55,60,...,85}, ytick={60,65,...,90},
+    xlabel={Mathématiques}, ylabel={Sciences}]
+    \addplot[steelblue4, very thick, domain=55:85, samples=2] {x + 5};
+    \draw[firebrick3, thick] (axis cs:60,72) -- (axis cs:63.5,68.5);
+    \draw[firebrick3, thick] (axis cs:63,66) -- (axis cs:62,67);
+    \draw[firebrick3, thick] (axis cs:67,67) -- (axis cs:64.5,69.5);
+    \draw[firebrick3, thick] (axis cs:75,84) -- (axis cs:77,82);
+    \draw[firebrick3, thick] (axis cs:76,82) -- (axis cs:76.5,81.5);
+    \draw[firebrick3, thick] (axis cs:79,79) -- (axis cs:76.5,81.5);
+    \node[pt] at (axis cs:60,72) {};
+    \node[pt] at (axis cs:63,66) {};
+    \node[pt] at (axis cs:67,67) {};
+    \node[pt] at (axis cs:75,84) {};
+    \node[pt] at (axis cs:76,82) {};
+    \node[pt] at (axis cs:79,79) {};
+  \end{axis}
+\end{tikzpicture}

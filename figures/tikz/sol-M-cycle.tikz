@@ -1,0 +1,26 @@
+  \begin{tikzpicture}[scale=0.85]
+    \begin{scope}
+      \node[pageweb] (a1) at (0,2) {$1$};
+      \node[pageweb] (a2) at (2,2) {$2$};
+      \node[pageweb] (a3) at (2,0) {$3$};
+      \draw[lien2] (a1) -- (a2); \draw[lien2] (a2) -- (a3); \draw[lien2] (a3) -- (a1);
+    \end{scope}
+    \begin{scope}[xshift=4cm]
+      \node[pageweb] (b1) at (0,2) {$1$};
+      \node[pageweb] (b2) at (2,2) {$2$};
+      \node[pageweb] (b3) at (2,0) {$3$};
+      \draw[lien2] (b1) -- (b2); \draw[lien2] (b2) -- (b3); \draw[lien2] (b3) -- (b1);
+      \draw[lien] (b1) to[loop above, min distance=9mm] (b1);
+      \draw[lien] (b2) to[loop above, min distance=9mm] (b2);
+      \draw[lien] (b3) to[loop right, min distance=9mm] (b3);
+    \end{scope}
+    \begin{scope}[xshift=8cm]
+      \node[pageweb] (c1) at (0,2) {$1$};
+      \node[pageweb] (c2) at (2,2) {$2$};
+      \node[pageweb] (c3) at (2,0) {$3$};
+      \draw[lien] (c1) -- (c2); \draw[lien] (c2) -- (c3); \draw[lien] (c3) -- (c1);
+      \draw[lien] (c1) to[loop above, min distance=9mm] (c1);
+      \draw[lien] (c2) to[loop above, min distance=9mm] (c2);
+      \draw[lien] (c3) to[loop right, min distance=9mm] (c3);
+    \end{scope}
+  \end{tikzpicture}

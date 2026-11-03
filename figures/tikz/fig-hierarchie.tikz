@@ -1,0 +1,16 @@
+\begin{tikzpicture}[scale=0.95, every node/.style={font=\small}]
+  \foreach \i/\lab/\prop in {%
+     0/{$\Transf$ : toutes les transformations}/{aucun invariant métrique},
+     1/{$\Aff$ : transformations affines}/{alignement, parallélisme},
+     2/{$\Sim$ : similitudes}/{$+$ angles, rapports de longueurs},
+     3/{$\Iso$ : isométries}/{$+$ longueurs, aires},
+     4/{$\Iso^{+}$ : déplacements}/{$+$ orientation}}
+    {\pgfmathsetmacro{\w}{9.4-1.35*\i}
+     \pgfmathsetmacro{\y}{-0.95*\i}
+     \draw[rounded corners=2pt, fill=steelblue4!\the\numexpr8+10*\i\relax,
+           draw=sectioncolor!60]
+       ({-\w/2},{\y-0.36}) rectangle ({\w/2},{\y+0.36});
+     \node at (0,\y) {\lab};
+     \node[anchor=west, font=\scriptsize, gray!80!black]
+       at ({\w/2+0.25},\y) {\prop};}
+\end{tikzpicture}

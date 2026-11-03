@@ -1,0 +1,5 @@
+\begin{tikzpicture}[scale=0.85]
+  \draw[fig] (0,0) circle (1.4);
+  \node[pt, label={[etiq]right:$x_2$}] (x2b) at (1.4,0) {};
+  \draw[firebrick3, thick, dashed] (x2b) circle (0.4);
+\end{tikzpicture}

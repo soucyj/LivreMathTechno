@@ -1,0 +1,26 @@
+\begin{tikzpicture}[scale=1.05]
+  % Segment
+  \draw[sectioncolor, very thick] (0,0.9) -- (3,0.9);
+  \foreach \x in {0,1,2,3} \draw[sectioncolor, thick] (\x,0.78) -- (\x,1.02);
+  \node[etiq, align=center] at (1.5,-0.55) {$s = 3$, $N = 3 = 3^1$};
+  % Carré
+  \begin{scope}[shift={(4,0)}]
+    \fill[steelblue4!22] (0,0) rectangle (2.1,2.1);
+    \draw[sectioncolor, thin, step=0.7] (0,0) grid (2.1,2.1);
+    \draw[sectioncolor, thick] (0,0) rectangle (2.1,2.1);
+    \node[etiq, align=center] at (1.05,-0.55) {$s = 3$, $N = 9 = 3^2$};
+  \end{scope}
+  % Cube
+  \begin{scope}[shift={(7.3,0)}, x={(0.7cm,0)}, y={(0,0.7cm)}, z={(0.32cm,0.24cm)}]
+    \fill[steelblue4!22] (0,0,0) -- (3,0,0) -- (3,3,0) -- (0,3,0) -- cycle;
+    \fill[steelblue4!34] (3,0,0) -- (3,0,3) -- (3,3,3) -- (3,3,0) -- cycle;
+    \fill[steelblue4!12] (0,3,0) -- (3,3,0) -- (3,3,3) -- (0,3,3) -- cycle;
+    \foreach \i in {1,2}{
+      \draw[sectioncolor, thin] (\i,0,0) -- (\i,3,0) -- (\i,3,3);
+      \draw[sectioncolor, thin] (0,\i,0) -- (3,\i,0) -- (3,\i,3);
+      \draw[sectioncolor, thin] (3,0,\i) -- (3,3,\i) -- (0,3,\i);}
+    \draw[sectioncolor, thick, line join=round] (0,0,0) -- (3,0,0) -- (3,0,3) -- (3,3,3)
+      -- (0,3,3) -- (0,3,0) -- cycle (3,0,0) -- (3,3,0) -- (0,3,0) (3,3,0) -- (3,3,3);
+    \node[etiq, align=center] at (1.9,-0.8,0) {$s = 3$, $N = 27 = 3^3$};
+  \end{scope}
+\end{tikzpicture}

@@ -1,0 +1,19 @@
+\begin{tikzpicture}[scale=0.7]
+  \begin{scope}
+    \repere{-2.6}{2.6}{-1.6}{2.6}
+    \draw[trait1] (-2.6,1.3) -- (2.4,-1.2) node[etiq, below] {$\ker A$};
+    \draw[trait2] (-1.6,1.3) -- (2.6,-0.8);
+    \foreach \t in {-0.4,0,0.4,0.8}{
+      \node[pt, fill=steelblue4] at ({1-2*\t},{\t}) {};}
+    \node[etiq, steelblue4, above right] at (0.2,0.5) {$(1,0) + \ker A$};
+    \node[etiq] at (0,-2.4) {espace de départ};
+  \end{scope}
+  \draw[-{Stealth[length=2.4mm]}, thick, gray] (3.4,0.6) -- node[etiq, above] {$A$} (5.0,0.6);
+  \begin{scope}[xshift=8.2cm]
+    \repere{-2.6}{2.6}{-1.6}{2.6}
+    \draw[trait3] (-0.8,-1.6) -- (1.3,2.6) node[etiq, right] {$\Ima A$};
+    \node[ptim, fill=steelblue4, minimum size=5pt,
+          label={[etiq]right:$(1,2)$}] at (1,2) {};
+    \node[etiq] at (0,-2.4) {espace d'arrivée};
+  \end{scope}
+\end{tikzpicture}

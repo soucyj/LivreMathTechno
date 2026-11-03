@@ -1,0 +1,17 @@
+  \begin{tikzpicture}[scale=1.05]
+    \node[pageweb] (p7) at (0,5) {$7$};
+    \node[pageweb] (p6) at (2.8,5) {$6$};
+    \node[pageweb] (p1) at (0,3.3) {$1$};
+    \node[pageweb] (p4) at (2.8,3.3) {$4$};
+    \node[pageweb] (p3) at (1.4,1.9) {$3$};
+    \node[pageweb] (p2) at (0,0.5) {$2$};
+    \node[pageweb] (p5) at (2.8,0.5) {$5$};
+    \draw[lien2] (p7) -- (p6);
+    \draw[lien] (p4) -- (p6);
+    \draw[lien] (p4) -- (p1);
+    \draw[lien] (p3) -- (p1);
+    \draw[lien2] (p1) -- (p2);
+    \draw[lien2] (p2) -- (p3);
+    \draw[lien2] (p3) -- (p5);
+    \draw[lien] (p5) -- (p4);
+  \end{tikzpicture}

@@ -1,0 +1,20 @@
+\begin{tikzpicture}[scale=0.95]
+  % Deux copies du plan
+  \begin{scope}
+    \draw[sectioncolor!50, thick, fill=steelblue4!8]
+      (0,0) -- (4,0) -- (5,2.3) -- (1,2.3) -- cycle;
+    \node[etiq, sectioncolor,above] at (0.55,2) {$\Plan$};
+    \node[pt, label={[etiq]below:$P$}] (P) at (1.4,0.75) {};
+    \node[pt, label={[etiq]below:$Q$}] (Q) at (2.6,1.5) {};
+  \end{scope}
+  \begin{scope}[xshift=6.6cm]
+    \draw[firebrick3!50, thick, fill=firebrick3!8]
+      (0,0) -- (4,0) -- (5,2.3) -- (1,2.3) -- cycle;
+    \node[etiq, firebrick3,above] at (0.55,2) {$\Plan$};
+    \node[ptim, label={[etiq]below:$f(P)$}] (Pp) at (2.9,0.6) {};
+    \node[ptim, label={[etiq]above:$f(Q)$}] (Qp) at (1.7,1.7) {};
+  \end{scope}
+  \draw[fleche] (P) to[bend left=12] (Pp);
+  \draw[fleche] (Q) to[bend left=12] (Qp);
+  \node[etiq, sectioncolor] at (5.6,2.6) {$f$};
+\end{tikzpicture}

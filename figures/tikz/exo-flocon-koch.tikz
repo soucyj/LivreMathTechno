@@ -1,0 +1,7 @@
+\begin{tikzpicture}[scale=2.2, fractale/.style={fill=steelblue4!22, draw=sectioncolor, thin, line join=round}]
+  \foreach \n in {0,...,3}{
+    \begin{scope}[shift={(\n*1.55,0)}]
+      \input{figures/fractales/flocon-koch-\n.tikz}
+      \node[etiq, sectioncolor] at (0.5,-0.45) {étape $\n$};
+    \end{scope}}
+\end{tikzpicture}

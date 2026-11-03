@@ -1,0 +1,44 @@
+% ═══════════════════════════════════════════════════════════════════════
+%  Gabarit pandoc du livre (sortie PDF de Quarto)
+%
+%  Volontairement minimal : toute la mise en page vient de livrejs.cls,
+%  comme pour l'ancien Livre.tex. Le filtre _filtres/livrejs.lua traduit
+%  le Markdown en environnements de la classe (theorem, exercice...), et
+%  produit la couverture, la page « Au sujet de ces notes », la table des
+%  matières, l'annexe des solutions et la bibliographie.
+% ═══════════════════════════════════════════════════════════════════════
+\makeatletter
+\def\input@path{{latex/}}   % la classe et les paquets du livre
+\makeatother
+\documentclass{livrejs}
+\usepackage{ccicons}   % icônes Creative Commons (notice de licence)
+
+$for(bibliography)$
+\addbibresource{$bibliography$}
+$endfor$
+
+\input{preambule-livre}
+
+% ── Commandes utilisées dans le LaTeX produit par pandoc ─────────────
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\pandocbounded}[1]{#1}
+\providecommand{\passthrough}[1]{#1}
+% Quarto insère \bookmarksetup{startatroot} avant chaque chapitre (paquet
+% bookmark, non utilisé ici) : sans effet.
+\providecommand{\bookmarksetup}[1]{}
+
+% ── Métadonnées ──────────────────────────────────────────────────────
+\etablissement{Université Laval}
+\departement{Département de mathématiques et de statistique}
+\title{Mathématiques\\[2pt]
+       et technologie}
+\soustitre{$subtitle$}
+\author{$for(author)$$author$$sep$ \and $endfor$}
+\date{\today}
+\hypersetup{pdftitle={$title$ : $subtitle$},
+            pdfauthor={$for(author)$$author$$sep$, $endfor$}}
+
+\begin{document}
+$body$
+\end{document}

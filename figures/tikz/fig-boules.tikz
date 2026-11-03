@@ -1,0 +1,17 @@
+\begin{tikzpicture}[scale=0.85]
+  \begin{scope}
+    \draw[sectioncolor, thick, dashed, fill=steelblue4!15] (0,0) circle (1.4);
+    \node[pt] (c) at (0,0) {};
+    \node[etiq, below] at (0,0) {$x_0$};
+    \draw[sectioncolor!70, thick, dashed] (0,0) -- (45:1.4) node[midway, above, etiq]{$r$};
+    \node[etiq, sectioncolor] at (0,-1.9) {$\boule{x_0}{r}$ dans $(\R^2,\dE)$};
+  \end{scope}
+  \begin{scope}[xshift=5.4cm]
+    \draw[firebrick3, thick, dashed, fill=firebrick3!15]
+      (0,1.4) -- (1.4,0) -- (0,-1.4) -- (-1.4,0) -- cycle;
+    \node[pt] (c2) at (0,0) {};
+    \node[etiq, below] at (0,0) {$x_0$};
+    \draw[firebrick3!70, thick, dashed] (0,0) -- (0.7,0.7) node[midway, above, etiq]{$r$};
+    \node[etiq, firebrick3] at (0,-1.9) {$\boule{x_0}{r}$ dans $(\R^2,\dT)$};
+  \end{scope}
+\end{tikzpicture}

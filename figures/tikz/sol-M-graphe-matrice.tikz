@@ -1,0 +1,12 @@
+  \begin{tikzpicture}[scale=1.1]
+    \node[pageweb] (p1) at (0,2) {$1$};
+    \node[pageweb] (p3) at (2.5,2) {$3$};
+    \node[pageweb] (p2) at (0,0) {$2$};
+    \node[pageweb] (p4) at (2.5,0) {$4$};
+    \draw[lien] (p1) -- (p3);
+    \draw[lien2] (p1) -- (p2);
+    \draw[lien2] (p1) -- (p4);
+    \draw[lien] (p2) -- (p3);
+    \draw[lien2] (p3) -- (p4);
+    \draw[lien] (p3) to[loop above, min distance=9mm] (p3);
+  \end{tikzpicture}

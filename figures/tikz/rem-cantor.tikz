@@ -1,0 +1,3 @@
+\begin{tikzpicture}[xscale=8, yscale=0.9]
+  \input{figures/fractales/cantor.tikz}
+\end{tikzpicture}

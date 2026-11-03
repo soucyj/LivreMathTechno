@@ -1,0 +1,30 @@
+\begin{tikzpicture}
+  % Une courbe lisse : le zoom l'aplatit
+  \begin{scope}[xscale=2.1, yscale=1.4]
+    \draw[axe] (-0.1,0) -- (2.2,0);
+    \draw[sectioncolor, thick, domain=0:2, samples=60, smooth]
+      plot (\x, {1.2*sin(deg(\x*1.4))});
+    \draw[firebrick3, thick] (0.5,0.79) rectangle (0.7,0.99);
+    \node[etiq, sectioncolor] at (1.1,1.55) {une courbe lisse};
+  \end{scope}
+  \begin{scope}[shift={(5.6,0)}, xscale=2.1, yscale=1.4]
+    \draw[firebrick3, thick] (0,0) rectangle (1.5,1.5);
+    \clip (0,0) rectangle (1.5,1.5);
+    \draw[sectioncolor, thick, domain=0.5:0.7, samples=40, smooth]
+      plot ({(\x-0.5)/0.2*1.5}, {(1.2*sin(deg(1.4*\x))-0.79)/0.2*1.5});
+  \end{scope}
+  \node[etiq, sectioncolor] at (7.18,2.45) {agrandie : presque une droite};
+  \draw[fleche, firebrick3!70] (1.5,1.4) to[bend left=15] (5.5,1.6);
+  % La courbe de von Koch : le zoom la reproduit
+  \begin{scope}[shift={(0,-3.4)}, scale=4.2, courbe/.style={sectioncolor, line join=round, thick}]
+    \input{figures/fractales/koch-5.tikz}
+    \draw[firebrick3, thick] (-0.01,-0.03) rectangle (0.343,0.13);
+    \node[etiq, sectioncolor] at (0.5,0.42) {la courbe de von Koch};
+  \end{scope}
+  \begin{scope}[shift={(5.6,-3.4)}, scale=4.2, courbe/.style={sectioncolor, line join=round, thick}]
+    \draw[firebrick3, thick] (-0.03,-0.09) rectangle (1.03,0.39);
+    \input{figures/fractales/koch-4.tikz}
+  \end{scope}
+  \node[etiq, sectioncolor] at (7.7,-1.5) {agrandie : la même courbe};
+  \draw[fleche, firebrick3!70] (1.5,-3.0) to[bend left=12] (5.5,-2.9);
+\end{tikzpicture}

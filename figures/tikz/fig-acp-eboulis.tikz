@@ -1,0 +1,21 @@
+\begin{tikzpicture}
+  \begin{axis}[
+    width=9cm, height=4.2cm, scale only axis,
+    tick label style={font=\scriptsize}, label style={font=\scriptsize},
+    title style={font=\small, sectioncolor},
+    axis line style={gray!70}, tick style={gray!70},
+    grid=major, grid style={gray!18, very thin},
+    ybar, bar width=0.55cm, ymajorgrids, xmajorgrids=false, xtick pos=bottom,
+    xmin=0.4, xmax=10.6, ymin=0, ymax=3.7,
+    xtick={1,...,10}, ytick={0,1,2,3},
+    xlabel={numéro $k$ de la composante}, ylabel={valeur propre $\lambda_k$}]
+    \addplot[fill=steelblue4!55, draw=steelblue4] coordinates {(1,3.272) (2,1.737) (3,1.405) (4,1.057) (5,0.685) (6,0.599) (7,0.451) (8,0.397) (9,0.215) (10,0.182)};
+    \draw[firebrick3, thick, dashed] (axis cs:0.4,1) -- (axis cs:10.6,1)
+      node[etiq, above left, text=firebrick3] {$\lambda = 1$};
+    \node[etiq, above, text=black!70] at (axis cs:1,3.272) {\num{32.7}\,\%};
+    \node[etiq, above, text=black!70] at (axis cs:2,1.737) {\num{17.4}\,\%};
+    \node[etiq, above, text=black!70] at (axis cs:3,1.405) {\num{14.0}\,\%};
+    \node[etiq, above, text=black!70] at (axis cs:4,1.057) {\num{10.6}\,\%};
+    \node[etiq, above, text=black!70] at (axis cs:5,0.685) {\num{6.8}\,\%};
+  \end{axis}
+\end{tikzpicture}

@@ -1,0 +1,4 @@
+% Flocon carré, étape 0
+% Fichier généré par generer.py : ne pas modifier à la main.
+\fill[fractale]
+  (0,0) -- (1,0) -- (1,1) -- (0,1) -- cycle;

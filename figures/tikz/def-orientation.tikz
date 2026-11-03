@@ -1,0 +1,16 @@
+  \begin{tikzpicture}[scale=0.95]
+    \begin{scope}
+      \draw[fleche] (0,0) -- (1,0) node[etiq, below right] {$\vec u$};
+      \draw[fleche] (0,0) -- (55:1) node[etiq, above] {$\vec v$};
+      \draw[sectioncolor, thin, -{Stealth[length=1.6mm]}]
+        (0.42,0) arc (0:55:0.42);
+      \node[etiq] at (0.2,-0.75) {base directe};
+    \end{scope}
+    \begin{scope}[xshift=3.4cm]
+      \draw[fleche] (0,0) -- (1,0) node[etiq, below right] {$\vec u$};
+      \draw[fleche] (0,0) -- (-55:1) node[etiq, below right] {$\vec v$};
+      \draw[sectioncolor, thin, -{Stealth[length=1.6mm]}]
+        (0.42,0) arc (0:-55:0.42);
+      \node[etiq] at (0.2,-1.05) {base indirecte};
+    \end{scope}
+  \end{tikzpicture}

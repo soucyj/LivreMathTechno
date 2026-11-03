@@ -1,0 +1,21 @@
+\begin{tikzpicture}[scale=0.55]
+  \begin{scope}
+    \repere{-0.6}{4.6}{-0.6}{4.6}
+    \draw[trait2] (-0.5,4.25) -- (4.5,-0.75);   % x + y = 3.75... (schéma)
+    \draw[trait1] (-0.5,0.5) -- (4.5,3.0);
+    \node[pt] at (2.0,1.75) {};
+    \node[etiq] at (2,-1.6) {solution unique};
+  \end{scope}
+  \begin{scope}[xshift=7.5cm]
+    \repere{-0.6}{4.6}{-0.6}{4.6}
+    \draw[trait2] (-0.5,0.5) -- (4.5,3.0);
+    \draw[trait1] (-0.5,2.0) -- (4.5,4.5);
+    \node[etiq] at (2,-1.6) {aucune solution};
+  \end{scope}
+  \begin{scope}[xshift=15cm]
+    \repere{-0.6}{4.6}{-0.6}{4.6}
+    \draw[trait2, line width=2.4pt, opacity=0.5] (-0.5,0.5) -- (4.5,3.0);
+    \draw[trait1] (-0.5,0.5) -- (4.5,3.0);
+    \node[etiq] at (2,-1.6) {infinité de solutions};
+  \end{scope}
+\end{tikzpicture}

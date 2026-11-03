@@ -1,0 +1,8 @@
+  \begin{tikzpicture}[scale=0.9]
+    \draw[droite] (-2.2,0) -- (2.2,0) node[etiq, right, black] {$d$};
+    \foreach \x/\y in {-1.4/1.1, -0.3/0.6, 1.2/0.4}
+      {\node[pt] at (\x,\y) {};}
+    \foreach \x/\y in {-1.4/-1.1, -0.3/-0.6, 1.2/-0.4}
+      {\node[ptim] at (\x,\y) {};
+       \draw[gray!60, thin, dotted, -{Stealth[length=1.6mm]}] (\x,\y) -- (\x,-\y);}
+  \end{tikzpicture}

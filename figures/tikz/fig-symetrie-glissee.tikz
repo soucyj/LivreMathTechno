@@ -1,0 +1,11 @@
+\begin{tikzpicture}[scale=1.0]
+  \draw[droite] (-0.5,0) -- (8.2,0);
+  \foreach \i in {0,1,2,3}{
+    \begin{scope}[shift={(2*\i,0)}, scale=0.55]
+      \fill[fig] \motifF;
+    \end{scope}
+    \begin{scope}[shift={(2*\i+1,0)}, scale=0.55, yscale=-1]
+      \fill[figim] \motifF;
+    \end{scope}}
+  \node[etiq, right] at (8.3,0) {axe};
+\end{tikzpicture}

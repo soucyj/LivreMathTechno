@@ -1,0 +1,4 @@
+% Courbe de von Koch, étape 1
+% Fichier généré par generer.py : ne pas modifier à la main.
+\draw[courbe]
+  (0,0) -- (0.3333,0) -- (0.5,0.2887) -- (0.6667,0) -- (1,0);

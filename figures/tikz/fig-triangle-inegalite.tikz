@@ -1,0 +1,8 @@
+\begin{tikzpicture}[scale=1]
+  \node[pt, label={[etiq]below:$x$}] (x) at (0,0) {};
+  \node[pt, label={[etiq]right:$y$}] (y) at (3.4,0.5) {};
+  \node[pt, label={[etiq]above:$z$}] (z) at (1.3,2.1) {};
+  \draw[sectioncolor, thick] (x) -- (y) node[midway, below, etiq]{$d(x,y)$};
+  \draw[sectioncolor!70, thick, dashed] (x) -- (z) node[midway, left, etiq]{$d(x,z)$};
+  \draw[sectioncolor!70, thick, dashed] (z) -- (y) node[midway, above right, etiq]{$d(z,y)$};
+\end{tikzpicture}

@@ -1,0 +1,13 @@
+\begin{tikzpicture}[scale=0.9]
+  \draw[sectioncolor, thick, fill=steelblue4!28] plot[smooth cycle, tension=0.75]
+    coordinates {(-0.49,-0.20) (0.99,-1.01) (2.75,-0.47) (3.16,1.02)
+                 (1.81,2.23) (0.19,1.83)};
+  \draw[fig] plot[smooth cycle, tension=0.75]
+    coordinates {(0,0) (1.1,-0.6) (2.4,-0.2) (2.7,0.9) (1.7,1.8) (0.5,1.5)};
+  \node[etiq, sectioncolor] at (1.2,0.6) {$A$};
+  \node[etiq, sectioncolor] at (2.7,2.35) {$\Vois{A}{\varepsilon}$};
+  \draw[fleche, sectioncolor] (1.85,1.55) -- (2.5,2.05);
+  \draw[sectioncolor, thick, {Stealth[length=2mm]}-{Stealth[length=2mm]}]
+    (2.1,-0.3) -- (2.8,-0.3);
+  \node[etiq, sectioncolor, below] at (2.45,-0.35) {$\varepsilon$};
+\end{tikzpicture}

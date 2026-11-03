@@ -1,0 +1,7 @@
+\begin{tikzpicture}[scale=3.9]
+  \foreach \n/\x in {200/0, 2000/1.12, 15000/2.24}{
+    \begin{scope}[shift={(\x,0)}]
+      \input{figures/fractales/chaos-sierpinski-\n.tikz}
+      \node[etiq, sectioncolor] at (0.5,-0.09) {$\num{\n}$ points};
+    \end{scope}}
+\end{tikzpicture}

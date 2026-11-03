@@ -1,0 +1,38 @@
+% Trois panneaux côte à côte (anciennement trois subfigure), alignés par
+% le bas comme avec [b] ; sous-légendes (i), (ii), (iii).
+\begin{tikzpicture}
+  % (i) aucun point fixe
+  \begin{scope}[shift={(0.25,0)}]
+    \draw[axe] (-2.3,0) -- (1.8,0) node[right, etiq]{$x$};
+    \draw[axe] (0,-2.3) -- (0,1.8);
+    \draw[sectioncolor!35, thick] (-2.3,-2.3) -- (1.8,1.8);
+    \node[etiq, sectioncolor!70, fill=white, inner sep=2pt, right] at (-1.7,-1.7) {$y=x$};
+    \draw[firebrick3, thick, domain=-2.3:0.8, samples=2] plot (\x,{\x+1});
+    \node[etiq, firebrick3, fill=white, inner sep=2pt, above left] at (-0.2,0.8) {$y=x+1$};
+    \node[font=\small, below] at (-0.25,-2.45) {(i) aucun point fixe};
+  \end{scope}
+  % (ii) deux points fixes
+  \begin{scope}[shift={(4.55,-1.8)}]
+    \draw[axe] (-1.3,0) -- (1.8,0) node[right, etiq]{$x$};
+    \draw[axe] (0,-0.5) -- (0,1.8);
+    \draw[sectioncolor!35, thick] (-0.5,-0.5) -- (1.8,1.8);
+    \node[etiq, sectioncolor!70, fill=white, inner sep=2pt, right] at (-0.4,-0.4) {$y=x$};
+    \draw[firebrick3, thick, domain=-1.15:1.35, samples=60, smooth]
+      plot (\x,{\x*\x});
+    \node[etiq, firebrick3, fill=white, inner sep=2pt, left] at (1.2,1.44) {$y=x^2$};
+    \node[ptim] at (0,0) {};
+    \node[ptim] at (1,1) {};
+    \node[font=\small, below] at (0.25,-0.65) {(ii) deux points fixes};
+  \end{scope}
+  % (iii) un point fixe
+  \begin{scope}[shift={(9.2,0)}]
+    \draw[axe] (-1.8,0) -- (0.9,0) node[right, etiq]{$x$};
+    \draw[axe] (0,-2.3) -- (0,3.3);
+    \draw[sectioncolor!35, thick] (-1.8,-1.8) -- (0.9,0.9);
+    \node[etiq, sectioncolor!70, fill=white, inner sep=2pt, above] at (0.5,0.5) {$y=x$};
+    \draw[firebrick3, thick, domain=-1.15:0.35, samples=2] plot (\x,{3*\x+2});
+    \node[etiq, firebrick3, fill=white, inner sep=2pt] at (-0.85,1.5) {$y=3x+2$};
+    \node[ptim, label={[etiq]right:$(-1,-1)$}] at (-1,-1) {};
+    \node[font=\small, below] at (-0.45,-2.45) {(iii) un point fixe};
+  \end{scope}
+\end{tikzpicture}

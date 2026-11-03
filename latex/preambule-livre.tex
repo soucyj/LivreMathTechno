@@ -1,0 +1,26 @@
+% ═══════════════════════════════════════════════════════════════════════
+%  Préambule propre au livre (PDF seulement)
+%  Repris tel quel du préambule de Livre.tex.
+% ═══════════════════════════════════════════════════════════════════════
+% ── Coupure des URL ──────────────────────────────────────────────────
+% Sans réglage, les longues adresses des notes de bas de page débordent
+% dans la marge. xurl (chargé après hyperref, que la classe appelle en
+% dernier) rend chaque caractère d'une URL sécable ; les trois lignes
+% suivantes rétablissent une hiérarchie : couper de préférence après un
+% « / », un « - », un « . » ou un « : », et à l'intérieur d'un mot
+% seulement en dernier recours.
+\usepackage{xurl}
+\def\UrlBigBreaks{\do\:\do\/\do\-\do\.}
+\mathchardef\UrlBigBreakPenalty=100
+\mathchardef\UrlBreakPenalty=5000
+
+
+\input{macros-livre}
+
+% Algorithmes : même présentation que les théorèmes et définitions.
+\newcounter{algorithme}[chapter]
+\renewcommand{\thealgorithme}{\thechapter.\arabic{algorithme}}
+\newenvironment{algorithme}[1]{%
+  \refstepcounter{algorithme}\thmheading{Algorithme}{\thealgorithme}{#1}%
+  \begin{tcolorbox}[thmbox]}{%
+  \end{tcolorbox}}

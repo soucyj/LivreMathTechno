@@ -1,0 +1,1939 @@
+# L'analyse en composantes principales {#chap:acp}
+
+Un tableau de données n'est souvent rien d'autre qu'une liste de points.
+Si l'on note, pour chaque élève d'une classe, son résultat en
+mathématiques et son résultat en sciences, chaque élève devient un point
+du plan, et la classe entière, un *nuage de points*. Avec trois
+mesures par élève, le nuage vit dans l'espace $\R^3$ ; avec les dix
+épreuves d'un décathlon, dans $\R^{10}$ ; avec les centaines de milliers
+de marqueurs génétiques d'une personne, dans un espace de dimension
+gigantesque. Dans le plan, un coup d'œil suffit pour repérer une
+tendance, des groupes ou un point isolé. Mais nos yeux s'arrêtent à la
+dimension $3$, et encore : sur une page ou un écran, nous ne voyons
+jamais qu'une *projection* de l'espace sur un plan.
+
+Pensons à la photographie d'un objet. Une théière photographiée de
+dessus n'est qu'un disque ; photographiée de côté, on reconnaît
+immédiatement son bec et son anse. Les deux photos sont des projections
+du même objet, mais l'une est beaucoup plus informative que l'autre.
+L'*analyse en composantes principales* (ACP) répond à la question
+correspondante pour un nuage de points : *sous quel angle faut-il le
+regarder pour en voir le plus possible ?* Elle cherche la droite,
+puis le plan, puis plus généralement le sous-espace de petite dimension
+sur lequel la projection du nuage déforme le moins les données.
+
+Nous verrons que la réponse est donnée par les vecteurs propres d'une
+matrice symétrique, la *matrice de covariance* des données. Ce
+chapitre réunit donc deux sujets qui semblent éloignés, la statistique
+descriptive du secondaire et les vecteurs propres de
+l'[annexe D](#annexe:algebre). Nous commencerons très modestement, par
+un nuage de six points du plan, et nous chercherons la droite qui le
+représente le mieux ; la projection orthogonale
+(définition \ref{def:D-projection}) et le théorème de Pythagore feront
+l'essentiel du travail. Nous passerons ensuite à un nuage de l'espace,
+formé de mesures prises sur des manchots de l'Antarctique, et nous
+chercherons le meilleur plan sur lequel le projeter. Nous pourrons alors
+définir l'ACP en toute généralité, en faire un bref historique et
+l'appliquer, avec Python, à des données où aucun dessin direct n'est
+possible.
+
+## Un peu de statistique descriptive {#sec:acp-stats}
+
+### Individus, variables et tableau de données
+
+En statistique, on appelle [individus]{.defi} les objets sur lesquels on
+prend des mesures (des élèves, des manchots, des athlètes, des villes),
+et [variables]{.defi} les grandeurs mesurées (une note, une longueur, un
+temps de course, une température). Lorsqu'on mesure $p$ variables sur
+$n$ individus, on range les résultats dans un [tableau de
+données]{.defi} à $n$ lignes et $p$ colonnes : la ligne $i$ décrit
+l'individu $i$, et la colonne $j$ contient les valeurs de la variable
+$j$. Chaque individu est ainsi représenté par un point de $\R^p$.
+
+Le tableau \ref{tab:acp-notes} nous servira d'exemple tout au long des
+deux premières sections. Il donne les résultats (sur $100$) de six
+élèves, désignés par les lettres $A$ à $F$, à un examen de
+mathématiques et à un examen de sciences. Ici, $n = 6$ et $p = 2$ : le
+nuage est formé de six points du plan (figure \ref{fig:acp-notes}).
+
+::: {#tab:acp-notes}
+Les résultats de six élèves (données fictives), un élève par ligne. Les deux premières colonnes de résultats forment le tableau de données ; les deux dernières donnent les écarts à la moyenne, qui serviront à la section \ref{sec:acp-droite}.
+
+| Élève | Mathématiques $x$ | Sciences $y$ | Écart $x - \bar{x}$ | Écart $y - \bar{y}$ |
+|:-:|:-:|:-:|:-:|:-:|
+| $A$ | $60$ | $72$ | $-10$ | $-3$ |
+| $B$ | $63$ | $66$ | $-7$ | $-9$ |
+| $C$ | $67$ | $67$ | $-3$ | $-8$ |
+| $D$ | $75$ | $84$ | $5$ | $9$ |
+| $E$ | $76$ | $82$ | $6$ | $7$ |
+| $F$ | $79$ | $79$ | $9$ | $4$ |
+| Moyenne | $70$ | $75$ | $0$ | $0$ |
+:::
+
+::: {#fig:acp-notes}
+![](figures/tikz/fig-acp-notes.tikz)
+
+Le nuage de points du tableau \ref{tab:acp-notes}. Les élèves forts en mathématiques ont tendance à l'être aussi en sciences : le nuage s'allonge selon une direction oblique. Le point moyen $M$ est le centre de gravité du nuage.
+:::
+
+### Moyenne, variance et écart type
+
+::: {.definition #def:acp-moyenne-variance title="Moyenne, variance, écart type"}
+Soit $x_1, \dots, x_n$ les valeurs d'une variable $x$ sur $n$ individus.
+La [moyenne]{.defi} de $x$ est
+$$
+  \bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i .
+$$
+La [variance]{.defi} de $x$ est la moyenne des carrés des écarts à la
+moyenne, et l'[écart type]{.defi} est sa racine carrée :
+$$
+  s_x^2 = \frac{1}{n}\sum_{i=1}^{n} (x_i - \bar{x})^2 ,
+  \qquad s_x = \sqrt{s_x^2} .
+$$
+Le point $M = (\bar{x}_1, \dots, \bar{x}_p)$ dont les coordonnées sont
+les moyennes des $p$ variables s'appelle le [point moyen]{.defi} (ou
+centre de gravité) du nuage.
+:::
+
+La variance mesure la *dispersion* des valeurs autour de leur
+moyenne : elle est nulle si toutes les valeurs sont égales, et elle est
+d'autant plus grande que les valeurs sont étalées. On utilise souvent
+l'écart type plutôt que la variance, parce qu'il s'exprime dans la même
+unité que les données. Pour les notes de mathématiques du
+tableau \ref{tab:acp-notes},
+$$
+  s_x^2 = \frac{(-10)^2 + (-7)^2 + (-3)^2 + 5^2 + 6^2 + 9^2}{6}
+  = \frac{300}{6} = 50,
+  \qquad s_x = \sqrt{50} \approx \num{7.07} .
+$$
+Le même calcul donne $s_y^2 = \frac{9 + 81 + 64 + 81 + 49 + 16}{6} =
+50$ pour les sciences : les deux matières ont, par construction, la
+même dispersion.
+
+Il est souvent commode de remplacer chaque valeur par son écart à la
+moyenne, $x_i - \bar{x}$. On dit alors que l'on [centre]{.defi} les
+données ; géométriquement, on déplace l'origine au point moyen $M$. Les
+données centrées ont une moyenne nulle, et leur variance est la même que
+celle des données de départ, puisqu'une translation ne change pas la
+dispersion.
+
+::: {.remark #rem:acp-variable-statistique title="Variable statistique ou variable aléatoire ?"}
+Le mot « variable » n'a pas ici le sens qu'il avait au
+chapitre \ref{chap:markov}. Une variable aléatoire $X$ est décrite par
+une loi de probabilité, et sa variance, que l'on note $\mathrm{Var}(X)$
+avec des majuscules, se calcule à partir de cette loi : c'est une
+quantité théorique. Dans ce chapitre, $x$ est une *variable
+statistique* : une simple colonne de nombres $x_1, \dots, x_n$ que l'on
+a observés, sans aucun hasard ni aucune loi. Sa variance $s_x^2$ est un
+nombre que l'on calcule directement à partir du tableau. Pour ne pas
+confondre les deux notions, nous réservons les minuscules et les
+notations $\bar{x}$, $s_x^2$ et $s_{xy}$ aux données observées, et nous
+n'écrirons pas $\mathrm{Var}(x)$.
+
+Les deux notions sont tout de même liées. Si l'on choisit au hasard l'un
+des $n$ individus, chacun avec la probabilité $\frac1n$, et que l'on note
+$X$ la valeur de la variable pour cet individu, alors $X$ est une
+variable aléatoire, dont l'espérance est $\bar{x}$ et dont la variance
+est $\mathrm{Var}(X) = s_x^2$.
+:::
+
+### Covariance et corrélation
+
+La variance décrit une variable à la fois. Pour décrire la façon dont
+*deux* variables varient ensemble, on multiplie leurs écarts à la
+moyenne.
+
+::: {.definition #def:acp-covariance title="Covariance, coefficient de corrélation"}
+La [covariance]{.defi} de deux variables $x$ et $y$, mesurées sur les
+mêmes $n$ individus, est
+$$
+  s_{xy} = \frac{1}{n}\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y}) .
+$$
+Si $s_x$ et $s_y$ sont non nuls, le [coefficient de corrélation
+linéaire]{.defi} de $x$ et de $y$ est
+$$
+  r_{xy} = \frac{s_{xy}}{s_x\,s_y} .
+$$
+:::
+
+Le signe de chaque produit $(x_i - \bar{x})(y_i - \bar{y})$ dépend du
+quadrant, délimité par les droites pointillées de la
+figure \ref{fig:acp-notes}, dans lequel se trouve le point $i$ : il est
+positif en haut à droite et en bas à gauche, négatif dans les deux
+autres quadrants. Une covariance positive signale donc que les deux
+variables ont tendance à être grandes en même temps, et petites en même
+temps. Dans notre exemple, tous les points sont dans les quadrants
+« positifs », et
+$$
+  s_{xy} = \frac{(-10)(-3) + (-7)(-9) + (-3)(-8) + 5 \cdot 9 + 6 \cdot 7 + 9 \cdot 4}{6}
+  = \frac{240}{6} = 40
+$$
+et
+$$
+  r_{xy} = \frac{40}{\sqrt{50}\,\sqrt{50}} = \num{0.8} .
+$$
+
+Le coefficient de corrélation a une interprétation géométrique simple.
+Si l'on range les écarts à la moyenne des deux variables dans deux
+vecteurs de $\R^n$,
+$$
+  \vec{a} = (x_1 - \bar{x}, \dots, x_n - \bar{x})
+  \quad\text{et}\quad
+  \vec{b} = (y_1 - \bar{y}, \dots, y_n - \bar{y}),
+$$
+alors $s_{xy} = \frac1n\,\vec{a}\cdot\vec{b}$, $s_x = \frac{1}{\sqrt n}\norme{\vec{a}}$
+et $s_y = \frac{1}{\sqrt n}\norme{\vec{b}}$, de sorte que, d'après la
+formule \eqref{eq:D-angle},
+$$
+  r_{xy} = \frac{\vec{a}\cdot\vec{b}}{\norme{\vec{a}}\,\norme{\vec{b}}} = \cos\theta,
+$$
+où $\theta$ est l'angle entre $\vec{a}$ et $\vec{b}$. L'inégalité de
+Cauchy--Schwarz montre donc que $-1 \leq r_{xy} \leq 1$. On a $r_{xy} =
+\pm 1$ exactement lorsque $\vec{a}$ et $\vec{b}$ sont colinéaires,
+c'est-à-dire lorsque les points du nuage sont parfaitement alignés, et
+$r_{xy} = 0$ lorsque ces deux vecteurs sont orthogonaux : on dit alors
+que les variables sont [non corrélées]{.defi}.
+
+::: {.remark #rem:acp-n-moins-un title="Diviser par $n$ ou par $n - 1$ ?"}
+Beaucoup de calculatrices, de manuels et de logiciels divisent par
+$n - 1$ plutôt que par $n$ dans la définition de la variance et de la
+covariance. Les deux formules ne répondent pas à la même question.
+
+Si les $n$ individus sont *tous* ceux qui nous intéressent, et que l'on
+veut seulement décrire leur dispersion, on divise par $n$ : la variance
+est la moyenne des carrés des écarts. C'est notre situation, puisque
+nous cherchons à décrire la forme d'un nuage de points donné.
+
+Si les $n$ individus sont un *échantillon* tiré d'une population plus
+grande, dont on veut estimer la variance, on divise par $n - 1$. La
+raison est que l'on mesure les écarts à partir de la moyenne $\bar{x}$
+de l'échantillon, faute de connaître celle de la population. Or
+$\bar{x}$ est justement le nombre $c$ qui rend la somme $\sum (x_i -
+c)^2$ la plus petite possible : les écarts à $\bar{x}$ sont donc, dans
+l'ensemble, un peu plus petits que les écarts à la vraie moyenne, et la
+division par $n$ sous-estime la variance de la population. On montre
+qu'en moyenne, elle la sous-estime exactement par le facteur
+$\frac{n-1}{n}$, ce que la division par $n - 1$ corrige. On peut aussi
+remarquer que les $n$ écarts ont une somme nulle : dès que l'on en
+connaît $n - 1$, le dernier est déterminé, de sorte que la somme des
+carrés ne contient que $n - 1$ informations indépendantes.
+
+Pour les notes de mathématiques des six élèves, on obtient
+$\frac{300}{6} = 50$ en divisant par $n$, et $\frac{300}{5} = 60$ en
+divisant par $n - 1$. L'écart entre les deux formules est notable pour
+un petit tableau, et négligeable lorsque $n$ est grand. Il faut donc
+savoir ce que calcule l'outil que l'on utilise. Sur la plupart des
+calculatrices, la touche $\sigma_x$ divise par $n$ et la touche $s_x$
+par $n - 1$ ; notre $s_x$ correspond donc à la touche $\sigma_x$. En
+Python, `np.var` et `np.std` divisent par $n$ par défaut, tandis que
+`np.cov` et les méthodes `var` et `std` de `pandas` divisent par $n - 1$.
+
+Pour l'ACP, ce choix n'a aucune importance : toutes les variances et
+covariances sont multipliées par le même facteur $\frac{n}{n-1}$, ce qui
+multiplie les valeurs propres par ce facteur sans changer ni les vecteurs
+propres ni les proportions de variance que nous calculerons, et les
+coefficients de corrélation ne changent pas du tout. Nous diviserons
+toujours par $n$, qui rend les formules plus simples.
+:::
+
+::: {.secondaire #rem:acp-secondaire-stats title="La statistique à deux variables au secondaire"}
+Au deuxième cycle du secondaire, les élèves étudient les distributions
+à deux caractères : ils construisent des nuages de points, décrivent et
+estiment la corrélation linéaire, puis tracent une droite de régression,
+notamment par la méthode de Mayer ou par la méthode
+médiane-médiane [@PDA2016]. Plusieurs idées de ce chapitre y sont
+déjà en germe. Le point moyen apparaît dans la méthode de Mayer, qui
+fait passer la droite par les points moyens de deux sous-groupes. Le
+coefficient de corrélation y est souvent estimé à partir de la forme du
+nuage, par exemple en comparant la longueur et la largeur du rectangle
+ou de l'ellipse qui l'entoure : un nuage très allongé indique une forte
+corrélation. L'ACP donne un sens précis à ces deux dimensions, la
+« longueur » et la « largeur » du nuage, qui deviendront les
+racines carrées de deux valeurs propres.
+:::
+
+## La droite qui représente le mieux un nuage de points {#sec:acp-droite}
+
+### Deux façons de mesurer l'écart à une droite
+
+Le nuage de la figure \ref{fig:acp-notes} s'allonge selon une direction
+oblique. Quelle est la droite qui le représente le mieux ? La question
+semble familière : c'est celle que l'on pose au secondaire lorsqu'on
+trace une droite de régression. Il faut pourtant préciser ce que l'on
+entend par « représenter le mieux ».
+
+La [droite de régression]{.defi} des moindres carrés est la droite
+$y = ax + b$ qui minimise la somme des carrés des écarts *verticaux*
+entre les points et la droite. Elle répond à une question de
+*prédiction* : connaissant la note de mathématiques $x$ d'un élève,
+quelle note de sciences $y$ peut-on prévoir ? On montre que cette
+droite passe par le point moyen et qu'elle a pour pente
+$a = s_{xy}/s_x^2$ (exercice \ref{exo:acp-python-notes}). Ici,
+$a = 40/50 = \num{0.8}$, et la droite de régression a pour équation
+$y = 75 + \num{0.8}\,(x - 70)$, c'est-à-dire $y = \num{0.8}\,x + 19$.
+
+Mais les deux variables ne jouent pas le même rôle dans ce calcul. Si
+l'on cherchait plutôt à prédire la note de mathématiques à partir de
+celle de sciences, on minimiserait les écarts *horizontaux*, et l'on
+obtiendrait la droite $x = 70 + \num{0.8}\,(y - 75)$, soit
+$y = \num{1.25}\,x - \num{12.5}$ : une autre droite ! Lorsqu'aucune des
+deux variables n'a vocation à expliquer l'autre, et que l'on cherche
+simplement à décrire la forme du nuage, il est plus naturel de mesurer
+la distance de chaque point à la droite *perpendiculairement* à
+celle-ci (figure \ref{fig:acp-residus}). C'est ce que nous ferons.
+
+::: {#fig:acp-residus}
+![](figures/tikz/fig-acp-residus.tikz)
+
+À gauche, la droite de régression de $y$ selon $x$ minimise la somme des carrés des écarts verticaux (en rouge). À droite, la droite que nous cherchons minimise la somme des carrés des distances perpendiculaires. Ce n'est pas la même droite.
+:::
+
+::: {.definition #def:acp-droite-ajustement title="Droite d'ajustement orthogonal"}
+Soit $\vec{x}_1, \dots, \vec{x}_n$ des points du plan (ou de $\R^p$), et
+$\mathcal{D}$ une droite. Notons $d_i$ la distance du point $\vec{x}_i$ à
+la droite $\mathcal{D}$, c'est-à-dire la distance de $\vec{x}_i$ à sa
+projection orthogonale sur $\mathcal{D}$. La droite qui rend la somme
+$$
+  S(\mathcal{D}) = d_1^2 + d_2^2 + \dots + d_n^2
+$$
+la plus petite possible s'appelle la [droite d'ajustement
+orthogonal]{.defi} du nuage. Nous verrons qu'elle porte aussi le nom
+d'[axe principal]{.defi}.
+:::
+
+### On peut se ramener à des données centrées
+
+Toutes les droites de régression passent par le point moyen ; c'est
+aussi le cas de la droite d'ajustement orthogonal. L'intuition est
+claire : si une droite passait à côté du centre de gravité du nuage, on
+pourrait la déplacer parallèlement à elle-même pour la rapprocher de
+l'ensemble des points. Nous admettrons ce résultat. Nous pouvons donc *centrer* les données, c'est-à-dire
+placer l'origine au point moyen, et ne chercher que parmi les droites qui
+passent par l'origine.
+
+*Dans toute la suite de cette section, les points $\vec{x}_1, \dots,
+\vec{x}_n$ sont centrés* : ce sont les écarts à la moyenne des deux
+dernières colonnes du tableau \ref{tab:acp-notes}, par exemple
+$\vec{x}_A = (-10, -3)$. Une droite passant par l'origine est l'espace
+engendré $\Span\{\vec{u}\}$ par un vecteur unitaire $\vec{u}$.
+
+### Projeter sur une droite : le théorème de Pythagore
+
+D'après la définition \ref{def:D-projection}, la projection orthogonale
+du point $\vec{x}_i$ sur la droite engendrée par le vecteur unitaire
+$\vec{u}$ est
+$$
+  \proj_{\vec{u}}\vec{x}_i = (\vec{x}_i \cdot \vec{u})\,\vec{u}
+  = t_i\,\vec{u}, \qquad\text{où}\qquad t_i = \vec{x}_i \cdot \vec{u} .
+$$
+Le nombre $t_i$ est la *coordonnée* du point projeté sur la droite,
+graduée par $\vec{u}$ : c'est la position, le long de la droite, de
+l'« ombre » du point $\vec{x}_i$. Le point $\vec{x}_i$, sa projection
+$t_i\vec{u}$ et l'origine forment un triangle rectangle
+(figure \ref{fig:acp-pythagore}), et le théorème de Pythagore donne
+\begin{equation}\label{eq:acp-pythagore}
+  \norme{\vec{x}_i}^2 = t_i^2 + d_i^2 .
+\end{equation}
+Dans ce triangle, l'hypoténuse joint l'origine au point $\vec{x}_i$ : sa
+longueur $\norme{\vec{x}_i}$ est la distance du point à l'origine,
+c'est-à-dire au point moyen du nuage. Ni le point ni l'origine ne
+bougent lorsqu'on change de droite ; seule la droite pivote autour de
+l'origine. L'hypoténuse reste donc la même pour toutes les droites, et
+seuls les deux autres côtés, $t_i$ et $d_i$, dépendent de $\vec{u}$.
+
+::: {#fig:acp-pythagore}
+![](figures/tikz/fig-acp-pythagore.tikz)
+
+La projection du point $\vec{x}_i$ sur la droite engendrée par le vecteur unitaire $\vec{u}$ est le point $t_i\vec{u}$, avec $t_i = \vec{x}_i\cdot\vec{u}$. Lorsque la droite pivote autour de l'origine, le point $\vec{x}_i$ et l'origine restent fixes : l'hypoténuse $\norme{\vec{x}_i}$ ne change pas. Si le côté $t_i$ s'allonge, le côté $d_i$ raccourcit.
+:::
+
+C'est l'observation clé de tout le chapitre. En additionnant
+l'égalité \eqref{eq:acp-pythagore} sur tous les points du nuage, on
+obtient
+\begin{equation}\label{eq:acp-inertie}
+  \underbrace{\sum_{i=1}^{n} \norme{\vec{x}_i}^2}_{\text{ne dépend pas de } \vec{u}}
+  = \sum_{i=1}^{n} t_i^2 + \sum_{i=1}^{n} d_i^2 .
+\end{equation}
+Le membre de gauche est la somme des carrés des distances des points à
+l'origine : il ne dépend que du nuage, pas de la droite choisie.
+Rendre la somme des $d_i^2$ la plus petite possible revient donc à
+rendre la somme des $t_i^2$ la plus grande possible. Or, les $t_i$ ont
+une moyenne nulle, puisque
+$\frac1n\sum t_i = \big(\frac1n\sum \vec{x}_i\big)\cdot\vec{u} =
+\vec{0}\cdot\vec{u} = 0$ pour des données centrées ; la quantité
+$\frac1n\sum t_i^2$ est donc la *variance* des projections.
+
+::: {.proposition #prop:acp-deux-problemes title="Deux problèmes équivalents"}
+Pour un nuage centré, la droite $\Span\{\vec{u}\}$ qui minimise la somme
+des carrés des distances des points à la droite est aussi celle qui
+maximise la variance des projections des points sur la droite.
+:::
+
+Ces deux points de vue sont complémentaires. Le premier dit que la
+droite cherchée *passe au plus près des points* ; le second, que
+les points projetés sur cette droite sont *le plus étalés possible*,
+autrement dit que la projection écrase le moins possible le nuage. Pour
+reprendre l'image de l'introduction, c'est la direction selon laquelle
+l'ombre du nuage est la plus longue.
+
+::: {.example #ex:acp-trois-directions title="Trois directions pour les six élèves"}
+Comparons trois droites passant par le point moyen, de vecteurs
+directeurs unitaires $\vec{e}_1 = (1,0)$, $\vec{u} = \frac{1}{\sqrt2}(1,1)$
+et $\vec{w} = \frac{1}{\sqrt2}(1,-1)$. Pour $\vec{e}_1$ (la droite
+horizontale), $t_i$ est simplement l'écart $x_i - \bar{x}$, et la
+variance des projections est $s_x^2 = 50$. Pour $\vec{u}$, on obtient
+$t_i = \frac{1}{\sqrt2}\big((x_i - \bar{x}) + (y_i - \bar{y})\big)$,
+c'est-à-dire, pour les élèves $A$ à $F$,
+$$
+  \sqrt2\;(t_A, t_B, \dots, t_F) = (-13, -16, -11, 14, 13, 13),
+$$
+d'où
+$$
+  \frac16\sum t_i^2 = \frac{169 + 256 + 121 + 196 + 169 + 169}{6 \cdot 2}
+  = \frac{1080}{12} = 90 .
+$$
+Pour $\vec{w}$, on trouve de même $\sqrt2\;(t_A, \dots, t_F) = (-7, 2,
+5, -4, -1, 5)$ et une variance de $\frac{120}{12} = 10$. Enfin,
+$\frac16\sum \norme{\vec{x}_i}^2 = s_x^2 + s_y^2 = 100$. Pour la
+direction $\vec{u}$, la relation \eqref{eq:acp-inertie}, divisée par $n$,
+s'écrit donc $100 = 90 + 10$ : la variance des projections vaut $90$, et
+la moyenne des carrés des distances à la droite vaut $10$. Pour
+$\vec{w}$, c'est l'inverse, $100 = 10 + 90$. La direction $\vec{u}$ est
+de loin la meilleure des trois.
+:::
+
+### La variance dans une direction quelconque
+
+Plutôt que d'essayer les directions une à une, exprimons la variance des
+projections en fonction de $\vec{u}$. Si $\vec{x}_i = (a_i, b_i)$ et
+$\vec{u} = (u_1, u_2)$, alors $t_i = a_i u_1 + b_i u_2$, et
+\begin{align*}
+  \frac1n\sum_{i=1}^{n} t_i^2
+  &= \frac1n\sum_{i=1}^{n} \big(a_i^2 u_1^2 + 2 a_i b_i u_1 u_2 + b_i^2 u_2^2\big)\\
+  &= s_x^2\,u_1^2 + 2 s_{xy}\,u_1 u_2 + s_y^2\,u_2^2 .
+\end{align*}
+On reconnaît une expression déjà rencontrée : si l'on pose
+$$
+  C = \mat{s_x^2}{s_{xy}}{s_{xy}}{s_y^2},
+$$
+alors $C\vec{u} = (s_x^2 u_1 + s_{xy}u_2,\ s_{xy}u_1 + s_y^2 u_2)$ et
+\begin{equation}\label{eq:acp-uCu}
+  \frac1n\sum_{i=1}^{n} t_i^2 = \vec{u}\cdot C\vec{u} = \vec{u}^{\mathsf{T}} C\,\vec{u} .
+\end{equation}
+La matrice $C$ s'appelle la [matrice de covariance]{.defi} des deux
+variables. Elle contient les deux variances sur sa diagonale et la
+covariance ailleurs, et elle est *symétrique*. Pour nos six élèves,
+$$
+  C = \mat{50}{40}{40}{50} .
+$$
+
+Toute direction du plan s'écrit $\vec{u} = (\cos\theta, \sin\theta)$,
+où $\theta$ est l'angle que fait la droite avec l'axe horizontal. La
+variance des projections devient alors une fonction de $\theta$ :
+$$
+  f(\theta) = 50\cos^2\theta + 80\cos\theta\sin\theta + 50\sin^2\theta
+  = 50 + 40\sin(2\theta),
+$$
+puisque $\cos^2\theta + \sin^2\theta = 1$ et $2\sin\theta\cos\theta =
+\sin(2\theta)$. Cette fonction sinusoïdale atteint son maximum, $90$,
+lorsque $2\theta = 90^\circ$, donc pour $\theta = 45^\circ$, et son
+minimum, $10$, pour $\theta = 135^\circ$ (figure \ref{fig:acp-angle}).
+La droite d'ajustement orthogonal est donc la droite de pente $1$ qui
+passe par le point moyen $(70, 75)$, c'est-à-dire la droite
+d'équation $y = x + 5$.
+
+::: {#fig:acp-angle}
+![](figures/tikz/fig-acp-angle.tikz)
+
+À gauche, le nuage centré et les projections de ses points sur deux droites : celle d'angle $45^\circ$ (en bleu), où les projections sont très étalées, et celle d'angle $135^\circ$ (en ocre), où elles sont tassées près de l'origine. À droite, la variance $f(\theta) = 50 + 40\sin(2\theta)$ des projections, en fonction de l'angle de la droite.
+:::
+
+::: {.secondaire #rem:acp-sinusoidale title="Une fonction sinusoïdale"}
+La fonction $f(\theta) = 50 + 40\sin(2\theta)$ est une fonction
+sinusoïdale, du type de celles qu'étudient les élèves de cinquième
+secondaire (séquence SN), avec ses paramètres habituels : une valeur
+moyenne de $50$, une amplitude de $40$ et une période de $180^\circ$. La
+période s'explique sans calcul : tourner une droite d'un demi-tour la
+ramène sur elle-même. Le problème d'optimisation de cette section est
+donc accessible à un élève du secondaire, pourvu qu'on lui fournisse
+l'expression de $f$ ; le chercher par essais, avec une droite que l'on
+fait tourner autour du point moyen dans GeoGebra, est aussi une
+activité éclairante.
+:::
+
+### Le lien avec les vecteurs propres
+
+Le maximum est atteint dans la direction de $\vec{u} = \frac{1}{\sqrt2}
+(1,1)$. Ce vecteur n'est pas quelconque : la matrice
+$C = \mat{50}{40}{40}{50}$ a pour valeurs propres $\lambda_1 = 90$ et
+$\lambda_2 = 10$, de vecteurs propres respectifs $(1,1)$ et $(1,-1)$. Le
+calcul est exactement celui de l'exemple \ref{ex:D-valeurs-propres},
+puisque $C = 10\mat{5}{4}{4}{5}$ et que, comme $\mat{2}{1}{1}{2}$, cette
+matrice a des coefficients diagonaux égaux. La droite d'ajustement
+orthogonal est portée par le vecteur propre associé à la *plus grande*
+valeur propre ; cette plus grande valeur propre est la variance maximale,
+et la seconde valeur propre est la variance minimale.
+
+Ce n'est pas une coïncidence. Pour une matrice symétrique $C$ quelconque,
+posons $\vec{u}(\theta) = (\cos\theta, \sin\theta)$ et
+$f(\theta) = \vec{u}^{\mathsf{T}}C\,\vec{u}$. La dérivée de
+$\vec{u}(\theta)$ est le vecteur $\vec{u}'(\theta) = (-\sin\theta,
+\cos\theta)$, qui est unitaire et perpendiculaire à $\vec{u}$. Par la
+règle de dérivation d'un produit (qui s'applique au produit scalaire
+composante par composante),
+$$
+  f'(\theta) = \vec{u}'^{\mathsf{T}} C\,\vec{u} + \vec{u}^{\mathsf{T}} C\,\vec{u}'
+  = 2\,\vec{u}' \cdot C\vec{u},
+$$
+où l'on a utilisé la symétrie de $C$ :
+$\vec{u}^{\mathsf{T}}C\,\vec{u}' = (\vec{u}^{\mathsf{T}}C\,\vec{u}')^{\mathsf{T}}
+= \vec{u}'^{\mathsf{T}}C^{\mathsf{T}}\vec{u} = \vec{u}'^{\mathsf{T}}C\,\vec{u}$.
+La dérivée s'annule donc exactement lorsque $C\vec{u}$ est perpendiculaire
+à $\vec{u}'$, c'est-à-dire, dans le plan, lorsque $C\vec{u}$ est
+*parallèle* à $\vec{u}$ : lorsque $C\vec{u} = \lambda\vec{u}$ pour
+un certain nombre $\lambda$. Les directions où la variance est maximale
+ou minimale sont donc des directions propres de $C$ ! De plus, si
+$C\vec{u} = \lambda\vec{u}$ avec $\vec{u}$ unitaire, alors
+$f = \vec{u}\cdot\lambda\vec{u} = \lambda$ : la variance dans une
+direction propre est la valeur propre correspondante.
+
+::: {.theorem #thm:acp-droite title="La droite d'ajustement orthogonal"}
+Soit un nuage de points du plan, de point moyen $M$ et de matrice de
+covariance $C$, et soit $\lambda_1 \geq \lambda_2$ les valeurs propres de
+$C$, de vecteurs propres unitaires $\vec{v}_1$ et $\vec{v}_2$.
+
+1. La droite d'ajustement orthogonal est la droite qui passe par $M$ et
+   qui est dirigée par $\vec{v}_1$.
+2. La variance des projections des points sur cette droite vaut
+   $\lambda_1$, et la moyenne des carrés des distances des points à
+   cette droite vaut $\lambda_2$.
+3. La variance totale du nuage, $s_x^2 + s_y^2$, est égale à
+   $\lambda_1 + \lambda_2$.
+:::
+
+::: {.proof}
+Le point (1) découle du fait, admis plus haut, que la droite
+d'ajustement orthogonal passe par le point moyen, de la
+proposition \ref{prop:acp-deux-problemes} et de l'étude de $f$ qui
+précède : $f$ est continue et périodique, donc elle atteint son maximum,
+en un point où $f' = 0$, c'est-à-dire dans une direction propre ; parmi
+les deux valeurs propres, la plus grande est $\lambda_1$. Le point (3)
+est la propriété de la trace (section \ref{sec:D-valeurs-propres}) : la
+somme des valeurs propres est égale à la somme $s_x^2 + s_y^2$ des
+coefficients diagonaux. Le point (2) en découle, en divisant
+l'égalité \eqref{eq:acp-inertie} par $n$ : la moyenne des $d_i^2$ vaut
+$(s_x^2 + s_y^2) - \lambda_1 = \lambda_2$.
+:::
+
+Le théorème donne aussi un sens précis à la « forme » du nuage. La
+variance totale $s_x^2 + s_y^2 = 100$ des six élèves se répartit en
+$\lambda_1 = 90$ le long de l'axe principal et $\lambda_2 = 10$ dans la
+direction perpendiculaire. On dit que l'axe principal [explique]{.defi}
+$\frac{90}{100} = \SI{90}{\percent}$ de la variance totale : en
+remplaçant chaque point par sa projection sur la droite, on ne perd que
+$\SI{10}{\percent}$ de la dispersion du nuage. Géométriquement, le nuage
+ressemble à une ellipse dont les axes sont dirigés par les vecteurs
+propres, et dont les demi-axes sont proportionnels à $\sqrt{\lambda_1}$
+et à $\sqrt{\lambda_2}$ (figure \ref{fig:acp-axes-principaux}) ; on
+retrouve l'ellipse de la figure \ref{fig:D-valeurs-propres}.
+
+::: {#fig:acp-axes-principaux}
+![](figures/tikz/fig-acp-axes-principaux.tikz)
+
+À gauche, les vecteurs propres de la matrice de covariance, multipliés par la racine carrée de leur valeur propre (l'écart type dans chaque direction), dessinent les axes d'une ellipse qui épouse la forme du nuage ; on a tracé l'ellipse de demi-axes $2\sqrt{90}$ et $2\sqrt{10}$. À droite, l'axe principal $y = x + 5$ se situe entre les deux droites de régression, $y = \num{0.8}\,x + 19$ et $y = \num{1.25}\,x - \num{12.5}$.
+:::
+
+Les coordonnées $t_i$ des projections sur l'axe principal ont, elles
+aussi, une interprétation. Puisque
+$t_i = \frac{1}{\sqrt2}\big((x_i - 70) + (y_i - 75)\big)$, elles sont
+proportionnelles à la *somme* des écarts à la moyenne dans les deux
+matières : la coordonnée sur l'axe principal mesure le niveau général de
+l'élève. La coordonnée sur le second axe,
+$\frac{1}{\sqrt2}\big((x_i - 70) - (y_i - 75)\big)$, mesure plutôt la
+*différence* entre les deux matières : elle est positive pour un élève
+relativement plus fort en mathématiques qu'en sciences. Ce passage
+d'un couple de notes à un couple « niveau général, préférence » est
+un simple changement de base orthonormée, une rotation de $45^\circ$
+du repère : il ne fait perdre aucune information, mais il range
+l'information par ordre d'importance.
+
+::: {.remark #rem:acp-regression title="Régression ou axe principal ?"}
+La figure \ref{fig:acp-axes-principaux} illustre un fait général :
+l'axe principal se situe toujours entre les deux droites de régression,
+et les trois droites sont confondues seulement lorsque les points sont
+parfaitement alignés. Les droites de régression sont « tirées » vers
+l'horizontale ou vers la verticale, un phénomène que Francis Galton a
+appelé, en étudiant la taille des enfants en fonction de celle de leurs
+parents, la *régression vers la moyenne* [@Galton1886]. Le choix
+entre les deux méthodes dépend de la question posée : pour *prédire*
+une variable à partir d'une autre, on utilise la régression ; pour
+*décrire* un nuage sans privilégier de variable, l'axe principal. Il
+faut toutefois retenir une faiblesse de l'axe principal : il dépend des
+unités de mesure (exercice \ref{exo:acp-unites}), ce qui n'est pas le
+cas de la droite de régression, ni du coefficient de corrélation.
+:::
+
+## Des données dans l'espace {#sec:acp-espace}
+
+### Les manchots de l'archipel Palmer
+
+Entre 2007 et 2009, l'écologiste Kristen Gorman et ses collègues de la
+station de recherche Palmer, en Antarctique, ont mesuré plusieurs
+centaines de manchots appartenant à trois espèces : le manchot Adélie,
+le manchot à jugulaire et le manchot papou [@Gorman2014]. Ces données,
+rendues publiques sous une licence libre [@Horst2020], sont aujourd'hui
+très utilisées pour enseigner la statistique et la science des données.
+Nous retiendrons, pour $n = 342$ manchots, trois variables mesurées en
+millimètres : la longueur du bec, la hauteur du bec (son épaisseur,
+mesurée verticalement à la base) et la longueur de la nageoire
+(tableau \ref{tab:acp-manchots}). Chaque manchot est donc un point de
+$\R^3$.
+
+::: {#tab:acp-manchots}
+Trois manchots de l'archipel Palmer, un de chaque espèce, puis les moyennes et les écarts types des trois variables sur l'ensemble des $342$ manchots.
+
+| | Espèce | Longueur du bec | Hauteur du bec | Nageoire |
+|:--|:--|:-:|:-:|:-:|
+| manchot 1 | Adélie | $\num{39.1}$ | $\num{18.7}$ | $181$ |
+| manchot 153 | papou | $\num{46.1}$ | $\num{13.2}$ | $211$ |
+| manchot 277 | à jugulaire | $\num{46.5}$ | $\num{17.9}$ | $192$ |
+| moyenne | | $\num{43.92}$ | $\num{17.15}$ | $\num{200.92}$ |
+| écart type | | $\num{5.45}$ | $\num{1.97}$ | $\num{14.04}$ |
+:::
+
+Un nuage de points de l'espace se dessine en perspective, mais une
+perspective n'est rien d'autre qu'une projection sur le plan de la page,
+et la figure \ref{fig:acp-manchots-3d} n'en montre qu'un point de vue
+parmi d'autres. Sur un écran, on peut faire tourner le nuage avec la
+souris, ce qui revient à faire défiler un grand nombre de projections ;
+sur papier, il faut choisir.
+
+::: {#fig:acp-manchots-3d}
+![](figures/tikz/fig-acp-manchots-3d.tikz)
+
+Les $342$ manchots vus en perspective. Les couleurs et les formes des marques indiquent l'espèce. Cette vue suggère trois groupes, mais on ne peut pas y lire les trois mesures d'un manchot : le dessin n'a que deux dimensions, et deux points de l'espace situés l'un derrière l'autre, dans la direction du regard, sont dessinés au même endroit de la page.
+:::
+
+### Regarder le nuage sous différents angles
+
+La façon la plus simple de représenter des données de dimension $3$ sur
+une page consiste à oublier une des variables, c'est-à-dire à projeter
+le nuage sur l'un des trois plans de coordonnées. La
+figure \ref{fig:acp-manchots-plans} montre les trois projections
+obtenues. Elles ne racontent pas toutes la même histoire.
+
+::: {#fig:acp-manchots-plans}
+![](figures/tikz/fig-acp-manchots-plans.tikz)
+
+Les projections du nuage des manchots sur les trois plans de coordonnées. Dans le premier, les trois espèces forment trois groupes bien distincts. Dans le troisième, les manchots papous se détachent nettement, mais les manchots Adélie et à jugulaire se confondent.
+:::
+
+Dans le premier plan (longueur et hauteur du bec), les trois espèces
+sont bien séparées : les manchots Adélie ont un bec court et haut, les
+papous un bec long et mince, et les manchots à jugulaire un bec à la
+fois long et haut. Dans le troisième plan (hauteur du bec et nageoire),
+les papous, qui ont de longues nageoires et un bec mince, se détachent
+clairement, mais les deux autres espèces se superposent presque
+entièrement : en ne regardant que ce plan, on ne soupçonnerait pas qu'il
+y a là deux espèces. Le choix du plan de projection n'est donc pas
+anodin. Rien n'oblige d'ailleurs à se limiter aux plans de coordonnées :
+on peut projeter le nuage sur n'importe quel plan passant par le point
+moyen. Une question naturelle se pose alors : *quel est le meilleur
+plan sur lequel projeter les données ?*
+
+Il faut d'abord s'entendre sur le sens de « meilleur ». Nous ne pouvons
+pas demander à la méthode de séparer les espèces, puisqu'elle ne les
+connaît pas : les couleurs ont été ajoutées après coup, et dans la
+plupart des applications, on ne dispose d'aucune étiquette de ce genre.
+Nous reprenons plutôt le critère de la section précédente : le meilleur
+plan est celui qui passe au plus près des points, ou, ce qui revient au
+même, celui sur lequel le nuage projeté est le plus étalé.
+
+### Projeter sur un plan
+
+Soit $\Plan$ un plan passant par l'origine, et $(\vec{a}, \vec{b})$ une
+base orthonormée de ce plan. La projection orthogonale d'un point
+$\vec{x}$ sur $\Plan$ est
+$$
+  \proj_{\Plan}\vec{x} = (\vec{x}\cdot\vec{a})\,\vec{a} + (\vec{x}\cdot\vec{b})\,\vec{b} :
+$$
+on projette sur chacune des deux droites de la base, et l'on additionne.
+Le vecteur $\vec{x} - \proj_{\Plan}\vec{x}$ est orthogonal à $\vec{a}$,
+puisque
+$$
+  \big(\vec{x} - \proj_{\Plan}\vec{x}\big)\cdot\vec{a}
+  = \vec{x}\cdot\vec{a} - (\vec{x}\cdot\vec{a})(\vec{a}\cdot\vec{a})
+    - (\vec{x}\cdot\vec{b})(\vec{b}\cdot\vec{a})
+  = \vec{x}\cdot\vec{a} - \vec{x}\cdot\vec{a} - 0 = 0 ,
+$$
+et de même à $\vec{b}$ ; il est donc orthogonal au plan tout
+entier ; sa norme est la distance $d$ du point $\vec{x}$ au plan. Les
+nombres $\vec{x}\cdot\vec{a}$ et $\vec{x}\cdot\vec{b}$ sont les
+coordonnées du point projeté dans la base $(\vec{a}, \vec{b})$ : ce sont
+eux que l'on porte en abscisse et en ordonnée pour dessiner le nuage
+projeté. Le théorème de Pythagore s'applique encore :
+$$
+  \norme{\vec{x}}^2 = (\vec{x}\cdot\vec{a})^2 + (\vec{x}\cdot\vec{b})^2 + d^2 .
+$$
+Le même raisonnement qu'à la section \ref{sec:acp-droite} montre donc
+que, pour un nuage centré, le plan qui minimise la somme des carrés des
+distances des points au plan est celui qui maximise
+$$
+  \frac1n\sum_{i=1}^{n}\Big((\vec{x}_i\cdot\vec{a})^2 + (\vec{x}_i\cdot\vec{b})^2\Big)
+  = \vec{a}^{\mathsf{T}}C\,\vec{a} + \vec{b}^{\mathsf{T}}C\,\vec{b},
+$$
+la variance du nuage projeté, où $C$ est maintenant la matrice de
+covariance $3 \times 3$ des trois variables. Ses coefficients diagonaux
+sont les trois variances, et le coefficient $(j,k)$ est la covariance des
+variables $j$ et $k$ ; l'égalité découle de \eqref{eq:acp-uCu},
+appliquée à $\vec{a}$ puis à $\vec{b}$ (nous la justifierons en toute
+dimension à la section \ref{sec:acp-definition}).
+
+### Un problème d'unités : réduire les variables
+
+Avant de chercher ce plan, un obstacle doit être levé. La longueur de la
+nageoire a un écart type de $\num{14.04}$ mm, la hauteur du bec un écart
+type de $\num{1.97}$ mm seulement. Une variable très dispersée pèse
+beaucoup plus lourd dans la variance totale : à elle seule, la nageoire
+contribue $\num{14.04}^2 \approx 197$ des quelque $231$ mm$^2$ de
+variance totale du nuage. Le meilleur plan serait donc presque imposé
+par la nageoire, simplement parce qu'elle est plus grande que le bec, et
+non parce qu'elle est plus informative. Le problème serait pire encore
+avec des variables mesurées dans des unités différentes, comme une
+longueur en millimètres et une masse en grammes : le résultat dépendrait
+alors du choix arbitraire des unités (exercice \ref{exo:acp-unites}).
+
+La solution habituelle consiste à [réduire]{.defi} les variables, en
+divisant chaque écart à la moyenne par l'écart type :
+$$
+  z_i = \frac{x_i - \bar{x}}{s_x} .
+$$
+Le nombre $z_i$, appelé la [cote $z$]{.defi} de la valeur $x_i$, est
+sans unité : il indique de combien d'écarts types la valeur $x_i$
+s'éloigne de la moyenne. Une variable [centrée réduite]{.defi} a une
+moyenne nulle et une variance égale à $1$, et la covariance de deux
+variables centrées réduites est égale à leur coefficient de corrélation.
+La matrice de covariance des variables réduites est donc la [matrice de
+corrélation]{.defi} $R$ des variables de départ, dont tous les
+coefficients diagonaux valent $1$. Pour les manchots,
+$$
+  R = \begin{pmatrix}
+    1 & -\num{0.235} & \num{0.656}\\
+    -\num{0.235} & 1 & -\num{0.584}\\
+    \num{0.656} & -\num{0.584} & 1
+  \end{pmatrix},
+$$
+où les variables sont, dans l'ordre, la longueur du bec, la hauteur du
+bec et la longueur de la nageoire. On y lit, par exemple, que les
+manchots qui ont une longue nageoire ont tendance à avoir un bec long
+($r = \num{0.656}$) et mince ($r = -\num{0.584}$).
+
+::: {.secondaire #rem:acp-cote-z title="La cote $z$ et la cote R"}
+Les futurs enseignants québécois connaissent bien un usage de la
+cote $z$ : la *cote de rendement au collégial* (cote R), qui
+sert à l'admission dans les programmes universitaires contingentés, est
+construite à partir de la cote $z$ d'un étudiant dans chacun de ses
+groupes-cours. L'idée est exactement celle de la réduction : une note
+de $75$ n'a pas la même valeur dans un groupe où la moyenne est de $65$
+que dans un groupe où elle est de $85$, et l'écart à la moyenne, exprimé
+en écarts types, permet de comparer des résultats obtenus dans des
+contextes différents. En classe, la cote $z$ permet de répondre à une
+question que se posent souvent les élèves : « ai-je mieux réussi en
+mathématiques ou en français ? »
+:::
+
+### Le meilleur plan
+
+Comme dans le plan, on montre que la meilleure droite est dirigée par le
+vecteur propre de $R$ associé à la plus grande valeur propre. Pour le
+meilleur plan, la réponse est tout aussi simple : *il est engendré par
+les vecteurs propres associés aux deux plus grandes valeurs propres*
+(théorème \ref{thm:acp-optimalite}). La matrice $R$ étant symétrique,
+le théorème spectral (théorème \ref{thm:D-spectral}) garantit que ces
+vecteurs propres sont orthogonaux. Un calcul numérique
+(section \ref{sec:acp-python}) donne les valeurs propres
+$$
+  \lambda_1 = \num{2.003}, \qquad \lambda_2 = \num{0.767}, \qquad \lambda_3 = \num{0.230},
+$$
+dont la somme vaut $3$, la trace de $R$, et les vecteurs propres
+unitaires
+$$
+  \vec{v}_1 = \coliii{\num{0.551}}{-\num{0.512}}{\num{0.659}}, \qquad
+  \vec{v}_2 = \coliii{\num{0.657}}{\num{0.753}}{\num{0.036}}, \qquad
+  \vec{v}_3 = \coliii{-\num{0.514}}{\num{0.413}}{\num{0.752}} .
+$$
+Le plan engendré par $\vec{v}_1$ et $\vec{v}_2$ conserve
+$\frac{\num{2.003} + \num{0.767}}{3} \approx \SI{92.3}{\percent}$ de la
+variance totale du nuage réduit : en projetant sur ce plan, on ne perd
+que $\SI{7.7}{\percent}$ de la dispersion. La
+figure \ref{fig:acp-manchots-acp} montre le résultat. Les trois espèces
+y apparaissent clairement, alors que la méthode ignorait leur
+existence. À titre de comparaison, le plan engendré par $\vec{v}_2$ et
+$\vec{v}_3$ ne conserve que $\frac{\num{0.767} + \num{0.230}}{3} \approx
+\SI{33.2}{\percent}$ de la variance, et les manchots Adélie et papous y
+sont indiscernables.
+
+::: {#fig:acp-manchots-acp}
+![](figures/tikz/fig-acp-manchots-acp.tikz)
+
+À gauche, la projection du nuage réduit des manchots sur le plan engendré par les deux premiers vecteurs propres de la matrice de corrélation : c'est le meilleur plan, au sens de la variance. À droite, la projection sur le plan engendré par les deux derniers vecteurs propres, qui est le pire : le nuage y est écrasé.
+:::
+
+Les composantes des vecteurs propres permettent d'interpréter les
+nouveaux axes. La coordonnée d'un manchot sur le premier axe,
+$$
+  y_1 = \num{0.551}\,z_{\text{long.\ bec}} - \num{0.512}\,z_{\text{haut.\ bec}} + \num{0.659}\,z_{\text{nageoire}},
+$$
+est grande pour un manchot à long bec mince et à longue nageoire : c'est
+le profil du manchot papou, que l'on trouve à droite de la figure.
+La coordonnée sur le second axe,
+$y_2 \approx \num{0.657}\,z_{\text{long.\ bec}} + \num{0.753}\,z_{\text{haut.\ bec}}$,
+ne dépend presque pas de la nageoire ; elle mesure la *taille du bec*,
+dans ses deux dimensions, et elle sépare les manchots à jugulaire, au
+bec long et haut, des manchots Adélie. L'ACP a ainsi remplacé trois
+mesures corrélées par deux nouvelles variables, des combinaisons
+linéaires des premières, qui résument l'essentiel de l'information.
+
+<!-- Application shinylive : version web seulement. Source dans
+     shiny/acp-manchots/, exportée dans applications/ par shiny/exporter.sh. -->
+::: {.content-visible when-format="html"}
+L'application ci-dessous permet de faire cette recherche soi-même. Le
+plan de projection y est le plan de l'écran : en faisant tourner le
+nuage, on choisit un plan, et l'on voit à côté l'ombre du nuage sur ce
+plan et la part de la variance qu'il conserve. Cherchez d'abord un bon
+point de vue à la main, puis comparez avec les plans engendrés par deux
+vecteurs propres de $R$.
+Le calcul se fait entièrement dans votre navigateur : l'application met
+quelques secondes à se charger.
+
+```{=html}
+<div class="column-page-right appli-shiny">
+  <iframe id="appli-acp-manchots" src="applications/acp-manchots/"
+          title="À la recherche du meilleur plan : l'ACP des manchots"
+          style="width:100%; height:1900px; border:1px solid #e3e6eb; border-radius:10px;"></iframe>
+  <p style="text-align:right; font-size:0.85em; margin-top:0.3em;">
+    <a href="applications/acp-manchots/" target="_blank" rel="noopener">Ouvrir
+    l'application dans un nouvel onglet ↗</a></p>
+</div>
+<script>
+// Ajuste la hauteur du cadre à celle de l'application (shinylive place
+// l'application dans un second cadre, de même origine).
+(function () {
+  const cadre = document.getElementById("appli-acp-manchots");
+  // Ouverte depuis le disque (file://), la page ne peut pas lancer shinylive.
+  if (location.protocol === "file:") {
+    cadre.outerHTML = '<div style="border:1px solid #f0c987; background:#fff4e0; ' +
+      'color:#7a4f00; border-radius:8px; padding:0.8em 1em;">L\'application ne ' +
+      'fonctionne pas quand le livre est ouvert directement depuis le disque. ' +
+      'Lancez <code>quarto preview</code> dans le dossier du livre, ou ' +
+      '<code>python3 -m http.server --directory _book</code>, puis ouvrez ' +
+      'l\'adresse <code>http://localhost:…</code> affichée.</div>';
+    return;
+  }
+  setInterval(function () {
+    try {
+      const interne = cadre.contentDocument.querySelector("iframe");
+      const h = interne.contentDocument.body.scrollHeight;
+      if (h > 300 && Math.abs(h - cadre.offsetHeight) > 4) cadre.style.height = (h + 2) + "px";
+    } catch (e) { /* application pas encore chargée */ }
+  }, 600);
+})();
+</script>
+```
+:::
+
+::: {.content-visible when-format="pdf"}
+La version web de ces notes contient une application interactive qui
+permet de faire cette recherche soi-même : en faisant tourner le nuage,
+on choisit le plan de l'écran, et l'on voit l'ombre du nuage sur ce
+plan, avec la part de la variance qu'il conserve.
+:::
+
+::: {.outil #outil:acp-3d title="Faire tourner un nuage de points"}
+Pour développer l'intuition, rien ne vaut un nuage que l'on peut faire
+tourner. Les calculatrices 3D de GeoGebra et de Desmos tracent un nuage
+de points de l'espace à partir d'une liste de triplets : on peut y
+coller les mesures des manchots et chercher, en faisant tourner la
+figure, le point de vue où les trois espèces se séparent le mieux. En
+Python, la bibliothèque `plotly` produit un nuage 3D que l'on fait
+pivoter à la souris (`plotly.express.scatter_3d`). Pour des données
+de dimension supérieure, l'outil en ligne *Embedding Projector* de
+TensorFlow (<https://projector.tensorflow.org>) calcule l'ACP d'un jeu
+de données et en affiche la projection sur les trois premiers axes
+principaux, dans une vue que l'on peut faire tourner.
+:::
+
+## L'analyse en composantes principales {#sec:acp-definition}
+
+Nous pouvons maintenant décrire la méthode en toute généralité. Les
+deux exemples précédents en contiennent tous les ingrédients ; il ne
+reste qu'à les écrire pour $p$ variables, avec des matrices.
+
+### Le tableau centré et la matrice de covariance
+
+On dispose de $n$ individus et de $p$ variables. Après avoir centré
+chaque variable (et l'avoir réduite, s'il y a lieu : voir la
+remarque \ref{rem:acp-reduire}), on range
+les données dans une matrice $X$ de taille $n \times p$, dont la ligne
+$i$ est le vecteur $\vec{x}_i^{\mathsf{T}}$ de l'individu $i$. Puisque
+chaque colonne est centrée, la somme des lignes est le vecteur nul.
+
+::: {.definition #def:acp-matrice-covariance title="Matrice de covariance"}
+La [matrice de covariance]{.defi} du tableau centré $X$ est la matrice
+$p \times p$
+$$
+  C = \frac1n\,X^{\mathsf{T}}X .
+$$
+Son coefficient $(j,k)$ est
+$c_{jk} = \frac1n\sum_{i=1}^{n} x_{ij}x_{ik}$, la covariance des
+variables $j$ et $k$ ; ses coefficients diagonaux sont les variances. Si
+les variables ont été réduites, $C$ est la matrice de corrélation des
+variables de départ.
+:::
+
+::: {.proposition #prop:acp-proprietes-C title="Propriétés de la matrice de covariance"}
+Soit $C$ la matrice de covariance d'un tableau centré $X$.
+
+1. $C$ est symétrique.
+2. Pour tout vecteur unitaire $\vec{u} \in \R^p$, le nombre
+   $\vec{u}^{\mathsf{T}}C\,\vec{u}$ est la variance des projections
+   $t_i = \vec{x}_i\cdot\vec{u}$ des individus sur la droite engendrée
+   par $\vec{u}$. En particulier, $\vec{u}^{\mathsf{T}}C\,\vec{u} \geq 0$.
+3. Les valeurs propres de $C$ sont réelles et positives ou nulles, et
+   leur somme est la [variance totale]{.defi} $c_{11} + c_{22} + \dots +
+   c_{pp}$ du nuage, c'est-à-dire la moyenne des carrés des distances des
+   individus au point moyen.
+:::
+
+::: {.proof}
+(1) $C^{\mathsf{T}} = \frac1n X^{\mathsf{T}}(X^{\mathsf{T}})^{\mathsf{T}}
+    = \frac1n X^{\mathsf{T}}X = C$.
+(2) Le vecteur $X\vec{u}$ a pour composantes les nombres
+    $t_i = \vec{x}_i\cdot\vec{u}$, dont la moyenne est nulle, et
+    $$
+      \vec{u}^{\mathsf{T}}C\,\vec{u} = \frac1n\,\vec{u}^{\mathsf{T}}X^{\mathsf{T}}X\vec{u}
+      = \frac1n\,(X\vec{u})\cdot(X\vec{u}) = \frac1n\sum_{i=1}^{n} t_i^2 .
+    $$
+(3) D'après le théorème spectral, les valeurs propres de $C$ sont
+    réelles. Si $\vec{v}$ est un vecteur propre unitaire associé à
+    $\lambda$, alors $\lambda = \vec{v}^{\mathsf{T}}(\lambda\vec{v}) =
+    \vec{v}^{\mathsf{T}}C\,\vec{v} \geq 0$ par (2). La somme des valeurs
+    propres est la trace de $C$ : avec $C = QDQ^{\mathsf{T}}$ et
+    $\operatorname{tr}(AB) = \operatorname{tr}(BA)$, on a
+    $\operatorname{tr}(C) = \operatorname{tr}(DQ^{\mathsf{T}}Q) =
+    \operatorname{tr}(D)$, puisque $Q^{\mathsf{T}}Q = I$. Enfin
+    $\sum_j c_{jj} = \frac1n\sum_i\sum_j x_{ij}^2 = \frac1n\sum_i
+    \norme{\vec{x}_i}^2$.
+:::
+
+::: {.remark #rem:acp-reduire title="Faut-il toujours réduire les variables ?"}
+Non. Réduire, c'est décider que toutes les variables ont la même
+importance au départ : chacune reçoit une variance de $1$, quelle que
+soit sa dispersion réelle. Cette décision s'impose dans deux cas :
+
+* lorsque les variables s'expriment dans des unités différentes
+  (des millimètres et des grammes, des secondes et des mètres), car la
+  variance totale additionnerait alors des quantités qui ne se comparent
+  pas, et le résultat dépendrait du choix des unités
+  (exercices \ref{exo:acp-unites} et \ref{exo:acp-python-masse}) ;
+* lorsque les variables ont la même unité, mais des ordres de grandeur
+  si différents que la plus dispersée imposerait à elle seule le premier
+  axe, comme la nageoire et le bec des manchots.
+
+En revanche, lorsque les variables s'expriment dans la même unité et que
+leurs dispersions se comparent, les différences de variance font partie
+de ce que l'on veut décrire, et la réduction les efface. Si les points
+sont des positions dans l'espace, par exemple, réduire revient à étirer
+chaque axe séparément, ce qui déforme le nuage dont on cherche
+justement la forme. De même, pour des notes sur $100$ à plusieurs
+examens, un examen où tous les élèves ont obtenu à peu près la même note
+ne distingue presque pas les élèves ; une fois réduit, il pèserait
+pourtant autant que les autres, et ses petits écarts, dus en bonne
+partie au hasard, seraient amplifiés. Une variable constante ne peut
+d'ailleurs pas être réduite du tout, puisque son écart type est nul.
+
+Les deux analyses ne donnent pas les mêmes axes : l'une diagonalise la
+matrice de covariance, l'autre la matrice de corrélation. Il faut donc
+toujours préciser laquelle on a effectuée. Dans le doute, et en
+particulier dès que les unités diffèrent, on réduit ; c'est ce que font
+par défaut plusieurs logiciels de statistique.
+:::
+
+### Axes principaux et composantes principales
+
+Le théorème spectral (théorème \ref{thm:D-spectral}) permet d'écrire
+$C = QDQ^{\mathsf{T}}$, où $D$ est la matrice diagonale des valeurs
+propres et où les colonnes de $Q$ forment une base orthonormée de
+vecteurs propres. On numérote les valeurs propres par ordre décroissant,
+$\lambda_1 \geq \lambda_2 \geq \dots \geq \lambda_p \geq 0$, et l'on note
+$\vec{v}_1, \dots, \vec{v}_p$ les vecteurs propres correspondants.
+
+::: {.definition #def:acp title="Analyse en composantes principales"}
+Soit $X$ un tableau centré, $C$ sa matrice de covariance, et
+$(\vec{v}_1, \dots, \vec{v}_p)$ une base orthonormée de vecteurs propres
+de $C$, associés aux valeurs propres $\lambda_1 \geq \dots \geq
+\lambda_p$.
+
+1. La droite engendrée par $\vec{v}_k$ est le $k$^e^ [axe
+   principal]{.defi} du nuage.
+2. La $k$^e^ [composante principale]{.defi} est la variable
+   $y_k$ dont la valeur pour l'individu $i$ est la coordonnée de sa
+   projection sur le $k$^e^ axe :
+   $$
+     y_{ik} = \vec{x}_i\cdot\vec{v}_k .
+   $$
+   Matriciellement, le vecteur des valeurs de $y_k$ est $X\vec{v}_k$, et
+   le tableau des composantes principales est $Y = XQ$.
+3. La [proportion de variance expliquée]{.defi} par le $k$^e^ axe
+   est
+   $$
+     \frac{\lambda_k}{\lambda_1 + \lambda_2 + \dots + \lambda_p} .
+   $$
+:::
+
+Le vocabulaire varie d'un ouvrage à l'autre : certains appellent
+« composantes principales » les vecteurs $\vec{v}_k$ eux-mêmes, et les
+logiciels désignent souvent les valeurs $y_{ik}$ par le mot anglais
+*scores*. L'essentiel est de distinguer les *directions* $\vec{v}_k$,
+qui sont des vecteurs de $\R^p$, des *coordonnées* $y_{ik}$ des $n$
+individus dans ces directions.
+
+::: {.theorem #thm:acp-optimalite title="Propriétés de l'ACP"}
+Avec les notations de la définition \ref{def:acp} :
+
+1. chaque composante principale $y_k$ est de moyenne nulle et de
+   variance $\lambda_k$ ;
+2. deux composantes principales distinctes $y_j$ et $y_k$ sont non
+   corrélées ;
+3. pour tout $q \leq p$, parmi tous les sous-espaces de dimension $q$ de
+   $\R^p$, celui qui est engendré par $\vec{v}_1, \dots, \vec{v}_q$ est
+   celui sur lequel la variance du nuage projeté est la plus grande ; cette
+   variance maximale vaut $\lambda_1 + \dots + \lambda_q$ ;
+4. de façon équivalente, si l'on remplace chaque individu par sa
+   projection sur ce sous-espace, la moyenne des carrés des distances
+   entre les individus et leurs projections vaut $\lambda_{q+1} + \dots +
+   \lambda_p$, et aucun autre sous-espace de dimension $q$ ne fait mieux.
+:::
+
+::: {.proof}
+(1\) et (2). La moyenne de $y_k$ est
+$\big(\frac1n\sum_i\vec{x}_i\big)\cdot\vec{v}_k = 0$. La covariance de
+$y_j$ et de $y_k$ vaut
+$$
+  \frac1n\sum_{i=1}^{n} y_{ij}\,y_{ik}
+  = \frac1n\,(X\vec{v}_j)\cdot(X\vec{v}_k)
+  = \vec{v}_j^{\mathsf{T}}C\,\vec{v}_k
+  = \lambda_k\,\vec{v}_j\cdot\vec{v}_k ,
+$$
+qui vaut $\lambda_k$ si $j = k$ et $0$ sinon, puisque la base est
+orthonormée.
+
+(3\) Traitons d'abord le cas $q = 1$. Un vecteur unitaire $\vec{u}$ s'écrit
+$\vec{u} = c_1\vec{v}_1 + \dots + c_p\vec{v}_p$, avec $c_j =
+\vec{u}\cdot\vec{v}_j$ et $c_1^2 + \dots + c_p^2 = \norme{\vec{u}}^2 =
+1$. Alors $C\vec{u} = \lambda_1 c_1\vec{v}_1 + \dots + \lambda_p
+c_p\vec{v}_p$ et
+$$
+  \vec{u}^{\mathsf{T}}C\,\vec{u} = \lambda_1 c_1^2 + \lambda_2 c_2^2 + \dots + \lambda_p c_p^2
+  \leq \lambda_1\,(c_1^2 + \dots + c_p^2) = \lambda_1 ,
+$$
+avec égalité pour $\vec{u} = \vec{v}_1$. La variance dans la direction
+$\vec{u}$ est donc une moyenne des valeurs propres, pondérée par les
+« poids » $c_j^2$, dont la somme vaut $1$ ; elle est maximale
+lorsque tout le poids est placé sur la plus grande valeur propre.
+
+Pour $q$ quelconque, soit $(\vec{a}_1, \dots, \vec{a}_q)$ une base
+orthonormée d'un sous-espace $V$. La variance du nuage projeté sur $V$
+est $\sum_{l=1}^{q}\vec{a}_l^{\mathsf{T}}C\,\vec{a}_l$, et le calcul
+précédent donne
+$$
+  \sum_{l=1}^{q}\vec{a}_l^{\mathsf{T}}C\,\vec{a}_l
+  = \sum_{j=1}^{p}\lambda_j\,w_j,
+  \qquad\text{où}\qquad
+  w_j = \sum_{l=1}^{q}(\vec{a}_l\cdot\vec{v}_j)^2 .
+$$
+Le poids $w_j$ est le carré de la norme de la projection du vecteur
+unitaire $\vec{v}_j$ sur $V$ : il est compris entre $0$ et $1$. De plus,
+$\sum_j w_j = \sum_l \sum_j (\vec{a}_l\cdot\vec{v}_j)^2 = \sum_l
+\norme{\vec{a}_l}^2 = q$. Une somme $\sum_j \lambda_j w_j$ dont les poids
+sont compris entre $0$ et $1$ et totalisent $q$ est au plus égale à
+$\lambda_1 + \dots + \lambda_q$, la somme des $q$ plus grandes valeurs
+propres : on obtient la plus grande somme en donnant le poids maximal,
+$1$, aux $q$ plus grandes valeurs propres. Cette borne est atteinte
+lorsque $V = \Span\{\vec{v}_1, \dots, \vec{v}_q\}$.
+
+(4\) Par le théorème de Pythagore, la moyenne des carrés des distances au
+sous-espace est la variance totale, $\lambda_1 + \dots + \lambda_p$, moins
+la variance du nuage projeté. On conclut avec (3).
+:::
+
+Le point (2) est important en pratique. Les variables de départ sont
+souvent fortement corrélées entre elles, et donc redondantes : la
+longueur du bec et la longueur de la nageoire disent en partie la même
+chose. Les composantes principales, elles, sont non corrélées : chacune
+apporte une information que les précédentes ne contenaient pas.
+
+::: {.algorithme #alg:acp title="Analyse en composantes principales"}
+Partant d'un tableau de données de $n$ individus et de $p$ variables :
+
+1. centrer chaque variable, en lui soustrayant sa moyenne ; si les
+   variables ne sont pas mesurées dans la même unité, ou si leurs
+   dispersions sont très différentes, les réduire aussi, en les divisant
+   par leur écart type ;
+2. calculer la matrice de covariance $C = \frac1n X^{\mathsf{T}}X$ du
+   tableau obtenu ;
+3. calculer les valeurs propres et des vecteurs propres unitaires de $C$,
+   et les ranger par ordre décroissant des valeurs propres ;
+4. choisir le nombre $q$ d'axes à conserver ;
+5. calculer les coordonnées des individus sur ces axes,
+   $y_{ik} = \vec{x}_i\cdot\vec{v}_k$, et représenter le nuage projeté,
+   par exemple dans le plan des deux premiers axes ;
+6. interpréter les axes à l'aide des composantes des vecteurs propres.
+:::
+
+### Combien d'axes conserver ?
+
+Il n'existe pas de règle universelle, mais trois critères sont d'usage
+courant. Le plus simple consiste à conserver assez d'axes pour expliquer
+une proportion fixée de la variance totale, par exemple
+$\SI{80}{\percent}$ ou $\SI{90}{\percent}$. On peut aussi tracer le
+[diagramme des éboulis]{.defi}, qui représente les valeurs propres par
+ordre décroissant (figure \ref{fig:acp-eboulis}), et chercher un
+« coude » au-delà duquel les valeurs propres diminuent lentement : les
+axes suivants ne font qu'ajouter de petites contributions de même
+importance, qui relèvent souvent du bruit. Enfin, pour des données
+réduites, le [critère de Kaiser]{.defi} conserve les axes dont la valeur
+propre dépasse $1$. Puisque la variance totale vaut alors $p$ et que
+chaque variable de départ y contribue pour $1$, un axe dont la valeur
+propre est inférieure à $1$ résume moins d'information qu'une seule des
+variables de départ.
+
+Pour visualiser les données, la question est souvent tranchée d'avance :
+on veut un dessin, donc $q = 2$ (ou $q = 3$, avec une figure que l'on
+peut faire tourner). Il faut alors garder en tête la proportion de
+variance conservée par le plan, qui indique jusqu'à quel point le
+dessin est fidèle aux données.
+
+::: {.remark #rem:acp-signes title="Le signe des axes est arbitraire"}
+Un vecteur propre n'est défini qu'à un facteur non nul près ; même
+unitaire, il peut être remplacé par son opposé
+(exercice \ref{exo:M-florence}). Changer $\vec{v}_k$ en $-\vec{v}_k$
+change le signe de toutes les coordonnées $y_{ik}$, ce qui retourne la
+figure selon le $k$^e^ axe, sans rien changer à son interprétation.
+Deux logiciels, ou deux versions d'un même logiciel, peuvent donc
+produire des figures symétriques l'une de l'autre. Dans ce chapitre,
+nous avons choisi les signes qui rendent les figures plus faciles à
+lire, par exemple pour que les manchots papous soient à droite.
+:::
+
+### Le calcul avec Python {#sec:acp-python}
+
+L'algorithme \ref{alg:acp} se programme en quelques lignes avec
+`numpy`. La fonction `np.linalg.eigh`, réservée aux matrices symétriques
+(section \ref{sec:D-diagonalisation}), renvoie les valeurs propres par
+ordre *croissant* ; on les remet dans l'ordre décroissant à l'aide de
+`np.argsort`. Pour lire le fichier de données, nous utilisons la
+bibliothèque `pandas`, l'outil de référence en Python pour manipuler
+des tableaux de données ; elle est installée d'office dans les
+environnements comme Google Colab. La méthode `dropna` élimine les
+deux manchots pour lesquels les mesures manquent.
+
+```{.python #lst:acp-manchots caption="Une fonction pour l'ACP, appliquée aux trois mesures des manchots."}
+import numpy as np
+import pandas as pd
+np.set_printoptions(precision=3, suppress=True)
+
+url = ("https://raw.githubusercontent.com/allisonhorst/"
+       "palmerpenguins/main/inst/extdata/penguins.csv")
+manchots = pd.read_csv(url).dropna(subset=["bill_length_mm"])
+X = manchots[["bill_length_mm", "bill_depth_mm",
+              "flipper_length_mm"]].to_numpy()
+
+def acp(X, reduire=True):
+    Z = X - X.mean(axis=0)               # centrer
+    if reduire:
+        Z = Z / X.std(axis=0)            # réduire : cotes z
+    C = Z.T @ Z / len(Z)                 # matrice de covariance
+    valeurs, vecteurs = np.linalg.eigh(C)
+    ordre = np.argsort(valeurs)[::-1]    # ordre décroissant
+    valeurs, vecteurs = valeurs[ordre], vecteurs[:, ordre]
+    return valeurs, vecteurs, Z @ vecteurs
+
+valeurs, vecteurs, Y = acp(X)
+print("taille :", X.shape)
+print("valeurs propres :", valeurs)
+print("proportions :", valeurs / valeurs.sum())
+print(vecteurs)
+print(Y[:3, :2])     # trois manchots dans le plan principal
+```
+
+```{.python caption="Sortie."}
+taille : (342, 3)
+valeurs propres : [2.003 0.767 0.23 ]
+proportions : [0.668 0.256 0.077]
+[[-0.551  0.657 -0.514]
+ [ 0.512  0.753  0.413]
+ [-0.659  0.036  0.752]]
+[[ 1.824 -0.041]
+ [ 1.211 -0.476]
+ [ 0.864 -0.128]]
+```
+
+On retrouve les valeurs propres et les vecteurs propres annoncés à la
+section \ref{sec:acp-espace}, au signe près du premier vecteur
+(remarque \ref{rem:acp-signes}) : avec ce signe, les manchots papous
+se retrouvent à gauche. La dernière ligne du programme affiche les
+coordonnées des trois premiers manchots, tous de l'espèce Adélie, dans le
+plan principal. Il ne reste qu'à les dessiner avec `matplotlib`, en
+coloriant chaque point selon l'espèce
+(exercice \ref{exo:acp-python-manchots}).
+
+::: {.remark title="L'ACP en pratique"}
+Les bibliothèques spécialisées, comme `scikit-learn`, permettent
+d'effectuer l'ACP sans avoir à programmer les calculs. Avec
+`PCA().fit(Z)`, l'attribut `explained_variance_ratio_` donne les
+proportions de variance expliquée, et la méthode `transform` calcule
+les composantes principales. Attention : l'attribut
+`explained_variance_` divise par $n - 1$
+(remarque \ref{rem:acp-n-moins-un}).
+:::
+
+### Un peu d'histoire {#sec:acp-histoire}
+
+:::: {.historical #hist:pearson title="Karl Pearson et les « lignes et plans d'ajustement »"}
+::: {.portrait src="figures/portraits/karl-pearson.jpg" legende="Karl Pearson (1857--1936), en 1910." credit="Domaine public, National Portrait Gallery (Londres), *Wikimedia Commons*."}
+Karl Pearson (1857--1936) est né à Londres. Après des études de
+mathématiques à l'Université de Cambridge, il étudia la physique, la
+philosophie et le droit en Allemagne, avant de devenir, en 1884,
+professeur de mathématiques appliquées et de mécanique à l'University
+College de Londres. Sous l'influence de Francis Galton et du zoologiste
+Walter Weldon, il se tourna vers l'étude statistique de l'hérédité et
+de l'évolution, qu'il appelait la *biométrie* [@MacTutorPearson].
+:::
+
+\medskip
+
+Pearson est l'un des fondateurs de la statistique moderne. On lui doit
+l'expression « écart type », le coefficient de corrélation qui porte
+son nom, le test du khi-deux et la revue *Biometrika*, fondée en 1901.
+La même année, il publia un court article intitulé « Sur les lignes et
+les plans qui s'ajustent au plus près à des systèmes de points de
+l'espace » [@Pearson1901]. Il y remarque que les deux droites de
+régression dépendent de la variable que l'on choisit d'expliquer, et
+il propose plutôt de chercher la droite, ou le plan, qui minimise la
+somme des carrés des distances *perpendiculaires* : c'est
+exactement le problème de la section \ref{sec:acp-droite}. Il montre que
+cette droite passe par le centre de gravité du nuage et qu'elle est
+portée par le grand axe de l'« ellipsoïde de corrélation », c'est-à-dire
+par un vecteur propre de la matrice de covariance.
+
+Pearson fut aussi, comme Galton, un ardent défenseur de l'eugénisme,
+qui prétendait améliorer l'espèce humaine en contrôlant la reproduction ;
+en 1911, il devint le premier titulaire de la chaire d'eugénisme créée
+par le testament de Galton. Ces idées, qui ont servi à justifier des politiques de
+stérilisation forcée au \siecle{20}, sont aujourd'hui unanimement
+rejetées ; en 2020, l'University College de Londres a retiré les noms de
+Galton et de Pearson de plusieurs de ses bâtiments. L'histoire de la
+statistique rappelle ainsi que des outils mathématiques solides peuvent
+être mis au service de projets condamnables.
+::::
+
+La méthode fut redécouverte, indépendamment, par le statisticien et
+économiste américain Harold Hotelling (1895--1973), qui lui donna son
+nom dans un article de 1933 intitulé « Analyse d'un ensemble de variables
+statistiques en composantes principales » [@Hotelling1933]. Le contexte
+est celui de la psychologie de l'éducation : l'article paraît dans le
+*Journal of Educational Psychology*, et Hotelling y illustre la
+méthode sur des résultats d'élèves à des tests de lecture et
+d'arithmétique. Les psychologues cherchaient alors à expliquer les
+corrélations entre les résultats scolaires par un petit nombre de
+« facteurs » cachés. Charles Spearman avait observé en
+1904 [@Spearman1904] que les notes d'écoliers en lettres classiques, en
+français, en anglais et en mathématiques sont toutes corrélées
+positivement, et il en avait déduit l'existence d'un facteur général
+d'intelligence, qu'il notait $g$ ; nos six élèves, dont l'axe principal
+mesure le « niveau général », en sont un écho lointain. Hotelling
+propose aussi une méthode itérative de calcul, voisine de la méthode
+des puissances du chapitre \ref{chap:markov}.
+
+Pendant longtemps, l'ACP resta limitée par le calcul : trouver à la main
+les valeurs propres d'une matrice $10 \times 10$ est un travail de
+plusieurs jours. L'arrivée des ordinateurs rend ces calculs beaucoup
+plus accessibles. En France, l'école d'« analyse des données » de
+Jean-Paul Benzécri popularise, dans les années 1960 et
+1970, l'ACP et ses représentations graphiques, qui restent très
+utilisées dans le monde francophone. La
+même idée apparaît aussi sous d'autres noms, comme la *transformation
+de Karhunen--Loève* en traitement du signal. Aujourd'hui, l'ACP est
+l'une des méthodes les plus employées de toute la statistique
+[@Jolliffe2002; @JolliffeCadima2016].
+
+## Au-delà de trois dimensions {#sec:acp-grande-dimension}
+
+### Le décathlon
+
+L'intérêt de l'ACP apparaît vraiment lorsque les données ont plus de
+trois variables, et qu'aucun dessin direct n'est possible. Le décathlon
+en fournit un bel exemple. Cette épreuve d'athlétisme réunit dix
+disciplines, disputées sur deux jours : quatre courses (le $100$ m, le
+$400$ m, le $110$ m haies et le $1500$ m), trois sauts (en longueur, en
+hauteur et à la perche) et trois lancers (le poids, le disque et le
+javelot). Le tableau \ref{tab:acp-decathlon} donne un extrait de
+$41$ résultats obtenus par des décathloniens lors de deux compétitions
+de 2004, le Décastar de Talence et les Jeux olympiques
+d'Athènes [@HussonLePages2017]. Chaque résultat est un point de
+$\R^{10}$ ; quelques athlètes, comme Sebrle, Clay et Karpov, ont participé
+aux deux compétitions et apparaissent donc deux fois.
+
+::: {#tab:acp-decathlon colonnes="lcccccccccc"}
+Les résultats de quelques décathloniens en 2004 : temps en secondes pour les courses, distances et hauteurs en mètres pour les sauts et les lancers.
+
+| Athlète | $100$ | Long. | Poids | Haut. | $400$ | Haies | Disque | Perche | Jav. | $1500$ |
+|:--|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Sebrle | $\num{10.85}$ | $\num{7.84}$ | $\num{16.36}$ | $\num{2.12}$ | $\num{48.36}$ | $\num{14.05}$ | $\num{48.72}$ | $\num{5.00}$ | $\num{70.52}$ | $\num{280.01}$ |
+| Karpov | $\num{10.50}$ | $\num{7.81}$ | $\num{15.93}$ | $\num{2.09}$ | $\num{46.81}$ | $\num{13.97}$ | $\num{51.65}$ | $\num{4.60}$ | $\num{55.54}$ | $\num{278.11}$ |
+| Drews | $\num{10.87}$ | $\num{7.38}$ | $\num{13.07}$ | $\num{1.88}$ | $\num{48.51}$ | $\num{14.01}$ | $\num{40.11}$ | $\num{5.00}$ | $\num{51.53}$ | $\num{274.21}$ |
+| Casarsa | $\num{11.36}$ | $\num{6.68}$ | $\num{14.92}$ | $\num{1.94}$ | $\num{53.20}$ | $\num{15.39}$ | $\num{48.66}$ | $\num{4.40}$ | $\num{58.62}$ | $\num{296.12}$ |
+| moyenne | $\num{11.00}$ | $\num{7.26}$ | $\num{14.48}$ | $\num{1.98}$ | $\num{49.62}$ | $\num{14.61}$ | $\num{44.33}$ | $\num{4.76}$ | $\num{58.32}$ | $\num{279.02}$ |
+:::
+
+Les variables étant mesurées dans des unités différentes (secondes et
+mètres) et avec des dispersions très différentes, nous les réduisons ; la
+variance totale vaut donc $10$. La fonction `acp` du
+programme \ref{lst:acp-manchots} s'applique sans changement, une fois
+le fichier `decathlon.csv` lu. La colonne `Points` contient le
+total officiel des points de chaque athlète, que nous n'utilisons pas
+dans le calcul.
+
+```{.python #lst:acp-decathlon caption="L'ACP du décathlon (la fonction `acp` est celle du programme \ref{lst:acp-manchots})."}
+deca = pd.read_csv("decathlon.csv", index_col=0)
+X = deca.iloc[:, :10].to_numpy()        # les dix épreuves
+valeurs, vecteurs, Y = acp(X)
+print("valeurs propres :", valeurs.round(2))
+print("% cumulés :", (100 * np.cumsum(valeurs) / valeurs.sum()).round(1))
+r = np.corrcoef(Y[:, 0], deca["Points"])[0, 1]
+print("corrélation y1 / points :", round(r, 3))
+```
+
+```{.python caption="Sortie."}
+valeurs propres : [3.27 1.74 1.4  1.06 0.68 0.6  0.45 0.4  0.21 0.18]
+% cumulés : [ 32.7  50.1  64.1  74.7  81.6  87.5  92.1  96.   98.2 100. ]
+corrélation y1 / points : 0.956
+```
+
+Le diagramme des éboulis (figure \ref{fig:acp-eboulis}) est beaucoup
+moins tranché que pour les manchots. Le premier axe explique
+$\SI{32.7}{\percent}$ de la variance, le deuxième $\SI{17.4}{\percent}$ :
+le plan principal ne conserve qu'environ la moitié de l'information. Le
+critère de Kaiser retiendrait quatre axes, et il en faudrait cinq pour
+dépasser $\SI{80}{\percent}$. Ce n'est pas un échec de la méthode, mais
+une information sur les données : les performances dans les dix
+épreuves sont assez indépendantes les unes des autres, et l'on ne peut
+pas résumer un décathlonien par deux nombres sans perte importante. Le
+plan principal en donne néanmoins la meilleure image plane possible.
+
+::: {#fig:acp-eboulis}
+![](figures/tikz/fig-acp-eboulis.tikz)
+
+Le diagramme des éboulis de l'ACP du décathlon, avec la proportion de variance expliquée par les cinq premiers axes. La droite pointillée indique le seuil du critère de Kaiser.
+:::
+
+### Lire le plan principal
+
+La figure \ref{fig:acp-decathlon} montre les athlètes dans le plan des
+deux premiers axes. Pour interpréter ces axes, on regarde les composantes
+des vecteurs propres $\vec{v}_1$ et $\vec{v}_2$
+(tableau \ref{tab:acp-decathlon-axes}). Sur le premier axe, les
+composantes des épreuves de vitesse ($100$ m, $110$ m haies, $400$ m)
+sont négatives, et celle du saut en longueur est positive. Comme un bon
+temps est un temps *court*, cela signifie que les athlètes situés à
+droite courent vite et sautent loin. Le premier axe mesure donc la
+performance générale, en particulier dans les épreuves de vitesse et de
+saut. Le second axe est porté par les lancers (poids et disque), mais
+aussi par le $400$ m et le $1500$ m : les athlètes du haut de la figure
+sont puissants, mais relativement lents sur les courses longues. C'est
+le cas de Casarsa, tout en haut, qui lance le disque à $\num{48.66}$ m
+mais court le $400$ m en $\num{53.20}$ s, l'un des pires temps du
+groupe. Le saut à la perche, dont les deux composantes sont
+faibles, est mal représenté par ce plan : c'est le troisième axe qui le
+décrit.
+
+::: {#tab:acp-decathlon-axes}
+Les composantes des deux premiers vecteurs propres de la matrice de corrélation du décathlon. Le signe de chaque vecteur est choisi pour que le saut en longueur soit du côté positif du premier axe, et le lancer du disque du côté positif du second.
+
+| Épreuve | $\vec{v}_1$ | $\vec{v}_2$ |
+|:--|:-:|:-:|
+| $100$ m | $-\num{0.428}$ | $\num{0.142}$ |
+| saut en longueur | $\num{0.410}$ | $-\num{0.262}$ |
+| lancer du poids | $\num{0.344}$ | $\num{0.454}$ |
+| saut en hauteur | $\num{0.316}$ | $\num{0.266}$ |
+| $400$ m | $-\num{0.376}$ | $\num{0.432}$ |
+| $110$ m haies | $-\num{0.413}$ | $\num{0.174}$ |
+| lancer du disque | $\num{0.305}$ | $\num{0.460}$ |
+| saut à la perche | $\num{0.028}$ | $-\num{0.137}$ |
+| lancer du javelot | $\num{0.153}$ | $\num{0.241}$ |
+| $1500$ m | $-\num{0.032}$ | $\num{0.360}$ |
+:::
+
+::: {#fig:acp-decathlon}
+![](figures/tikz/fig-acp-decathlon.tikz)
+
+Les $41$ résultats du décathlon projetés sur le plan principal. Parmi les athlètes nommés, Bourguignon a concouru au Décastar, les autres aux Jeux olympiques.
+:::
+
+Le résultat le plus frappant est celui de la dernière ligne du
+programme \ref{lst:acp-decathlon}. La première composante principale a
+été calculée sans aucune connaissance du barème officiel du décathlon,
+qui convertit chaque performance en points selon des tables
+complexes. Pourtant, son coefficient de corrélation avec le total des
+points est de $\num{0.956}$ : les trois médaillés olympiques de 2004,
+Sebrle, Clay et Karpov, sont les trois points les plus à droite de la
+figure. L'ACP a, en quelque sorte, retrouvé seule ce que signifie « être
+un bon décathlonien ».
+
+### D'autres applications
+
+Les mêmes calculs s'appliquent à des données de dimension bien plus
+grande, et l'ACP est souvent la première chose que l'on fait devant un
+nouveau jeu de données. En génétique, John Novembre et ses collègues ont
+appliqué l'ACP aux génomes de près de $\num{1400}$ Européens, décrits par
+environ $\num{200000}$ marqueurs génétiques. Une fois chaque personne
+projetée sur le plan des deux premiers axes, et la figure convenablement
+tournée, le nuage reproduit de façon saisissante la carte géographique
+de l'Europe [@Novembre2008]. En reconnaissance d'images, chaque
+photographie de $100 \times 100$ pixels est un point de
+$\R^{\num{10000}}$ ; les vecteurs propres de la matrice de covariance
+d'un grand nombre de visages, que l'on peut afficher comme des images,
+ont été appelés *visages propres* (en anglais *eigenfaces*), et un
+visage se décrit assez bien par ses coordonnées sur quelques dizaines de
+ces visages propres [@TurkPentland1991]. L'ACP sert aussi à compresser
+des données, à éliminer du bruit, ou à réduire le nombre de variables
+avant d'appliquer une autre méthode d'apprentissage automatique.
+
+Il faut toutefois garder en tête les limites de la méthode. L'ACP est
+*linéaire* : elle cherche des droites et des plans, et elle passe à
+côté d'une structure courbe, comme un nuage disposé le long d'un arc de
+cercle. Elle est sensible aux unités et aux valeurs aberrantes, qui
+peuvent accaparer un axe à elles seules. Enfin, une grande variance
+n'est pas toujours synonyme d'information intéressante : la direction
+qui sépare deux groupes peut très bien être une direction de faible
+variance.
+
+::: {.secondaire #rem:acp-classe-donnees title="Des données réelles en classe"}
+Le programme de mathématique du secondaire insiste sur
+l'interprétation de données et sur le développement d'un regard
+critique sur l'information statistique [@PDA2016]. Les données des
+manchots se prêtent bien à une activité en ce sens, sans aucune
+algèbre linéaire. On distribue aux élèves les mesures d'une
+cinquantaine de manchots, sans indiquer l'espèce, et on leur demande de
+construire des nuages de points pour différentes paires de variables :
+lequel montre le mieux qu'il y a « plusieurs sortes » de manchots ?
+La discussion fait apparaître l'idée centrale de ce chapitre : un même
+ensemble de données, regardé sous différents angles, peut révéler ou
+cacher sa structure. Avec des élèves plus avancés, un tableur permet
+de calculer la cote $z$ de chaque mesure et de constater que les
+variables, une fois réduites, deviennent comparables. On peut aussi
+proposer aux élèves de construire un « score » combinant plusieurs
+épreuves sportives réalisées en éducation physique, puis de comparer
+leur classement à celui que produit une simple somme des cotes $z$.
+:::
+
+## Exercices {.unnumbered .exercices}
+
+:::: {.exercice #exo:acp-main-2d}
+On considère les quatre points $(1,1)$, $(3,3)$, $(3,7)$ et $(5,5)$ du
+plan.
+
+a) Calculer le point moyen $M$ et les coordonnées des points centrés.
+b) Calculer la matrice de covariance $C$ et le coefficient de
+   corrélation $r_{xy}$.
+c) Trouver les valeurs propres et des vecteurs propres unitaires de $C$.
+d) Donner l'équation de l'axe principal du nuage, et la comparer avec
+   celle de la droite de régression de $y$ selon $x$. Faire un dessin.
+e) Calculer les coordonnées $t_i$ des projections des quatre points sur
+   l'axe principal, et vérifier que leur variance est égale à la plus
+   grande valeur propre.
+f) Quelle proportion de la variance totale l'axe principal
+   explique-t-il ? Calculer la somme des carrés des distances des quatre
+   points à cet axe.
+
+::: {.solution}
+a) $M = (3,4)$ ; les points centrés sont $(-2,-3)$, $(0,-1)$, $(0,3)$ et
+   $(2,1)$.
+b) $s_x^2 = \frac{4 + 0 + 0 + 4}{4} = 2$, $s_y^2 = \frac{9 + 1 + 9 + 1}{4} =
+   5$ et $s_{xy} = \frac{6 + 0 + 0 + 2}{4} = 2$, d'où
+   $C = \mat{2}{2}{2}{5}$ et $r_{xy} = \frac{2}{\sqrt{10}} \approx \num{0.632}$.
+c) $\dete(C - \lambda I) = \lambda^2 - 7\lambda + 6 = (\lambda - 6)(\lambda - 1)$.
+   Pour $\lambda_1 = 6$, $C - 6I = \mat{-4}{2}{2}{-1}$ a pour noyau
+   $\Span\{(1,2)\}$ ; pour $\lambda_2 = 1$, $C - I = \mat{1}{2}{2}{4}$ a pour
+   noyau $\Span\{(2,-1)\}$. Vecteurs unitaires : $\vec{v}_1 =
+   \frac{1}{\sqrt5}(1,2)$ et $\vec{v}_2 = \frac{1}{\sqrt5}(2,-1)$, qui sont
+   bien orthogonaux.
+d) L'axe principal passe par $(3,4)$ avec une pente de $2$ : $y = 2x - 2$.
+   La droite de régression a pour pente $s_{xy}/s_x^2 = 1$ et passe aussi
+   par $M$ : $y = x + 1$. L'axe principal est plus pentu, conformément à la
+   remarque \ref{rem:acp-regression}.
+e) $t_i = \frac{1}{\sqrt5}\big(\Delta x_i + 2\,\Delta y_i\big)$, d'où
+   $\sqrt5\,(t_1, t_2, t_3, t_4) = (-8, -2, 6, 4)$. La moyenne des $t_i$
+   est nulle et $\frac14\sum t_i^2 = \frac{64 + 4 + 36 + 16}{4 \cdot 5} =
+   \frac{120}{20} = 6 = \lambda_1$.
+f) $\frac{6}{6 + 1} \approx \SI{85.7}{\percent}$. La moyenne des carrés
+   des distances vaut $\lambda_2 = 1$, donc leur somme vaut $4$. On le
+   vérifie : les distances signées sont
+   $\frac{1}{\sqrt5}(2\,\Delta x_i - \Delta y_i)$, soit $\frac{1}{\sqrt5}(-1,
+   1, -3, 3)$, et $\frac{1 + 1 + 9 + 9}{5} = 4$.
+:::
+::::
+
+:::: {.exercice #exo:acp-angle}
+Un nuage centré du plan a pour matrice de covariance
+$C = \mat{13}{3\sqrt3}{3\sqrt3}{7}$.
+
+a) Montrer que la variance des projections sur la droite dirigée par
+   $\vec{u} = (\cos\theta, \sin\theta)$ est
+   $f(\theta) = 10 + 3\cos(2\theta) + 3\sqrt3\,\sin(2\theta)$.
+b) Écrire $f(\theta)$ sous la forme $10 + A\cos(2\theta - \varphi)$, et en
+   déduire le maximum et le minimum de $f$, ainsi que les angles où ils
+   sont atteints.
+c) Vérifier le résultat en calculant les valeurs propres et les vecteurs
+   propres de $C$.
+
+::: {.solution}
+a) $f(\theta) = \vec{u}^{\mathsf{T}}C\,\vec{u} = 13\cos^2\theta +
+   6\sqrt3\sin\theta\cos\theta + 7\sin^2\theta$. Avec $\cos^2\theta =
+   \frac{1 + \cos 2\theta}{2}$, $\sin^2\theta = \frac{1 - \cos 2\theta}{2}$ et
+   $2\sin\theta\cos\theta = \sin 2\theta$, on obtient $f(\theta) = 10 +
+   3\cos 2\theta + 3\sqrt3\sin 2\theta$.
+b) On cherche $A > 0$ et un angle $\varphi$ tels que
+   $3\cos 2\theta + 3\sqrt3\sin 2\theta = A\cos(2\theta - \varphi)$ pour
+   tout $\theta$. Par la formule d'addition,
+   $A\cos(2\theta - \varphi) = (A\cos\varphi)\cos 2\theta +
+   (A\sin\varphi)\sin 2\theta$ ; il suffit donc que
+   $$
+     A\cos\varphi = 3 \qquad\text{et}\qquad A\sin\varphi = 3\sqrt3 .
+   $$
+   En élevant ces deux égalités au carré et en les additionnant, on obtient
+   $A^2(\cos^2\varphi + \sin^2\varphi) = 3^2 + (3\sqrt3)^2$, c'est-à-dire
+   $A^2 = 9 + 27 = 36$, d'où $A = 6$. On en tire
+   $\cos\varphi = \frac36 = \frac12$ et $\sin\varphi = \frac{3\sqrt3}{6} =
+   \frac{\sqrt3}{2}$, donc $\varphi = 60^\circ$ : $f(\theta) =
+   10 + 6\cos(2\theta - 60^\circ)$. Le maximum vaut $16$, pour $2\theta = 60^\circ$, soit
+   $\theta = 30^\circ$ ; le minimum vaut $4$, pour $\theta = 120^\circ$.
+c) $\dete(C - \lambda I) = \lambda^2 - 20\lambda + (91 - 27) = \lambda^2 -
+   20\lambda + 64 = (\lambda - 16)(\lambda - 4)$. On vérifie que
+   $C\col{\sqrt3/2}{1/2} = \col{13\sqrt3/2 + 3\sqrt3/2}{9/2 + 7/2} =
+   16\col{\sqrt3/2}{1/2}$ : le vecteur propre associé à $16$ est bien
+   $(\cos 30^\circ, \sin 30^\circ)$, et celui associé à $4$ lui est
+   perpendiculaire, d'angle $120^\circ$.
+:::
+::::
+
+:::: {.exercice #exo:acp-main-3d}
+Dans une école, on a relevé les résultats d'un grand nombre d'élèves en
+mathématiques, en physique et en éducation physique, puis on les a
+réduits. La matrice de corrélation obtenue est
+$$
+  R = \begin{pmatrix} 1 & \num{0.8} & 0\\ \num{0.8} & 1 & 0\\ 0 & 0 & 1 \end{pmatrix}.
+$$
+
+a) Calculer les valeurs propres de $R$ et des vecteurs propres unitaires.
+   Vérifier que la somme des valeurs propres est égale à la variance
+   totale.
+b) Quelle proportion de la variance totale chaque axe explique-t-il ?
+   Combien d'axes faut-il retenir pour en expliquer au moins
+   $\SI{80}{\percent}$ ? Que dit le critère de Kaiser ?
+c) Interpréter chacun des trois axes principaux.
+d) Un élève a pour cotes $z$ les valeurs $(\num{1.5}\,;\ \num{0.5}\,;\ -1)$.
+   Calculer ses coordonnées dans le plan des deux premiers axes, ainsi que
+   le carré de la distance entre ce point et sa projection sur ce plan.
+
+::: {.solution}
+a) En développant selon la troisième ligne, $\dete(R - \lambda I) = (1 -
+   \lambda)\big((1 - \lambda)^2 - \num{0.64}\big)$, dont les racines sont
+   $\lambda_1 = \num{1.8}$, $\lambda_2 = 1$ et $\lambda_3 = \num{0.2}$. Les
+   vecteurs propres unitaires sont $\vec{v}_1 = \frac{1}{\sqrt2}(1,1,0)$,
+   $\vec{v}_2 = (0,0,1)$ et $\vec{v}_3 = \frac{1}{\sqrt2}(1,-1,0)$. La somme
+   $\num{1.8} + 1 + \num{0.2} = 3$ est bien la trace de $R$, c'est-à-dire la
+   somme des variances des trois variables réduites.
+b) $\SI{60}{\percent}$, $\SI{33.3}{\percent}$ et $\SI{6.7}{\percent}$. Il
+   faut deux axes, qui expliquent $\SI{93.3}{\percent}$ de la variance. Le
+   critère de Kaiser retient le premier axe ; le deuxième, dont la valeur
+   propre vaut exactement $1$, est à la limite : il résume autant
+   d'information qu'une variable de départ, et pour cause, puisqu'il
+   *est* la variable « éducation physique ».
+c) Le premier axe, proportionnel à $z_{\text{math}} + z_{\text{phys}}$,
+   mesure la réussite globale dans les deux matières scientifiques. Le
+   deuxième est l'éducation physique, non corrélée aux deux autres. Le
+   troisième, proportionnel à $z_{\text{math}} - z_{\text{phys}}$, oppose les
+   élèves relativement plus forts en mathématiques à ceux qui le sont en
+   physique ; sa faible variance traduit la forte corrélation entre ces
+   deux matières.
+d) $y_1 = \frac{\num{1.5} + \num{0.5}}{\sqrt2} = \sqrt2 \approx \num{1.414}$
+   et $y_2 = -1$. La troisième coordonnée est
+   $y_3 = \frac{\num{1.5} - \num{0.5}}{\sqrt2} = \frac{1}{\sqrt2}$, et le carré
+   de la distance au plan vaut $y_3^2 = \num{0.5}$. On vérifie que
+   $y_1^2 + y_2^2 + y_3^2 = 2 + 1 + \num{0.5} = \num{3.5} = \num{1.5}^2 +
+   \num{0.5}^2 + 1^2$.
+:::
+::::
+
+:::: {.exercice #exo:acp-unites}
+On reprend les six élèves du tableau \ref{tab:acp-notes}, mais on
+exprime maintenant la note de sciences sur $10$ plutôt que sur $100$ :
+on remplace $y$ par $y' = y/10$.
+
+a) Calculer la nouvelle matrice de covariance $C'$ et le nouveau
+   coefficient de corrélation.
+b) Calculer les valeurs propres de $C'$ et un vecteur propre associé à
+   la plus grande. Quelle proportion de la variance totale le premier axe
+   explique-t-il ?
+c) Exprimer l'axe principal obtenu dans les unités de départ (notes sur
+   $100$) et le comparer à la droite $y = x + 5$ trouvée à la
+   section \ref{sec:acp-droite}. Conclure.
+d) Montrer que si l'on réduit les variables, l'ACP ne dépend plus des
+   unités choisies.
+
+::: {.solution}
+a) $s_{y'}^2 = \frac{1}{100}\,s_y^2 = \num{0.5}$ et $s_{xy'} =
+   \frac{1}{10}\,s_{xy} = 4$, d'où $C' = \mat{50}{4}{4}{\num{0.5}}$. Le
+   coefficient de corrélation est inchangé :
+   $\frac{4}{\sqrt{50}\sqrt{\num{0.5}}} = \frac45 = \num{0.8}$.
+b) Le polynôme caractéristique est $\lambda^2 - \num{50.5}\,\lambda + 9$,
+   de racines $\lambda = \frac{\num{50.5} \pm \sqrt{\num{2550.25} - 36}}{2}$,
+   soit $\lambda_1 \approx \num{50.32}$ et $\lambda_2 \approx \num{0.18}$. Un
+   vecteur propre associé à $\lambda_1$ est $(4\,;\ \lambda_1 - 50) \approx (4\,;
+   \ \num{0.32})$, c'est-à-dire une pente d'environ $\num{0.080}$. Le premier
+   axe explique $\frac{\num{50.32}}{\num{50.5}} \approx \SI{99.6}{\percent}$
+   de la variance.
+c) Une pente de $\num{0.080}$ en points sur $10$ par point sur $100$
+   correspond à une pente de $\num{0.80}$ dans les unités de départ : l'axe
+   principal est devenu, à très peu près, la droite de régression
+   $y = \num{0.8}\,x + 19$, et non plus $y = x + 5$. En divisant la variance
+   des sciences par $100$, on a presque fait disparaître cette variable de
+   la variance totale, et le premier axe se contente de suivre la direction
+   des mathématiques. Les résultats d'une ACP non réduite dépendent donc des
+   unités de mesure.
+d) La cote $z$ d'une valeur ne change pas si l'on multiplie la variable
+   par une constante positive $c$ : $\frac{cx_i - c\bar{x}}{c\,s_x} =
+   \frac{x_i - \bar{x}}{s_x}$. Le tableau réduit, donc la matrice de
+   corrélation et toute l'ACP, sont inchangés.
+:::
+::::
+
+:::: {.exercice #exo:acp-vrai-faux}
+Dire si chacun des énoncés suivants est vrai ou faux, et justifier
+brièvement.
+
+a) La première composante principale est toujours l'une des variables de
+   départ.
+b) Si les variables de départ sont deux à deux non corrélées, l'ACP non
+   réduite se contente de les ranger par ordre de variance décroissante.
+c) Pour un nuage du plan, l'axe principal est la droite de régression de
+   $y$ selon $x$.
+d) Pour des données réduites à $p$ variables, la somme des valeurs
+   propres vaut $p$.
+e) Deux nuages qui ont la même matrice de covariance ont la même forme.
+f) Si les deux premières composantes principales expliquent
+   $\SI{95}{\percent}$ de la variance, deux individus proches dans le plan
+   principal sont proches dans $\R^p$.
+
+::: {.solution}
+a) Faux. C'est en général une combinaison linéaire de toutes les
+   variables, comme $y_1 = \frac{1}{\sqrt2}(x + y)$ pour les six élèves.
+b) Vrai. La matrice de covariance est alors diagonale ; ses vecteurs
+   propres sont les vecteurs de la base standard, et ses valeurs propres
+   sont les variances.
+c) Faux. L'axe principal est situé entre les deux droites de régression
+   (remarque \ref{rem:acp-regression}) ; il ne coïncide avec elles que si
+   les points sont alignés.
+d) Vrai. C'est la trace de la matrice de corrélation, dont les $p$
+   coefficients diagonaux valent $1$.
+e) Faux. La matrice de covariance ne retient que les moyennes des
+   produits des écarts : un nuage en forme d'ellipse et un nuage formé de
+   deux groupes séparés peuvent avoir la même matrice de covariance, et
+   donc les mêmes axes principaux. Il faut toujours regarder le nuage
+   projeté, et pas seulement les valeurs propres.
+f) Faux. La proportion de
+   $\SI{95}{\percent}$ est une *moyenne* sur tous les individus. La
+   moyenne des carrés des distances au plan est petite, mais un individu
+   particulier peut être loin du plan, et deux individus qui se projettent
+   au même endroit peuvent être éloignés dans la direction des autres
+   axes. On peut contrôler ce risque en calculant, pour chaque individu, la
+   distance entre ce point et sa projection.
+:::
+::::
+
+:::: {.exercice .python #exo:acp-python-notes}
+On reprend les six élèves du tableau \ref{tab:acp-notes}.
+
+a) Avec `numpy`, calculer la matrice de covariance (avec
+   `np.cov(X.T, bias=True)`, qui divise par $n$), puis ses valeurs propres
+   et ses vecteurs propres.
+b) Pour $\num{181}$ valeurs de $\theta$ régulièrement réparties entre
+   $0^\circ$ et $180^\circ$, calculer la variance des projections des
+   points centrés sur la droite dirigée par $(\cos\theta, \sin\theta)$, et
+   tracer le graphique de la figure \ref{fig:acp-angle}. Pour quel angle
+   le maximum est-il atteint ?
+c) Avec `np.polyfit(x, y, 1)`, calculer la droite de régression de $y$
+   selon $x$ et vérifier que sa pente vaut $s_{xy}/s_x^2$. Tracer le nuage,
+   l'axe principal et les deux droites de régression.
+d) Échanger les rôles de $x$ et de $y$. Lesquelles des trois droites
+   changent ?
+
+::: {.solution}
+Le programme suivant répond aux quatre questions.
+
+```{.python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([60, 63, 67, 75, 76, 79], dtype=float)
+y = np.array([72, 66, 67, 84, 82, 79], dtype=float)
+X = np.column_stack([x, y])
+Xc = X - X.mean(axis=0)
+
+C = np.cov(X.T, bias=True)                  # [[50, 40], [40, 50]]
+valeurs, vecteurs = np.linalg.eigh(C)       # [10, 90]
+print(C, valeurs, vecteurs, sep="\n")
+
+theta = np.linspace(0, np.pi, 181)
+U = np.column_stack([np.cos(theta), np.sin(theta)])
+f = ((Xc @ U.T) ** 2).mean(axis=0)          # une variance par angle
+print("maximum :", f.max(), "pour", np.degrees(theta[f.argmax()]))
+
+a, b = np.polyfit(x, y, 1)                  # pente 0.8, ordonnée 19
+print(a, C[0, 1] / C[0, 0])
+plt.scatter(x, y)
+t = np.linspace(55, 85, 2)
+plt.plot(t, t + 5, label="axe principal")
+plt.plot(t, a * t + b, "--", label="régression de y selon x")
+plt.plot(t, 1.25 * t - 12.5, "-.", label="régression de x selon y")
+plt.axis("equal"); plt.legend(); plt.show()
+```
+
+a) On obtient $C = \mat{50}{40}{40}{50}$, de valeurs propres $10$ et $90$,
+   comme à la section \ref{sec:acp-droite}.
+b) Le maximum, $90$, est atteint pour $\theta = 45^\circ$ ; la courbe
+   obtenue est celle de $f(\theta) = 50 + 40\sin 2\theta$.
+c) `np.polyfit` renvoie la pente $\num{0.8}$ et l'ordonnée à l'origine
+   $19$ ; on a bien $s_{xy}/s_x^2 = 40/50$.
+d) En échangeant $x$ et $y$, les deux droites de régression échangent
+   leurs rôles : la droite « de $y$ selon $x$ » devient la droite
+   $x = \num{0.8}\,y + 10$. L'axe principal, lui, ne change pas (à la
+   symétrie près des axes du dessin) : il ne privilégie aucune des deux
+   variables.
+:::
+::::
+
+:::: {.exercice .python #exo:acp-python-manchots}
+On reprend les données des manchots et la fonction `acp` du
+programme \ref{lst:acp-manchots}.
+
+a) Reproduire la figure \ref{fig:acp-manchots-plans} avec `matplotlib`,
+   en coloriant chaque point selon l'espèce (colonne `species`).
+b) Reproduire la figure \ref{fig:acp-manchots-acp}. Les manchots papous
+   sont-ils à gauche ou à droite ? Pourquoi est-ce sans importance ?
+c) Recommencer l'ACP *sans* réduire les variables
+   (`acp(X, reduire=False)`). Quelle proportion de la variance le premier
+   axe explique-t-il ? Quelle variable domine le premier vecteur propre ?
+   Expliquer.
+d) Vérifier numériquement que les trois composantes principales de l'ACP
+   réduite sont non corrélées et que leurs variances sont les valeurs
+   propres.
+
+::: {.solution}
+Le programme suivant trace les figures et effectue les calculs.
+
+```{.python}
+import matplotlib.pyplot as plt
+
+especes = manchots["species"].to_numpy()
+couleurs = {"Adelie": "tab:red", "Chinstrap": "tab:blue",
+            "Gentoo": "tab:orange"}
+
+def dessiner(P, titres):
+    for e, c in couleurs.items():
+        plt.scatter(P[especes == e, 0], P[especes == e, 1],
+                    s=8, color=c, label=e)
+    plt.xlabel(titres[0]); plt.ylabel(titres[1]); plt.legend()
+    plt.show()
+
+dessiner(X[:, [0, 1]], ["longueur du bec", "hauteur du bec"])  # etc.
+valeurs, vecteurs, Y = acp(X)
+dessiner(Y[:, [0, 1]], ["y1", "y2"])
+print(acp(X, reduire=False)[:2])
+print(np.cov(Y.T, bias=True).round(6))
+```
+
+a) On obtient les trois nuages de la figure \ref{fig:acp-manchots-plans}.
+b) Avec les vecteurs propres renvoyés par `eigh`, les papous sont à
+   gauche : le premier vecteur propre est l'opposé de celui de la
+   section \ref{sec:acp-espace} (remarque \ref{rem:acp-signes}). Le dessin
+   est simplement retourné.
+c) Sans réduction, les valeurs propres sont environ $\num{212.3}$,
+   $\num{16.1}$ et $\num{2.4}$ ; le premier axe explique $\SI{92.0}{\percent}$
+   de la variance, et son vecteur propre vaut environ $\pm(\num{0.27}\,;
+   \ -\num{0.08}\,;\ \num{0.96})$ : il est presque dirigé selon la nageoire.
+   Comme expliqué à la section \ref{sec:acp-espace}, la nageoire, de loin la
+   plus dispersée, accapare la variance totale. Le pourcentage élevé est
+   trompeur : il traduit une différence d'échelle, pas une structure.
+d) La matrice de covariance de $Y$ est diagonale, de diagonale
+   $(\num{2.003}\,;\ \num{0.767}\,;\ \num{0.230})$.
+:::
+::::
+
+:::: {.exercice .python #exo:acp-python-masse}
+On ajoute aux trois mesures des manchots une quatrième variable, la masse
+en grammes (colonne `body_mass_g`).
+
+a) Effectuer l'ACP de ces quatre variables sans les réduire. Que
+   constate-t-on ?
+b) Effectuer l'ACP des variables réduites. Donner les proportions de
+   variance expliquée. Combien d'axes retient le critère de Kaiser ?
+   combien en faut-il pour dépasser $\SI{80}{\percent}$ ?
+c) Interpréter le premier axe à l'aide de son vecteur propre.
+d) Reconstruire chaque manchot à partir de ses deux premières
+   composantes, $\hat{\vec{z}}_i = y_{i1}\vec{v}_1 + y_{i2}\vec{v}_2$, et
+   vérifier que la moyenne des $\norme{\vec{z}_i - \hat{\vec{z}}_i}^2$ est
+   égale à $\lambda_3 + \lambda_4$ (théorème \ref{thm:acp-optimalite}).
+
+::: {.solution}
+a) Le premier axe explique $\SI{99.99}{\percent}$ de la variance, et son
+   vecteur propre est presque exactement $(0,0,0,1)$ : la masse, dont
+   l'écart type est d'environ $800$ g, écrase tout le reste. L'ACP non
+   réduite n'a ici aucun sens.
+b) Les valeurs propres sont $\num{2.754}$, $\num{0.773}$, $\num{0.365}$ et
+   $\num{0.109}$, soit $\SI{68.8}{\percent}$, $\SI{19.3}{\percent}$,
+   $\SI{9.1}{\percent}$ et $\SI{2.7}{\percent}$. Le critère de Kaiser ne
+   retient qu'un axe ; il en faut deux pour dépasser
+   $\SI{80}{\percent}$ ($\SI{88.2}{\percent}$). Les critères ne sont pas
+   toujours d'accord.
+c) Au signe près, $\vec{v}_1 \approx (\num{0.46}\,;\ -\num{0.40}\,;
+   \ \num{0.58}\,;\ \num{0.55})$ : le premier axe oppose les gros manchots, à longue
+   nageoire, long bec et bec mince (les papous), aux autres. C'est un axe
+   de « taille ».
+d) Le programme suivant effectue la vérification.
+
+   ```{.python}
+   X4 = manchots[["bill_length_mm", "bill_depth_mm",
+                  "flipper_length_mm", "body_mass_g"]].to_numpy()
+   valeurs, V, Y = acp(X4)
+   Z = (X4 - X4.mean(axis=0)) / X4.std(axis=0)
+   Z_chapeau = Y[:, :2] @ V[:, :2].T
+   print(((Z - Z_chapeau) ** 2).sum(axis=1).mean(), valeurs[2:].sum())
+   ```
+
+   Les deux nombres valent $\num{0.4737}$.
+:::
+::::
+
+:::: {.exercice .python #exo:acp-python-vins}
+La bibliothèque `scikit-learn` contient un jeu de données classique
+décrivant $178$ vins italiens, issus de trois cépages, par $13$
+variables chimiques (taux d'alcool, acidité, intensité de la couleur,
+etc.) [@Forina1991]. On le charge avec
+```{.python}
+from sklearn.datasets import load_wine
+vins = load_wine()
+X, cepage = vins.data, vins.target   # cepage vaut 0, 1 ou 2
+```
+
+a) Pourquoi faut-il réduire les variables ? (Comparer les écarts types
+   des variables.)
+b) Effectuer l'ACP réduite avec la fonction `acp`, tracer le diagramme
+   des éboulis et donner la proportion de variance conservée par le plan
+   principal.
+c) Représenter les vins dans le plan principal, en coloriant chacun
+   selon son cépage. Que constate-t-on ?
+d) Comparer avec la classe `PCA` de `scikit-learn`, appliquée aux
+   données réduites par `StandardScaler`. Les proportions de variance
+   sont-elles les mêmes ? et les valeurs propres ?
+
+::: {.solution}
+a) Les écarts types vont d'environ $\num{0.12}$ (pour les phénols non
+   flavonoïdes) à plus de $300$ (pour la proline) : sans réduction, la proline expliquerait à
+   elle seule $\SI{99.8}{\percent}$ de la variance.
+b) Les valeurs propres commencent par $\num{4.71}$, $\num{2.50}$,
+   $\num{1.45}$, $\num{0.92}$, $\num{0.85}$ ; le plan principal conserve
+   $\SI{55.4}{\percent}$ de la variance (sur un total de $13$). Le critère de
+   Kaiser retient trois axes, et il en faut cinq pour dépasser
+   $\SI{80}{\percent}$.
+c) Les trois cépages forment trois groupes presque disjoints : le premier
+   axe sépare les cépages $0$ et $2$, et le deuxième isole le cépage $1$.
+   Avec seulement la moitié de la variance, le plan principal suffit à
+   révéler la structure, invisible dans $\R^{13}$.
+d) On applique la classe `PCA` aux données réduites.
+
+   ```{.python}
+   from sklearn.decomposition import PCA
+   from sklearn.preprocessing import StandardScaler
+   pca = PCA().fit(StandardScaler().fit_transform(X))
+   print(pca.explained_variance_ratio_[:3])   # [0.362 0.192 0.111]
+   print(pca.explained_variance_[:3])         # [4.732 2.511 1.454]
+   ```
+
+   Les proportions sont identiques, mais les valeurs propres sont
+   légèrement plus grandes, dans le rapport $\frac{178}{177}$ :
+   `scikit-learn` divise par $n - 1$
+   (remarque \ref{rem:acp-n-moins-un}). Les vecteurs propres
+   (`pca.components_`) sont les mêmes, au signe près.
+:::
+::::
+
+:::: {.exercice .classe #exo:reflexion-ch5}
+L'analyse en composantes principales ne figure pas au programme du
+secondaire, mais elle mobilise plusieurs notions qui y sont étudiées, et
+elle intervient de plus en plus dans les médias, sous forme de
+graphiques qui « résument » des données complexes.
+
+a) Relever trois notions du programme du secondaire [@PDA2016] qui
+   interviennent dans ce chapitre, et préciser le rôle de chacune.
+b) Concevoir les grandes lignes d'une activité d'une période, destinée à
+   des élèves du deuxième cycle, qui fasse vivre l'idée de « choisir le
+   meilleur point de vue » sur un ensemble de données, sans algèbre
+   linéaire.
+c) Un article présente un graphique dans lequel des pays sont placés
+   selon deux axes nommés « développement économique » et « qualité de
+   vie », obtenus par une ACP de vingt indicateurs. Quelles questions un
+   lecteur critique devrait-il se poser ? Comment l'enseignant peut-il
+   amener les élèves à se les poser ?
+
+::: {.solution}
+Plusieurs réponses sont possibles ; en voici une.
+
+a) Le *nuage de points* et la *corrélation* (deuxième cycle) : l'ACP part
+   d'un nuage, et son premier axe décrit sa direction d'allongement, d'autant
+   plus marquée que la corrélation est forte
+   (remarque \ref{rem:acp-secondaire-stats}). La *droite de régression* :
+   elle sert de point de comparaison avec l'axe principal, et la
+   comparaison oblige à préciser ce que l'on minimise
+   (remarque \ref{rem:acp-regression}). Les *fonctions sinusoïdales*
+   (cinquième secondaire, SN) : la variance dans une direction du plan est
+   une fonction sinusoïdale de l'angle (remarque \ref{rem:acp-sinusoidale}).
+   On pourrait ajouter la *moyenne* et les *mesures de dispersion*,
+   ainsi que les *vecteurs* et le *produit scalaire* (SN), qui servent à
+   projeter.
+b) On donne aux élèves, en équipe, une feuille de données décrivant une
+   quarantaine de manchots par quatre mesures, sans l'espèce
+   (remarque \ref{rem:acp-classe-donnees}). Chaque équipe trace, à la main
+   ou au tableur, le nuage de points d'une paire de variables différente,
+   et décrit ce qu'elle voit. La mise en commun montre que certains nuages
+   font apparaître des groupes, et d'autres non. On révèle alors les
+   espèces, et l'on discute : pourquoi certaines vues sont-elles plus
+   informatives ? Comment pourrait-on combiner deux mesures pour faire
+   encore mieux ? En prolongement, les élèves peuvent essayer des
+   combinaisons simples (somme ou différence de cotes $z$) et comparer les
+   nuages obtenus.
+c) Quelle proportion de la variance le plan représente-t-il ? (S'il n'en
+   conserve que $\SI{40}{\percent}$, les distances sur le graphique sont peu
+   fiables.) Les variables ont-elles été réduites ? Qui a nommé les axes, et
+   sur quelle base ? Le nom d'un axe est une *interprétation*, tirée des
+   composantes du vecteur propre, et non un
+   résultat du calcul. Le choix des vingt indicateurs, enfin, détermine
+   entièrement le résultat. L'enseignant peut faire vivre ces questions en
+   faisant construire aux élèves un « indice » combinant quelques
+   indicateurs, puis en leur montrant qu'un autre choix de pondération
+   modifie le classement : le résumé d'un ensemble de données n'est
+   jamais neutre.
+:::
+::::

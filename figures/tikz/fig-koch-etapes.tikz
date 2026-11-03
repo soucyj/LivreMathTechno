@@ -1,0 +1,11 @@
+\begin{tikzpicture}[scale=5.5, courbe/.style={sectioncolor, line join=round, thick}]
+  \foreach \n/\x/\y in {0/0/0, 1/0/-0.42, 2/0/-0.84, 3/1.25/0, 4/1.25/-0.42}{
+    \begin{scope}[shift={(\x,\y)}]
+      \input{figures/fractales/koch-\n.tikz}
+      \node[etiq, left, sectioncolor] at (-0.02,0.04) {$K_{\n}$};
+    \end{scope}}
+  \begin{scope}[shift={(1.25,-0.84)}, courbe/.style={sectioncolor, line join=round, thin}]
+    \input{figures/fractales/koch-5.tikz}
+    \node[etiq, left, sectioncolor] at (-0.02,0.04) {$K_{5}$};
+  \end{scope}
+\end{tikzpicture}

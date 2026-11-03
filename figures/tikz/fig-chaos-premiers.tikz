@@ -1,0 +1,8 @@
+\begin{tikzpicture}[scale=6.2, chaosvers/.style={gray!60, dashed, thin},
+    chaospas/.style={-{Stealth[length=2.2mm]}, firebrick3, thick}]
+  \draw[sectioncolor, thick, line join=round] (0,0) -- (1,0) -- (0.5,0.8660254) -- cycle;
+  \node[pt, label={[etiq]below left:$A$}] at (0,0) {};
+  \node[pt, label={[etiq]below right:$B$}] at (1,0) {};
+  \node[pt, label={[etiq]above:$C$}] at (0.5,0.8660254) {};
+  \input{figures/fractales/chaos-premiers-coups.tikz}
+\end{tikzpicture}

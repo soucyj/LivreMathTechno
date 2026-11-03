@@ -1,0 +1,16 @@
+  \begin{tikzpicture}[scale=1, every node/.style={font=\sffamily}]
+    \foreach \i/\xb/\yb/\same in {1/1/1/1, 2/0/1/0, 3/0/0/1, 4/1/0/0} {
+      \pgfmathsetmacro{\xoff}{(\i-1)*1.05}
+      \node[draw=sectioncolor, thick, fill=steelblue4!15, minimum size=0.85cm]
+        at (\xoff,0.55) {\xb};
+      \ifnum\same=1
+        \node[draw=sectioncolor, thick, fill=steelblue4!15, minimum size=0.85cm]
+          at (\xoff,-0.55) {\yb};
+      \else
+        \node[draw=firebrick3, thick, fill=firebrick3!20, minimum size=0.85cm]
+          at (\xoff,-0.55) {\yb};
+      \fi
+    }
+    \node[etiq, left] at (-0.7,0.55) {$X$};
+    \node[etiq, left] at (-0.7,-0.55) {$Y$};
+  \end{tikzpicture}

@@ -1,0 +1,20 @@
+\begin{tikzpicture}[scale=1.1]
+  % la droite engendrée par u (angle de 25 degrés)
+  \draw[droite] (205:2.2) -- (25:4.6) node[etiq, above] {$\Span\{\vec{u}\}$};
+  \coordinate (O) at (0,0);
+  \coordinate (X) at (2.3,2.6);
+  % projection de X sur la droite : (X . u) u
+  \pgfmathsetmacro{\t}{2.3*cos(25) + 2.6*sin(25)}
+  \coordinate (P) at (25:\t);
+  \draw[gray, thin] ($(P)+(205:0.22)$) -- ($(P)+(205:0.22)+(115:0.22)$) -- ($(P)+(115:0.22)$);
+  \draw[fleche] (O) -- (25:1) node[etiq, below right] {$\vec{u}$};
+  \draw[thick, coveraccent!85!black] (O) -- (X)
+    node[midway, etiq, above left] {$\norme{\vec{x}_i}$};
+  \draw[thick, firebrick3] (X) -- (P)
+    node[midway, etiq, right] {$d_i$};
+  \draw[very thick, steelblue4] (O) -- (P)
+    node[midway, etiq, below right] {$t_i = \vec{x}_i \cdot \vec{u}$};
+  \node[pt, label={[etiq]above:$\vec{x}_i$}] at (X) {};
+  \node[pt, fill=steelblue4, label={[etiq]below right:$t_i\,\vec{u}$}] at (P) {};
+  \node[pt, fill=black, label={[etiq]below left:$\vec{0}$}] at (O) {};
+\end{tikzpicture}

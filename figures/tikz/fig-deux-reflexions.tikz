@@ -1,0 +1,26 @@
+\begin{tikzpicture}[scale=1.25]
+  \draw[droite] (-1.8,0) -- (1.8,0) node[etiq, right, black] {$d_1$};
+  \draw[droite] (35:-1.8) -- (35:1.8) node[etiq, right, black] {$d_2$};
+  \node[pt, label={[etiq]below left:$M$}] at (0,0) {};
+  \draw[sectioncolor, thin] (0.6,0) arc (0:35:0.6);
+  \node[etiq, sectioncolor] at (17:0.82) {$\varphi$};
+  % Motif original dans le premier "secteur"
+  \begin{scope}[shift={(0.75,0.25)}, scale=0.5]
+    \fill[fig] \motifF;
+  \end{scope}
+  % Après s1 (réflexion d'axe d1)
+  \begin{scope}[cm={1,0,0,-1,(0,0)}]
+    \begin{scope}[shift={(0.75,0.25)}, scale=0.5]
+      \fill[figaux] \motifF;
+    \end{scope}
+  \end{scope}
+  % Après s2 o s1 = rotation de 70°
+  \begin{scope}[rotate=70]
+    \begin{scope}[shift={(0.75,0.25)}, scale=0.5]
+      \fill[figim] \motifF;
+    \end{scope}
+  \end{scope}
+  \draw[-{Stealth[length=2mm]}, firebrick3, thick]
+    (1.35,0.75) arc (25:95:1.5);
+  \node[etiq, firebrick3] at (60:1.85) {$2\varphi$};
+\end{tikzpicture}

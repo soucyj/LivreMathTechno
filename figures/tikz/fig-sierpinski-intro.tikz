@@ -1,0 +1,10 @@
+\begin{tikzpicture}[scale=1.15]
+  % Triangle de Sierpinski, profondeur 3 : trois niveaux de foreach
+  % imbriqués, chacun plaçant trois copies deux fois plus petites.
+  \foreach \ax/\ay in {0/0, 2/0, 1/1.7320508}{
+    \foreach \bx/\by in {0/0, 1/0, 0.5/0.8660254}{
+      \foreach \cx/\cy in {0/0, 0.5/0, 0.25/0.4330127}{
+        \fill[sectioncolor!85]
+          ({\ax+\bx+\cx},{\ay+\by+\cy})
+          -- ++(0.5,0) -- ++(-0.25,0.4330127) -- cycle;}}}
+\end{tikzpicture}

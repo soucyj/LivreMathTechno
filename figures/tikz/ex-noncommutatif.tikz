@@ -1,0 +1,28 @@
+  \begin{tikzpicture}[scale=1.15]
+    \begin{scope}
+      \draw[quadrillage] (-1.2,-1.2) grid (1.2,1.2);
+      \draw[axe] (-1.2,0) -- (1.35,0); \draw[axe] (0,-1.2) -- (0,1.35);
+      \fill[fig] \motifF;
+      \node[etiq, black] at (0,-1.45) {motif de départ};
+    \end{scope}
+    \begin{scope}[xshift=3.4cm]
+      \draw[quadrillage] (-1.2,-1.2) grid (1.2,1.2);
+      \draw[axe] (-1.2,0) -- (1.35,0); \draw[axe] (0,-1.2) -- (0,1.35);
+      \begin{scope}[cm={0,1,-1,0,(0,0)}]     % rotation 90°
+        \begin{scope}[cm={1,0,0,-1,(0,0)}]   % puis, appliquée d'abord, s
+          \fill[figim] \motifF;
+        \end{scope}
+      \end{scope}
+      \node[etiq, black] at (0,-1.45) {$r \circ R$};
+    \end{scope}
+    \begin{scope}[xshift=6.8cm]
+      \draw[quadrillage] (-1.2,-1.2) grid (1.2,1.2);
+      \draw[axe] (-1.2,0) -- (1.35,0); \draw[axe] (0,-1.2) -- (0,1.35);
+      \begin{scope}[cm={1,0,0,-1,(0,0)}]     % réflexion
+        \begin{scope}[cm={0,1,-1,0,(0,0)}]   % puis, appliquée d'abord, r
+          \fill[figaux] \motifF;
+        \end{scope}
+      \end{scope}
+      \node[etiq, black] at (0,-1.45) {$R \circ r$};
+    \end{scope}
+  \end{tikzpicture}

@@ -1,0 +1,2131 @@
+# Les transformations du plan {#chap:transformations}
+
+## Introduction
+
+Une transformation du plan déplace ou déforme les figures selon une
+règle précise. Certaines, comme les rotations et les réflexions,
+préservent les distances ; d'autres, comme les transformations affines,
+préservent plutôt l'alignement et le parallélisme. En les représentant
+par des fonctions et des matrices, on peut étudier ces transformations
+dans un cadre commun et comprendre quelles propriétés elles conservent.
+
+Ce point de vue intervient notamment dans la construction de fractales.
+Par exemple, le triangle de Sierpinski peut être reconstruit à partir de
+trois transformations affines du plan, décrites par dix-huit nombres.
+La figure obtenue est un ensemble invariant associé à ces
+transformations [@Barnsley1993]. Représenter une image par un petit
+nombre de transformations est aussi à la base de la *compression
+fractale d'images* [@Kominek1997].
+
+::: {#fig:sierpinski-intro}
+![](figures/tikz/fig-sierpinski-intro.tikz)
+
+Le triangle de Sierpinski peut être reconstruit à partir de trois transformations affines du plan, décrites par dix-huit nombres. Cette représentation illustre le principe de la compression fractale.
+:::
+
+L'étude des transformations présente aussi un intérêt pour
+l'enseignement. On les rencontre à plusieurs moments du parcours
+scolaire québécois : la réflexion apparaît au troisième cycle
+du primaire, la translation et la rotation en première secondaire,
+l'homothétie et les figures semblables en deuxième et troisième
+secondaire, et le langage vectoriel qui les unifie en cinquième
+secondaire [@PDA2016]^[Disponible en ligne : <https://cdn-contenu.quebec.ca/cdn-contenu/education/pfeq/secondaire/progressions-apprentissages/PFEQ-progression-apprentissages-mathematique-secondaire.pdf>].
+Ces transformations sont généralement présentées séparément, avec des
+constructions et un vocabulaire propres à chacune : le pliage ou le
+miroir pour la réflexion, le calque et le compas pour la rotation, le
+quadrillage pour l'homothétie. Cette approche permet de développer
+l'intuition avant d'introduire un formalisme plus général. Cependant,
+elle ne fait pas nécessairement ressortir les propriétés communes aux
+transformations étudiées. Sans proposer de présenter une telle synthèse
+aux élèves du secondaire, il est utile que leurs enseignants puissent
+la faire. Nous chercherons donc à dégager un cadre commun qui permette
+de mieux comprendre ces transformations et leurs propriétés.
+
+:::: {.historical title="Le programme d'Erlangen"}
+En 1872, Felix Klein (1849--1925) prend possession de sa chaire à
+l'université d'Erlangen. Il y propose une façon de classer les
+géométries qui aura une influence considérable [@Klein1893]^[Le texte original, en allemand, est disponible en ligne, en édition intégrale et libre de droits : <https://www.gutenberg.org/ebooks/38033>.]. Alors qu'on distinguait les géométries par leurs axiomes, Klein propose de les caractériser par leurs *transformations*. Dans cette perspective, une géométrie consiste à étudier les propriétés des figures qui sont conservées par les transformations d'un groupe donné.
+
+::: {.portrait src="figures/portraits/felix-klein.jpg" legende="Felix Klein (1849--1925)." credit="Domaine public, *Wikimedia Commons*."}
+À titre d'exemple, les isométries préservent les longueurs, les angles et les
+aires. On retrouve ainsi la géométrie euclidienne étudiée au secondaire. Si on
+considère plutôt les similitudes, les longueurs peuvent changer, mais leurs
+*rapports* et les angles sont conservés : c'est le contexte des figures
+semblables. Les transformations affines forment un groupe plus vaste encore,
+pour lequel on conserve le parallélisme, l'alignement et les rapports de
+longueurs *sur une même droite*. Enfin, l'étude des propriétés conservées
+par les déformations continues, comme la présence d'un trou, relève de la
+topologie.
+:::
+
+Ainsi, lorsqu'on élargit le groupe de transformations considéré, on
+restreint les propriétés géométriques qui sont conservées. Nous
+organiserons l'étude des transformations suivant cette hiérarchie.
+À la section \ref{sec:secondaire}, nous verrons aussi comment elle
+permet de situer les transformations introduites dans le programme
+québécois.
+
+\medskip
+
+::: {.portrait position="droite" largeur="0.25" src="figures/tikz/bouteille-klein.tikz"}
+Le nom de Klein est également associé à un objet plus connu du grand
+public^[Pas si grand que ça quand même !], la [bouteille de Klein]{.defi},
+qu'il décrit en 1882. Cette surface fermée, qui n'a ni intérieur ni
+extérieur, rappelle le ruban de Möbius. Pour la représenter sans qu'elle
+se recoupe, il faut se placer dans un espace à quatre dimensions. Les
+modèles que l'on fabrique ou que l'on dessine présentent donc une
+intersection, comme c'est le cas ici. Selon une anecdote souvent
+rapportée, son nom proviendrait d'une confusion entre *Fläche* (surface)
+et *Flasche* (bouteille).
+:::
+::::
+
+## Qu'est-ce qu'une transformation du plan ? {#sec:def-transfo}
+
+Dans ce chapitre, nous travaillerons principalement dans le
+[plan euclidien]{.defi}, noté $\Plan$ ou $\mathbb{R}^2$. Il s'agit du
+plan usuel de la géométrie, dans lequel on dispose d'une distance
+$d(P,Q)$ entre deux points.
+
+::: {.definition #def:transfo title="Transformation géométrique du plan"}
+Une [transformation géométrique]{.defi} du plan est une bijection du plan
+dans lui-même, c'est-à-dire une fonction bijective
+$f : \Plan \longrightarrow \Plan$. On note $\Transf$ l'ensemble de
+toutes les transformations du plan.
+:::
+
+La définition fait intervenir deux notions qu'il convient de préciser :
+$f$ doit être une *fonction* et cette fonction doit être
+*bijective*.
+
+La notation $f : \Plan \longrightarrow \Plan$ désigne une fonction
+de $\Plan$ vers $\Plan$. Cela signifie
+
+\par
+
+(i) que $f$ soit définie en chaque point $P \in \Plan$ (partout définie);
+(ii) et qu'elle lui associe un unique point $f(P)$ (univoque).
+
+\par
+
+Ces deux conditions expriment que chaque point de l'ensemble de départ
+possède une et une seule image. Pour que la fonction soit bijective,
+nous devons ajouter les deux conditions suivantes :
+
+\par
+
+(iii) si $P \neq Q$, alors $f(P) \neq f(Q)$ (injectivité) ;
+(iv) et pour tout $Q \in \Plan$, il existe $P \in \Plan$
+     tel que $Q = f(P)$ (surjectivité).
+
+\par
+
+La première de ces conditions signifie que deux points distincts ont
+des images distinctes; la seconde, que chaque point du plan d'arrivée
+possède un antécédent. Ainsi, dans la définition \ref{def:transfo},
+une transformation est une fonction $f : \Plan \to \Plan$ qui satisfait
+les conditions (i) et (ii), ainsi que les conditions de bijectivité
+(iii) et (iv).
+
+::: {#fig:bijection}
+![](figures/tikz/fig-bijection.tikz)
+
+Chaque point du plan possède une unique image par la transformation. Deux points distincts ont des images distinctes (injectivité) et chaque point du plan d'arrivée possède un antécédent (surjectivité).
+:::
+
+::: {.secondaire #rem:vocabulaire title="Quelques précisions de vocabulaire"}
+1. Lorsque $Q = f(P)$, on dit que $Q$ est l'[image]{.defi} de $P$
+   par $f$, et que $P$ est un [antécédent]{.defi} de $Q$.
+2. On dira souvent, dans un contexte géométrique, que
+   « $P$ s'est déplacé en $Q$ ». Cette expression suggère un mouvement,
+   alors que la définition porte sur une *correspondance* entre des
+   points. Nous verrons à la
+   section \ref{sec:secondaire} que cette confusion entre
+   « transformation » et « mouvement » est l'une des difficultés
+   les mieux documentées chez les élèves — et chez les futurs
+   enseignants [@Yanik2011].
+3. Une transformation agit sur *tout* le plan, pas seulement
+   sur la figure qu'on a dessinée. Cette distinction peut être masquée
+   par le vocabulaire employé en
+   classe. Lorsqu'on dit qu'on « fait tourner un triangle », la
+   transformation s'applique en fait au plan entier. Le triangle
+   sert à représenter l'effet de cette transformation.
+:::
+
+### Exemples et contre-exemples
+
+Pour mieux comprendre le rôle de chacune des conditions de la
+définition, examinons un exemple et deux contre-exemples.
+
+::: {.example #ex:symcentrale-syn title="Une symétrie centrale"}
+Soit $M$ un point fixe et soit $f_1 : \Plan \to \Plan$ la correspondance
+qui envoie $P$ sur l'unique point $P'$ tel que $M$ soit le milieu du
+segment $[PP']$ ; autrement dit, $P'$ est le symétrique de $P$ par
+rapport à $M$.
+
+![](figures/tikz/ex-symcentrale-syn.tikz)
+
+Vérifions que $f_1$ est une transformation du plan : chaque
+point $P$ a exactement une image $P'$, l'unique point tel que
+$\overrightarrow{MP'} = -\overrightarrow{MP}$, et chaque point est
+l'image d'exactement un point (en appliquant de nouveau la correspondance à
+l'image, on retrouve le point de départ). C'est la [symétrie centrale de
+centre $M$]{.defi}.
+Elle préserve les longueurs, les angles et la forme des figures ; nous
+la retrouverons à la section \ref{sec:catalogue} comme cas particulier
+d'une homothétie de rapport négatif.
+:::
+
+::: {.example #ex:repliage title="Un repliage du plan"}
+Soit $d$ une droite fixe. Soit $f_2 : \Plan \to \Plan$ qui laisse fixe
+tout point situé du côté « nord » de $d$ (droite comprise), et qui
+envoie tout point situé de l'autre côté sur son réfléchi par rapport à
+$d$ : on obtient le même effet en pliant une feuille le long de $d$.
+
+![](figures/tikz/ex-repliage.tikz)
+
+Cette correspondance définit une fonction, puisque chaque point
+possède une unique image. Elle n'est cependant pas injective : un point $Q$
+situé strictement au nord
+de $d$ a deux antécédents, lui-même et son réfléchi au sud. Elle n'est
+pas surjective non plus : aucun point situé strictement au sud de $d$
+n'est jamais atteint, puisque les images sont toutes au nord ou sur la droite.
+La fonction ne satisfait donc pas la définition d'une transformation du plan.
+:::
+
+::: {.example #ex:pixel title="L'arrondi au pixel près"}
+Soit $f_3 : \Plan \to \Plan$ qui envoie $(x,y)$ sur le point de
+coordonnées entières le plus proche, c'est-à-dire sur
+$(\lfloor x \rceil, \lfloor y \rceil)$ où $\lfloor \cdot \rceil$ désigne
+l'arrondi à l'entier le plus proche. Cette correspondance illustre l'arrondi
+associé à l'affichage d'une
+image sur une grille de pixels.
+
+![](figures/tikz/ex-pixel.tikz)
+
+Les points d'un carré de côté $1$ centré en un point de coordonnées entières
+ont la même image. Ainsi, $f_3$ n'est pas injective. D'autre part, les points
+dont les coordonnées ne sont pas entières n'ont aucun antécédent, de sorte que
+$f_3$ n'est pas surjective. Il ne s'agit donc pas d'une transformation du
+plan.
+:::
+
+### Composer des transformations
+
+::: {.definition #def:composition title="Égalité et composition"}
+Pour $f, g \in \Transf$, on a $f = g$ si et seulement si $f(P) = g(P)$
+pour tout point $P \in \Plan$.
+
+On définit la [composée]{.defi} $f \circ g : \Plan \to \Plan$ par la règle
+$$
+  (f \circ g)(P) = f\bigl(g(P)\bigr).
+$$
+:::
+
+Il faut porter attention à l'ordre de composition : dans $f \circ g$,
+on applique d'abord $g$. Cette convention découle de la notation
+fonctionnelle. Nous y reviendrons, car elle occasionne aussi des
+difficultés dans l'apprentissage des transformations au secondaire.
+
+La composée de deux transformations du plan est encore une
+transformation du plan. On peut le vérifier en reprenant les quatre
+conditions de la définition \ref{def:transfo}; cette vérification est
+proposée à l'exercice \ref{exo:composee-bijection}.
+
+::: {.example #ex:noncommutatif title="La composition n'est pas commutative"}
+Considérons $r$ la rotation de $90°$ autour de l'origine et $R$ la réflexion
+par rapport à l'axe des $x$. En appliquant les deux composées au même motif, on obtient les figures
+ci-dessous. On constate que le résultat dépend de l'ordre choisi.
+
+![](figures/tikz/ex-noncommutatif.tikz)
+
+Les deux images sont symétriques l'une de l'autre par rapport à
+l'origine : ici $r \circ R \neq R \circ r$, et plus précisément
+$R \circ r = r^{-1} \circ R$.
+:::
+
+## Le groupe des transformations du plan {#sec:groupe}
+
+Les observations précédentes font ressortir trois propriétés de
+$\Transf$ : la composition de deux de ses éléments appartient encore
+à cet ensemble, l'identité en fait partie et chaque transformation
+possède une réciproque. Précisons ces propriétés.
+
+::: {.theorem #thm:groupeT title="Propriétés de $(\Transf, \circ)$"}
+Soient $f, g, h \in \Transf$. Alors :
+
+(i) **fermeture** : $f \circ g \in \Transf$ ;
+(ii) **associativité** :
+     $(f \circ g) \circ h = f \circ (g \circ h)$ ;
+(iii) **identité** : $\mathrm{id}(P) = P$
+      appartient à $\Transf$ et vérifie
+      $f \circ \mathrm{id} = \mathrm{id} \circ f = f$ ;
+(iv) **inverse** : il existe $f^{-1} \in \Transf$ telle
+     que $f \circ f^{-1} = f^{-1} \circ f = \mathrm{id}$.
+
+En revanche, l'ordre compte : en général $f \circ g \neq g \circ f$.
+:::
+
+:::: demonstration
+Nous avons déjà établi la fermeture. Pour l'associativité, on utilise
+la propriété correspondante de la composition des fonctions : les deux membres évalués en $P$
+donnent $f(g(h(P)))$. Enfin, toute bijection admet une bijection
+réciproque : la condition de bijectivité assure donc l'existence de l'inverse.
+L'exemple \ref{ex:noncommutatif} montre toutefois que la composition n'est pas
+commutative.
+::::
+
+::: {.remark #rem:inverse-composee title="Inverser une composée"}
+La réciproque d'une composée s'obtient en inversant l'ordre des
+fonctions :
+$$
+  (f \circ g)^{-1} = g^{-1} \circ f^{-1},
+$$
+ce qui diffère en général de $f^{-1} \circ g^{-1}$. Une analogie familière
+permet de retenir cet ordre : après avoir mis
+ses bas, puis ses souliers, il faut enlever les souliers avant les bas
+pour revenir à la situation de départ.
+:::
+
+::: {.remark #rem:groupe-mat2903 title="Le mot groupe"}
+Les propriétés de fermeture et d'associativité, ainsi que l'existence d'un
+élément neutre et d'un inverse pour chaque élément, définissent la structure
+de [groupe]{.defi}. Cette notion permet d'étudier dans un même cadre des objets
+aussi différents que des transformations, des nombres ou des permutations.
+L'étude de cette structure dépasse le cadre de ce cours : les groupes, leurs sous-groupes,
+les groupes de symétrie d'une figure et leurs applications aux pavages
+du plan sont l'objet du cours *MAT-2903: Thèmes
+géométriques*. Nous en utiliserons cependant le vocabulaire :
+dans les sections qui suivent, nous dirons d'un ensemble de
+transformations qu'il est un [sous-groupe]{.defi} de $\Transf$ lorsqu'il
+est lui-même stable par composition et par inversion.
+:::
+
+Nous étudierons plusieurs familles de transformations, chacune étant
+incluse dans la précédente. La figure \ref{fig:hierarchie} présente
+leurs relations et servira de référence pour la suite du chapitre.
+Nous ferons aussi des liens avec les transformations étudiées au
+secondaire.
+
+::: {#fig:hierarchie}
+![](figures/tikz/fig-hierarchie.tikz)
+
+Les principaux groupes de transformations du plan sont ordonnés par inclusion. En descendant dans le diagramme, on restreint les transformations permises et on conserve davantage de propriétés géométriques, suivant le point de vue proposé par Klein.
+:::
+
+::: {.remark #rem:hierarchie-non-inversible title="Où sont les applications affines non inversibles ?"}
+Chaque famille de la figure \ref{fig:hierarchie} est emboîtée dans
+$\Transf$, l'ensemble de *toutes* les transformations du plan ; or
+la définition \ref{def:transfo} exige qu'une transformation soit
+bijective. Ainsi, chacune des familles représentées, y compris le groupe
+$\Aff$ que nous définirons plus loin, est constituée de bijections.
+
+Il existe pourtant, comme nous le verrons à la
+section \ref{sec:non-inversible}, des *applications* affines qui
+ne sont pas bijectives — la projection en est l'exemple type. Celles-ci
+ne préservent en général ni l'alignement ni le parallélisme (la preuve
+de la proposition \ref{prop:proprietes} utilise explicitement
+l'inversibilité), et elles ne figurent dans *aucune* des familles
+de la figure \ref{fig:hierarchie} : n'étant pas bijectives, elles ne
+sont même pas dans $\Transf$. Il faut donc distinguer les deux expressions : «
+affine », sans autre précision, n'implique pas
+l'inversibilité tandis que c'est le cas pour « transformation affine ».
+:::
+
+## Du plan géométrique au plan des coordonnées {#sec:coordonnees}
+
+Jusqu'à présent, nous avons adopté un point de vue *synthétique* :
+les transformations étaient décrites géométriquement, sans faire appel
+aux coordonnées. C'est l'approche d'Euclide, que l'on retrouve aussi en
+première secondaire. Pour passer au point de vue *analytique*,
+nous allons choisir un repère. Les points seront alors représentés par
+des couples de nombres, et les transformations par des formules.
+
+Choisissons une origine $O$ et une base orthonormée
+$\{\vec{e}_1, \vec{e}_2\}$. Un point $P$ du plan s'identifie alors au
+vecteur colonne de ses coordonnées, et nous écrirons indifféremment
+$$
+  P = (x,y) \qquad\text{ou}\qquad P = \col{x}{y} \in \R^2 .
+$$
+La distance entre deux points s'exprime par la norme euclidienne :
+$$
+  d(P,Q) = \norme{P - Q} = \sqrt{(x_P-x_Q)^2 + (y_P-y_Q)^2}.
+$$
+
+Ce passage à la géométrie analytique occupe une place importante en
+quatrième et cinquième secondaire. Une fois le repère choisi, on peut
+représenter un point par un couple de coordonnées, une droite par une
+équation et une région par des inéquations. Dans le cas des
+transformations que nous étudierons, nous utiliserons des matrices.
+Cette correspondance entre géométrie et algèbre, associée aux travaux
+de Descartes, permet d'effectuer des calculs sur les transformations
+et de les programmer.
+
+::: {.remark #rem:points-vecteurs title="Points ou vecteurs ?"}
+En algèbre linéaire et en géométrie vectorielle, on distingue un *point*
+d'un *vecteur*. Nous utiliserons ici une convention qui simplifie les
+écritures : un point
+$P$ et le vecteur $\overrightarrow{OP}$ sont représentés par la même
+colonne de nombres. Cet abus de notation est courant en infographie. Il ne faut toutefois
+pas perdre de vue la distinction entre les deux objets, notamment
+lorsqu'on cherche à comprendre pourquoi une translation n'est pas
+linéaire.
+:::
+
+## Les transformations affines {#sec:affines}
+
+Nous allons maintenant étudier une famille de transformations du plan
+qui comprend toutes celles du programme du secondaire. Chacune de ces
+transformations peut être décrite à l'aide de six nombres.
+
+::: {.definition #def:affine title="Application affine du plan"}
+Une [application affine]{.defi} du plan est une fonction
+$w : \R^2 \to \R^2$ qui, dans la base standard, s'écrit sous la forme
+\begin{equation}\label{eq:affine}
+  w\col{x}{y} = \mat{a}{b}{c}{d}\col{x}{y} + \col{e}{f},
+\end{equation}
+où $a,b,c,d,e,f \in \R$. On dit que \eqref{eq:affine} est la
+[représentation analytique]{.defi} de $w$. En notation compacte, en posant
+$A = \mat{a}{b}{c}{d}$ et $\vec{t} = \col{e}{f}$,
+$$
+  w\col{x}{y} = A\col{x}{y} + \vec{t}.
+$$
+La matrice $A$ s'appelle la [partie linéaire]{.defi} de $w$, et le vecteur
+$\vec{t}$ sa [partie translation]{.defi}.
+:::
+
+Une application affine est donc la composée d'*une application
+linéaire suivie d'une translation*. Nous verrons que les translations,
+les rotations, les réflexions, les homothéties et les cisaillements
+peuvent tous s'écrire sous cette forme, de même que leurs composées.
+
+::: {.remark #rem:pourquoi-affine title="Pourquoi « affine » et non « linéaire » ?"}
+Une application linéaire $T$ vérifie $T(\vec{0}) = \vec{0}$ : elle fixe
+nécessairement l'origine. Or une translation ne fixe aucun point. Les
+translations, qui sont pourtant les plus simples des transformations
+géométriques, ne sont donc *pas* linéaires. C'est précisément pour
+les inclure qu'on ajoute le terme constant $\vec{t}$, et qu'on parle
+d'applications affines. Nous verrons à la
+section \ref{sec:homogenes} comment une dimension supplémentaire permet de représenter ces
+applications par des applications linéaires.
+:::
+
+Rappelons de l'algèbre linéaire que le [noyau]{.defi} d'une
+application linéaire $T : \R^2 \to \R^2$ est l'ensemble
+$\ker T = \{\vec{u} \in \R^2 : T(\vec{u}) = \vec{0}\}$ ; une application linéaire est
+injective si et seulement si son noyau se réduit à $\{\vec{0}\}$, c'est-
+à-dire si et seulement si la matrice qui la représente est inversible.
+Nous utiliserons cette caractérisation pour démontrer la proposition
+suivante.
+
+::: {.proposition #prop:inversibilite title="Inversibilité"}
+Une application affine de partie linéaire $A$ et de partie translation
+$\vec{t}$ est bijective si et seulement si $\dete(A) \neq 0$. Dans ce
+cas, sa réciproque est encore affine :
+$$
+  w^{-1}\col{x}{y} = A^{-1}\col{x}{y} - A^{-1}\vec{t}.
+$$
+:::
+
+:::: demonstration
+Si $\dete(A) \neq 0$, la matrice $A$ est inversible, et on peut vérifier que
+l'application qui envoie $\col{x}{y}$ sur
+$A^{-1}\left(\col{x}{y} - \vec{t}\right)$ est une réciproque de $w$ : cette
+réciproque est affine, avec une partie
+linéaire $A^{-1}$ et de partie translation $-A^{-1}\vec{t}$.
+Réciproquement, si $\dete(A) = 0$, la matrice $A$ possède un vecteur non
+nul $\vec{u}$ dans son noyau ; alors $w(P + \vec{u}) = w(P)$ pour tout
+point $P$, donc $w$ n'est pas injective.
+::::
+
+Ainsi, les applications affines inversibles constituent un sous-groupe
+de $\Transf$. Nous le noterons $\Aff$ et l'appellerons le
+[groupe affine]{.defi} du plan.
+
+Nous pouvons maintenant préciser une convention de vocabulaire qui
+sera utilisée dans tout le chapitre. Une [application affine]{.defi} est n'importe quelle
+fonction de la forme \eqref{eq:affine}, sans condition sur $A$ : la
+projection orthogonale de la section \ref{sec:catalogue} en est une. Une
+[transformation affine]{.defi} est une application affine *bijective*,
+c'est-à-dire un élément de $\Aff$. Le mot *transformation* garde
+ainsi le sens que lui donne la définition \ref{def:transfo} : l'inversibilité
+est déjà comprise dans l'expression « transformation
+affine ». Une application affine non inversible n'est donc pas une
+transformation au sens retenu ici.
+
+### Ce qu'une transformation affine conserve {#sec:proprietes-affines}
+
+::: {.proposition #prop:proprietes title="Propriétés des transformations affines"}
+Soit $w$ une transformation affine du plan. Alors :
+
+1. l'image d'une droite est une droite ;
+2. l'image d'une droite passant par l'origine est une droite
+   passant par $(e,f)$ ;
+3. l'image de deux droites parallèles est formée de deux droites
+   parallèles ;
+4. l'image d'un segment est un segment, et l'image du milieu d'un
+   segment est le milieu du segment image ;
+5. plus généralement, $w$ préserve les rapports de longueurs
+   *sur une même droite* ;
+6. l'image d'un carré est un parallélogramme, et l'image d'un
+   parallélogramme est un parallélogramme.
+:::
+
+:::: demonstration
+Utilisons la représentation paramétrique d'une droite, vue en
+géométrie vectorielle : une [droite]{.defi} passant par $P$ et
+de [vecteur directeur]{.defi} $\vec{u} \neq \vec{0}$ (un vecteur non nul
+parallèle à la droite) est l'ensemble des points $P + s\vec{u}$,
+$s \in \R$ : on obtient tous les points de la droite en partant de $P$
+et en avançant d'un multiple quelconque de $\vec{u}$. En appliquant la transformation, nous obtenons
+$$
+  w(P + s\vec{u}) = A(P + s\vec{u}) + \vec{t}
+  = \underbrace{AP + \vec{t}}_{= \,w(P)} + \,s\,(A\vec{u}),
+$$
+c'est-à-dire la droite passant par $w(P)$ et de vecteur directeur
+$A\vec{u}$, lequel est non nul puisque $A$ est inversible. Cela démontre
+(1), et (2) en prenant $P = \vec{0}$.
+
+Pour établir (3), observons que deux droites parallèles ont le même vecteur directeur
+$\vec{u}$, donc leurs images ont le même vecteur directeur $A\vec{u}$ ;
+elles sont parallèles.
+
+Pour (4) et (5), rappelons que le segment $[PQ]$ est l'ensemble des
+$P + s(Q-P)$ pour $s \in \intff{0}{1}$, et le calcul précédent montre
+que son image est l'ensemble des $w(P) + s\,A(Q-P)$ pour les mêmes
+valeurs de $s$, soit le segment $[w(P)\,w(Q)]$. Puisque la valeur du paramètre
+$s$ est conservée, le point qui coupait le segment dans le rapport $s$ est
+envoyé sur le point qui coupe le segment image dans le même rapport
+$s$. En particulier le milieu ($s = 1/2$) va sur le milieu.
+
+Enfin, pour (6), le carré de sommets $P$, $P + \vec{u}$, $P + \vec{u} +
+\vec{v}$, $P + \vec{v}$ a pour image le quadrilatère de sommets $w(P)$,
+$w(P) + A\vec{u}$, $w(P) + A\vec{u} + A\vec{v}$, $w(P) + A\vec{v}$,
+dont les côtés opposés sont parallèles deux à deux.
+::::
+
+::: {.remark #rem:non-conserve title="Les propriétés qui ne sont pas conservées"}
+Il faut aussi préciser les limites de ce résultat : une transformation affine
+ne préserve en général ni les
+longueurs, ni les angles, ni la perpendicularité, ni les rapports de
+longueurs entre deux directions différentes. Un carré peut devenir un
+parallélogramme quelconque ; un cercle devient une ellipse. En revanche,
+elle multiplie toutes les aires par le même facteur, comme nous
+allons le voir.
+:::
+
+### Visualiser une transformation affine : l'image du carré unité {#sec:carre-unite}
+
+Une façon de comprendre l'effet d'une transformation affine consiste à
+examiner l'image du [carré unité]{.defi} $[0,1] \times [0,1]$. Cette
+observation est aussi une activité utile pour aborder les
+transformations avec des élèves.
+
+Pour comprendre pourquoi, notons $\vec{e}_1 = \col{1}{0}$ et
+$\vec{e}_2 = \col{0}{1}$. Alors
+$$
+  A\vec{e}_1 = \col{a}{c}, \qquad A\vec{e}_2 = \col{b}{d}.
+$$
+On constate donc que *les colonnes de $A$ sont les images des deux
+vecteurs de la base*. Le carré unité, dont les côtés sont $\vec{e}_1$ et
+$\vec{e}_2$, devient donc le parallélogramme construit sur les deux
+colonnes de $A$, puis translaté de $\vec{t}$.
+
+::: {#fig:carre-unite}
+![](figures/tikz/fig-carre-unite.tikz)
+
+Les colonnes de la matrice sont les images des vecteurs de la base. Le carré unité devient le parallélogramme qu'elles engendrent. Cette figure permet ainsi de lire les coefficients de $A$.
+:::
+
+La proposition suivante fait intervenir l'[orientation]{.defi} du plan.
+Avant de l'énoncer, précisons le sens de cette notion.
+
+::: {.definition #def:orientation title="Orientation d'une base, du plan"}
+Une base $(\vec u, \vec v)$ du plan est dite [directe]{.defi} si l'on
+passe du premier vecteur au second, en tournant par le plus petit angle,
+dans le sens antihoraire (le sens trigonométrique) ; elle est dite
+[indirecte]{.defi} dans le cas contraire.
+
+![](figures/tikz/def-orientation.tikz)
+
+On dit qu'une transformation affine $w$
+[préserve l'orientation]{.defi} si elle envoie toute base directe sur une
+base directe (et donc, nécessairement, toute base indirecte sur une base
+indirecte) ; on dit qu'elle la [renverse]{.defi} si elle échange les deux
+types de bases. Puisque $A$ envoie la base standard directe
+$(\vec e_1, \vec e_2)$ sur $(A\vec e_1, A\vec e_2)$, et que cette
+dernière est directe exactement lorsque $\dete(A) > 0$, le signe du
+déterminant décide de tout, comme l'affirme la proposition suivante.
+:::
+
+::: {.proposition #prop:aire-det title="Aire et déterminant"}
+Soit $w$ une application affine de partie linéaire $A$, et soit
+$D \subset \R^2$ une région d'aire $S$. Alors
+$$
+  \Aire\bigl(w(D)\bigr) = \lvert \dete(A)\rvert \cdot S .
+$$
+Lorsque $\dete(A) \neq 0$, c'est-à-dire lorsque $w$ est une
+transformation affine, elle préserve de plus l'orientation du plan si
+$\dete(A) > 0$ et la renverse si $\dete(A) < 0$.
+:::
+
+Nous admettrons ce résultat, qui peut être démontré à l'aide du
+théorème du changement de variables en calcul intégral. On peut
+cependant en expliquer l'idée géométrique. La propriété est vérifiée
+pour le carré unité, par la définition du déterminant, puis pour les
+autres carrés d'un quadrillage, par translation. Elle s'étend aux
+réunions de ces carrés. En utilisant un quadrillage de plus en plus
+fin, on peut ensuite approcher l'aire d'une région plus générale.
+
+::: {.secondaire #rem:orientation title="Le F est-il à l'endroit ?"}
+Les déterminants ne sont pas étudiés au secondaire, mais la symétrie
+axiale l'est. On peut donc s'appuyer sur cette notion familière pour
+interpréter le signe du déterminant : si $\dete(A) > 0$, la figure image
+se lit dans le même sens que la figure de départ ; si $\dete(A) < 0$,
+elle est retournée, comme dans un miroir. Pour rendre ce retournement
+visible, nous utilisons un motif en forme de « F », qui n'a pas de
+symétrie axiale. Un triangle isocèle, au contraire, possède une symétrie
+intrinsèque qui pourrait masquer le changement d'orientation.
+:::
+
+::: {.outil #outil:curseurs title="Une matrice à curseurs dans GeoGebra"}
+Dans GeoGebra, on crée quatre curseurs $a$, $b$, $c$ et $d$, la matrice
+`M = {{a, b}, {c, d}}` et un polygone en forme de « F »,
+puis on trace son image avec la commande `ApplyMatrix(M, F)`.
+En affichant aussi `Determinant(M)`, les élèves peuvent observer
+en direct ce que les résultats de cette section prédisent : le rapport des
+aires suit $\lvert\dete(M)\rvert$, le « F » se retourne au moment où le
+déterminant change de signe, et la figure s'aplatit sur une droite
+lorsqu'il s'annule (section \ref{sec:non-inversible}). Pour éviter que
+l'activité se réduise à faire bouger des curseurs, on demandera d'abord
+de *prédire* l'effet d'un réglage (remarque \ref{rem:outils}).
+:::
+
+::: {.example #ex:rectangle title="Image d'un rectangle"}
+Déterminons l'image du rectangle plein
+$R = \intff{0}{2} \times \intff{0}{1}$ par
+$$
+  w\col{x}{y} = \mat{1}{-1}{2}{0}\col{x}{y} + \col{-1}{1}.
+$$
+D'après la proposition \ref{prop:proprietes}, l'image d'un parallélogramme est
+un parallélogramme. Nous pouvons donc
+déterminer l'image du rectangle en calculant celles de ses quatre
+sommets. On obtient
+$$
+  \begin{array}{lcl}
+  w(0,0) = (-1,1),  &\quad& w(2,0) = (1,5),\\[2pt]
+  w(2,1) = (0,5),   &\quad& w(0,1) = (-2,1).
+  \end{array}
+$$
+L'image est donc le parallélogramme plein de sommets $(-1,1)$, $(1,5)$,
+$(0,5)$ et $(-2,1)$. Vérifions aussi le résultat en comparant les aires : $\dete(A) = 0 - (-2) =
+2$, et l'aire du rectangle valait $2$ ; l'aire de l'image doit donc
+valoir $4$. C'est bien le cas : le parallélogramme a une base de
+longueur $1$ (le segment de $(-1,1)$ à $(-2,1)$) et une hauteur $4$.
+
+![](figures/tikz/ex-rectangle.tikz)
+:::
+
+::: {.example #ex:triangle title="Image d'un triangle"}
+Avec la même transformation $w$, cherchons l'image du triangle plein de
+sommets $A = (1,1)$, $B = (0,0)$ et $C = (-1,1)$. On calcule
+$$
+  w(1,1) = \col{1-1-1}{2+0+1} = \col{-1}{3}, \quad
+  w(0,0) = \col{-1}{1}, \quad
+  w(-1,1) = \col{-3}{-1}.
+$$
+L'image est le triangle plein de sommets $(-1,3)$, $(-1,1)$ et
+$(-3,-1)$. Observons que le triangle de départ est isocèle, alors que son image
+ne l'est pas. Cet exemple rappelle qu'une transformation affine ne
+conserve pas nécessairement les longueurs.
+:::
+
+## Un catalogue d'applications affines {#sec:catalogue}
+
+Nous allons présenter quelques applications affines élémentaires.
+À l'exception de la projection, étudiée en dernier, elles sont toutes
+des transformations du plan. Leur intérêt vient notamment du fait
+que toute application linéaire inversible du plan peut être obtenue
+en les composant, comme nous le verrons au
+théorème \ref{thm:decomposition}.
+
+Pour la suite, nous désignerons l'origine par $\vec{0}$ et
+représenterons un point du plan par le vecteur colonne $\col{x}{y}$.
+
+Nous adopterons les conventions de notation suivantes dans tout le
+chapitre :
+les *rotations* portent un $r$ minuscule et les *réflexions*
+un $R$ majuscule. Ainsi $r_\theta$ est la rotation d'angle $\theta$
+autour de l'origine et $r_{O,\alpha}$ celle d'angle $\alpha$ autour du
+point $O$, tandis que $R_\theta$ est la réflexion dont l'axe passe par
+l'origine en faisant un angle $\theta$ avec l'axe des $x$, et $R_d$ la
+réflexion d'axe $d$. Les translations s'écrivent $t_{\vec{t}}$ et les
+homothéties $h_c$ ou $h_{M,c}$.
+
+### Translations
+
+::: {.definition #def:translation title="Translation"}
+La [translation]{.defi} de vecteur $\vec{t} = \col{e}{f}$ est
+l'application
+$$
+  t_{\vec{t}}\col{x}{y} = \col{x}{y} + \col{e}{f}
+  = \mat{1}{0}{0}{1}\col{x}{y} + \col{e}{f}.
+$$
+:::
+
+Sa partie linéaire est l'identité : $\dete(I) = 1$, donc les aires et
+l'orientation sont préservées. La translation fournit ainsi un premier exemple d'isométrie.
+Notons aussi que composer deux translations donne une translation, et
+que l'ordre n'y change rien :
+$t_{\vec{u}} \circ t_{\vec{v}} = t_{\vec{u}+\vec{v}} =
+t_{\vec{v}} \circ t_{\vec{u}}$. Dans ce cas particulier, l'ordre de composition n'a donc pas
+d'importance. Cette simplicité peut aider à comprendre la place
+accordée aux translations au début du secondaire.
+
+### Homothéties
+
+::: {.definition #def:homothetie title="Homothétie de centre l'origine"}
+L'[homothétie de centre $\vec{0}$ et de rapport]{.defi} $c \in \Rs$ est
+l'application linéaire
+$$
+  h_c\col{x}{y} = \mat{c}{0}{0}{c}\col{x}{y} = \col{cx}{cy} .
+$$
+Lorsque $0 < c < 1$, on parle de [contraction uniforme]{.defi} ; lorsque
+$c > 1$, de [dilatation uniforme]{.defi}. Lorsque $c < 0$, l'homothétie
+retourne la figure de l'autre côté du centre ; en particulier
+$h_{-1}$ est la [symétrie centrale]{.defi} de centre $\vec{0}$, qui n'est
+autre que la rotation d'un demi-tour.
+:::
+
+On a $\dete(cI) = c^2 > 0$ : une homothétie multiplie les aires par
+$c^2$ et ne renverse jamais l'orientation, même si $c < 0$. Le cas d'un
+rapport négatif mérite d'être discuté en classe, car il
+peut sembler contraire à l'intuition.
+
+Pour décrire une homothétie dont le centre n'est pas l'origine, nous
+utiliserons la [conjugaison]{.defi}. Le procédé consiste à translater le
+centre à l'origine, à appliquer l'homothétie déjà définie, puis à
+effectuer la translation inverse.
+
+::: {.proposition #prop:homothetie-centre title="Homothétie de centre quelconque"}
+L'homothétie de centre $M = (h,k)$ et de rapport $c$ est
+$$
+  h_{M,c} = t_{\vec{m}} \circ h_c \circ t_{-\vec{m}},
+  \qquad \vec{m} = \col{h}{k},
+$$
+et sa représentation analytique est
+$$
+  h_{M,c}\col{x}{y} = \mat{c}{0}{0}{c}\col{x}{y}
+  + \col{h(1-c)}{k(1-c)}
+  = \col{cx + h(1-c)}{cy + k(1-c)} .
+$$
+:::
+
+:::: demonstration
+Notons $P$ le point de départ et appliquons successivement les trois transformations :
+$P \mapsto P - \vec{m} \mapsto c(P-\vec{m}) \mapsto
+c(P - \vec{m}) + \vec{m} = cP + (1-c)\vec{m}$.
+
+Vérifions que cette composée satisfait la définition \ref{def:homothetie} avec centre
+$M$ plutôt qu'avec centre $\vec{0}$. Or, en soustrayant $\vec{m}$ de part
+et d'autre de $h_{M,c}(P) = cP + (1-c)\vec{m}$, on obtient
+$$
+  h_{M,c}(P) - M = c(P - M) ,
+$$
+c'est-à-dire que le vecteur allant de $M$ à l'image est $c$ fois le
+vecteur allant de $M$ à $P$. Cela signifie que l'image $P'$ de
+$P$ est sur la droite $MP$, du même côté de $M$ que $P$ si $c > 0$ et
+du côté opposé si $c < 0$, à une distance $\lvert c\rvert$ fois plus
+grande. C'est la définition synthétique de l'homothétie
+(exemple \ref{ex:symcentrale-syn} pour le cas $c = -1$), transportée
+sans changement au centre $M$. De plus, le centre $M$ est fixe, puisque
+$h_{M,c}(M) - M = c(M-M) = \vec{0}$.
+::::
+
+::: {.secondaire #rem:formule-secondaire title="Interpréter la formule de l'homothétie"}
+La formule $(x,y) \mapsto (cx + h(1-c),\ cy + k(1-c))$ se retrouve
+dans les manuels de deuxième secondaire. À ce niveau, elle est
+généralement présentée sans le calcul qui permet de l'obtenir. La
+composition $t_{\vec{m}} \circ h_c \circ t_{-\vec{m}}$ en explique
+pourtant la forme : on déplace le centre à l'origine, on effectue
+l'homothétie, puis on revient par la translation inverse. Ce procédé
+permet de reconstruire les formules des transformations à centre
+étudiées au secondaire. Il est donc utile de pouvoir le reprendre
+au tableau, même si on n'en présente pas tout le formalisme aux élèves.
+:::
+
+### Rotations
+
+::: {.definition #def:rotation title="Rotation de centre l'origine"}
+La [rotation]{.defi} d'angle $\theta$ autour de l'origine, dans le sens
+antihoraire, est l'application linéaire de matrice
+$$
+  r_\theta = \mat{\cos\theta}{-\sin\theta}{\sin\theta}{\cos\theta}.
+$$
+:::
+
+::: {.remark #rem:rotation-indice title="Un ou deux indices ?"}
+Précisons la lecture des indices, conformément à la convention de la
+section \ref{sec:catalogue} : un indice numérique seul, comme dans
+$r_\theta$, signifie que la rotation est centrée à l'*origine*.
+Dès que le centre n'est pas l'origine, on le précise en le plaçant en
+premier indice, comme dans $r_{M,\theta}$, introduit plus bas : l'indice
+porte alors sur *deux* objets, le centre et l'angle, et non seulement
+l'angle. La même lecture vaudra pour les homothéties ($h_c$ contre
+$h_{M,c}$) et pour les réflexions ($R_\theta$ contre $R_d$).
+:::
+
+On peut retrouver cette matrice à partir de la méthode présentée au
+paragraphe \ref{sec:carre-unite} : la première colonne est
+$(\cos\theta, \sin\theta)$, qui est bien l'image de $\vec{e}_1$ par une
+rotation d'angle $\theta$ ; la seconde est $(-\sin\theta, \cos\theta)$,
+soit $\vec{e}_2$ tourné du même angle. On a
+$\dete(r_\theta) = \cos^2\theta + \sin^2\theta = 1$ : les rotations
+préservent les aires et l'orientation.
+
+::: {#fig:rotation}
+![](figures/tikz/fig-rotation.tikz)
+
+Les deux colonnes de $r_\theta$ sont les images de $\vec{e}_1$ et $\vec{e}_2$. La lecture des coordonnées de ces deux points du cercle trigonométrique permet de reconstruire la matrice.
+:::
+
+En reprenant le procédé de conjugaison de la
+proposition \ref{prop:homothetie-centre}, on obtient la rotation de centre
+$M$ quelconque :
+$$
+  r_{M,\theta}\col{x}{y}
+  = r_\theta\left(\col{x}{y} - \vec{m}\right) + \vec{m}
+  = r_\theta\col{x}{y} + (I - r_\theta)\,\vec{m}.
+$$
+
+::: {.proposition #prop:rotations-groupe title="Composer deux rotations de même centre"}
+Soit $M$ un point quelconque du plan. Alors
+$r_{M,\alpha}\, r_{M,\beta} = r_{M,\alpha + \beta} = r_{M,\beta}\, r_{M,\alpha}$, et
+$r_{M,\theta}^{-1} = r_{M,-\theta}$.
+:::
+
+:::: demonstration
+Traitons d'abord le cas $M = \vec{0}$, c'est-à-dire les rotations
+$r_\alpha$ et $r_\beta$ de la définition \ref{def:rotation}. Le calcul du
+produit matriciel fait intervenir les formules d'addition
+des angles :
+$$
+  \mat{\cos\alpha}{-\sin\alpha}{\sin\alpha}{\cos\alpha}
+  \mat{\cos\beta}{-\sin\beta}{\sin\beta}{\cos\beta}
+  = \mat{p}{-q}{q}{p},
+$$
+où
+\begin{align*}
+  p &= \cos\alpha\cos\beta - \sin\alpha\sin\beta = \cos(\alpha+\beta),\\
+  q &= \sin\alpha\cos\beta + \cos\alpha\sin\beta = \sin(\alpha+\beta).
+\end{align*}
+On reconnaît $r_{\alpha+\beta}$, et le produit dans l'autre ordre donne le
+même résultat puisque $\alpha + \beta = \beta + \alpha$ : c'est
+$r_\alpha r_\beta = r_{\alpha+\beta} = r_\beta r_\alpha$.
+
+Pour un centre $M$ quelconque, de vecteur position $\vec{m}$, la
+conjugaison introduite ci-dessus donne, pour tout point $P$,
+\begin{align*}
+  (r_{M,\alpha}\, r_{M,\beta})(P)
+  &= r_\alpha\bigl(r_\beta(P - \vec{m}) + \vec{m} - \vec{m}\bigr) + \vec{m}\\
+  &= (r_\alpha r_\beta)(P - \vec{m}) + \vec{m}\\
+  &= r_{\alpha+\beta}(P - \vec{m}) + \vec{m}\\
+  &= r_{M,\alpha+\beta}(P),
+\end{align*}
+où l'on a utilisé le cas $M = \vec{0}$ à la troisième égalité. En inversant
+l'ordre des rotations, le calcul précédent donne le
+même résultat, et il suffit de
+poser $\beta = -\alpha$ pour obtenir $r_{M,\theta}^{-1} = r_{M,-\theta}$.
+::::
+
+::: {.secondaire #rem:addition-angles title="Les identités trigonométriques et les rotations"}
+La démonstration ci-dessus est une preuve des identités
+$\cos(\alpha+\beta) = \cos\alpha\cos\beta - \sin\alpha\sin\beta$ et
+$\sin(\alpha+\beta) = \sin\alpha\cos\beta + \cos\alpha\sin\beta$, à
+condition d'admettre que composer deux rotations donne une rotation, ce
+qui est géométriquement évident. Cette démonstration permet de comprendre la
+forme de ces identités en
+les reliant au produit de deux matrices. Elle peut ainsi enrichir leur
+présentation en cinquième secondaire.
+:::
+
+### Réflexions
+
+::: {.definition #def:reflexion-axes title="Réflexions par rapport aux axes"}
+Les réflexions par rapport à l'axe des $x$ et à l'axe des $y$ sont
+respectivement
+$$
+  H = \mat{1}{0}{0}{-1}, \qquad V = \mat{-1}{0}{0}{1}.
+$$
+:::
+
+Plus généralement, la réflexion par rapport à la droite passant par
+l'origine et faisant un angle $\theta$ avec l'axe des $x$ a pour matrice
+\begin{equation}\label{eq:reflexion-theta}
+  R_\theta = \mat{\cos 2\theta}{\sin 2\theta}{\sin 2\theta}{-\cos 2\theta}.
+\end{equation}
+On vérifie que $\dete(R_\theta) = -\cos^2 2\theta - \sin^2 2\theta = -1$:
+une réflexion renverse l'orientation, comme le suggère l'image du miroir.
+Examinons deux cas particuliers :
+$\theta = 0$ donne $H$ ; $\theta = \pi/4$ donne la réflexion par rapport
+à la droite $y = x$, de matrice $\mat{0}{1}{1}{0}$, qui échange les
+coordonnées.
+
+::: {.remark #rem:angle-double title="L'angle double"}
+La présence de $2\theta$ dans \eqref{eq:reflexion-theta} s'explique
+géométriquement : faire tourner le
+*miroir* de $\theta$ fait tourner l'*image* de $2\theta$.
+C'est le même phénomène qui fait que la composée de deux réflexions
+d'axes sécants est une rotation d'angle *double* de l'angle des
+axes, résultat que nous démontrons au
+théorème \ref{thm:deux-reflexions} et que l'on peut faire observer aux élèves du secondaire.
+:::
+
+### Cisaillements
+
+::: {.definition #def:cisaillement title="Cisaillement"}
+Un [cisaillement horizontal]{.defi} de rapport $m$ est l'application
+linéaire de matrice $\mat{1}{m}{0}{1}$ ; un [cisaillement vertical]{.defi}
+de rapport $m$, celle de matrice $\mat{1}{0}{m}{1}$.
+:::
+
+Un cisaillement horizontal laisse fixe l'axe des $x$ et fait glisser
+chaque droite horizontale d'une quantité proportionnelle à sa hauteur :
+on peut visualiser cet effet en décalant progressivement les cartes
+d'un paquet initialement bien empilé. Son déterminant vaut $1$ : *un cisaillement
+conserve les aires*, bien que les angles et les longueurs puissent être modifiés.
+
+::: {.secondaire #rem:cisaillement-aire title="Le cisaillement et l'aire du parallélogramme"}
+Le cisaillement permet de justifier la formule « base $\times$ hauteur » pour
+l'aire d'un parallélogramme. En effet, un cisaillement de rapport approprié
+transforme celui-ci en un rectangle de même base et de même hauteur. Puisque
+l'aire est conservée, les deux figures ont la même aire. Au
+secondaire, on retrouve cette égalité d'aires en découpant un
+triangle et en le déplaçant de l'autre côté , ce qui donne une autre interprétation du résultat.
+:::
+
+### Contractions et dilatations non uniformes
+
+::: {.definition #def:contraction-nonunif title="Contraction non uniforme"}
+C'est une application linéaire de la forme
+$\mat{a}{0}{0}{b}$ avec $0 < a < 1$ et $0 < b < 1$.
+:::
+
+Si $a \neq b$, les facteurs de contraction diffèrent suivant les deux
+directions : un cercle devient une ellipse.
+
+### Un catalogue en images
+
+::: {#fig:catalogue}
+![](figures/tikz/fig-catalogue.tikz)
+
+Quelques applications affines, représentées à l'aide d'un même motif. La figure de départ est en trait pâle et son image en couleur. Parmi les transformations illustrées, seule la réflexion renverse l'orientation, ce que permet de constater la forme du « F ».
+:::
+
+::: {#tab:catalogue espacement="10pt"}
+Les applications affines élémentaires et leurs propriétés. La projection est la seule de cette liste qui ne soit pas une transformation du plan, puisque son déterminant est nul.
+
+| Transformation | Matrice $A$ | $\dete(A)$ | Isométrie ? |
+|:--|:--|:-:|:-:|
+| Translation de $\vec{t}$ | $I$ | $1$ | oui |
+| Rotation d'angle $\theta$ | $\mat{\cos\theta}{-\sin\theta}{\sin\theta}{\cos\theta}$ | $1$ | oui |
+| Réflexion d'axe $\theta$ | $\mat{\cos 2\theta}{\sin 2\theta}{\sin 2\theta}{-\cos 2\theta}$ | $-1$ | oui |
+| Homothétie de rapport $c$ | $\mat{c}{0}{0}{c}$ | $c^2$ | si $\lvert c\rvert = 1$ |
+| Cisaillement de rapport $m$ | $\mat{1}{m}{0}{1}$ | $1$ | non (sauf $m=0$) |
+| Contraction non uniforme | $\mat{a}{0}{0}{b}$ | $ab$ | non (sauf $\lvert a\rvert=\lvert b\rvert=1$) |
+| Projection sur $y=x$ | $\tfrac12\mat{1}{1}{1}{1}$ | $0$ | non (non inversible) |
+:::
+
+### Le cas non inversible {#sec:non-inversible}
+
+Il est parfois utile de considérer des applications affines qui ne sont
+pas des transformations, c'est-à-dire pour lesquelles $\dete(A) = 0$.
+L'image du plan est alors une droite (si
+$A \neq 0$) ou un point (si $A = 0$).
+
+::: {.example #ex:projection-analytique title="La projection orthogonale sur $y = x$"}
+Après le repliage de l'exemple \ref{ex:repliage}, considérons une autre
+application non inversible, qui est cette fois affine : la [projection
+orthogonale]{.defi} sur une droite. La
+projection orthogonale du point $(x,y)$ sur la droite $y = x$ est le
+point de cette droite le plus proche de $(x,y)$ ; en notant
+$\vec{u} = \tfrac{1}{\sqrt2}\col{1}{1}$ le vecteur unitaire directeur,
+c'est
+$$
+  p\col{x}{y} = \left(\col{x}{y} \cdot \vec{u}\right)\vec{u}
+  = \frac{x+y}{2}\col{1}{1}
+  = \frac12\mat{1}{1}{1}{1}\col{x}{y}.
+$$
+Le déterminant vaut $\tfrac14(1 - 1) = 0$ : les images ont une aire nulle, ce
+qui correspond au fait qu'elles
+sont contenues dans une droite. Observons aussi que $p \circ p = p$ : projeter deux fois revient
+à projeter une fois.
+:::
+
+::: {#fig:projection}
+![](figures/tikz/fig-projection.tikz)
+
+Une application affine non inversible : l'image du motif est le segment de la droite $y = x$ allant de $(0,0)$ à $\bigl(\tfrac78, \tfrac78\bigr)$, image du coin $(\tfrac34, 1)$. Ce n'est pas une transformation du plan au sens de la définition \ref{def:transfo}.
+:::
+
+### Le théorème de décomposition
+
+::: {.theorem #thm:decomposition title="Décomposition des applications linéaires du plan"}
+Une application linéaire de $\R^2$ dans $\R^2$ est inversible si et
+seulement si elle est une composition d'homothéties, de rotations, de
+réflexions, de cisaillements et de contractions ou dilatations non
+uniformes.
+:::
+
+On peut interpréter ce résultat à partir d'une propriété de l'algèbre
+linéaire : toute matrice inversible est un produit de matrices
+élémentaires, celles qui correspondent aux opérations sur les lignes.
+Les cisaillements sont exactement les matrices d'addition d'un multiple
+d'une ligne à une autre ; les contractions non uniformes, celles de
+multiplication d'une ligne par un scalaire ; la réflexion d'axe $y=x$,
+celle d'échange de deux lignes. Ainsi, la méthode de Gauss--Jordan,
+généralement présentée au cégep comme une technique de calcul, possède aussi
+une interprétation géométrique : les opérations élémentaires correspondent à
+une *décomposition* de la transformation du plan.
+
+## Les coordonnées homogènes et leurs applications en infographie {#sec:homogenes}
+
+La composition de deux applications affines fait intervenir à la fois
+leurs parties linéaires et leurs translations. Si
+$w_1$ et $w_2$ ont pour parties linéaires $A_1$ et $A_2$ et pour
+translations $\vec{t}_1$ et $\vec{t}_2$, alors
+$$
+  (w_2 \circ w_1)\col{x}{y}
+  = A_2\left(A_1\col{x}{y} + \vec{t}_1\right) + \vec{t}_2
+  = (A_2A_1)\col{x}{y} + (A_2\vec{t}_1 + \vec{t}_2),
+$$
+Cette écriture demande donc deux calculs distincts. Lorsqu'on doit
+composer un grand nombre de transformations, comme en infographie,
+il est utile de disposer d'une représentation qui réunisse ces
+opérations.
+
+Pour y parvenir, on plonge le plan dans $\R^3$, à la hauteur $z = 1$ :
+on représente le point $(x,y)$ par le triplet $(x,y,1)$. On écrit alors
+\begin{equation}\label{eq:homogene}
+  \begin{pmatrix} a & b & e\\ c & d & f\\ 0 & 0 & 1\end{pmatrix}
+  \coliii{x}{y}{1}
+  = \coliii{ax + by + e}{cx + dy + f}{1}.
+\end{equation}
+Le terme de translation est maintenant compris dans le produit
+matriciel. L'application affine du plan est ainsi représentée par
+une application linéaire dans un espace de dimension supérieure. On appelle $(x,y,1)$ les
+[coordonnées homogènes]{.defi} du point $(x,y)$.
+
+::: {#fig:homogenes}
+![](figures/tikz/fig-homogenes.tikz)
+
+Les coordonnées homogènes. Les points du plan sont représentés à la hauteur $z=1$, les vecteurs (les directions) à la hauteur $z=0$. La distinction point/vecteur de la remarque \ref{rem:points-vecteurs} apparaît dans la troisième coordonnée.
+:::
+
+Cette représentation possède plusieurs propriétés utiles :
+
+\par
+
+1. **Composition.** La matrice de
+   $w_2 \circ w_1$ est le produit des deux matrices $3\times3$,
+   dans cet ordre. Le produit tient compte à la fois de la partie
+   linéaire et de la translation.
+2. **Inversion.** La matrice de $w^{-1}$ est
+   l'inverse de la matrice $3\times3$.
+3. **Points et vecteurs.** Un point est
+   $(x,y,1)$, un vecteur est $(x,y,0)$. La différence de deux points
+   donne bien un vecteur, et la translation d'un vecteur ne le
+   change pas : c'est exactement ce que dit la géométrie affine.
+4. **Extension aux transformations projectives.** En permettant à la troisième
+   ligne d'être autre chose que $(0,0,1)$, on obtient les
+   transformations *projectives*, celles qui font converger les
+   parallèles vers un point de fuite. C'est ainsi que fonctionne
+   toute perspective en trois dimensions [@FoleyVanDam1996].
+
+::: {.example #ex:homogenes-concret title="Composer une rotation et une translation"}
+Considérons le motif en forme de maison de sommets $(0,0)$, $(2,0)$,
+$(2\,;\ 1{,}4)$, $(1\,;\ 2{,}2)$, $(0\,;\ 1{,}4)$, et appliquons successivement deux
+transformations : $r$, la rotation de $\pi/2$ autour de l'origine, puis $t$,
+la
+translation de vecteur $(3,1)$. En coordonnées homogènes,
+$$
+  M_r = \begin{pmatrix} 0&-1&0\\ 1&0&0\\ 0&0&1\end{pmatrix},
+  \qquad
+  M_t = \begin{pmatrix} 1&0&3\\ 0&1&1\\ 0&0&1\end{pmatrix}.
+$$
+Puisque la rotation précède la translation, la transformation
+composée $t \circ r$ a pour matrice le produit $M_tM_r$, calculé dans cet
+ordre :
+$$
+  M_t M_r =
+  \begin{pmatrix} 1&0&3\\ 0&1&1\\ 0&0&1\end{pmatrix}
+  \begin{pmatrix} 0&-1&0\\ 1&0&0\\ 0&0&1\end{pmatrix}
+  =
+  \begin{pmatrix} 0&-1&3\\ 1&0&1\\ 0&0&1\end{pmatrix}.
+$$
+Appliquons-la, par exemple, au coin $(2,0)$ de la maison, écrit en
+coordonnées homogènes $(2,0,1)$ :
+$$
+  M_t M_r \coliii{2}{0}{1}
+  = \coliii{0(2) - 1(0) + 3(1)}{1(2) + 0(0) + 1(1)}{1}
+  = \coliii{3}{3}{1} ,
+$$
+c'est-à-dire $(2,0) \mapsto (3,3)$. C'est exactement ce que donnerait le
+calcul affine direct
+$\col{x}{y} \mapsto r_{\pi/2}\col{x}{y} + \col{3}{1}$, mais obtenu ici
+par une seule multiplication de matrices $3 \times 3$.
+
+![](figures/tikz/ex-homogenes-concret.tikz)
+
+Composons maintenant dans l'autre ordre, $r \circ t$ (la translation précède alors la rotation) :
+$$
+  M_r M_t =
+  \begin{pmatrix} 0&-1&0\\ 1&0&0\\ 0&0&1\end{pmatrix}
+  \begin{pmatrix} 1&0&3\\ 0&1&1\\ 0&0&1\end{pmatrix}
+  =
+  \begin{pmatrix} 0&-1&-1\\ 1&0&3\\ 0&0&1\end{pmatrix} ,
+$$
+On obtient une matrice différente de $M_tM_r$. Le recours aux coordonnées
+homogènes ne change donc pas l'importance de l'ordre de composition, déjà
+soulignée à la remarque \ref{rem:inverse-composee}. Nous retrouverons ces deux
+mêmes
+matrices, calculées cette fois par la machine, à
+l'[annexe A](#annexe:python).
+:::
+
+::: {.remark #rem:usages title="Quelques applications"}
+Les produits de matrices de la forme \eqref{eq:homogene} interviennent
+dans de nombreuses applications : déplacer un personnage dans un jeu
+vidéo, déterminer la position de la pince d'un bras de robot
+articulé [@CraigRobotics2005], redresser une photographie ou faire
+pivoter une carte. Le nombre de calculs peut atteindre des millions
+par seconde. Ces exemples permettent de montrer aux élèves comment
+des transformations rencontrées au secondaire sont utilisées dans
+les technologies qu'ils connaissent.
+:::
+
+## Isométries et similitudes {#sec:similitudes}
+
+Parmi les transformations affines, certaines préservent la
+*forme* des figures. Nous allons les étudier et préciser leur
+place dans la hiérarchie de la figure \ref{fig:hierarchie}. Ce sont
+notamment les transformations auxquelles on s'intéresse au secondaire.
+
+::: {.definition #def:similitude title="Similitude, isométrie, contraction"}
+Une [similitude]{.defi} du plan est une application affine
+$w : \R^2 \to \R^2$ pour laquelle il existe une constante $k > 0$ telle
+que
+\begin{equation}\label{eq:similitude}
+  \norme{w(P) - w(Q)} = k\,\norme{P - Q}
+  \qquad \text{pour tous } P, Q \in \R^2 .
+\end{equation}
+Le nombre $k$ est le [rapport de similitude]{.defi}. Lorsque $k = 1$, on
+dit que $w$ est une [isométrie]{.defi}. Lorsque $0 < k < 1$, on dit que
+$w$ est une [contraction]{.defi} de facteur $k$.
+:::
+
+La condition \eqref{eq:similitude} signifie que toutes les distances
+sont multipliées par le même facteur $k$. On retrouve la propriété
+utilisée au secondaire pour définir des figures semblables.
+Cependant, elle porte ici sur une *transformation* du plan,
+plutôt que sur une paire de figures donnée.
+
+::: {.proposition #prop:partie-lineaire title="Il suffit de regarder la partie linéaire"}
+Une application affine de partie linéaire $A$ est une similitude de
+rapport $k$ si et seulement si l'application linéaire
+$\col{x}{y} \mapsto A\col{x}{y}$ en est une, de même rapport.
+:::
+
+:::: demonstration
+Observons d'abord que le terme de translation disparaît dans la
+différence :
+$$
+  w(P) - w(Q) = (AP + \vec{t}) - (AQ + \vec{t}) = A(P - Q) = w_1(P) - w_1(Q).
+$$
+Les deux membres de \eqref{eq:similitude} sont donc identiques pour $w$
+et pour $w_1$.
+::::
+
+::: {.proposition #prop:compo-similitudes title="Une composition de similitudes est une similitude"}
+Si $w_1$ et $w_2$ sont des similitudes de rapports $k_1$ et $k_2$, alors
+$w_2 \circ w_1$ est une similitude de rapport $k_1k_2$.
+:::
+
+:::: demonstration
+Pour tous $P, Q \in \R^2$,
+$$
+  \norme{w_2(w_1(P)) - w_2(w_1(Q))} = k_2\,\norme{w_1(P) - w_1(Q)}
+  = k_2 k_1 \norme{P - Q}.
+$$
+Une récurrence permet ensuite d'étendre cette égalité à un nombre
+quelconque de facteurs.
+::::
+
+En particulier, les similitudes forment un sous-groupe $\Sim$ de $\Aff$,
+et les isométries un sous-groupe $\Iso$ de $\Sim$ : ce qui justifie les
+inclusions représentées à la figure \ref{fig:hierarchie}.
+
+### Les propriétés des similitudes
+
+Nous savons que les homothéties, les rotations, les réflexions et les
+translations sont des similitudes (exercice \ref{exo:catalogue-similitudes}),
+de même que toutes leurs composées. Nous admettrons la réciproque,
+dont la démonstration dépasse le cadre du cours : la partie linéaire d'une similitude de
+rapport $k$ est toujours de la forme $k\,r_\theta$ (similitude directe)
+ou $k\,R_\theta$ (similitude indirecte) pour un certain angle $\theta$. Les
+deux propositions suivantes présentent des conséquences de
+cette caractérisation.
+
+::: {.proposition #cor:det-similitude title="Déterminant d'une similitude"}
+Si $w$ est une similitude de rapport $k$ et de partie linéaire $A$,
+alors $\dete(A) = k^2$ ou $\dete(A) = -k^2$. Par conséquent
+$\lvert\dete(A)\rvert = k^2$, et $w$ est une contraction si et seulement
+si $\lvert\dete(A)\rvert < 1$.
+:::
+
+::: {.proposition #cor:aires title="Aires et rapport de similitude"}
+Si $w$ est une similitude de rapport $k$ et si $D$ est une région du
+plan, alors $\Aire(w(D)) = k^2\,\Aire(D)$.
+:::
+
+::: {.secondaire #rem:k-carre title="Le facteur $k^2$ pour les aires"}
+Au secondaire, la proposition \ref{cor:aires} s'exprime souvent ainsi : « si
+on double les dimensions, l'aire est multipliée par quatre ». La mémorisation
+de cette règle ne suffit pas toujours à bien l'appliquer. Pour en comprendre
+la raison, on peut proposer deux explications : l'une par le déterminant
+(proposition \ref{prop:aire-det}), l'autre par le fait qu'une aire est
+un produit de deux longueurs, chacune multipliée par $k$. La deuxième
+est parfaitement accessible à un élève de troisième secondaire ; la
+première explique pourquoi le résultat vaut aussi pour des figures qui
+ne sont ni des rectangles ni des triangles. Le même raisonnement en
+dimension trois donne $k^3$ pour les volumes.
+:::
+
+::: {.example #ex:reconnaitre title="Reconnaître une similitude"}
+La matrice $A = \mat{0{,}8}{0}{a}{0{,}6}$ ne représente une similitude pour
+aucune valeur de $a$. En effet, si $k$ était le rapport, l'exercice
+\ref{exo:cercle-unite} appliqué à $\vec{e}_1$ et $\vec{e}_2$ donnerait
+$$
+  k = \norme{A\vec{e}_1} = \sqrt{0{,}8^2 + a^2} \geq 0{,}8
+  \qquad\text{et}\qquad
+  k = \norme{A\vec{e}_2} = 0{,}6,
+$$
+ce qui est contradictoire.
+
+En revanche, $A = \mat{0{,}5}{\alpha}{\beta}{0{,}5}$ est une similitude
+pour $\alpha = \beta = 0$ (homothétie de rapport $\tfrac12$) et aussi
+pour $\alpha = \tfrac{\sqrt3}{2}$, $\beta = -\tfrac{\sqrt3}{2}$ : dans ce
+dernier cas, on reconnaît la matrice $r_{-\pi/3}$ de la rotation
+d'angle $-\pi/3$ : c'est même une isométrie, puisque $k = 1$.
+:::
+
+### Classification des isométries du plan
+
+::: {.theorem #thm:classification title="Les quatre isométries du plan"}
+Toute isométrie du plan est de l'un des quatre types suivants :
+
+1. une [translation]{.defi} (y compris l'identité) ;
+2. une [rotation]{.defi} autour d'un point ;
+3. une [réflexion]{.defi} par rapport à une droite ;
+4. une [réflexion glissée]{.defi} (ou [symétrie glissée]{.defi} :
+   les deux noms coexistent dans la littérature — nous retenons le
+   premier, qui s'accorde avec « réflexion » comme
+   « symétrie axiale » s'accorde avec « symétrie »), c'est-à-dire
+   une réflexion suivie d'une translation parallèle à l'axe.
+:::
+
+Nous utiliserons ce théorème sans le démontrer. Le tableau ci-dessous
+présente les quatre types d'isométries, en distinguant aussi l'identité.
+
+::: {#tab:isometries}
+Classification des isométries du plan suivant leur déterminant et l'ensemble de leurs points fixes.
+
+| Isométrie | $\dete(A)$ | Points fixes | Nom au secondaire |
+|:--|:--|:--|:--|
+| Identité | $+1$ | tout le plan | --- |
+| Translation | $+1$ | aucun | translation |
+| Rotation | $+1$ | un seul point | rotation |
+| Réflexion | $-1$ | une droite | réflexion, symétrie axiale |
+| Réflexion glissée | $-1$ | aucun | (absente du programme) |
+:::
+
+::: {.secondaire #rem:symetrie-glissee title="La réflexion glissée au-delà du programme"}
+La réflexion glissée ne figure pas au programme du secondaire québécois.
+On peut cependant la reconnaître dans les traces de pas dans la neige, la
+disposition des feuilles sur certaines tiges et plusieurs frises
+décoratives. Son existence montre aussi que la liste « translation, rotation,
+réflexion » est *incomplète*. En effet, la composée d'une réflexion et
+d'une translation peut n'appartenir à aucune de ces trois familles. Chercher à
+décrire une telle composée constitue une activité permettant de prolonger
+l'étude des isométries.
+:::
+
+::: {#fig:symetrie-glissee}
+![](figures/tikz/fig-symetrie-glissee.tikz)
+
+Une frise engendrée par une réflexion glissée : chaque étape comprend une réflexion suivie d'une translation d'un demi-pas. Aucune translation, rotation ou réflexion seule ne produit ce motif.
+:::
+
+### La décomposition en réflexions
+
+::: {.theorem #thm:deux-reflexions title="Composée de deux réflexions"}
+Soient $d_1$ et $d_2$ deux droites du plan et $R_1$, $R_2$ les
+réflexions correspondantes.
+
+1. Si $d_1 \parallel d_2$, alors $R_2 \circ R_1$ est la translation
+   de vecteur $2\vec{v}$, où $\vec{v}$ est le vecteur
+   perpendiculaire menant de $d_1$ à $d_2$.
+2. Si $d_1$ et $d_2$ se coupent en $M$ en formant un angle
+   $\varphi$, alors $R_2 \circ R_1$ est la rotation de centre $M$ et
+   d'angle $2\varphi$.
+:::
+
+:::: demonstration
+Démontrons le second cas; le premier se traite de façon analogue. Quitte à translater,
+supposons $M = \vec{0}$. Si $d_1$ fait un angle $\alpha$ avec l'axe des
+$x$ et $d_2$ un angle $\alpha + \varphi$, alors, par
+\eqref{eq:reflexion-theta},
+$$
+  R_{\alpha+\varphi}R_\alpha
+  = \mat{\cos(2\alpha+2\varphi)}{\sin(2\alpha+2\varphi)}
+  {\sin(2\alpha+2\varphi)}{-\cos(2\alpha+2\varphi)}
+  \mat{\cos 2\alpha}{\sin 2\alpha}{\sin 2\alpha}{-\cos 2\alpha}.
+$$
+En développant et en regroupant à l'aide des formules d'addition, on
+obtient
+$$
+  R_{\alpha+\varphi}R_\alpha
+  = \mat{\cos 2\varphi}{-\sin 2\varphi}{\sin 2\varphi}{\cos 2\varphi}
+  = r_{2\varphi}.
+$$
+::::
+
+::: {#fig:deux-reflexions}
+![](figures/tikz/fig-deux-reflexions.tikz)
+
+Deux réflexions successives d'axes sécants donnent une rotation dont l'angle est le *double* de celui des axes. En bleu, le motif ; en or, son image par $R_1$ ; en rouge, l'image par $R_2 \circ R_1$.
+:::
+
+::: {.corollary #cor:trois-reflexions title="Trois réflexions suffisent"}
+Toute isométrie du plan est la composée d'au plus trois réflexions.
+:::
+
+::: {.secondaire #rem:reflexion-fondamentale title="Le rôle de la réflexion dans l'enseignement"}
+Le corollaire \ref{cor:trois-reflexions} permet de mieux comprendre la
+place de la réflexion parmi les transformations du premier cycle du
+secondaire. En effet, toutes les isométries peuvent être obtenues en
+composant des réflexions; c'est notamment le cas des translations et
+des rotations. Une activité avec deux miroirs ou deux pliages
+successifs permet d'observer ce résultat. Les élèves peuvent constater
+que deux réflexions d'axes sécants donnent une rotation et comparer
+l'angle de celle-ci avec l'angle entre les axes. La manipulation donne
+ainsi un appui concret à l'étude de cette propriété.
+:::
+
+::: {.outil #outil:deux-reflexions title="Deux miroirs dans GeoGebra"}
+Le théorème \ref{thm:deux-reflexions} se prête bien à une exploration
+dans GeoGebra. On trace deux droites $d_1$ et $d_2$ et une figure $F$,
+puis on construit `F' = Reflect(F, d1)` et
+`F'' = Reflect(F', d2)`. En faisant tourner $d_2$ autour du point
+d'intersection, les élèves comparent l'angle `Angle(d1, d2)` avec
+l'angle de la rotation qui envoie $F$ sur $F''$ ; en rendant les deux
+droites parallèles, ils voient la rotation devenir une translation. Ils
+peuvent aussi vérifier que l'ordre des réflexions compte : échanger
+$d_1$ et $d_2$ change le sens de la rotation.
+:::
+
+## Déterminer une transformation à partir de points {#sec:determiner}
+
+Jusqu'ici, nous avons cherché l'image d'une figure par une transformation
+donnée. Nous allons maintenant poser le problème dans l'autre sens :
+connaissant une figure et son image, comment déterminer la
+transformation qui les relie? Cette question intervient notamment
+lorsqu'un logiciel redresse une photographie ou compare deux
+empreintes pour en reconnaître la forme.
+
+::: {.theorem #thm:trois-points title="Trois points suffisent"}
+Soient $P_1 = (x_1,y_1)$, $P_2 = (x_2,y_2)$ et $P_3 = (x_3,y_3)$ trois
+points *non alignés* du plan, et soient $Q_1 = (u_1,v_1)$,
+$Q_2 = (u_2,v_2)$, $Q_3 = (u_3,v_3)$ trois points quelconques. Alors il
+existe une *unique* application affine $w$ telle que
+$$
+  w(P_1) = Q_1, \qquad w(P_2) = Q_2, \qquad w(P_3) = Q_3 .
+$$
+:::
+
+La démonstration consiste à traduire les conditions géométriques par
+un système d'équations linéaires. Cette méthode se prête directement
+à une résolution informatique.
+
+:::: demonstration
+Cherchons $a,b,c,d,e,f$ tels que
+$w\col{x}{y} = \mat{a}{b}{c}{d}\col{x}{y} + \col{e}{f}$. Les trois
+conditions $w(P_i) = Q_i$ s'écrivent
+$$
+  \begin{array}{rcl@{\qquad}rcl}
+  a x_1 + b y_1 + e &=& u_1, & c x_1 + d y_1 + f &=& v_1,\\
+  a x_2 + b y_2 + e &=& u_2, & c x_2 + d y_2 + f &=& v_2,\\
+  a x_3 + b y_3 + e &=& u_3, & c x_3 + d y_3 + f &=& v_3.
+  \end{array}
+$$
+C'est un système de six équations à six inconnues. On peut le séparer en deux
+systèmes indépendants de trois équations
+à trois inconnues. De plus, ces deux systèmes possèdent la même
+matrice :
+\begin{equation}\label{eq:trois-points-systeme}
+  \begin{pmatrix} x_1 & y_1 & 1\\ x_2 & y_2 & 1\\ x_3 & y_3 & 1\end{pmatrix}
+  \coliii{a}{b}{e} = \coliii{u_1}{u_2}{u_3}
+  \qquad\text{et}\qquad
+  \begin{pmatrix} x_1 & y_1 & 1\\ x_2 & y_2 & 1\\ x_3 & y_3 & 1\end{pmatrix}
+  \coliii{c}{d}{f} = \coliii{v_1}{v_2}{v_3}.
+\end{equation}
+Notons $M$ cette matrice commune. Un calcul direct donne
+$$
+  \dete(M) = (x_2 - x_1)(y_3 - y_1) - (x_3 - x_1)(y_2 - y_1),
+$$
+quantité qui vaut le double de l'aire orientée du triangle
+$P_1P_2P_3$ : elle est non nulle exactement lorsque les trois points ne
+sont pas alignés. Dans ce cas, chacun des deux systèmes possède une
+solution unique, d'où l'existence et l'unicité de $w$.
+::::
+
+::: {.remark #rem:trois-points-homogene title="Une écriture plus compacte"}
+Les coordonnées homogènes permettent de résumer ce calcul. Posons
+$$
+  \widetilde{P} = \begin{pmatrix} x_1 & x_2 & x_3\\
+  y_1 & y_2 & y_3\\
+  1   & 1   & 1\end{pmatrix},
+  \qquad
+  \widetilde{Q} = \begin{pmatrix} u_1 & u_2 & u_3\\
+  v_1 & v_2 & v_3\\
+  1   & 1   & 1\end{pmatrix}.
+$$
+La matrice $3\times3$ de $w$ s'obtient par
+$$
+  \widetilde{W} = \widetilde{Q}\,\widetilde{P}^{-1}.
+$$
+Cette formule est celle qu'implémentent les bibliothèques d'infographie,
+et nous la retrouverons en Python à
+l'[annexe A](#annexe:python).
+:::
+
+::: {.example #ex:deux-triangles title="Le problème des deux triangles"}
+Cherchons l'application affine qui envoie le triangle de sommets
+$A = (-11,3)$, $B = (1,12)$, $C = (-1,14)$ sur le triangle de sommets
+$P = (90,-68)$, $Q = (69,-53)$, $R = (83,-59)$, avec $A \mapsto P$,
+$B \mapsto Q$ et $C \mapsto R$.
+
+Les images prescrites donnent les six équations suivantes :
+$$
+  \begin{array}{rcl@{\qquad\qquad}rcl}
+  -11a + 3b + e &=& 90, & -11c + 3d + f &=& -68,\\
+  a + 12b + e &=& 69, &   c + 12d + f &=& -53,\\
+  -a + 14b + e &=& 83, &  -c + 14d + f &=& -59.
+  \end{array}
+$$
+Le premier système donne $a = -4$, $b = 3$, $e = 37$ ; le second,
+$c = 2$, $d = -1$, $f = -43$. La transformation cherchée est donc
+$$
+  w\col{x}{y} = \mat{-4}{3}{2}{-1}\col{x}{y} + \col{37}{-43}.
+$$
+Observons aussi que $\dete(A) = 4 - 6 = -2$ : la transformation
+renverse l'orientation et double les aires. Ce n'est ni une isométrie,
+ni même une similitude : une similitude linéaire de rapport $k$ doit
+vérifier $A^{\top}A = k^2 I$, et
+$A^{\top}A = \mat{20}{-14}{-14}{10}$ n'est pas un multiple de $I$.
+:::
+
+::: {.outil #outil:wolfram-systemes title="Résoudre les systèmes avec WolframAlpha"}
+Les deux systèmes de l'exemple \ref{ex:deux-triangles} se résolvent en
+une ligne dans WolframAlpha :
+`solve -11a+3b+e=90, a+12b+e=69, -a+14b+e=83`. Le calcul étant
+confié à l'outil, l'attention se porte sur la *mise en équations*,
+qui est l'étape où se trouve la géométrie : chaque sommet et son image
+fournissent deux équations, et il faut trois couples de points pour
+obtenir les six équations nécessaires. On peut ensuite demander aux
+élèves de contrôler la réponse en calculant à la main l'image d'un des
+sommets.
+:::
+
+::: {#fig:deux-triangles}
+![](figures/tikz/fig-deux-triangles.tikz)
+
+Détermination de l'unique application affine qui envoie le triangle de gauche sur celui de droite, avec $A \mapsto P$, $B \mapsto Q$ et $C \mapsto R$. Le repère de droite est décalé pour tenir sur la page ; les deux quadrillages ont la même maille, ce qui permet de comparer les aires : celle de droite est bien le double de celle de gauche, conformément à $\lvert\dete(A)\rvert=2$.
+:::
+
+::: {.remark #rem:combien-points title="Combien de points pour quel groupe ?"}
+Le théorème \ref{thm:trois-points} a des analogues pour les
+sous-groupes. Une *similitude* du plan est entièrement déterminée
+par l'image de *deux* points distincts, et une *isométrie*
+aussi — à ceci près qu'il reste dans les deux cas une ambiguïté : deux
+solutions, l'une directe et l'autre indirecte, symétriques par rapport à
+la droite joignant les deux images. C'est exactement ce que dit
+l'exercice \ref{exo:deux-similitudes}. Une *translation* est
+déterminée par l'image d'un seul point. Le nombre de points requis donne ainsi
+une façon concrète de comparer
+les contraintes qui caractérisent ces familles. Cette observation peut
+aider les élèves à distinguer, par exemple, les données nécessaires
+pour déterminer une rotation de celles qui définissent une translation.
+:::
+
+## Les transformations dans l'enseignement secondaire québécois {#sec:secondaire}
+
+Nous allons maintenant examiner les liens entre les résultats de ce
+chapitre et l'enseignement secondaire. Nous situerons d'abord les
+transformations dans le programme québécois, puis nous comparerons les
+notations des manuels avec la représentation matricielle. Nous verrons
+ensuite comment ce point de vue peut aider à expliquer certaines
+propriétés et à comprendre les difficultés des élèves.
+
+### Où sont-elles dans le programme ?
+
+Les transformations géométriques sont reprises à plusieurs moments du
+parcours scolaire, avec un vocabulaire et des représentations adaptés
+aux connaissances des élèves [@PFEQ2007]^[Disponible en ligne : <https://cdn-contenu.quebec.ca/cdn-contenu/education/pfeq/secondaire/PFEQ-domaines-apprentissage-deuxieme-cycle-secondaire.pdf> (voir le chapitre 4, « Domaines d'apprentissage »).]  [@PDA2016].
+
+::: {#tab:curriculum colonnes="p{2.5cm}p{9.4cm}"}
+Introduction des transformations géométriques dans le programme québécois. Les niveaux indiqués correspondent au moment où la notion est introduite ; elle est reprise et enrichie ensuite.
+
+| Niveau | Ce qui est en jeu |
+|:--|:--|
+| Primaire, $3^{\text{e}}$ cycle | Réflexion et axe de symétrie ; frises et dallages ; observation de régularités. Le vocabulaire est informel, le travail se fait par pliage, miroir et papier quadrillé. |
+| $1^{\text{re}}$ secondaire | Translation, rotation et réflexion ; construction de l'image d'une figure ; figures isométriques ; frises et dallages analysés en termes de transformations. |
+| $2^{\text{e}}$ secondaire | Homothétie ; figures semblables ; rapport de similitude ; premières justifications à l'aide des propriétés des transformations. |
+| $3^{\text{e}}$ secondaire | Conditions minimales d'isométrie et de similitude des triangles ; recherche de mesures manquantes ; rapports $k$, $k^2$, $k^3$ pour les longueurs, les aires et les volumes. |
+| $4^{\text{e}}$ secondaire | Géométrie analytique : distance, point de partage, droites. L'outillage algébrique nécessaire à la représentation analytique des transformations se met en place. |
+| $5^{\text{e}}$ secondaire (SN) | Vecteurs : opérations, combinaisons linéaires, produit scalaire. Le vecteur de translation peut alors être décrit à l'aide de ces opérations, au-delà de sa représentation par une flèche. |
+:::
+
+Deux observations peuvent être faites à partir de ce tableau. D'abord,
+l'ordre d'introduction des transformations rappelle la hiérarchie de
+Klein (figure \ref{fig:hierarchie}) : les isométries précèdent les
+similitudes, tandis que les transformations affines générales ne sont
+pas étudiées. Rien ne permet toutefois d'affirmer que ce rapprochement
+est délibéré. D'autre part, le lien entre les transformations et leur
+représentation analytique n'est pas nécessairement établi au
+secondaire. Les élèves peuvent donc connaître les quatre
+transformations, les coordonnées et les vecteurs sans savoir comment
+ces notions se rejoignent. Le travail de ce chapitre permet à
+l'enseignant de faire cette synthèse.
+
+### Traduire la notation du secondaire
+
+Les manuels québécois utilisent une notation fonctionnelle compacte pour
+désigner les transformations. Cette notation désigne la transformation elle-même et se traduit
+directement dans le langage matriciel. Une différence de convention
+doit cependant être précisée : là
+où nous écrivons $R_d$ pour la réflexion d'axe $d$, les manuels écrivent
+$s_d$, du mot « symétrie ». La colonne de gauche ci-dessous reproduit
+leur notation, celle de droite la nôtre.
+
+::: {#tab:dictionnaire espacement="6pt"}
+Correspondance entre les notations du secondaire et la représentation analytique des transformations.
+
+| Secondaire | Se lit | Représentation analytique |
+|:--|:--|:--|
+| $t_{(a,b)}$ | translation de $(a,b)$ | $\col{x}{y} \mapsto \col{x}{y} + \col{a}{b}$ |
+| $r_{O,\theta}$ | rotation de centre $O$, d'angle $\theta$ | $\col{x}{y} \mapsto r_\theta\col{x}{y}$ |
+| $r_{M,\theta}$ | rotation de centre $M$ | $\col{x}{y} \mapsto r_\theta\left(\col{x}{y} - \vec{m}\right) + \vec{m}$ |
+| $s_{d}$ | réflexion d'axe $d$ | $\col{x}{y} \mapsto R_\theta\col{x}{y}$ si $d$ passe par $O$ |
+| $h_{O,k}$ | homothétie de centre $O$, rapport $k$ | $\col{x}{y} \mapsto k\col{x}{y}$ |
+| $h_{M,k}$ | homothétie de centre $M$ | $\col{x}{y} \mapsto k\col{x}{y} + (1-k)\vec{m}$ |
+| $s_{d} \circ t_{(a,b)}$ | « on translate, puis on réfléchit » | $\col{x}{y} \mapsto R_\theta\left(\col{x}{y} + \col{a}{b}\right)$ |
+:::
+
+::: {.secondaire #rem:notation-secondaire title="L'intérêt de la notation fonctionnelle"}
+Il arrive qu'on reproche à cette notation d'être lourde. Elle présente
+cependant un avantage : elle traite la transformation comme un
+*objet* qu'on peut nommer, comparer et composer, plutôt que comme
+une action qu'on exécute. La recherche en didactique souligne la difficulté de
+ce passage — passer de la
+transformation-*procédé* à la transformation-*objet* — et la
+notation aide à le franchir [@Edwards1997]. Son utilisation peut donc
+soutenir cet apprentissage.
+:::
+
+### Les apports du point de vue matriciel
+
+Même si les matrices ne sont pas enseignées au secondaire, leur étude
+permet de mieux comprendre plusieurs propriétés qui y sont utilisées.
+Voici six liens à retenir pour l'enseignement.
+
+\par
+
+1. **Un cadre commun.** Translation, rotation,
+   réflexion et homothétie peuvent être décrites par une même formule
+   $w\col{x}{y} = A\col{x}{y} + \vec{t}$.
+   Quand un
+   élève demande « est-ce qu'il existe d'autres transformations ? »,
+   ce cadre permet d'identifier d'autres exemples.
+2. **Pourquoi l'ordre compte.** « Pourquoi
+   $r \circ R \neq R \circ r$ ? » Parce que la multiplication des
+   matrices n'est pas commutative
+   (exemple \ref{ex:noncommutatif}). Le calcul algébrique et
+   l'observation géométrique permettent ainsi
+   d'expliquer le même phénomène.
+3. **D'où vient le $k^2$.** La règle « les aires sont
+   multipliées par $k^2$ » peut être justifiée par le déterminant, ou,
+   plus simplement, par le fait qu'une aire
+   est un produit de deux longueurs
+   (remarque \ref{rem:k-carre}).
+4. **Pourquoi les conditions minimales fonctionnent.** Les
+   critères d'isométrie et de similitude des triangles
+   ([cac]{.smallcaps}, [aca]{.smallcaps}, [ccc]{.smallcaps}, [aa]{.smallcaps}…)
+   peuvent sembler arbitraires lorsqu'on les présente sans explication. Le
+   théorème \ref{thm:trois-points} permet d'éclairer cette question : une
+   application affine est déterminée par l'image de trois
+   points, et une similitude par l'image de deux. C'est pour cela
+   qu'un nombre fini d'égalités suffit.
+5. **Le rôle central de la réflexion.** Le
+   corollaire \ref{cor:trois-reflexions} indique que la réflexion
+   permet d'engendrer toutes les isométries. Ce rôle justifie qu'on
+   prenne le temps de l'étudier, notamment en utilisant des miroirs.
+6. **La liste des trois transformations est incomplète.** La
+   réflexion glissée existe (remarque \ref{rem:symetrie-glissee}), et
+   un élève qui compose une réflexion et une translation peut
+   la rencontrer. Il est utile de pouvoir reconnaître et expliquer
+   ce cas.
+
+### Les difficultés d'apprentissage, et d'où elles viennent
+
+Les recherches en didactique font ressortir plusieurs difficultés
+récurrentes dans l'apprentissage des transformations. Certaines ne
+proviennent pas d'erreurs de calcul, mais de la façon dont les élèves,
+et parfois les futurs enseignants, interprètent les objets étudiés.
+
+\par
+
+1. **La transformation vue comme un mouvement de la figure.**
+   L'élève pense qu'on déplace le triangle, pas qu'on transforme le
+   plan. Cela peut expliquer qu'il ne conçoive pas l'image d'un point qui
+   n'appartient pas à la figure, et qu'il ne comprenne pas qu'une
+   rotation ait un centre situé « ailleurs » [@Yanik2011]. On peut
+   alors demander régulièrement l'image de points isolés, et
+   l'image du *quadrillage* lui-même.
+2. **La translation confondue avec son vecteur, ou avec un
+   déplacement quelconque.** Beaucoup d'élèves croient que
+   « translater » signifie « bouger sans tourner », sans se soucier
+   de la distance ni de la direction. Une activité possible consiste à faire construire
+   la translation par les seules coordonnées.
+3. **Le centre de rotation systématiquement placé sur la
+   figure.** Lorsque le centre est extérieur à la figure ou situé à
+   l'intérieur de celle-ci, la construction peut poser des
+   difficultés [@Hollebrands2003]. On peut s'appuyer sur la
+   conjugaison
+   de la proposition \ref{prop:homothetie-centre}, expliquée
+   géométriquement, « je vais au centre, je tourne, je reviens ».
+4. **L'homothétie réduite à un agrandissement.** L'élève
+   n'imagine pas $k < 0$, et confond souvent le rapport $k$ avec
+   « le nombre de fois plus grand » en termes d'aire. Il est utile de
+   faire tracer des homothéties de rapport négatif, et faire
+   comparer systématiquement les longueurs, les aires et les
+   angles.
+5. **« Semblable » compris comme « qui se ressemble ».** Le sens
+   courant du mot peut masquer sa définition mathématique. On peut revenir à la
+   définition \ref{def:similitude} elle-même, énoncée
+   avec des mots — *toutes* les distances multipliées par le
+   *même* nombre.
+6. **Le niveau de van Hiele.** Plus généralement, les élèves
+   qui raisonnent au niveau visuel (« ça a l'air pareil ») ne
+   peuvent pas produire de justification fondée sur les propriétés,
+   même s'ils obtiennent les bonnes réponses [@Usiskin1982]^[Disponible en ligne : <https://files.eric.ed.gov/fulltext/ED220288.pdf>.].
+   Il faut donc examiner la justification, même lorsque la réponse
+   obtenue est correcte.
+
+::: {.secondaire #rem:test-classe title="Une question pour préciser la conception de l'élève"}
+La question suivante permet de voir si l'élève considère la
+transformation comme un mouvement limité à la figure : *« Soit une
+rotation de $90°$ autour d'un point $M$
+situé à l'extérieur du triangle $ABC$. Le point $M$ a-t-il une image ?
+Laquelle ? »* L'élève qui répond « $M$ n'est pas dans le triangle, donc
+la question ne se pose pas » ne prend pas en compte le fait que la transformation est définie sur
+le plan entier. C'est la même difficulté que celle de la
+remarque \ref{rem:vocabulaire}.
+:::
+
+### Quelques activités pour la classe
+
+\par
+
+1. **Deux miroirs.** Placer deux petits miroirs formant un
+   angle $\varphi$ et compter les images. On découvre
+   expérimentalement le théorème \ref{thm:deux-reflexions} : la
+   composée de deux réflexions est une rotation d'angle $2\varphi$.
+   Faire varier $\varphi$ jusqu'à obtenir un nombre entier d'images
+   offre un problème d'exploration qui sera approfondi dans le cours [mat-2903]{.smallcaps}.
+2. **La chasse aux symétries.** Photographier des logos, des
+   carrelages, des flocons, et compter, pour chacun, ses rotations
+   et ses réflexions. La question « combien de symétries a ce
+   logo ? » demande d'identifier précisément les transformations qui conservent
+   la figure.
+3. **Le pantographe.** Un instrument articulé qui réalise
+   matériellement une homothétie. Il donne une interprétation concrète de
+   la proposition \ref{prop:homothetie-centre}, et
+   la question « où est le centre ? » devient concrète : c'est le
+   point où l'instrument est fixé.
+4. **Programmer une transformation.** Faire écrire, en Python
+   ou dans un logiciel de géométrie dynamique, la fonction qui
+   calcule l'image d'un point. Comme nous l'avons noté à
+   l'[annexe A](#annexe:python), la programmation demande de
+   préciser des éléments qui peuvent
+   rester implicites dans une construction à la main — en particulier le fait que la
+   transformation s'applique à *tous* les points.
+5. **La géométrie dynamique.** Construire une figure et son
+   image, puis *déplacer* un sommet de la figure de départ et
+   observer. Ce qui reste invariant pendant le déplacement, c'est
+   précisément ce que la transformation conserve. Cette activité permet
+   de donner un sens visuel à la notion
+   d'invariant.
+
+::: {.secondaire #rem:outils title="L'utilisation des outils"}
+L'utilisation d'un logiciel de géométrie dynamique ou d'un programme
+ne suffit pas, à elle seule, à assurer la compréhension. On peut
+manipuler un curseur ou exécuter un calcul sans chercher à interpréter
+le résultat. Une démarche utile consiste à demander aux élèves de
+*prédire* ce qu'ils pensent obtenir avant d'utiliser l'outil.
+Ils peuvent ensuite comparer leur prévision avec le résultat et
+chercher à expliquer les différences. L'outil sert alors à examiner
+une conjecture formulée au préalable [@Hollebrands2003].
+:::
+
+## Exercices {.unnumbered .exercices}
+
+:::: {.exercice #exo:transfo-ou-non}
+Parmi les correspondances suivantes dans le plan cartésien,
+identifier celles qui sont des transformations géométriques du plan.
+
+a) $f_1 : (x,y) \mapsto (x^5, y)$
+b) $f_2 : (x,y) \mapsto (\tan x, y)$
+c) $f_3 : (x,y) \mapsto (x^2+y^2, y)$
+d) $f_4 : (x,y) \mapsto (5x-1, -2y+3)$
+e) $f_5 : (x,y) \mapsto (y, x)$
+f) $f_6 : (x,y) \mapsto (-3y, 3x)$
+g) $f_7 : (x,y) \mapsto (\ln(1+x^2), y)$
+h) $f_8 : (x,y) \mapsto (x, \arctan y)$
+i) $f_9 : (x,y) \mapsto (x+y, x-y)$
+
+::: {.solution}
+Les cas (a), (d), (e), (f) et (i) satisfont la définition. En (b), $f_2$ n'est pas définie
+lorsque $x = \pi/2 + k\pi$ : ce n'est pas une correspondance partout
+définie. En (c), $f_3$ n'est ni injective ($f_3(x,y) = f_3(-x,y)$) ni
+surjective (la première coordonnée de l'image est toujours $\geq 0$).
+Le cas (g) présente les mêmes défauts que (c), pour les mêmes raisons. En (h), $f_8$ est
+injective, mais pas surjective : $\arctan y \in \intoo{-\pi/2}{\pi/2}$
+pour tout $y$, si bien qu'aucun point de seconde coordonnée
+$\geq \pi/2$ n'est atteint. Dans ce dernier cas, seule la surjectivité fait
+défaut. Parmi les transformations obtenues, (d), (e), (f) et (i) sont
+affines, alors que (a) ne l'est pas.
+:::
+::::
+
+:::: {.exercice #exo:vrai-faux}
+[Vrai ou faux ?]{.smallcaps} Justifier chaque réponse en utilisant la
+propriété appropriée de la définition \ref{def:transfo}, ou en donnant un contre-exemple.
+
+a) Une transformation du plan peut envoyer deux points
+   distincts sur un même point.
+b) Il est possible qu'un point du plan ne soit l'image d'aucun
+   point par une transformation donnée.
+c) Si $f$ et $g$ sont deux transformations telles que
+   $f \circ g = \mathrm{id}$, alors $g \circ f = \mathrm{id}$
+   aussi.
+d) Trois points alignés ont nécessairement des images alignées
+   par *toute* transformation du plan.
+e) Si $w$ est une transformation *affine*, trois points
+   alignés ont nécessairement des images alignées.
+f) Une transformation du plan qui fixe trois points non
+   alignés donnés est nécessairement l'identité.
+
+::: {.solution}
+a) **Faux** : deux points distincts ont des images distinctes par injectivité.
+b) **Faux** : chaque point possède un antécédent par surjectivité.
+c) **Vrai** : l'égalité $f \circ g = \mathrm{id}$ avec $g$
+   bijective implique que $f$ est la réciproque de $g$. La composition d'une
+   bijection et de sa réciproque donne l'identité dans les deux ordres.
+d) **Faux**. Contre-exemple : $f_1(x,y) = (x^5,y)$ de
+   l'exercice \ref{exo:transfo-ou-non} est une transformation du plan, mais
+   elle envoie les points alignés $(0,0)$, $(1,1)$, $(2,2)$ sur $(0,0)$,
+   $(1,1)$, $(32,2)$, qui ne sont plus alignés.
+e) **Vrai**, par la proposition \ref{prop:proprietes}.
+f) **Faux** : c'est vrai pour une transformation *affine*
+   (théorème \ref{thm:trois-points}, avec $Q_i = P_i$). Cette hypothèse n'est
+   toutefois pas donnée ici. Pour construire un
+   contre-exemple, on peut fixer les trois points non alignés et échanger
+   deux autres points du plan, en laissant les autres inchangés. On
+   obtient encore une bijection.
+:::
+::::
+
+:::: {.exercice #exo:composee-bijection}
+Montrer que la composée de deux transformations du plan est une
+transformation du plan, en vérifiant les quatre conditions de la
+définition \ref{def:transfo}.
+
+::: {.solution}
+Soient $f, g \in \Transf$. La composée $f \circ g$ est partout définie
+et univoque comme composée de fonctions. Pour l'injectivité, supposons que
+$f(g(P)) = f(g(Q))$, l'injectivité de $f$ donne $g(P) = g(Q)$, puis
+celle de $g$ donne $P = Q$. Pour la surjectivité, considérons $R \in \Plan$ ; par
+surjectivité de $f$, il existe $S$ tel que $f(S) = R$, puis, par
+surjectivité de $g$, il existe $P$ tel que $g(P) = S$ ; alors
+$(f\circ g)(P) = R$.
+:::
+::::
+
+:::: {.exercice #exo:images}
+Soit l'application affine
+$w\col{x}{y} = \mat{1}{-1}{2}{0}\col{x}{y} + \col{-1}{1}$.
+
+a) Déterminer l'image du rectangle plein
+   $\intff{0}{2}\times\intff{0}{1}$.
+b) Déterminer l'image du triangle plein de sommets
+   $A = (1,1)$, $B = (0,0)$ et $C = (-1,1)$.
+c) Déduire des propriétés de la transformation le rapport entre l'aire de
+   chaque figure et celle de son image.
+
+::: {.solution}
+a) Le parallélogramme plein de sommets $(-1,1)$, $(1,5)$, $(0,5)$ et
+   $(-2,1)$.
+b) Le triangle plein de sommets $(-1,3)$, $(-1,1)$ et $(-3,-1)$.
+c) $\dete(A) = (1)(0) - (-1)(2) = 2$ : l'aire de chacune des images est donc
+   le double de celle de la figure
+   de départ. Le signe positif du déterminant indique aussi que
+   l'orientation est conservée.
+:::
+::::
+
+:::: {.exercice #exo:cercle-unite}
+Soit $w$ une application linéaire. Montrer que $w$ est une similitude
+de rapport $k$ si et seulement si $\norme{w(U)} = k$ pour tout vecteur
+$U$ tel que $\norme{U} = 1$.
+
+::: {.solution}
+$(\Rightarrow)$ Supposons $w$ similitude de rapport $k$ et soit $U$
+unitaire. Comme $w$ est linéaire, $w(\vec{0}) = \vec{0}$, donc
+$$
+  \norme{w(U)} = \norme{w(U) - w(\vec{0})} = k\,\norme{U - \vec{0}}
+  = k\,\norme{U} = k .
+$$
+$(\Leftarrow)$ Supposons $\norme{w(U)} = k$ pour tout $U$ unitaire, et
+soient $P, Q \in \R^2$. Si $P = Q$, l'égalité \eqref{eq:similitude} est immédiate. Sinon, posons
+$$
+  V = \frac{P - Q}{\norme{P - Q}},
+$$
+qui est unitaire, de sorte que $\norme{w(V)} = k$. La linéarité permet alors d'écrire,
+$$
+  w(V) = \frac{1}{\norme{P-Q}}\,w(P - Q)
+  = \frac{1}{\norme{P-Q}}\,\bigl[w(P) - w(Q)\bigr],
+$$
+d'où
+$$
+  k = \norme{w(V)} = \frac{1}{\norme{P-Q}}\,\norme{w(P) - w(Q)},
+$$
+c'est-à-dire $\norme{w(P) - w(Q)} = k\,\norme{P-Q}$.
+:::
+::::
+
+:::: {.exercice #exo:catalogue-similitudes}
+Montrer que les translations, les homothéties, les rotations et les
+réflexions sont des similitudes, et donner le rapport de chacune.
+
+::: {.solution}
+La proposition \ref{prop:partie-lineaire} permet de se limiter, dans chaque
+cas, à la partie linéaire. Translation : $A = I$, et
+$\norme{P - Q} = \norme{P - Q}$, donc $k = 1$. Homothétie de rapport
+$c$ : $\norme{cP - cQ} = \lvert c\rvert\,\norme{P-Q}$, donc
+$k = \lvert c \rvert$. Rotation et réflexion : leurs matrices vérifient
+$A^\top A = I$, donc
+$\norme{AP - AQ}^2 = (P-Q)^\top A^\top A (P-Q) = \norme{P-Q}^2$ et
+$k = 1$.
+:::
+::::
+
+:::: {.exercice #exo:homothetie-centre}
+Déterminer l'image du point $(x,y)$ par l'homothétie de centre $(h,k)$ et
+de rapport $c$. *Suggestion* : translater d'abord selon $(-h,-k)$,
+effectuer l'homothétie, puis translater selon $(h,k)$.
+
+::: {.solution}
+C'est le point $\bigl(cx + h(1-c),\; cy + k(1-c)\bigr)$. Voir la
+proposition \ref{prop:homothetie-centre}. On peut vérifier que le centre
+$(h,k)$ est fixe, puisque $ch + h - ch = h$.
+:::
+::::
+
+:::: {.exercice #exo:isometrie-triangle}
+Déterminer l'expression analytique de l'isométrie qui envoie le triangle de
+sommets $(0,0)$, $(1,0)$, $(0,\tfrac12)$ sur le triangle image dont
+l'hypoténuse fait un angle de $\pi/4$ avec l'axe des $x$, le sommet
+$(0,0)$ étant envoyé sur $\bigl(1 - \tfrac{\sqrt2}{4},
+\tfrac{\sqrt2}{4}\bigr)$ et l'angle de rotation valant $-3\pi/4$.
+
+::: {.solution}
+La partie linéaire est $r_{-3\pi/4}$, et la partie translation se déduit de l'image de l'origine :
+\begin{align*}
+  w\col{x}{y}
+  &= \mat{\cos(-\tfrac{3\pi}{4})}{-\sin(-\tfrac{3\pi}{4})}
+         {\sin(-\tfrac{3\pi}{4})}{\cos(-\tfrac{3\pi}{4})}\col{x}{y}
+     + \col{1 - \tfrac{\sqrt2}{4}}{\tfrac{\sqrt2}{4}}\\[4pt]
+  &= \mat{-\tfrac{\sqrt2}{2}}{\tfrac{\sqrt2}{2}}
+         {-\tfrac{\sqrt2}{2}}{-\tfrac{\sqrt2}{2}}\col{x}{y}
+     + \col{1 - \tfrac{\sqrt2}{4}}{\tfrac{\sqrt2}{4}}.
+\end{align*}
+:::
+::::
+
+:::: {.exercice .python #exo:deux-triangles}
+Déterminer l'expression analytique d'une application affine qui envoie le
+triangle de sommets $A = (-11,3)$, $B = (1,12)$, $C = (-1,14)$ sur le
+triangle de sommets $P = (90,-68)$, $Q = (69,-53)$, $R = (83,-59)$, avec
+$A \mapsto P$, $B \mapsto Q$ et $C \mapsto R$. Utiliser un outil informatique
+pour faciliter la résolution des
+systèmes.
+
+::: {.solution}
+$w\col{x}{y} = \mat{-4}{3}{2}{-1}\col{x}{y} + \col{37}{-43}$. Voir
+l'exemple \ref{ex:deux-triangles} pour la démarche, et
+l'[annexe A](#annexe:python) pour le code.
+:::
+::::
+
+:::: {.exercice #exo:deux-similitudes}
+Déterminer deux similitudes qui envoient le segment $\mathcal{S}$ reliant
+$P = (-3,-1)$ à $Q = (-1,1)$ sur le segment $\mathcal{T}$ reliant
+$A = (3,1)$ à $B = (2,2)$, avec $P \mapsto A$ et $Q \mapsto B$. Y en
+a-t-il d'autres ?
+
+::: {.solution}
+Le segment de départ mesure $2\sqrt2$, celui d'arrivée $\sqrt2$ : le
+rapport est nécessairement $k = \tfrac12$. Une première solution
+s'obtient en composant la translation qui envoie $P$ sur l'origine, une
+rotation de $\pi/2$, l'homothétie de rapport $\tfrac12$, puis la
+translation qui ramène l'origine sur $A$ :
+$$
+  w_1\col{x}{y} = \mat{0}{-1/2}{1/2}{0}\col{x}{y} + \col{5/2}{5/2}.
+$$
+Une seconde s'obtient en remplaçant la rotation par une réflexion :
+$$
+  w_2\col{x}{y} = \mat{-1/2}{0}{0}{1/2}\col{x}{y} + \col{3/2}{3/2}.
+$$
+Ces deux solutions sont les seules possibles : la partie linéaire d'une similitude de
+rapport $k$ est nécessairement de la forme $k\,r_\theta$ ou $k\,R_\theta$
+(section \ref{sec:similitudes}), et les conditions $w(P) = A$,
+$w(Q) = B$ déterminent alors complètement $k$, $\theta$ et la
+translation dans chaque cas. Comparez avec la
+remarque \ref{rem:combien-points}.
+:::
+::::
+
+:::: {.exercice #exo:projection}
+Déterminer l'expression analytique de l'application affine correspondant à
+la projection orthogonale sur la droite d'équation $y = x$. Est-ce une
+transformation du plan ?
+
+::: {.solution}
+$w\col{x}{y} = \tfrac12\mat{1}{1}{1}{1}\col{x}{y}$. Son déterminant est
+nul, donc ce n'est pas une transformation du plan : l'image du plan est
+contenue dans la droite $y = x$. Voir
+l'exemple \ref{ex:projection-analytique}.
+:::
+::::
+
+:::: {.exercice #exo:cercle-ellipse}
+Soient $a, b, r > 0$ et $e, f \in \R$. Déterminer l'équation du lieu obtenu
+comme image du cercle $x^2 + y^2 = r^2$ par
+$w\col{x}{y} = \mat{a}{0}{0}{b}\col{x}{y} + \col{e}{f}$ ?
+
+::: {.solution}
+Si $(u,v) = w(x,y)$, alors $x = (u-e)/a$ et $y = (v-f)/b$, d'où
+$$
+  \frac{(u-e)^2}{(ar)^2} + \frac{(v-f)^2}{(br)^2} = 1 :
+$$
+Il s'agit d'une ellipse de centre $(e,f)$, d'axe horizontal de longueur $2ar$ et
+d'axe vertical de longueur $2br$. En particulier, l'image est un cercle
+si et seulement si $a = b$, c'est-à-dire si et seulement si $w$ est une
+similitude.
+:::
+::::
+
+:::: {.exercice #exo:cercle-ellipse-2}
+Existe-t-il une similitude envoyant le cercle $x^2 + y^2 = 4$ sur
+l'ellipse $x^2 + \tfrac{y^2}{4} = 1$ ?
+
+::: {.solution}
+Une telle similitude n'existe pas. En effet, une similitude multiplie toutes
+les distances par un même facteur
+$k$ ; elle conserve donc le rapport des longueurs des demi-axes. Ce
+rapport vaut $1$ pour le cercle et $2$ pour l'ellipse.
+:::
+::::
+
+:::: {.exercice #exo:det-contraction}
+On admet que l'aire de $w(D)$ vaut $\lvert\dete(A)\rvert$ fois celle de
+$D$.
+
+a) Donner un exemple de transformation affine qui réduit les
+   aires ($\lvert\dete(A)\rvert < 1$) sans être une contraction.
+b) Établir que cette situation ne peut pas se produire pour une similitude : si $w$
+   est une similitude, alors $\lvert\dete(A)\rvert < 1$ si et
+   seulement si $w$ est une contraction.
+
+::: {.solution}
+a) Prendre $A = \mat{1/2}{0}{0}{3/2}$, de déterminant $3/4 < 1$. Pour vérifier
+   qu'il ne s'agit pas d'une contraction, considérons $P = (0,0)$ et $Q = (0,1)$
+   ont pour images
+   $(0,0)$ et $(0,3/2)$, dont la distance a augmenté.
+b) Par la proposition \ref{cor:det-similitude},
+   $\lvert\dete(A)\rvert = k^2$. Donc
+   $\lvert\dete(A)\rvert < 1 \iff k^2 < 1 \iff 0 < k < 1$, ce qui est la
+   définition d'une contraction.
+:::
+::::
+
+:::: {.exercice #exo:pythagore}
+Soit le triangle rectangle $\mathcal{T} = \triangle BAC$, d'angle droit
+en $A$, dont les côtés mesurent $a = \overline{BC}$, $b = \overline{AC}$
+et $c = \overline{AB}$. Soit $D$ le pied de la hauteur issue de $A$ ;
+le triangle $\mathcal{T}$ est la réunion des triangles rectangles
+$\mathcal{T}_1 = \triangle ADC$ et $\mathcal{T}_2 = \triangle BDA$.
+
+a) Montrer que $\mathcal{T}_1$ et $\mathcal{T}_2$ sont
+   semblables à $\mathcal{T}$.
+b) Il existe donc des similitudes $w_1$ et $w_2$ telles que
+   $w_1(\mathcal{T}) = \mathcal{T}_1$ et
+   $w_2(\mathcal{T}) = \mathcal{T}_2$. Déterminer les rapports
+   $k_1$ et $k_2$.
+c) À l'aide de la proposition \ref{cor:aires} et l'égalité
+   $s = s_1 + s_2$ entre les aires, démontrer le théorème de
+   Pythagore.
+d) Trouver un ensemble $\mathcal{E}$ tel que
+   $w_1(\mathcal{E}) \cup w_2(\mathcal{E}) = \mathcal{E}$.
+
+::: {.solution}
+a) Les trois triangles ont un angle droit et partagent chacun un angle
+   aigu avec $\mathcal{T}$ ; ils sont donc semblables par le critère
+   [aa]{.smallcaps}.
+b) Le côté $\overline{AC} = b$ de $\mathcal{T}$ correspond à
+   l'hypoténuse $a$ de $\mathcal{T}$ dans la similitude ; on trouve
+   $k_1 = b/a$ et $k_2 = c/a$.
+c) Par la proposition \ref{cor:aires}, $s_1 = k_1^2 s$ et
+   $s_2 = k_2^2 s$. Alors
+   $$
+     s = s_1 + s_2 = (k_1^2 + k_2^2)\,s
+     \;\Longrightarrow\; 1 = \frac{b^2}{a^2} + \frac{c^2}{a^2}
+     \;\Longrightarrow\; a^2 = b^2 + c^2 .
+   $$
+d) $\mathcal{E} = \mathcal{T}$ convient, puisque
+   $\mathcal{T} = \mathcal{T}_1 \cup \mathcal{T}_2$. On obtient ainsi un exemple
+   d'*ensemble fixe* d'un système de fonctions itérées : un
+   triangle rectangle est réunion de deux copies réduites de lui-même.
+:::
+::::
+
+:::: {.exercice #exo:composee-glissee}
+Soit $R$ la réflexion d'axe $Ox$ et $t$ la translation de vecteur
+$(3,0)$. Montrer que $t \circ R$ est une réflexion glissée, et préciser
+son axe et son vecteur de glissement. Est-ce encore le cas pour
+$t \circ R$ si le vecteur de translation est plutôt $(0,3)$ ?
+
+::: {.solution}
+$(t \circ R)\col{x}{y} = \mat{1}{0}{0}{-1}\col{x}{y} + \col{3}{0}$. La
+partie linéaire est $R_0$ (déterminant $-1$), et la translation
+$(3,0)$ est déjà parallèle à l'axe $Ox$ : c'est une réflexion glissée
+d'axe $Ox$ et de vecteur de glissement $(3,0)$, puisque le vecteur de
+translation n'a pas de composante perpendiculaire à l'axe. Avec le vecteur
+$(0,3)$, la translation est
+au contraire entièrement perpendiculaire à l'axe : son effet se traduit par un
+déplacement de l'axe, et $t \circ R$ est une réflexion pure, d'axe
+$y = 3/2$.
+:::
+::::
+
+:::: {.exercice .python #exo:python}
+Écrire une fonction Python `decompose(A)` qui, étant donné une
+matrice $2\times2$ qui est une similitude, renvoie le rapport $k$,
+l'angle $\theta$ et le genre (directe ou indirecte). Vérifier son
+fonctionnement sur les matrices du catalogue de la
+table \ref{tab:catalogue}.
+
+::: {.solution}
+Nous utilisons la propriété suivante : une matrice orthogonale $2\times2$ est
+nécessairement la matrice d'une rotation ou d'une réflexion
+(section \ref{sec:similitudes}). Après avoir vérifié que
+$A^{\top}A = k^2 I$ avec $k = \sqrt{(A^\top A)_{11}}$, on pose
+$Q = A/k$, qui est orthogonale. Si $\dete(Q) > 0$, la matrice $Q$ est une rotation et
+$\theta = \operatorname{atan2}(Q_{21}, Q_{11})$. Sinon, $Q$ est une
+réflexion et l'angle de son axe est
+$\tfrac12\operatorname{atan2}(Q_{21}, Q_{11})$, d'après
+l'équation \eqref{eq:reflexion-theta}. Le code complet est donné à
+l'[annexe A](#annexe:python).
+:::
+::::
+
+:::: {.exercice .classe #exo:didactique}
+Un élève de deuxième secondaire affirme : « Si on applique une
+homothétie de rapport $3$ à un rectangle, son aire est multipliée
+par $3$. » Rédiger une réponse à cet élève. Elle doit (i) reconnaître ce qui
+est juste dans son raisonnement, (ii)
+comporter un contre-exemple numérique et (iii) proposer une explication
+qui ne fasse pas appel aux matrices.
+
+::: {.solution}
+(i\) Ce qui est juste : *toutes les longueurs* sont bien multipliées
+par $3$ : les côtés, les diagonales, le périmètre. L'erreur est
+d'étendre cette règle à l'aire.
+(ii) Contre-exemple : un rectangle $2 \times 5$ a une aire de $10$ ; son
+image est un rectangle $6 \times 15$, d'aire $90$, soit $9$ fois plus et
+non $3$.
+(iii) Explication : l'aire est un produit de deux longueurs. Chacune est
+multipliée par $3$, donc le produit est multiplié par $3 \times 3 = 9$.
+Pour l'illustrer, on peut effectuer un découpage : le rectangle image se pave
+exactement par $9$ copies du rectangle de départ. Le même argument donne
+$3^3 = 27$ pour les volumes (voir la remarque \ref{rem:k-carre}).
+:::
+::::
+
+:::: {.exercice .classe #exo:reflexion-ch1}
+Au secondaire québécois, seule la séquence Technico-sciences utilise des
+matrices pour décrire des transformations [@PDA2016] ; les élèves
+des séquences Culture, société et technique et Sciences naturelles les
+étudient sans elles (tableau \ref{tab:curriculum}).
+
+a) Choisir deux résultats de ce chapitre qui peuvent éclairer
+   l'enseignement des transformations au secondaire, même avec des
+   élèves qui ne voient pas de matrices. Pour chacun, préciser le
+   niveau visé et la forme, sans matrice, sous laquelle il pourrait
+   être présenté aux élèves.
+b) Pour l'un de ces deux résultats, décrire une difficulté
+   d'apprentissage que le point de vue du chapitre permet à
+   l'enseignant d'anticiper.
+c) Selon vous, la programmation d'une transformation (en Python ou
+   dans un logiciel de géométrie dynamique) a-t-elle sa place en
+   classe ? À quelles conditions ?
+
+::: {.solution}
+Plusieurs réponses sont possibles ; en voici une.
+
+a) *Le facteur $k^2$ pour les aires* (proposition \ref{cor:aires}) :
+   en troisième secondaire, il se présente par un pavage du rectangle image
+   par $k^2$ copies du rectangle de départ (remarque \ref{rem:k-carre},
+   exercice \ref{exo:didactique}). *La composée de deux réflexions*
+   (théorème \ref{thm:deux-reflexions}) : en première secondaire, l'activité des
+   deux miroirs fait constater que deux réflexions d'axes sécants donnent une
+   rotation d'angle double, et que deux réflexions d'axes parallèles donnent une
+   translation. L'enseignant qui sait que toute isométrie est une composée de réflexions
+   (remarque \ref{rem:reflexion-fondamentale}) peut donner aux
+   élèves une vision unifiée des isométries, plutôt qu'une liste de quatre
+   transformations sans lien entre elles.
+b) Pour le facteur $k^2$, l'erreur prévisible est l'extension abusive de la
+   linéarité : « tout est multiplié par $k$ ». Le chapitre montre que les
+   longueurs, les aires et les volumes ne sont pas des grandeurs de même
+   nature ; l'enseignant peut donc proposer d'emblée un contre-exemple
+   numérique plutôt que d'attendre que l'erreur se manifeste en évaluation.
+c) Oui, à condition que l'outil serve à vérifier une prédiction formulée à
+   l'avance (remarque \ref{rem:outils}). Écrire la fonction qui calcule l'image
+   d'un point oblige à expliciter la règle de la transformation et à la
+   concevoir comme une correspondance qui agit sur *tous* les points du
+   plan, et non seulement sur les sommets de la figure dessinée. Le temps
+   d'apprentissage de l'outil doit toutefois rester modeste par rapport au
+   temps consacré aux mathématiques.
+:::
+::::

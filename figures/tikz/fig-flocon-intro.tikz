@@ -1,0 +1,7 @@
+\begin{tikzpicture}[scale=4.4]
+  \fill[steelblue4!14] (0,0) -- (0.5,0.8660254) -- (1,0) -- cycle;
+  \begin{scope}[fractale/.style={fill=steelblue4!22, draw=sectioncolor, thin, line join=round}]
+    \input{figures/fractales/flocon-koch-4.tikz}
+  \end{scope}
+  \draw[sectioncolor!45, dashed, thin] (0,0) -- (0.5,0.8660254) -- (1,0) -- cycle;
+\end{tikzpicture}

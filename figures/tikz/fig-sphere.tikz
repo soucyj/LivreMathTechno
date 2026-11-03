@@ -1,0 +1,19 @@
+\begin{tikzpicture}[scale=1.3]
+  % Silhouette de la sphère
+  \draw[sectioncolor, thick] (0,0) circle (2);
+  \draw[sectioncolor!45, thick] (0,0) ellipse (2 and 0.55);
+  \draw[sectioncolor!25, thick, dashed] (-2,0) arc (180:360:2 and 0.55);
+  % Points u et v sur la sphère
+  \node[pt, label={[etiq]above left:$u$}] (u) at (-1.05,1.1) {};
+  \node[pt, label={[etiq]above right:$v$}] (v) at (1.35,0.75) {};
+  \node[etiq] at (0,-0.22) {$O$};
+  \fill (0,0) circle (0.6pt);
+  % Segment (corde) en pointillé
+  \draw[firebrick3, thick, dashed] (u) -- (v);
+  \node[etiq, firebrick3] at (0.5,0.65) {corde};
+  % Arc de grand cercle : doit bomber vers l'extérieur (au-dessus de la corde)
+  \draw[sectioncolor, very thick] (u) to[bend left=35] (v);
+  \node[etiq, sectioncolor] at (0.15,1.55) {arc};
+  \draw[sectioncolor!60, thin] (0,0) -- (u);
+  \draw[sectioncolor!60, thin] (0,0) -- (v);
+\end{tikzpicture}

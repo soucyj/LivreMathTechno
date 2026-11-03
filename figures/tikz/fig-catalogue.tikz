@@ -1,0 +1,25 @@
+\begin{tikzpicture}[scale=0.92]
+  \def\panneau#1#2#3#4{%
+    \begin{scope}[shift={(#1,#2)}]
+      \draw[quadrillage] (-1.25,-1.25) grid (1.25,1.25);
+      \draw[axe] (-1.25,0) -- (1.4,0);
+      \draw[axe] (0,-1.25) -- (0,1.4);
+      \draw[steelblue4!55, thin] \motifF;
+      \begin{scope}[#3]
+        \fill[figim] \motifF;
+      \end{scope}
+      \node[etiq, black, align=center] at (0,-1.72) {#4};
+    \end{scope}}
+  \panneau{0}{0}{cm={1,0,0,1,(-0.9,-0.6)}}
+    {translation\\$\vec{t}=(-0{,}9\,;-0{,}6)$}
+  \panneau{3.5}{0}{cm={0,1,-1,0,(0,0)}}
+    {rotation\\$\theta = 90°$}
+  \panneau{7}{0}{cm={1,0,0,-1,(0,0)}}
+    {réflexion\\d'axe $Ox$}
+  \panneau{0}{-4.3}{cm={0.55,0,0,0.55,(0,0)}}
+    {homothétie\\$c = 0{,}55$}
+  \panneau{3.5}{-4.3}{cm={1,0.8,0,1,(0,0)}}
+    {cisaillement\\vertical, $m=0{,}8$}
+  \panneau{7}{-4.3}{cm={0.5,0,0,0.85,(0,0)}}
+    {contraction\\non uniforme}
+\end{tikzpicture}

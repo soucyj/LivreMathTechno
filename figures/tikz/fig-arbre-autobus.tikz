@@ -1,0 +1,19 @@
+\begin{tikzpicture}[grow=right, level distance=2.9cm,
+    level 1/.style={sibling distance=2.1cm},
+    level 2/.style={sibling distance=1.0cm},
+    every node/.style={font=\small},
+    edge from parent/.style={draw, sectioncolor!80!black, thick}]
+  \node[pt] {}
+    child {node[right] {$\overline{P}$}
+      child {node[right] {$\overline{R}$ \quad $\tfrac23 \cdot \num{0.9}$}
+             edge from parent node[proba, below] {$\num{0.9}$}}
+      child {node[right] {$R$ \quad $\tfrac23 \cdot \num{0.1}$}
+             edge from parent node[proba, above] {$\num{0.1}$}}
+      edge from parent node[proba, below] {$\tfrac23$}}
+    child {node[right] {$P$}
+      child {node[right] {$\overline{R}$ \quad $\tfrac13 \cdot \num{0.6}$}
+             edge from parent node[proba, below] {$\num{0.6}$}}
+      child {node[right] {$R$ \quad $\tfrac13 \cdot \num{0.4}$}
+             edge from parent node[proba, above] {$\num{0.4}$}}
+      edge from parent node[proba, above] {$\tfrac13$}};
+\end{tikzpicture}

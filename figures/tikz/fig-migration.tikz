@@ -1,0 +1,24 @@
+% Diagramme et matrice côte à côte (anciennement deux minipage).
+\begin{tikzpicture}[scale=0.85]
+  \node[etat] (V) at (0,0) {$V$};
+  \node[etat] (B) at (4,0) {$B$};
+  \node[etat] (C) at (2,-3.2) {$C$};
+  \draw[lien] (V) to[bend left=15] node[proba] {$\num{0.10}$} (B);
+  \draw[lien] (B) to[bend left=15] node[proba] {$\num{0.05}$} (V);
+  \draw[lien] (B) to[bend left=15] node[proba] {$\num{0.05}$} (C);
+  \draw[lien] (C) to[bend left=15] node[proba] {$\num{0.10}$} (B);
+  \draw[lien] (C) to[bend left=15] node[proba] {$\num{0.05}$} (V);
+  \draw[lien] (V) to[bend left=15] node[proba] {$\num{0.05}$} (C);
+  \draw[lien] (V) to[loop left, min distance=9mm] node[proba, left] {$\num{0.85}$} (V);
+  \draw[lien] (B) to[loop right, min distance=9mm] node[proba, right] {$\num{0.90}$} (B);
+  \draw[lien] (C) to[loop below, min distance=9mm] node[proba, below] {$\num{0.85}$} (C);
+  % la matrice de transition, à droite du diagramme
+  \node[align=center, anchor=west] at (7.6,-1.4) {%
+    $M = \begin{pmatrix}
+      \num{0.85} & \num{0.05} & \num{0.05}\\
+      \num{0.10} & \num{0.90} & \num{0.10}\\
+      \num{0.05} & \num{0.05} & \num{0.85}
+    \end{pmatrix}$\\[6pt]
+    {\small colonnes : départ de $V$, de $B$, de $C$}\\
+    {\small lignes : arrivée en $V$, en $B$, en $C$}};
+\end{tikzpicture}

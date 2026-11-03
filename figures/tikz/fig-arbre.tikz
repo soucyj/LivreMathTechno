@@ -1,0 +1,10 @@
+\begin{tikzpicture}[scale=3.1]
+  \input{figures/fractales/arbre.tikz}
+  \begin{scope}[shift={(1.9,0)}]
+    \input{figures/fractales/arbre-pieces.tikz}
+    \node[etiq, firebrick3, right] at (0.03,0.2) {$w_1(A)$ : le tronc};
+    \node[etiq, steelblue4, left] at (-0.72,0.9) {$w_2(A)$};
+    \node[etiq, coveraccent!80!black, right] at (0.72,0.9) {$w_3(A)$};
+    \node[etiq, vertpiece, above] at (0,1.34) {$w_4(A)$ : la cime};
+  \end{scope}
+\end{tikzpicture}

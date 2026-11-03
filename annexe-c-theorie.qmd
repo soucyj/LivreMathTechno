@@ -1,0 +1,84 @@
+# Compléments théoriques sur les SIF {#annexe:theorie}
+
+Cette annexe rassemble les démonstrations du
+chapitre \ref{chap:fractales} présentées séparément afin d'alléger le texte
+principal. Nous montrerons d'abord que l'opérateur de
+Hutchinson d'un SIF est une contraction de l'espace
+$\big(\Comp{\R^2}, \dH\big)$ (théorème \ref{thm:W-contraction}), puis nous en
+déduirons le théorème de Hutchinson (théorème \ref{thm:hutchinson}) à
+l'aide du théorème de Banach. Les démonstrations ne font appel
+qu'aux $\varepsilon$-voisinages de la définition \ref{def:eps-voisinage}.
+Rappelons que $\dH(A,B) \leq \varepsilon$ signifie exactement que
+$A \subseteq \Vois{B}{\varepsilon}$ et $B \subseteq
+\Vois{A}{\varepsilon}$ (l'infimum de la définition \ref{def:hausdorff}
+étant atteint).
+
+::: {.lemma #lem:hausdorff-union title="Distance entre deux réunions"}
+Soient $A$, $B$, $C$ et $D$ des compacts non vides du plan. Alors
+$$
+  \dH(A \cup B,\ C \cup D) \leq \max\big\{\dH(A,C),\ \dH(B,D)\big\}.
+$$
+:::
+
+::: {.proof}
+Posons $\varepsilon = \max\{\dH(A,C), \dH(B,D)\}$. Puisque
+$\dH(A,C) \leq \varepsilon$, on a $A \subseteq \Vois{C}{\varepsilon}$ ;
+de même, $B \subseteq \Vois{D}{\varepsilon}$. Or un point à distance au
+plus $\varepsilon$ de $C$, ou de $D$, est à distance au plus
+$\varepsilon$ de $C \cup D$ : $\Vois{C}{\varepsilon}$ et
+$\Vois{D}{\varepsilon}$ sont tous deux contenus dans
+$\Vois{(C \cup D)}{\varepsilon}$. Ainsi $A \cup B \subseteq
+\Vois{(C\cup D)}{\varepsilon}$. En reprenant le raisonnement avec les rôles
+inversés, nous obtenons $C \cup D \subseteq \Vois{(A \cup B)}{\varepsilon}$,
+d'où
+$\dH(A\cup B, C\cup D) \leq \varepsilon$.
+:::
+
+::: {.lemma #lem:hausdorff-contraction title="Une contraction rapproche les ensembles"}
+Soit $w$ une contraction du plan, de rapport $k$, et soient $A$ et $B$
+deux compacts non vides. Alors
+$$
+  \dH\big(w(A), w(B)\big) \leq k\, \dH(A,B).
+$$
+:::
+
+::: {.proof}
+Posons $\varepsilon = \dH(A,B)$ et prenons un point quelconque de
+$w(A)$ ; il s'écrit $w(a)$ pour un certain $a \in A$. Puisque
+$A \subseteq \Vois{B}{\varepsilon}$, il existe $b \in B$ tel que
+$\dE(a,b) \leq \varepsilon$. Alors $w(b) \in w(B)$ et
+$$
+  \dE\big(w(a), w(b)\big) \leq k\,\dE(a,b) \leq k\varepsilon,
+$$
+de sorte que $w(a) \in \Vois{w(B)}{k\varepsilon}$. Nous avons donc établi que
+$w(A) \subseteq \Vois{w(B)}{k\varepsilon}$ ; en échangeant les rôles de
+$A$ et $B$, on obtient $w(B) \subseteq \Vois{w(A)}{k\varepsilon}$, d'où
+le résultat.
+:::
+
+### Démonstration du théorème \ref{thm:W-contraction} {.unnumbered}
+
+::: {.proof}
+Le lemme \ref{lem:hausdorff-union} s'étend par récurrence à une
+réunion de $N$ ensembles. On a donc
+\begin{align*}
+  \dH\big(W(A), W(B)\big)
+  &= \dH\Big(\bigcup_{i=1}^N w_i(A),\ \bigcup_{i=1}^N w_i(B)\Big)
+  \leq \max_{1 \leq i \leq N} \dH\big(w_i(A), w_i(B)\big) \\
+  &\leq \max_{1 \leq i \leq N} k_i\, \dH(A,B),
+\end{align*}
+La dernière inégalité découle du lemme \ref{lem:hausdorff-contraction}.
+Le membre de droite vaut $k\,\dH(A,B)$.
+:::
+
+### Démonstration du théorème \ref{thm:hutchinson} {.unnumbered}
+
+::: {.proof}
+Par les théorèmes \ref{thm:W-contraction} et \ref{thm:K-complet}, $W$
+est une contraction de rapport $k$ de l'espace métrique complet
+$\big(\Comp{\R^2}, \dH\big)$. Le théorème de Banach, sous la forme
+générale de la remarque \ref{rem:banach-general}, s'applique donc
+à $f = W$ : les points (i), (ii) et (iii) correspondent à ses conclusions
+exprimées dans cet espace, avec $x_0 = B$ et
+$x_1 = W(B)$.
+:::

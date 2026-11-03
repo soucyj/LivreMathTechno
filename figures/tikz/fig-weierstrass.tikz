@@ -1,0 +1,18 @@
+\begin{tikzpicture}[courbe/.style={sectioncolor, line join=round, very thin}]
+  \begin{scope}[xscale=3.1, yscale=1.05]
+    \draw[axe] (-1.08,0) -- (1.1,0) node[etiq, right] {$x$};
+    \draw[axe] (0,-2.05) -- (0,2.25);
+    \foreach \x in {-1,1} \draw[gray!70] (\x,0.05) -- (\x,-0.05) node[etiq, below] {$\x$};
+    \foreach \y in {-1,1} \draw[gray!70] (0.02,\y) -- (-0.02,\y) node[etiq, left] {$\y$};
+    \input{figures/fractales/weierstrass.tikz}
+    \draw[firebrick3, thick] (0.3,-0.55) rectangle (0.4,0.14);
+  \end{scope}
+  \begin{scope}[shift={(7.9,0.55)}, xscale=1.55, yscale=3.1]
+    % abscisses du fichier : (x - 0,3) * 20 - 1, dans [-1, 1]
+    \clip (-1.02,-0.56) rectangle (1.02,0.15);
+    \input{figures/fractales/weierstrass-zoom.tikz}
+  \end{scope}
+  \draw[firebrick3, thick] (6.3,-1.21) rectangle (9.5,1.04);
+  \draw[fleche, firebrick3!70] (1.3,0.3) to[bend left=20] (6.25,0.6);
+  \node[etiq, sectioncolor] at (7.9,1.3) {agrandissement de $[\num{0.3} \mathbin{;} \num{0.4}]$};
+\end{tikzpicture}

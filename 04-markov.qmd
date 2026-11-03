@@ -1,0 +1,2147 @@
+# Les chaînes de Markov et l'algorithme PageRank de Google {#chap:markov}
+
+Lorsqu'on tape quelques mots dans un moteur de recherche, des millions de
+pages contiennent souvent ces mots. Pour les présenter dans un ordre utile,
+le moteur doit décider lesquelles sont les plus *importantes*. À la
+fin des années 1990, deux étudiants de l'Université Stanford, Sergey Brin
+et Larry Page, ont proposé une réponse simple : imaginons un internaute
+qui navigue au hasard, en cliquant sur les liens qu'il rencontre, et
+mesurons la proportion du temps qu'il passe sur chaque page. Une page
+souvent visitée est une page importante. Cette idée est à l'origine de
+l'algorithme *PageRank* et du moteur de recherche Google.
+
+::: {#fig:miniweb1}
+![](figures/tikz/fig-miniweb1.tikz)
+
+Un *mini-web* de cinq pages. Une flèche de $j$ vers $i$ représente un lien, sur la page $j$, qui mène à la page $i$ ; une double flèche représente deux liens, un dans chaque sens. Un internaute qui clique au hasard passera-t-il plus de temps sur la page $2$, qui reçoit quatre liens, ou sur la page $1$, qui n'en reçoit que deux ?
+:::
+
+Le déplacement de cet internaute est un exemple de *chaîne de
+Markov* : un phénomène aléatoire qui évolue par étapes, et dont l'état à
+l'étape $n+1$ ne dépend que de son état à l'étape $n$, et non de tout
+son passé. Ce modèle, proposé par le mathématicien russe Andreï Markov au
+début du \siecle{20}, sert aujourd'hui en météorologie, en démographie,
+en génétique, en finance, en reconnaissance de la parole et dans les
+modèles qui génèrent du texte.
+
+Nous commencerons par quelques rappels sur les probabilités
+conditionnelles et les variables aléatoires discrètes. Nous étudierons
+ensuite deux modèles simples, un modèle météorologique à deux états et un
+modèle de migration entre la ville, la banlieue et la campagne. Ils nous
+permettront de définir les chaînes de Markov et leur matrice de
+transition. Nous verrons que le comportement à long terme d'une chaîne
+est décrit par un vecteur propre associé à la valeur propre $1$, ce qui
+nous ramènera aux notions de l'[annexe D](#annexe:algebre), puis
+au théorème du point fixe de Banach du chapitre \ref{chap:metriques}.
+Nous présenterons enfin l'algorithme PageRank, en tenant compte des
+difficultés que pose le Web réel : les pages sans liens sortants et les
+régions dont on ne peut plus sortir.
+
+:::: {.historical #hist:markov title="Andreï Markov"}
+::: {.portrait src="figures/portraits/andrei-markov.jpg" legende="Andreï Markov (1856--1922), vers 1875." credit="Domaine public, *Wikimedia Commons*."}
+Andreï Andreïevitch Markov (1856--1922) est né à Riazan, en Russie.
+Enfant de santé fragile, atteint d'une malformation à la jambe, il dut
+se déplacer avec des béquilles jusqu'à l'âge d'une dizaine d'années.
+Il étudia à l'Université de Saint-Pétersbourg, où il fut l'élève de
+Pafnouti Tchebychev, dont il prolongea les travaux en théorie des
+probabilités. Il y enseigna ensuite toute sa carrière, et fut élu à
+l'Académie des sciences de Saint-Pétersbourg [@MacTutorMarkov].
+:::
+
+\medskip
+
+Markov introduisit les chaînes qui portent son nom en
+1906 [@Markov1906], dans le cadre d'une controverse avec le
+mathématicien moscovite Pavel Nekrassov. Celui-ci soutenait que la loi
+des grands nombres, selon laquelle une fréquence observée se rapproche
+d'une probabilité, exigeait que les expériences soient indépendantes,
+et il en tirait des conclusions sur le libre arbitre. Markov montra
+que la loi reste vraie pour des variables dépendantes, pourvu que la
+dépendance soit du type qu'il décrivait : chaque résultat ne dépend que
+du précédent [@Hayes2013]. Ses chaînes étaient d'abord, pour lui, un
+contre-exemple théorique ; il ne les appliqua qu'une fois à des données
+réelles (note historique \ref{hist:onegin}).
+
+Markov était connu pour son indépendance d'esprit. En 1902, il protesta
+lorsque l'Académie, à la demande du tsar, annula l'élection de
+l'écrivain Maxime Gorki. En 1912, il demanda au Saint-Synode d'être
+excommunié, par solidarité avec Léon Tolstoï, qui l'avait été. En 1913,
+alors que l'Empire célébrait le tricentenaire de la dynastie des
+Romanov, il organisa plutôt la célébration d'un autre anniversaire : le
+bicentenaire de la loi des grands nombres, publiée par Jacques Bernoulli
+dans son *Ars conjectandi* en 1713 [@Hayes2013]. Son fils,
+Andreï Andreïevitch Markov (1903--1979), fut lui aussi mathématicien,
+spécialiste de logique.
+::::
+
+## Rappels sur les probabilités {#sec:rappels-proba}
+
+### Probabilités conditionnelles
+
+Une [expérience aléatoire]{.defi} est une expérience dont on ne peut pas
+prédire le résultat avec certitude : lancer un dé, tirer une carte,
+observer le temps qu'il fera demain. L'ensemble des résultats possibles
+s'appelle l'[univers]{.defi} de l'expérience, et un [événement]{.defi} est un
+sous-ensemble de l'univers. On note $\P{A}$ la probabilité d'un
+événement $A$ ; c'est un nombre de l'intervalle $\intff{0}{1}$.
+
+Il arrive souvent qu'une information partielle modifie la probabilité
+d'un événement. S'il pleut ce matin, la probabilité que l'autobus soit en
+retard n'est pas la même qu'un matin ensoleillé.
+
+::: {.definition #def:proba-cond title="Probabilité conditionnelle"}
+Soient $A$ et $B$ deux événements, avec $\P{B} > 0$. La
+[probabilité conditionnelle]{.defi} de $A$ sachant $B$ est
+$$
+  \P{A \mid B} = \frac{\P{A \cap B}}{\P{B}} .
+$$
+:::
+
+Autrement dit, $\P{A \cap B} = \P{A \mid B}\,\P{B}$ : pour que $A$ et
+$B$ se produisent tous les deux, il faut que $B$ se produise, puis que
+$A$ se produise sachant $B$. C'est la règle que l'on applique
+lorsqu'on multiplie les probabilités le long d'une branche d'un
+diagramme en arbre. La règle d'addition, qui consiste à additionner les
+probabilités des branches menant à un même résultat, correspond à la
+proposition suivante.
+
+::: {.proposition #prop:proba-totales title="Formule des probabilités totales"}
+Soient $B_1, \dots, B_N$ des événements deux à deux incompatibles, de
+probabilités non nulles, dont la réunion est l'univers tout entier.
+Alors, pour tout événement $A$,
+$$
+  \P{A} = \P{A \mid B_1}\,\P{B_1} + \P{A \mid B_2}\,\P{B_2} + \cdots +
+  \P{A \mid B_N}\,\P{B_N} .
+$$
+:::
+
+::: {.proof}
+Les événements $A \cap B_1, \dots, A \cap B_N$ sont deux à deux
+incompatibles et leur réunion est $A$. Donc
+$$
+  \P{A} = \sum_{j=1}^{N} \P{A \cap B_j} = \sum_{j=1}^{N} \P{A \mid B_j}\,\P{B_j} .
+$$
+:::
+
+::: {.example #ex:autobus title="L'autobus du matin"}
+Un matin sur trois en moyenne, il pleut. Lorsqu'il pleut, l'autobus est
+en retard avec une probabilité de $\num{0.4}$ ; sinon, avec une
+probabilité de $\num{0.1}$. Notons $P$ l'événement « il pleut » et $R$
+l'événement « l'autobus est en retard ». Le diagramme en arbre de la
+figure \ref{fig:arbre-autobus} et la formule des probabilités totales
+donnent
+$$
+  \P{R} = \P{R \mid P}\,\P{P} + \P{R \mid \overline{P}}\,\P{\overline{P}}
+  = \num{0.4}\cdot\tfrac13 + \num{0.1}\cdot\tfrac23 = \tfrac{\num{0.6}}{3} = \num{0.2} .
+$$
+L'autobus est donc en retard un matin sur cinq.
+:::
+
+::: {#fig:arbre-autobus}
+![](figures/tikz/fig-arbre-autobus.tikz)
+
+Le diagramme en arbre de l'exemple \ref{ex:autobus}. Les probabilités inscrites sur les branches du second niveau sont des probabilités conditionnelles ; on multiplie le long d'une branche et on additionne les branches qui mènent à $R$.
+:::
+
+### Variables aléatoires discrètes et espérance
+
+::: {.definition #def:va title="Variable aléatoire discrète"}
+Une [variable aléatoire discrète]{.defi} $X$ est une fonction qui associe
+un nombre à chaque résultat d'une expérience aléatoire, et qui ne prend
+qu'un nombre fini (ou une suite) de valeurs $x_1, x_2, \dots$ La
+[loi]{.defi} de $X$ est la donnée des probabilités $p_i = \P{X = x_i}$ ;
+ces nombres sont positifs et leur somme vaut $1$. L'[espérance]{.defi} de
+$X$ est la moyenne de ses valeurs, pondérée par leurs probabilités :
+$$
+  \Es{X} = x_1 p_1 + x_2 p_2 + \cdots = \sum_i x_i\,p_i .
+$$
+:::
+
+Si $X$ est le résultat d'un dé équilibré, sa loi attribue la probabilité
+$\tfrac16$ à chacune des valeurs $1, \dots, 6$, et $\Es{X} =
+\tfrac16(1 + 2 + \cdots + 6) = \num{3.5}$. L'espérance n'est pas
+nécessairement une valeur que $X$ peut prendre : c'est la valeur
+moyenne que l'on observerait en répétant l'expérience un grand nombre
+de fois. Deux propriétés nous seront utiles. D'abord, l'espérance est
+*linéaire* : $\Es{X + Y} = \Es{X} + \Es{Y}$, même lorsque $X$ et
+$Y$ ne sont pas indépendantes. Ensuite, si $\mathbb{1}_A$ est la variable
+[indicatrice]{.defi} d'un événement $A$, qui vaut $1$ si $A$ se produit et
+$0$ sinon, alors $\Es{\mathbb{1}_A} = 1 \cdot \P{A} + 0 \cdot
+\P{\overline{A}} = \P{A}$. Ces deux propriétés permettent de compter
+*en moyenne* sans connaître la loi d'une somme : nous en verrons un
+exemple à la section \ref{sec:meteo}.
+
+Dans ce chapitre, les variables aléatoires représenteront l'*état*
+d'un système : le temps qu'il fait, le lieu de résidence d'une personne,
+la page sur laquelle se trouve un internaute. Nous numéroterons les états
+$1, 2, \dots, N$, de sorte que la loi d'une telle variable est décrite
+par un vecteur de $\R^N$.
+
+::: {.definition #def:vecteur-proba title="Vecteur de probabilités"}
+Un vecteur $\vec{p} = (p_1, \dots, p_N)$ de $\R^N$ est un [vecteur
+de probabilités]{.defi} si ses composantes sont positives ou nulles et si leur
+somme vaut $1$ :
+$$
+  p_i \geq 0 \quad \text{pour tout } i, \qquad p_1 + p_2 + \cdots + p_N = 1 .
+$$
+Si $X$ est une variable aléatoire à valeurs dans $\{1, \dots, N\}$, le
+vecteur $\big(\P{X = 1}, \dots, \P{X = N}\big)$ est un vecteur de
+probabilités, que l'on appelle la loi de $X$.
+:::
+
+Géométriquement, les vecteurs de probabilités de $\R^2$ forment le
+segment qui joint $(1,0)$ à $(0,1)$, et ceux de $\R^3$ forment le
+triangle plein de sommets $(1,0,0)$, $(0,1,0)$ et $(0,0,1)$. On appelle
+cet ensemble le [simplexe]{.defi} de $\R^N$. En écrivant $\vec{e} = (1,
+1, \dots, 1)$, la condition sur la somme s'écrit aussi
+$\vec{e}^{\mathsf{T}}\vec{p} = 1$, une écriture qui nous sera utile pour
+les calculs matriciels.
+
+::: {.secondaire #rem:classe-proba title="Les probabilités conditionnelles au secondaire"}
+Les élèves dénombrent des résultats à l'aide de diagrammes en arbre dès
+le primaire. Au deuxième cycle du secondaire, ils recourent à
+l'espérance mathématique, mise en lien avec la moyenne pondérée, pour
+juger de l'équité d'un jeu, et ils prennent des décisions à partir de
+probabilités conditionnelles [@PDA2016]. Le diagramme en arbre y joue le rôle
+que jouera ici la matrice de transition : les probabilités inscrites
+sur les branches du second niveau sont des probabilités
+conditionnelles, et la règle « multiplier le long d'une branche,
+additionner les branches » est la formule des probabilités totales. Un
+arbre devient toutefois rapidement illisible lorsque le nombre d'étapes
+augmente : avec deux états, il compte déjà $2^{10} = 1024$ branches après
+dix étapes. C'est l'une des raisons d'introduire la notation matricielle.
+:::
+
+## Un premier modèle : la météo à deux états {#sec:meteo}
+
+Dans une ville imaginaire, on a observé pendant de nombreuses années que
+le temps qu'il fait un jour donné influence celui du lendemain :
+
+- après un jour de beau temps, il fait beau le lendemain avec une
+  probabilité de $\num{0.8}$, et il pleut avec une probabilité de
+  $\num{0.2}$ ;
+- après un jour de pluie, il fait beau le lendemain avec une
+  probabilité de $\num{0.4}$, et il pleut de nouveau avec une
+  probabilité de $\num{0.6}$.
+
+Nous supposons que ces probabilités ne dépendent ni de la saison, ni du
+temps qu'il a fait les jours précédents : seul compte le temps de la
+veille. On résume la situation par un [diagramme de transition]{.defi}
+(figure \ref{fig:meteo}), dans lequel chaque état est un sommet et chaque
+flèche porte la probabilité de passer d'un état à l'autre.
+
+::: {#fig:meteo}
+![](figures/tikz/fig-meteo.tikz)
+
+Le diagramme de transition du modèle météorologique. L'état $B$ représente un jour de beau temps et l'état $P$, un jour de pluie. Les probabilités des flèches qui *partent* d'un même état ont une somme égale à $1$.
+:::
+
+### Prévoir le temps des jours suivants
+
+Supposons qu'il fasse beau aujourd'hui, le jour $0$. Notons $X_n$ le
+temps qu'il fera dans $n$ jours. Par hypothèse, $\P{X_1 = B} = \num{0.8}$
+et $\P{X_1 = P} = \num{0.2}$. Pour le surlendemain, il faut distinguer
+selon le temps du lendemain ; la formule des probabilités totales donne
+\begin{align*}
+  \P{X_2 = B} &= \P{X_2 = B \mid X_1 = B}\,\P{X_1 = B}
+               + \P{X_2 = B \mid X_1 = P}\,\P{X_1 = P} \\
+              &= \num{0.8} \cdot \num{0.8} + \num{0.4} \cdot \num{0.2} = \num{0.72},
+\end{align*}
+et de même $\P{X_2 = P} = \num{0.2} \cdot \num{0.8} + \num{0.6} \cdot
+\num{0.2} = \num{0.28}$. Le même calcul, répété, donne la probabilité de
+chaque état à l'étape $n+1$ à partir des probabilités à l'étape $n$ :
+\begin{equation}\label{eq:meteo-recurrence}
+  \left\{\begin{aligned}
+    \P{X_{n+1} = B} &= \num{0.8}\,\P{X_n = B} + \num{0.4}\,\P{X_n = P},\\
+    \P{X_{n+1} = P} &= \num{0.2}\,\P{X_n = B} + \num{0.6}\,\P{X_n = P}.
+  \end{aligned}\right.
+\end{equation}
+On reconnaît un produit matriciel. Notons $\vec{x}_n = \big(\P{X_n = B},
+\P{X_n = P}\big)$ la loi de $X_n$ ; c'est un vecteur de probabilités. Le
+système \eqref{eq:meteo-recurrence} s'écrit
+$$
+  \vec{x}_{n+1} = M\vec{x}_n, \qquad\text{où}\qquad
+  M = \mat{\num{0.8}}{\num{0.4}}{\num{0.2}}{\num{0.6}} .
+$$
+La matrice $M$ s'appelle la [matrice de transition]{.defi} du modèle. Sa
+première colonne contient les probabilités des transitions qui partent
+de l'état $B$, et sa seconde colonne, celles qui partent de l'état $P$ ;
+le coefficient $m_{ij}$ est la probabilité de passer *de l'état $j$
+à l'état $i$*. En appliquant la récurrence plusieurs fois, on obtient
+$$
+  \vec{x}_1 = M\vec{x}_0, \quad
+  \vec{x}_2 = M\vec{x}_1 = M^2\vec{x}_0, \quad \dots, \quad
+  \vec{x}_n = M^n \vec{x}_0 .
+$$
+Prévoir le temps dans $n$ jours revient donc à calculer une puissance de
+matrice : c'est ici que l'algèbre linéaire entre en jeu.
+
+::: {.remark #rem:convention-colonnes title="Lignes ou colonnes ?"}
+Nous plaçons les probabilités de transition qui partent d'un même état
+dans une *colonne*, de sorte que la loi évolue par $\vec{x}_{n+1} =
+M\vec{x}_n$, comme les vecteurs de l'[annexe D](#annexe:algebre).
+Beaucoup d'ouvrages de probabilités, ainsi que Wikipédia, utilisent la
+convention inverse : ils placent ces probabilités dans une *ligne*,
+écrivent la loi comme un vecteur ligne $\vec{\pi}$ et la font évoluer par
+$\vec{\pi}_{n+1} = \vec{\pi}_n P$. Les deux conventions sont
+équivalentes, puisque $P = M^{\mathsf{T}}$, mais il faut repérer celle
+qu'utilise une source avant d'en reprendre les calculs. Dans notre
+convention, la somme de chaque *colonne* de $M$ vaut $1$.
+:::
+
+Le tableau \ref{tab:meteo} donne les premières valeurs de $\vec{x}_n$
+lorsqu'il fait beau le jour $0$, puis lorsqu'il pleut le jour $0$. Dans
+les deux cas, les probabilités se rapprochent rapidement de
+$\big(\tfrac23, \tfrac13\big) \approx (\num{0.6667}\,;\ \num{0.3333})$ :
+après une semaine, le temps qu'il faisait le jour $0$ n'a presque plus
+d'influence.
+
+::: {#tab:meteo}
+L'évolution de la loi $\vec{x}_n = M^n\vec{x}_0$ du modèle météorologique, selon le temps du jour $0$. On a indiqué $\P{X_n = B}$ ; la probabilité de pluie s'obtient par complément.
+
+| $n$ | $0$ | $1$ | $2$ | $3$ | $4$ | $5$ | $6$ | $7$ |
+|:--|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| beau le jour $0$ | $1$ | $\num{0.8}$ | $\num{0.72}$ | $\num{0.688}$ | $\num{0.6752}$ | $\num{0.6701}$ | $\num{0.6680}$ | $\num{0.6672}$ |
+| pluie le jour $0$ | $0$ | $\num{0.4}$ | $\num{0.56}$ | $\num{0.624}$ | $\num{0.6496}$ | $\num{0.6598}$ | $\num{0.6639}$ | $\num{0.6656}$ |
+:::
+
+### L'état d'équilibre
+
+Si la loi $\vec{x}_n$ converge vers un vecteur $\vec{q}$, alors, en
+passant à la limite dans $\vec{x}_{n+1} = M\vec{x}_n$, on obtient
+$\vec{q} = M\vec{q}$. Le vecteur $\vec{q}$ ne change pas lorsqu'on lui
+applique la transition : c'est un [état d'équilibre]{.defi}, aussi appelé
+[loi stationnaire]{.defi}. En langage d'algèbre linéaire, $\vec{q}$ est un
+vecteur propre de $M$ associé à la valeur propre $1$
+(définition \ref{def:D-valeur-propre}) ; en langage du
+chapitre \ref{chap:metriques}, c'est un point fixe de l'application
+$\vec{x} \mapsto M\vec{x}$.
+
+Cherchons-le. L'équation $(M - I)\vec{q} = \vec{0}$ s'écrit
+$$
+  \left\{\begin{aligned}
+  -\num{0.2}\,q_1 + \num{0.4}\,q_2 &= 0\\
+  \num{0.2}\,q_1 - \num{0.4}\,q_2 &= 0 ,
+  \end{aligned}\right.
+$$
+deux équations équivalentes, qui donnent $q_1 = 2q_2$. La condition
+$q_1 + q_2 = 1$ fournit ensuite l'unique vecteur de probabilités
+$\vec{q} = \big(\tfrac23, \tfrac13\big)$. À long terme, il fait beau
+deux jours sur trois.
+
+Pourquoi la convergence est-elle si rapide ? Le polynôme caractéristique
+de $M$ est $\lambda^2 - \num{1.4}\,\lambda + \num{0.4} = (\lambda -
+1)(\lambda - \num{0.4})$ ; la seconde valeur propre est
+$\lambda_2 = \num{0.4}$, associée au vecteur propre $\vec{v}_2 = (1,-1)$.
+Comme à l'exemple \ref{ex:D-diagonalisation}, écrivons le vecteur de
+départ dans la base propre $\{\vec{q}, \vec{v}_2\}$. Pour $\vec{x}_0 =
+(1,0)$, on a $\vec{x}_0 = \vec{q} + \tfrac13\vec{v}_2$, d'où
+$$
+  \vec{x}_n = M^n\vec{x}_0 = M^n\vec{q} + \tfrac13 M^n\vec{v}_2
+  = \vec{q} + \tfrac13\,(\num{0.4})^n\,\vec{v}_2 .
+$$
+L'écart à l'équilibre est multiplié par $\num{0.4}$ chaque jour : il est
+d'environ $\num{0.0005}$ après une semaine, ce que confirme le
+tableau \ref{tab:meteo}. La seconde valeur propre gouverne donc la
+vitesse de convergence ; nous retrouverons ce fait à
+la section \ref{sec:puissances}.
+
+::: {.example #ex:meteo-esperance title="Combien de beaux jours dans la semaine ?"}
+Il fait beau aujourd'hui. Combien de jours de beau temps peut-on
+espérer pendant les sept jours suivants ? Notons $Y$ ce nombre. On peut
+écrire $Y = \mathbb{1}_1 + \mathbb{1}_2 + \cdots + \mathbb{1}_7$, où
+$\mathbb{1}_n$ est l'indicatrice de l'événement « il fait beau le
+jour $n$ ». Ces variables ne sont pas indépendantes, mais la linéarité de
+l'espérance suffit :
+$$
+  \Es{Y} = \sum_{n=1}^{7} \Es{\mathbb{1}_n} = \sum_{n=1}^{7} \P{X_n = B}
+  \approx \num{0.8} + \num{0.72} + \num{0.688} + \cdots + \num{0.6672}
+  \approx \num{4.89} .
+$$
+On peut espérer près de cinq beaux jours, un peu plus que les
+$7 \cdot \tfrac23 \approx \num{4.67}$ jours qu'on prévoirait à
+l'équilibre, puisque la semaine commence par un beau jour.
+:::
+
+### Le calcul avec Python
+
+Le programme suivant calcule quelques puissances de $M$, puis l'état
+d'équilibre à l'aide de `np.linalg.eig`. La fonction renvoie des
+vecteurs propres unitaires (de norme $1$) ; il faut donc diviser le
+vecteur propre associé à $1$ par la somme de ses composantes pour obtenir
+un vecteur de probabilités (exercice \ref{exo:M-normaliser}).
+
+```{.python #lst:meteo caption="Le modèle météorologique : puissances de $M$ et état d'équilibre."}
+import numpy as np
+np.set_printoptions(precision=4, suppress=True)
+
+# colonnes : départ d'un beau jour, puis d'un jour de pluie
+M = np.array([[0.8, 0.4],
+              [0.2, 0.6]])
+x0 = np.array([1.0, 0.0])     # aujourd'hui, il fait beau
+
+for n in [1, 2, 5, 10, 20]:
+    print(n, np.linalg.matrix_power(M, n) @ x0)
+
+valeurs, vecteurs = np.linalg.eig(M)
+print("valeurs propres :", valeurs)
+v = vecteurs[:, np.argmax(valeurs)]   # associé à 1
+print("équilibre :", v / v.sum())     # normalisé : somme = 1
+```
+
+```{.python caption="Sortie."}
+1 [0.8 0.2]
+2 [0.72 0.28]
+5 [0.6701 0.3299]
+10 [0.6667 0.3333]
+20 [0.6667 0.3333]
+valeurs propres : [1.  0.4]
+équilibre : [0.6667 0.3333]
+```
+
+L'équilibre a aussi une interprétation en termes de *fréquences*.
+Si l'on simule le temps sur un grand nombre de jours, en tirant chaque
+jour le temps du lendemain selon les probabilités de transition, la
+proportion des jours de beau temps devrait se rapprocher de $\tfrac23$.
+C'est ce que vérifie le programme suivant, qui simule dix mille jours.
+
+```{.python #lst:meteo-simulation caption="Simulation du modèle météorologique sur dix mille jours."}
+import numpy as np
+rng = np.random.default_rng(2026)      # graine fixée
+
+M = np.array([[0.8, 0.4],
+              [0.2, 0.6]])
+etat, beaux = 0, 0                     # 0 : beau ; 1 : pluie
+n = 10_000
+for jour in range(n):
+    # tirage selon la colonne de l'état actuel
+    etat = rng.choice(2, p=M[:, etat])
+    beaux += (etat == 0)
+print("proportion de jours de beau temps :", beaux / n)
+```
+
+```{.python caption="Sortie."}
+proportion de jours de beau temps : 0.6644
+```
+
+La proportion observée, $\num{0.6644}$, est proche de $\tfrac23$ ; elle
+varierait légèrement avec une autre graine. Cette double interprétation
+de l'équilibre, comme *limite des probabilités* et comme
+*proportion du temps passé dans chaque état*, est au cœur de
+l'algorithme PageRank.
+
+::: {.outil #outil:markov-matrices title="Puissances de matrices sans programmer"}
+Pour une petite matrice, il n'est pas nécessaire d'écrire un programme.
+Dans WolframAlpha, la requête
+`{{0.8, 0.4}, {0.2, 0.6}}^10` calcule $M^{10}$, et
+`eigenvectors {{0.8, 0.4}, {0.2, 0.6}}` donne les vecteurs
+propres. Dans GeoGebra, on définit `M = {{0.8, 0.4}, {0.2,
+0.6}}` et l'on calcule `M^n`, avec un curseur $n$ : en
+faisant varier $n$, on voit les deux colonnes de $M^n$ devenir presque
+égales à $\big(\tfrac23, \tfrac13\big)$. Ce dernier constat est
+instructif : si toutes les colonnes de $M^n$ sont proches de $\vec{q}$,
+alors $M^n\vec{x}_0$ est proche de $\vec{q}$ pour *tout* vecteur de
+probabilités $\vec{x}_0$, ce qui explique que le point de départ soit
+oublié. Un tableur convient aussi : chaque ligne contient la loi d'un
+jour, calculée à partir de la ligne précédente par les deux formules
+du système \eqref{eq:meteo-recurrence}.
+:::
+
+## Les chaînes de Markov {#sec:def-markov}
+
+### Définition
+
+Le modèle météorologique repose sur une hypothèse précise : pour prévoir
+le temps de demain, il suffit de connaître le temps d'aujourd'hui ;
+connaître aussi celui des jours précédents n'apporte aucune information
+supplémentaire. C'est cette absence de mémoire, au-delà de l'étape
+présente, qui définit une chaîne de Markov.
+
+::: {.definition #def:markov title="Chaîne de Markov"}
+Une suite de variables aléatoires $X_0, X_1, X_2, \dots$ à valeurs dans
+un ensemble fini d'[états]{.defi} $\{1, 2, \dots, N\}$ est une
+[chaîne de Markov]{.defi} si, pour tout $n$ et pour tous les états $i, j,
+i_0, \dots, i_{n-1}$,
+$$
+  \P{X_{n+1} = i \mid X_n = j,\ X_{n-1} = i_{n-1},\ \dots,\ X_0 = i_0}
+  = \P{X_{n+1} = i \mid X_n = j} .
+$$
+Cette égalité s'appelle la [propriété de Markov]{.defi}. La chaîne est
+[homogène]{.defi} si cette probabilité ne dépend pas de $n$ ; on la note
+alors $m_{ij}$, et la matrice $M = (m_{ij})$ de taille $N \times N$
+s'appelle la [matrice de transition]{.defi} de la chaîne.
+:::
+
+Toutes les chaînes de ce chapitre sont homogènes. La propriété de Markov
+n'interdit pas le hasard de dépendre du passé : elle exige seulement que
+toute l'information utile sur le passé soit contenue dans l'état
+présent. Une suite de lancers d'une pièce de monnaie est une chaîne de
+Markov d'un type particulier, puisque chaque lancer ne dépend même pas
+du précédent : toutes les colonnes de sa matrice de transition sont
+égales à $\big(\tfrac12, \tfrac12\big)$. À l'opposé, nous verrons à la
+section \ref{sec:memoire} un modèle dont l'avenir dépend des deux
+derniers états.
+
+::: {.proposition #prop:evolution-loi title="Évolution de la loi"}
+Soit $(X_n)$ une chaîne de Markov homogène de matrice de transition $M$,
+et soit $\vec{x}_n$ la loi de $X_n$. Alors $\vec{x}_{n+1} = M\vec{x}_n$
+pour tout $n$, et par conséquent $\vec{x}_n = M^n\vec{x}_0$.
+:::
+
+::: {.proof}
+Les événements $\{X_n = 1\}, \dots, \{X_n = N\}$ sont deux à deux
+incompatibles et leur réunion est l'univers. Pour un état $i$, la
+formule des probabilités totales (proposition \ref{prop:proba-totales})
+donne
+$$
+  \P{X_{n+1} = i} = \sum_{j=1}^{N} \P{X_{n+1} = i \mid X_n = j}\,\P{X_n = j}
+  = \sum_{j=1}^{N} m_{ij}\, \P{X_n = j} ,
+$$
+où l'on omet les termes pour lesquels $\P{X_n = j} = 0$. Le membre de
+droite est la $i$\ap{e} composante du produit $M\vec{x}_n$
+(équation \eqref{eq:D-Ax}). La seconde affirmation s'obtient par
+récurrence sur $n$.
+:::
+
+Les coefficients de la matrice $M^n$ ont eux aussi une interprétation :
+en appliquant la proposition à $\vec{x}_0 = \vec{e}_j$, le vecteur dont
+seule la $j$\ap{e} composante est non nulle et vaut $1$, on voit que la
+$j$\ap{e} colonne de $M^n$ est la loi de $X_n$ lorsque la chaîne part de
+l'état $j$. Le coefficient $(M^n)_{ij}$ est donc la probabilité de
+passer de l'état $j$ à l'état $i$ en $n$ étapes.
+
+::: {.secondaire #rem:classe-graphes title="Graphes et matrices au secondaire"}
+Le diagramme de transition d'une chaîne de Markov est un *graphe
+orienté valué* : ses sommets sont les états, ses arêtes sont orientées et
+portent un poids. La progression des apprentissages prévoit une
+introduction à la théorie des graphes au deuxième cycle du secondaire,
+où les élèves construisent des graphes orientés et valués pour représenter
+une situation [@PDA2016]. Dans la séquence Technico-sciences, ils
+utilisent aussi des matrices comme registre de représentation, et
+effectuent des multiplications matricielles, notamment pour traiter des
+données à la manière d'un tableur. Une chaîne de Markov réunit ces deux
+registres : le graphe pour décrire la situation, la matrice pour
+calculer. Passer de l'un à l'autre (exercice \ref{exo:M-graphe-matrice})
+est une tâche accessible, qui oblige à préciser ce que représente chaque
+ligne et chaque colonne.
+:::
+
+### Ville, banlieue et campagne
+
+Considérons maintenant une population répartie entre trois milieux de
+vie : la ville ($V$), la banlieue ($B$) et la campagne ($C$). Chaque
+année, on observe les déménagements suivants :
+
+- parmi les citadins, $\SI{85}{\percent}$ restent en ville,
+  $\SI{10}{\percent}$ s'installent en banlieue et
+  $\SI{5}{\percent}$ à la campagne ;
+- parmi les banlieusards, $\SI{90}{\percent}$ restent en banlieue,
+  $\SI{5}{\percent}$ partent pour la ville et $\SI{5}{\percent}$
+  pour la campagne ;
+- parmi les ruraux, $\SI{85}{\percent}$ restent à la campagne,
+  $\SI{10}{\percent}$ s'installent en banlieue et
+  $\SI{5}{\percent}$ en ville.
+
+Nous supposons que la population totale est constante et que ces taux ne
+changent pas d'une année à l'autre. Le lieu de résidence d'une personne
+choisie au hasard est alors une chaîne de Markov à trois états, dont le
+diagramme et la matrice de transition sont donnés à la
+figure \ref{fig:migration}. Les proportions de la population dans
+chaque milieu forment un vecteur de probabilités $\vec{x}_n$, qui évolue
+selon $\vec{x}_{n+1} = M\vec{x}_n$.
+
+::: {#fig:migration}
+![](figures/tikz/fig-migration.tikz)
+
+Le modèle de migration entre la ville ($V$), la banlieue ($B$) et la campagne ($C$). Chaque colonne de $M$ correspond aux flèches qui partent d'un même état.
+:::
+
+Si la population se répartit aujourd'hui en $\SI{50}{\percent}$ en
+ville, $\SI{30}{\percent}$ en banlieue et $\SI{20}{\percent}$ à la
+campagne, alors $\vec{x}_0 = (\num{0.5}\,;\ \num{0.3}\,;\ \num{0.2})$ et
+$$
+  \vec{x}_1 = M\vec{x}_0
+  = \begin{pmatrix}
+  \num{0.85}\cdot\num{0.5} + \num{0.05}\cdot\num{0.3} + \num{0.05}\cdot\num{0.2}\\
+  \num{0.10}\cdot\num{0.5} + \num{0.90}\cdot\num{0.3} + \num{0.10}\cdot\num{0.2}\\
+  \num{0.05}\cdot\num{0.5} + \num{0.05}\cdot\num{0.3} + \num{0.85}\cdot\num{0.2}
+  \end{pmatrix}
+  = \begin{pmatrix} \num{0.45}\\ \num{0.34}\\ \num{0.21} \end{pmatrix} .
+$$
+Le tableau \ref{tab:migration} montre l'évolution sur un plus long
+horizon : la banlieue se peuple au détriment de la ville, et les
+proportions se stabilisent autour de $\big(\tfrac14, \tfrac12,
+\tfrac14\big)$.
+
+::: {#tab:migration}
+L'évolution de la répartition $\vec{x}_n = M^n\vec{x}_0$ de la population dans le modèle de migration.
+
+| $n$ (années) | $0$ | $1$ | $2$ | $5$ | $10$ | $20$ | $50$ |
+|:--|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| ville | $\num{0.50}$ | $\num{0.45}$ | $\num{0.41}$ | $\num{0.3319}$ | $\num{0.2768}$ | $\num{0.2529}$ | $\num{0.2500}$ |
+| banlieue | $\num{0.30}$ | $\num{0.34}$ | $\num{0.372}$ | $\num{0.4345}$ | $\num{0.4785}$ | $\num{0.4977}$ | $\num{0.5000}$ |
+| campagne | $\num{0.20}$ | $\num{0.21}$ | $\num{0.218}$ | $\num{0.2336}$ | $\num{0.2446}$ | $\num{0.2494}$ | $\num{0.2500}$ |
+:::
+
+L'état d'équilibre est la solution de $(M - I)\vec{q} = \vec{0}$ dont les
+composantes ont une somme égale à $1$. La méthode de Gauss--Jordan
+(section \ref{sec:D-gauss}) appliquée à
+$$
+  M - I = \begin{pmatrix}
+  -\num{0.15} & \num{0.05} & \num{0.05}\\
+  \num{0.10} & -\num{0.10} & \num{0.10}\\
+  \num{0.05} & \num{0.05} & -\num{0.15}
+  \end{pmatrix}
+$$
+montre que son noyau est la droite engendrée par $(1, 2, 1)$ ; en
+divisant par la somme des composantes, on obtient
+$\vec{q} = \big(\tfrac14, \tfrac12, \tfrac14\big)$. À long terme, la
+moitié de la population vit en banlieue.
+
+::: {.example #ex:migration-formule title="Une formule exacte pour $\vec{x}_n$"}
+La matrice de ce modèle a une structure particulière. Notons $Q$ la
+matrice $3 \times 3$ dont les trois colonnes sont égales à $\vec{q}$,
+c'est-à-dire $Q = \vec{q}\,\vec{e}^{\mathsf{T}}$. On vérifie que
+$$
+  M = \num{0.8}\, I + \num{0.2}\, Q :
+$$
+par exemple, la première colonne de $\num{0.8}\,I + \num{0.2}\,Q$ vaut
+$(\num{0.8} + \num{0.05}\,;\ \num{0.1}\,;\ \num{0.05})$. Autrement dit,
+chaque année, une personne garde son lieu de résidence avec une
+probabilité de $\num{0.8}$ ; avec une probabilité de $\num{0.2}$, elle
+« tire au sort » un nouveau milieu de vie selon la loi $\vec{q}$, ce
+qui peut la ramener au même endroit. Soit maintenant $\vec{v}$ un vecteur
+dont la somme des composantes est nulle. Alors $\vec{e}^{\mathsf{T}}\vec{v}
+= 0$, donc $Q\vec{v} = \vec{q}\,(\vec{e}^{\mathsf{T}}\vec{v}) = \vec{0}$
+et $M\vec{v} = \num{0.8}\,\vec{v}$. Tous les vecteurs du plan
+d'équation $v_1 + v_2 + v_3 = 0$ sont donc des vecteurs propres associés
+à la valeur propre $\num{0.8}$. Comme $\vec{x}_0 - \vec{q}$ est dans ce
+plan, on obtient
+$$
+  \vec{x}_n - \vec{q} = M^n(\vec{x}_0 - \vec{q}) = (\num{0.8})^n(\vec{x}_0 - \vec{q}),
+  \qquad\text{soit}\qquad
+  \vec{x}_n = \vec{q} + (\num{0.8})^n (\vec{x}_0 - \vec{q}) .
+$$
+L'écart à l'équilibre diminue de $\SI{20}{\percent}$ par année : il
+faut une dizaine d'années pour le réduire à environ le dixième de sa
+valeur initiale, puisque $(\num{0.8})^{10} \approx \num{0.107}$. Nous
+retrouverons cette idée de « tirage au sort » dans la matrice de Google,
+à la section \ref{sec:teleportation}.
+:::
+
+### Et si l'avenir dépendait de plusieurs jours ? {#sec:memoire}
+
+Revenons à la météo. Des observations plus fines pourraient montrer que
+le temps de demain dépend des *deux* derniers jours : après deux
+jours de beau temps, le beau temps est bien installé, alors qu'après un
+seul beau jour suivant un jour de pluie, il l'est moins. Supposons par
+exemple que la probabilité qu'il fasse beau demain soit donnée par le
+tableau suivant.
+
+| hier | aujourd'hui | $\P{\text{beau demain}}$ |
+|:-:|:-:|:-:|
+| $B$ | $B$ | $\num{0.9}$ |
+| $P$ | $B$ | $\num{0.7}$ |
+| $B$ | $P$ | $\num{0.5}$ |
+| $P$ | $P$ | $\num{0.3}$ |
+
+La suite $(X_n)$ des temps observés n'est plus une chaîne de Markov : la
+probabilité qu'il fasse beau demain sachant qu'il fait beau aujourd'hui
+n'est pas déterminée, puisqu'elle vaut $\num{0.9}$ ou $\num{0.7}$ selon
+le temps de la veille.
+
+On récupère cependant une chaîne de Markov en changeant d'états.
+Considérons le *couple* $Y_n = (X_{n-1}, X_n)$ formé du temps
+d'hier et de celui d'aujourd'hui. Il y a quatre états, $BB$, $PB$, $BP$
+et $PP$, et la connaissance de $Y_n$ suffit pour prévoir $Y_{n+1}$ :
+depuis l'état $(h, a)$, on ne peut passer qu'à $(a, B)$ ou à $(a, P)$. Par
+exemple, depuis $PB$ (pluie hier, beau aujourd'hui), on passe à $BB$
+avec une probabilité de $\num{0.7}$, et à $BP$ avec une probabilité de
+$\num{0.3}$. La matrice de transition, dans l'ordre $BB$, $PB$, $BP$,
+$PP$, est
+$$
+  M_2 = \begin{pmatrix}
+  \num{0.9} & \num{0.7} & 0 & 0\\
+  0 & 0 & \num{0.5} & \num{0.3}\\
+  \num{0.1} & \num{0.3} & 0 & 0\\
+  0 & 0 & \num{0.5} & \num{0.7}
+  \end{pmatrix} .
+$$
+Elle est plus grande, et elle contient beaucoup de zéros, parce que
+certaines transitions sont impossibles : depuis $BB$, on ne peut pas
+passer à $PP$ en un jour. Son état d'équilibre est
+$\vec{q} = \big(\tfrac{21}{32}, \tfrac{3}{32}, \tfrac{3}{32},
+\tfrac{5}{32}\big)$ (exercice \ref{exo:M-memoire}). La probabilité
+qu'il fasse beau un jour donné, à long terme, est donc
+$q_{BB} + q_{PB} = \tfrac{24}{32} = \tfrac34$.
+
+Cette construction est générale : un phénomène dont l'avenir dépend des
+$k$ derniers états se ramène à une chaîne de Markov dont les états sont
+des suites de $k$ états. Le prix à payer est la taille de la matrice :
+avec $N$ états de départ, on obtient $N^k$ nouveaux états. Les premiers
+générateurs automatiques de texte fonctionnaient ainsi : l'état est
+formé des $k$ derniers mots, et le mot suivant est tiré au hasard selon
+des fréquences observées dans un grand corpus. Avec $k = 1$ ou $2$, le
+texte produit est localement plausible, mais il perd le fil après
+quelques mots ; augmenter $k$ améliore la cohérence, mais le nombre
+d'états devient vite énorme.
+
+::: {.historical #hist:onegin title="Les voyelles d'Eugène Onéguine"}
+En 1913, Markov (note historique \ref{hist:markov}) a appliqué son modèle aux $\num{20000}$ premières lettres du
+roman en vers *Eugène Onéguine* d'Alexandre Pouchkine, en ne
+retenant que deux états : voyelle ou consonne [@Markov1913]. Il
+compta $\num{8638}$ voyelles ; une voyelle était suivie d'une voyelle
+$\num{1104}$ fois, soit avec une fréquence de $\num{0.128}$, alors qu'une
+consonne était suivie d'une voyelle avec une fréquence de $\num{0.663}$.
+La chaîne correspondante a pour matrice de transition
+$\mat{\num{0.128}}{\num{0.663}}{\num{0.872}}{\num{0.337}}$, et son état
+d'équilibre attribue aux voyelles la probabilité
+$\num{0.663}/(\num{0.872} + \num{0.663}) \approx \num{0.432}$, soit
+exactement la proportion $\num{8638}/\num{20000}$ observée dans le
+texte. Ce calcul, fait à la main, est la première application d'une
+chaîne de Markov à des données réelles.
+:::
+
+## Matrices stochastiques et états d'équilibre {#sec:stochastiques}
+
+Dans les deux exemples précédents, la loi $\vec{x}_n$ converge vers un
+unique état d'équilibre, quel que soit l'état de départ. Est-ce toujours
+le cas ? Pour répondre, nous dégageons d'abord les propriétés communes à
+toutes les matrices de transition.
+
+::: {.definition #def:stochastique title="Matrice stochastique"}
+Une matrice carrée $M$ est [stochastique]{.defi} si ses coefficients sont
+positifs ou nuls et si la somme des coefficients de chacune de ses
+colonnes vaut $1$. Autrement dit, chaque colonne de $M$ est un vecteur de
+probabilités, ce qui s'écrit aussi $\vec{e}^{\mathsf{T}} M =
+\vec{e}^{\mathsf{T}}$.
+:::
+
+La matrice de transition d'une chaîne de Markov est stochastique : sa
+$j$\ap{e} colonne est la loi de l'état suivant lorsqu'on part de
+l'état $j$. Réciproquement, toute matrice stochastique est la matrice de
+transition d'une chaîne de Markov.
+
+::: {.proposition #prop:stoch-conserve title="Une matrice stochastique conserve les lois"}
+Si $M$ est stochastique et si $\vec{v}$ est un vecteur de probabilités,
+alors $M\vec{v}$ est un vecteur de probabilités. Par conséquent,
+$M^n\vec{v}$ est un vecteur de probabilités pour tout $n \in \N$.
+:::
+
+La démonstration fait l'objet de l'exercice \ref{exo:M-conserve} ; on
+peut la lire dans la notation matricielle :
+$\vec{e}^{\mathsf{T}}(M\vec{v}) = (\vec{e}^{\mathsf{T}}M)\vec{v} =
+\vec{e}^{\mathsf{T}}\vec{v} = 1$. La proposition confirme que le
+modèle est cohérent : $\vec{x}_n = M^n\vec{x}_0$ est toujours une loi.
+
+### La valeur propre 1
+
+::: {.theorem #thm:stoch-vp1 title="Valeur propre d'une matrice stochastique"}
+Si $M$ est une matrice stochastique, alors $1$ est une valeur propre de
+$M$.
+:::
+
+::: {.proof}
+Les matrices $M$ et $M^{\mathsf{T}}$ ont le même polynôme
+caractéristique, puisque
+$\dete(M^{\mathsf{T}} - \lambda I) = \dete\big((M - \lambda I)^{\mathsf{T}}\big)
+= \dete(M - \lambda I)$ (proposition \ref{prop:D-det}) ; elles ont donc
+les mêmes valeurs propres. Or, en transposant l'égalité
+$\vec{e}^{\mathsf{T}}M = \vec{e}^{\mathsf{T}}$, on obtient
+$M^{\mathsf{T}}\vec{e} = \vec{e}$ : la $i$\ap{e} composante de
+$M^{\mathsf{T}}\vec{e}$ est la somme des coefficients de la $i$\ap{e}
+colonne de $M$, qui vaut $1$. Le vecteur $\vec{e}$ est donc un vecteur
+propre de $M^{\mathsf{T}}$ associé à la valeur propre $1$, et $1$ est
+aussi une valeur propre de $M$.
+:::
+
+Ce théorème garantit l'existence d'un vecteur non nul $\vec{v}$ tel que
+$M\vec{v} = \vec{v}$, mais pas que ce vecteur ait des composantes
+positives : un vecteur propre peut toujours être multiplié par $-1$, et
+il pourrait aussi avoir des composantes de signes différents. Le
+résultat suivant, que nous admettrons, règle cette question. C'est une
+conséquence du théorème de Perron--Frobenius, qui porte sur les matrices
+à coefficients positifs [@LangvilleMeyer2006].
+
+::: {.theorem #thm:perron title="Perron--Frobenius, cas des matrices stochastiques"}
+Soit $M$ une matrice stochastique.
+
+(i) Toute valeur propre $\lambda$ de $M$, réelle ou complexe,
+    vérifie $|\lambda| \leq 1$.
+(ii) Il existe un vecteur de probabilités $\vec{q}$ tel que
+     $M\vec{q} = \vec{q}$.
+:::
+
+Toute chaîne de Markov à un nombre fini d'états possède donc au moins un
+état d'équilibre. La première affirmation est d'ailleurs facile à
+démontrer pour les valeurs propres réelles (exercice \ref{exo:M-stoch-vp}).
+
+### Deux chaînes qui ne convergent pas
+
+L'existence d'un équilibre ne suffit pas à garantir que la loi
+$\vec{x}_n$ s'en rapproche. Deux exemples très simples le montrent.
+
+::: {.example #ex:stoch-identite title="Une chaîne qui ne bouge pas"}
+La matrice identité $I$ de taille $2$ est stochastique : chaque état est
+conservé avec probabilité $1$. Tout vecteur de probabilités est un état
+d'équilibre, et $\vec{x}_n = \vec{x}_0$ pour tout $n$. L'équilibre n'est
+pas unique, et la limite dépend du point de départ. Ce comportement se
+produit chaque fois que la chaîne contient deux groupes d'états qui ne
+communiquent pas entre eux.
+:::
+
+::: {.example #ex:stoch-oscille title="Une chaîne qui oscille"}
+La matrice $S = \mat{0}{1}{1}{0}$ est stochastique : l'état change à
+chaque étape. Son unique état d'équilibre est $\big(\tfrac12,
+\tfrac12\big)$, mais si l'on part de l'état $1$, la loi alterne entre
+$(1,0)$ et $(0,1)$ et ne converge pas. La cause apparaît dans les valeurs
+propres : $S$ a pour valeurs propres $1$ et $-1$, et la composante de
+$\vec{x}_0$ dans la direction propre associée à $-1$ change de signe à
+chaque étape au lieu de disparaître. Une chaîne de ce type est dite
+[périodique]{.defi}. Remarquons toutefois que la *proportion du temps*
+passé dans chaque état converge, elle, vers $\tfrac12$.
+:::
+
+Dans les deux cas, la valeur propre $1$ n'est pas la seule valeur propre
+de module $1$. Il suffit d'exclure ces situations pour obtenir la
+convergence. Une hypothèse commode est la suivante.
+
+::: {.definition #def:reguliere title="Matrice stochastique régulière"}
+Une matrice stochastique $M$ est [régulière]{.defi} s'il existe un entier
+$k \geq 1$ tel que tous les coefficients de $M^k$ soient strictement
+positifs.
+:::
+
+Puisque $(M^k)_{ij}$ est la probabilité de passer de $j$ à $i$ en $k$
+étapes, $M$ est régulière lorsqu'il existe un nombre d'étapes après
+lequel tous les états sont accessibles depuis tous les états. Les
+matrices du modèle météorologique et du modèle de migration sont
+régulières dès $k = 1$. Les matrices $I$ et $S$ ne le sont pas : toutes
+les puissances de $I$ sont égales à $I$, et celles de $S$ valent $I$ ou
+$S$.
+
+### Le théorème de convergence
+
+::: {.theorem #thm:convergence-markov title="Convergence vers l'équilibre"}
+Soit $M$ une matrice stochastique régulière de taille $N$. Alors :
+
+(i) $1$ est une valeur propre simple de $M$, et toute autre
+    valeur propre $\lambda$ vérifie $|\lambda| < 1$ ;
+(ii) il existe un unique vecteur de probabilités $\vec{q}$ tel
+     que $M\vec{q} = \vec{q}$, et ses composantes sont strictement
+     positives ;
+(iii) pour tout vecteur de probabilités $\vec{x}_0$, la suite
+      $\vec{x}_n = M^n\vec{x}_0$ converge vers $\vec{q}$.
+:::
+
+Les affirmations (i) et (ii) sont, elles aussi, des conséquences du
+théorème de Perron--Frobenius [@LangvilleMeyer2006], que nous
+admettrons. Nous démontrons (iii) sous l'hypothèse supplémentaire que $M$
+est diagonalisable, c'est-à-dire qu'il existe une base de $\R^N$ formée
+de vecteurs propres de $M$ (théorème \ref{thm:D-diagonalisation}) ; la
+démonstration générale suit la même idée, mais demande des outils
+d'algèbre linéaire qui dépassent le cadre de ce livre.
+
+::: {.proof}
+[Démonstration de (iii) lorsque $M$ est diagonalisable]
+Soit $\{\vec{q}, \vec{v}_2, \dots, \vec{v}_N\}$ une base de vecteurs
+propres, associés aux valeurs propres $1, \lambda_2, \dots, \lambda_N$,
+avec $|\lambda_i| < 1$ pour $i \geq 2$ par (i). Écrivons le vecteur de
+départ dans cette base :
+$$
+  \vec{x}_0 = \alpha_1\vec{q} + \alpha_2\vec{v}_2 + \cdots + \alpha_N\vec{v}_N .
+$$
+Puisque $M^n\vec{v} = \lambda^n\vec{v}$ pour tout vecteur propre
+$\vec{v}$ associé à $\lambda$ (exercice \ref{exo:M-puissances}),
+$$
+  \vec{x}_n = M^n\vec{x}_0
+  = \alpha_1\vec{q} + \alpha_2\lambda_2^n\vec{v}_2 + \cdots + \alpha_N\lambda_N^n\vec{v}_N .
+$$
+Chaque $\lambda_i^n$ tend vers $0$ lorsque $n \to \infty$, donc
+$\vec{x}_n \to \alpha_1\vec{q}$. Il reste à voir que $\alpha_1 = 1$. Par
+la proposition \ref{prop:stoch-conserve}, la somme des composantes de
+$\vec{x}_n$ vaut $1$ pour tout $n$ ; à la limite, celle de
+$\alpha_1\vec{q}$ vaut aussi $1$. Comme celle de $\vec{q}$ vaut $1$,
+on obtient $\alpha_1 = 1$.
+:::
+
+La démonstration montre aussi à quelle *vitesse* la convergence se
+produit : l'écart $\vec{x}_n - \vec{q}$ est une combinaison de termes en
+$\lambda_i^n$, et c'est le plus grand des modules $|\lambda_2|, \dots,
+|\lambda_N|$ qui décide de la rapidité avec laquelle il disparaît. Pour
+le modèle météorologique, ce module vaut $\num{0.4}$ ; pour le modèle de
+migration, il vaut $\num{0.8}$, et la convergence est plus lente, comme
+le montrent les tableaux \ref{tab:meteo} et \ref{tab:migration}.
+
+::: {.remark #rem:ergodique title="Proportion du temps et temps de retour"}
+L'état d'équilibre a deux interprétations, que la simulation de la
+section \ref{sec:meteo} illustrait. La première, que donne le
+théorème \ref{thm:convergence-markov}, est la limite des probabilités :
+$\P{X_n = i} \to q_i$. La seconde concerne une seule trajectoire de la
+chaîne : la proportion des étapes $0, 1, \dots, n-1$ passées dans l'état
+$i$ tend vers $q_i$ lorsque $n \to \infty$, avec probabilité $1$. Ce
+résultat, que nous admettrons, est le [théorème ergodique]{.defi} des
+chaînes de Markov, une version de la loi des grands nombres pour des
+étapes dépendantes ; il reste vrai pour les chaînes périodiques, comme
+celle de l'exemple \ref{ex:stoch-oscille}, pourvu que l'équilibre soit
+unique. On en déduit une troisième interprétation : si la chaîne passe
+en moyenne une fraction $q_i$ du temps dans l'état $i$, elle y revient
+en moyenne toutes les $1/q_i$ étapes. Dans le modèle météorologique, un
+jour de pluie revient en moyenne tous les $3$ jours, et un jour de beau
+temps tous les $\num{1.5}$ jour.
+:::
+
+::: {.secondaire #rem:classe-simulation title="Simuler une chaîne de Markov en classe"}
+La comparaison entre probabilités fréquentielles et théoriques est au
+cœur de l'enseignement des probabilités dès le premier
+cycle [@PDA2016]. Une chaîne de Markov s'y prête bien. Pour le modèle
+météorologique, on peut utiliser un dé à dix faces, ou une liste de
+nombres aléatoires : s'il fait beau, on tire « pluie » pour les résultats
+$1$ et $2$ ; s'il pleut, on tire « beau » pour les résultats $1$ à $4$.
+Chaque équipe simule un mois, puis on met en commun les résultats de la
+classe. La proportion de jours de beau temps se rapproche de $\tfrac23$,
+et la discussion peut porter sur une question qui n'a rien d'évident :
+pourquoi la proportion ne dépend-elle pas du temps qu'il faisait le
+premier jour ? Les élèves peuvent aussi constater que les jours de pluie
+arrivent en séquences, contrairement à ce que donnerait une suite de
+tirages indépendants ; c'est une occasion de discuter de la conception
+erronée selon laquelle le hasard produirait des résultats « bien
+mélangés ».
+:::
+
+## L'algorithme PageRank {#sec:pagerank}
+
+Un moteur de recherche classe les pages qui répondent à une requête selon
+deux types de critères. Les premiers portent sur le *contenu* de la
+page : la présence des mots cherchés, leur position dans le titre ou dans
+le texte, leur proximité. Les seconds portent sur la *popularité* de
+la page, mesurée à partir de la structure des liens du Web. L'algorithme
+PageRank, présenté par Sergey Brin et Larry Page en
+1998 [@BrinPage1998; @Page1999], relève de ce second type. Nous suivons
+ici la présentation de [@Gervais2008].
+
+### L'internaute aléatoire
+
+Imaginons un internaute qui navigue sans but précis. Lorsqu'il se trouve
+sur une page qui contient $k$ liens vers d'autres pages, il clique sur
+l'un d'eux au hasard, chacun avec la probabilité $1/k$. Si cette
+promenade dure assez longtemps, la proportion du temps qu'il passe sur
+une page mesure l'importance de cette page : une page vers laquelle
+pointent de nombreux liens, ou des liens issus de pages elles-mêmes très
+visitées, sera souvent visitée.
+
+Considérons le mini-web de la figure \ref{fig:miniweb1}, et supposons
+que l'internaute parte de la page $3$. La page $3$ contient trois liens,
+vers les pages $2$, $4$ et $5$ ; après un clic, il se trouve donc sur
+chacune de ces pages avec la probabilité $\tfrac13$, et sur les pages $1$
+et $3$ avec la probabilité $0$. Pour se trouver sur la page $1$ après
+deux clics, il doit être passé par la page $2$ ou par la page $5$, qui
+contiennent chacune deux liens dont l'un mène à la page $1$. La formule
+des probabilités totales donne
+$$
+  \P{X_2 = 1} = \tfrac12 \cdot \P{X_1 = 2} + \tfrac12 \cdot \P{X_1 = 5}
+  = \tfrac12 \cdot \tfrac13 + \tfrac12 \cdot \tfrac13 = \tfrac13 .
+$$
+On reconnaît la démarche de la section \ref{sec:meteo} : la page sur
+laquelle se trouve l'internaute après $n$ clics est une chaîne de Markov,
+dont les états sont les pages. Sa matrice de transition $A$ a pour
+coefficient $a_{ij} = 1/k_j$ si la page $j$, qui contient $k_j$ liens,
+pointe vers la page $i$, et $a_{ij} = 0$ sinon :
+$$
+  A = \begin{pmatrix}
+  0 & \tfrac12 & 0 & 0 & \tfrac12\\[2pt]
+  1 & 0 & \tfrac13 & 0 & \tfrac12\\[2pt]
+  0 & \tfrac12 & 0 & \tfrac12 & 0\\[2pt]
+  0 & 0 & \tfrac13 & 0 & 0\\[2pt]
+  0 & 0 & \tfrac13 & \tfrac12 & 0
+  \end{pmatrix} .
+$$
+Chaque colonne de $A$ décrit les liens qui *sortent* d'une page, et
+chaque ligne, les liens qui *entrent* dans une page. Avec
+$\vec{p}_0 = (0,0,1,0,0)$, on retrouve $\vec{p}_1 = A\vec{p}_0 = \big(0,
+\tfrac13, 0, \tfrac13, \tfrac13\big)$ et $\vec{p}_2 = A\vec{p}_1 =
+\big(\tfrac13, \tfrac16, \tfrac13, 0, \tfrac16\big)$. Le programme
+suivant construit la matrice $A$ à partir de la liste des liens,
+calcule quelques lois $\vec{p}_n = A^n\vec{p}_0$, puis l'état
+d'équilibre.
+
+```{.python #lst:miniweb1 caption="Le PageRank du mini-web de la figure \ref{fig:miniweb1}."}
+import numpy as np
+np.set_printoptions(precision=4, suppress=True)
+
+def matrice_transition(liens, N):
+    """Matrice de transition d'un mini-web de N pages.
+    liens[j] : pages vers lesquelles pointe la page j."""
+    A = np.zeros((N, N))
+    for j, sorties in liens.items():
+        for i in sorties:
+            # les pages sont numérotées à partir de 1
+            A[i - 1, j - 1] = 1 / len(sorties)
+    return A
+
+liens = {1: [2], 2: [1, 3], 3: [2, 4, 5], 4: [3, 5], 5: [1, 2]}
+A = matrice_transition(liens, 5)
+p = np.array([0, 0, 1, 0, 0])          # départ : page 3
+for n in [1, 2, 10, 50]:
+    print(n, np.linalg.matrix_power(A, n) @ p)
+
+valeurs, vecteurs = np.linalg.eig(A)
+k = np.argmin(abs(valeurs - 1))        # valeur propre 1
+q = np.real(vecteurs[:, k])
+q = q / q.sum()
+print("PageRank :", q)
+print("fois 55  :", 55 * q)
+```
+
+```{.python caption="Sortie."}
+1 [0.     0.3333 0.     0.3333 0.3333]
+2 [0.3333 0.1667 0.3333 0.     0.1667]
+10 [0.2673 0.3166 0.254  0.0587 0.1033]
+50 [0.2364 0.3636 0.2182 0.0727 0.1091]
+PageRank : [0.2364 0.3636 0.2182 0.0727 0.1091]
+fois 55  : [13. 20. 12.  4.  6.]
+```
+
+Deux détails du programme méritent une explication. La fonction
+`np.linalg.eig` peut renvoyer des nombres complexes lorsque la
+matrice n'est pas symétrique ; la fonction `np.real` conserve la
+partie réelle, puisque le vecteur propre cherché est réel. Et comme on
+ne connaît pas à l'avance la position de la valeur propre $1$ dans la
+liste, on cherche celle qui en est la plus proche.
+
+Le vecteur obtenu est
+$$
+  \vec{q} = \tfrac{1}{55}\,(13, 20, 12, 4, 6) .
+$$
+On vérifie que $A\vec{q} = \vec{q}$ et que la matrice $A$ est régulière
+(tous les coefficients de $A^5$ sont strictement positifs), de sorte que
+le théorème \ref{thm:convergence-markov} s'applique : quelle que soit la
+page de départ, l'internaute passe à long terme $\tfrac{20}{55}$ de son
+temps sur la page $2$, $\tfrac{13}{55}$ sur la page $1$, et ainsi de
+suite. Les composantes de $\vec{q}$ forment le [PageRank]{.defi} des pages,
+et le classement par ordre décroissant est : page $2$, page $1$, page
+$3$, page $5$, page $4$.
+
+L'équation $\vec{q} = A\vec{q}$, lue ligne par ligne, révèle le principe
+de l'algorithme. Sa deuxième ligne s'écrit
+$$
+  q_2 = 1 \cdot q_1 + \tfrac13\,q_3 + \tfrac12\,q_5
+  = \tfrac{13}{55} + \tfrac13\cdot\tfrac{12}{55} + \tfrac12\cdot\tfrac{6}{55}
+  = \tfrac{20}{55} .
+$$
+L'importance d'une page est la somme des « votes » qu'elle reçoit des
+pages qui pointent vers elle ; chaque page partage son propre PageRank
+également entre tous ses liens sortants. Un lien issu d'une page
+importante qui contient peu de liens rapporte donc beaucoup : la page $1$,
+qui ne reçoit que deux liens, devance la page $3$, qui en reçoit autant,
+parce que l'un de ses deux liens vient de la page $2$, la plus
+importante. La définition semble circulaire, puisque l'importance d'une
+page dépend de celle des autres ; l'algèbre linéaire lève cette
+circularité, en faisant de $\vec{q}$ la solution d'un système
+d'équations.
+
+::: {.historical #hist:google title="Le gogol et un vecteur propre à 25 milliards"}
+Le projet de recherche de Larry Page et Sergey Brin sur l'analyse des
+liens du Web (note historique \ref{hist:page}) a donné naissance au
+moteur de recherche Google, décrit dans un article présenté en
+1998 [@BrinPage1998]. Le nom Google est inspiré du terme *googol*
+(*gogol* en français), qui désigne le nombre $10^{100}$. Selon le
+récit qu'en fait le mathématicien états-unien Edward Kasner dans son
+livre *Mathematics and the Imagination* (1940), ce mot aurait été
+inventé par son neveu de neuf ans, Milton Sirotta. L'analyse
+mathématique de l'algorithme, que Kurt Bryan et Tanya Leise ont
+popularisée sous le titre « The \$25,000,000,000 eigenvector »
+(le vecteur propre de 25 milliards de dollars) [@BryanLeise2006],
+repose entièrement sur les notions de ce chapitre.
+:::
+
+### Les pages sans liens sortants {#sec:pendantes}
+
+Le Web réel contient des pages qui ne pointent vers aucune autre page :
+des documents PDF, des images, des pages en construction. Ajoutons au
+mini-web précédent une page $6$, vers laquelle pointe la page $5$, mais
+qui ne contient aucun lien (figure \ref{fig:miniweb2}).
+
+::: {#fig:miniweb2}
+![](figures/tikz/fig-miniweb2.tikz)
+
+Le mini-web 2 : la page $6$ n'a aucun lien sortant. Un internaute qui y arrive ne peut plus poursuivre sa promenade en cliquant.
+:::
+
+La sixième colonne de la matrice de transition $A$ est alors nulle, et
+$A$ n'est plus stochastique : la somme de sa sixième colonne vaut $0$.
+Concrètement, la probabilité « s'échappe » du système : un internaute qui
+arrive sur la page $6$ n'a nulle part où aller. Pour corriger ce défaut,
+on convient que l'internaute qui arrive sur une page sans lien sortant
+choisit ensuite une page *au hasard* parmi les $N$ pages du Web,
+chacune avec la probabilité $1/N$. On remplace ainsi chaque colonne nulle
+de $A$ par une colonne dont tous les coefficients valent $1/N$. Pour le
+mini-web 2, on obtient
+$$
+  B = \begin{pmatrix}
+  0 & \tfrac12 & 0 & 0 & \tfrac13 & \tfrac16\\[2pt]
+  1 & 0 & \tfrac13 & 0 & \tfrac13 & \tfrac16\\[2pt]
+  0 & \tfrac12 & 0 & \tfrac12 & 0 & \tfrac16\\[2pt]
+  0 & 0 & \tfrac13 & 0 & 0 & \tfrac16\\[2pt]
+  0 & 0 & \tfrac13 & \tfrac12 & 0 & \tfrac16\\[2pt]
+  0 & 0 & 0 & 0 & \tfrac13 & \tfrac16
+  \end{pmatrix} .
+$$
+Cette correction s'écrit de façon compacte. Soit $\vec{E}$ le vecteur de
+$\R^N$ dont la $j$\ap{e} composante vaut $1$ si la page $j$ n'a pas de
+lien sortant, et $0$ sinon ; ici, $\vec{E} = (0,0,0,0,0,1)$. La matrice
+$\vec{e}\,\vec{E}^{\mathsf{T}}$, produit d'une colonne et d'une ligne, a
+pour colonnes $\vec{e}$ là où $E_j = 1$ et $\vec{0}$ ailleurs. Par
+conséquent,
+\begin{equation}\label{eq:matrice-B}
+  B = A + \frac{1}{N}\,\vec{e}\,\vec{E}^{\mathsf{T}} .
+\end{equation}
+La matrice $B$ est stochastique et régulière. Son état d'équilibre, que
+l'on peut calculer avec le programme de la section \ref{sec:teleportation},
+est
+$$
+  \vec{q} = \tfrac{1}{127}\,(27, 42, 27, 10, 15, 6)
+  \approx (\num{0.213}\,;\ \num{0.331}\,;\ \num{0.213}\,;\ \num{0.079}\,;\ \num{0.118}\,;\ \num{0.047}) .
+$$
+Le classement devient : page $2$, pages $1$ et $3$ à égalité, page $5$,
+page $4$ et page $6$. L'ajout de la page $6$ a peu modifié le classement
+des cinq premières pages : seule la page $1$, qui devançait légèrement la
+page $3$, la rejoint à égalité, en partie parce que la page $5$ partage
+maintenant son vote entre trois liens au lieu de deux.
+
+### Les régions piégeantes et la téléportation {#sec:teleportation}
+
+Une seconde difficulté est plus sérieuse. Modifions le mini-web 2 en
+ajoutant une page $7$, et des liens de la page $6$ vers la page $7$ et
+de la page $7$ vers la page $6$ (figure \ref{fig:miniweb3}). Il n'y a
+plus de page sans lien sortant, mais un internaute qui arrive sur la
+page $6$ ne peut plus en sortir : il fait indéfiniment l'aller-retour
+entre les pages $6$ et $7$. Les pages $6$ et $7$ forment une
+[région piégeante]{.defi}.
+
+::: {#fig:miniweb3}
+![](figures/tikz/fig-miniweb3.tikz)
+
+Le mini-web 3 : les pages $6$ et $7$ forment une région piégeante. On peut y entrer, par la page $5$, mais on ne peut plus en sortir.
+:::
+
+La matrice de transition $A$ de ce mini-web est stochastique, mais elle
+n'est pas régulière : aucune puissance de $A$ ne permet d'aller de la
+page $6$ vers la page $1$. Son unique état d'équilibre est
+$\vec{q} = \big(0, 0, 0, 0, 0, \tfrac12, \tfrac12\big)$ : à long terme,
+l'internaute est presque sûrement piégé, et les pages $1$ à $5$ reçoivent
+toutes un PageRank nul. Un tel classement est inutilisable. De plus, la
+loi $\vec{p}_n$ ne converge pas, puisque l'internaute alterne entre les
+pages $6$ et $7$ comme dans l'exemple \ref{ex:stoch-oscille} ; on
+vérifie d'ailleurs que $-1$ est une valeur propre de $A$. Sur le Web
+réel, des régions piégeantes se forment spontanément, mais elles peuvent
+aussi être créées délibérément, par un ensemble de pages qui se citent
+mutuellement pour accaparer le PageRank.
+
+La solution retenue par Brin et Page consiste à donner à l'internaute
+un pouvoir de *téléportation* : à chaque étape, il suit un lien de
+la page où il se trouve avec une probabilité $\beta$, et, avec la
+probabilité $1 - \beta$, il abandonne sa navigation et saute vers une
+page choisie au hasard parmi les $N$ pages du Web. On peut penser à un
+internaute qui, de temps en temps, tape une nouvelle adresse dans son
+navigateur. Le nombre $\beta \in \intoo{0}{1}$ s'appelle le
+[facteur d'amortissement]{.defi} ; Brin et Page indiquaient utiliser
+habituellement $\beta = \num{0.85}$ [@BrinPage1998]. La matrice de
+transition de cette nouvelle promenade est
+\begin{equation}\label{eq:matrice-G}
+  G = \beta B + (1 - \beta)\,U, \qquad\text{où}\qquad
+  U = \frac{1}{N}\,\vec{e}\,\vec{e}^{\mathsf{T}}
+\end{equation}
+est la matrice $N \times N$ dont tous les coefficients valent $1/N$, et
+$B$ est la matrice \eqref{eq:matrice-B} qui tient compte des pages sans
+liens sortants. On reconnaît le « tirage au sort » de
+l'exemple \ref{ex:migration-formule}, avec la loi uniforme au lieu de
+$\vec{q}$.
+
+::: {.proposition #prop:G-reguliere title="Propriétés de la matrice $G$"}
+Si $0 < \beta < 1$, la matrice $G$ est stochastique et tous ses
+coefficients sont strictement positifs. En particulier, $G$ est
+régulière, et le théorème \ref{thm:convergence-markov} s'applique : $G$
+possède un unique état d'équilibre $\vec{q}$, dont toutes les composantes
+sont strictement positives.
+:::
+
+::: {.proof}
+Les matrices $B$ et $U$ sont stochastiques. Chaque coefficient de $G$
+est positif, et la somme d'une colonne de $G$ vaut
+$\beta \cdot 1 + (1 - \beta) \cdot 1 = 1$. De plus, chaque coefficient de
+$G$ est au moins égal à $(1 - \beta)/N > 0$. La matrice $G$ est donc
+régulière, avec $k = 1$ dans la définition \ref{def:reguliere}.
+:::
+
+Le vecteur $\vec{q}$ est le [PageRank]{.defi} du Web. Pour le mini-web 3,
+avec $\beta = \num{0.85}$ et $N = 7$, le programme suivant le calcule.
+La fonction `matrice_google` construit $B$, puis $G$, à partir de
+la liste des liens ; avec `beta=1`, elle ne fait que corriger les
+pages sans liens sortants, ce qui permet de retrouver le PageRank du
+mini-web 2 et l'équilibre du mini-web 3 sans téléportation.
+
+```{.python #lst:google caption="La matrice Google et le PageRank des mini-webs 2 et 3. La fonction `matrice_transition` est celle du programme \ref{lst:miniweb1}."}
+def matrice_google(liens, N, beta=0.85):
+    A = matrice_transition(liens, N)
+    E = (A.sum(axis=0) == 0).astype(float)  # colonnes nulles
+    e = np.ones(N)
+    B = A + np.outer(e, E) / N              # pages sans sortie
+    return beta * B + (1 - beta) * np.outer(e, e) / N
+
+def equilibre(M):
+    valeurs, vecteurs = np.linalg.eig(M)
+    q = np.real(vecteurs[:, np.argmin(abs(valeurs - 1))])
+    return q / q.sum()
+
+liens2 = {1: [2], 2: [1, 3], 3: [2, 4, 5], 4: [3, 5],
+          5: [1, 2, 6], 6: []}
+G2 = matrice_google(liens2, 6, beta=1)
+print("mini-web 2 :", equilibre(G2))
+
+liens3 = {1: [2], 2: [1, 3], 3: [2, 4, 5], 4: [3, 5],
+          5: [1, 2, 6], 6: [7], 7: [6]}
+G3 = matrice_google(liens3, 7, beta=1)
+print("sans téléportation :", equilibre(G3))
+print("beta = 0,85 :", equilibre(matrice_google(liens3, 7)))
+```
+
+```{.python caption="Sortie."}
+mini-web 2 : [0.2126 0.3307 0.2126 0.0787 0.1181 0.0472]
+sans téléportation : [-0.  -0.  -0.  -0.  -0.   0.5  0.5]
+beta = 0,85 : [0.1216 0.1823 0.1228 0.0562 0.0801 0.2247 0.2124]
+```
+
+La fonction `np.outer(u, v)` calcule le produit
+$\vec{u}\,\vec{v}^{\mathsf{T}}$ d'une colonne par une ligne. Les
+valeurs `-0.` de la deuxième ligne sont des nombres de l'ordre de
+$10^{-16}$, négatifs à cause des erreurs d'arrondi, que l'affichage
+arrondit à zéro.
+
+Avec la téléportation, toutes les pages reçoivent un PageRank positif,
+et le classement est : page $6$, page $7$, page $2$, page $3$, page $1$,
+page $5$, page $4$. Les pages de la région piégeante restent en tête,
+puisque l'internaute y reste longtemps chaque fois qu'il y entre, mais
+elles ne monopolisent plus le classement. Le choix de $\beta$ règle ce
+compromis. Le tableau \ref{tab:beta} montre que, plus $\beta$ est proche
+de $1$, plus le modèle suit fidèlement la structure des liens, mais plus
+la région piégeante accapare le PageRank ; plus $\beta$ est petit, plus
+le classement se rapproche de la loi uniforme et perd son information.
+
+::: {#tab:beta colonnes="cccccccc|c"}
+Le PageRank du mini-web 3 pour trois valeurs du facteur d'amortissement $\beta$. La dernière colonne donne la part totale de la région piégeante formée des pages $6$ et $7$.
+
+| $\beta$ | $q_1$ | $q_2$ | $q_3$ | $q_4$ | $q_5$ | $q_6$ | $q_7$ | $q_6 + q_7$ |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| $\num{0.5}$ | $\num{0.137}$ | $\num{0.183}$ | $\num{0.141}$ | $\num{0.095}$ | $\num{0.119}$ | $\num{0.169}$ | $\num{0.156}$ | $\num{0.325}$ |
+| $\num{0.85}$ | $\num{0.122}$ | $\num{0.182}$ | $\num{0.123}$ | $\num{0.056}$ | $\num{0.080}$ | $\num{0.225}$ | $\num{0.212}$ | $\num{0.437}$ |
+| $\num{0.99}$ | $\num{0.031}$ | $\num{0.048}$ | $\num{0.031}$ | $\num{0.012}$ | $\num{0.017}$ | $\num{0.432}$ | $\num{0.429}$ | $\num{0.861}$ |
+:::
+
+### La matrice Google {#sec:matrice-google}
+
+Rassemblons les deux corrections. Pour un Web de $N$ pages, de matrice
+de transition $A$, la [matrice Google]{.defi} est
+$$
+  G = \beta B + (1 - \beta)\,U
+  = \beta A + \frac{\beta}{N}\,\vec{e}\,\vec{E}^{\mathsf{T}}
+  + \frac{1 - \beta}{N}\,\vec{e}\,\vec{e}^{\mathsf{T}}
+  = \beta A + \frac{1}{N}\,\vec{e}\,\big(\beta\vec{E}^{\mathsf{T}} + (1 - \beta)\,\vec{e}^{\mathsf{T}}\big) ,
+$$
+et le PageRank est l'unique vecteur de probabilités $\vec{q}$ tel que
+$G\vec{q} = \vec{q}$. Pour le Web réel, $N$ se compte en milliards : il
+est hors de question de stocker la matrice $G$, qui contiendrait plus de
+$10^{18}$ coefficients, tous non nuls. La formule précédente montre
+qu'il n'est pas nécessaire de le faire : il suffit de connaître la
+matrice $A$, le vecteur $\vec{E}$ et le nombre $\beta$. Or $A$ est une
+matrice [creuse]{.defi} : une page contient en général quelques dizaines
+de liens au plus, de sorte que chaque colonne de $A$ ne compte qu'un
+petit nombre de coefficients non nuls parmi des milliards. On stocke
+alors seulement les coefficients non nuls et leurs positions, ce qui
+revient à stocker la liste des liens. Il reste à calculer $\vec{q}$ sans
+jamais former $G$ : c'est l'objet de la section suivante.
+
+## Calculer le PageRank : la méthode des puissances {#sec:puissances}
+
+Pour une matrice de quelques milliards de lignes, la fonction
+`np.linalg.eig` est inutilisable : elle calcule *toutes* les
+valeurs propres et tous les vecteurs propres, alors que nous n'en voulons
+qu'un, et elle travaille sur une matrice pleine. Le
+théorème \ref{thm:convergence-markov} suggère une méthode beaucoup plus
+simple : partir d'un vecteur de probabilités quelconque et appliquer $G$
+de façon répétée, puisque $G^n\vec{x}_0 \to \vec{q}$. C'est la
+[méthode des puissances]{.defi}.
+
+::: {.algorithme #algo:puissances title="Méthode des puissances pour le PageRank"}
+**Données :** la matrice creuse $A$, le vecteur $\vec{E}$, le
+facteur $\beta$ et une tolérance $\varepsilon > 0$.
+
+1. Poser $\vec{w}_0 = \frac{1}{N}\,\vec{e}$ (la loi uniforme).
+2. Pour $k = 1, 2, \dots$, calculer
+   $$
+     \vec{w}_k = G\vec{w}_{k-1}
+     = \beta A\vec{w}_{k-1} + \frac{\beta\, s_{k-1} + 1 - \beta}{N}\,\vec{e},
+     \qquad\text{où } s_{k-1} = \vec{E}^{\mathsf{T}}\vec{w}_{k-1} .
+   $$
+3. S'arrêter lorsque $d_1(\vec{w}_k, \vec{w}_{k-1}) < \varepsilon$,
+   et renvoyer $\vec{w}_k$.
+:::
+
+La formule de l'étape 2 provient de l'expression de $G$ à la
+section \ref{sec:matrice-google} : pour un vecteur de probabilités
+$\vec{w}$, on a $\vec{e}^{\mathsf{T}}\vec{w} = 1$, donc
+$$
+  G\vec{w} = \beta A\vec{w} + \frac{1}{N}\,\vec{e}\,
+  \big(\beta\,\vec{E}^{\mathsf{T}}\vec{w} + (1 - \beta)\,\vec{e}^{\mathsf{T}}\vec{w}\big)
+  = \beta A\vec{w} + \frac{\beta\,\vec{E}^{\mathsf{T}}\vec{w} + 1 - \beta}{N}\,\vec{e} .
+$$
+Le nombre $s = \vec{E}^{\mathsf{T}}\vec{w}$ est simplement la somme des
+composantes de $\vec{w}$ qui correspondent aux pages sans liens
+sortants. Le coût d'une itération est donc essentiellement celui du
+produit $A\vec{w}$, proportionnel au nombre de liens du Web plutôt qu'au
+carré du nombre de pages. La distance $d_1$ utilisée dans le critère
+d'arrêt est définie par
+$$
+  d_1(\vec{x}, \vec{y}) = |x_1 - y_1| + |x_2 - y_2| + \cdots + |x_N - y_N| ;
+$$
+c'est la taxi-distance de l'exemple \ref{ex:taxi}, étendue à $\R^N$.
+Le programme suivant met en œuvre l'algorithme.
+
+```{.python #lst:puissances caption="La méthode des puissances, appliquée au mini-web 3."}
+def pagerank(liens, N, beta=0.85, tol=1e-8):
+    """Méthode des puissances, sans construire G."""
+    A = matrice_transition(liens, N)    # creuse, en pratique
+    sans_sortie = (A.sum(axis=0) == 0)  # le vecteur E
+    w = np.ones(N) / N                  # départ : loi uniforme
+    for k in range(1, 1000):
+        s = w[sans_sortie].sum()        # le produit E^T w
+        w_suiv = beta * (A @ w) + (beta * s + 1 - beta) / N
+        if np.abs(w_suiv - w).sum() < tol:   # d_1(w_suiv, w)
+            return w_suiv, k
+        w = w_suiv
+
+liens3 = {1: [2], 2: [1, 3], 3: [2, 4, 5], 4: [3, 5],
+          5: [1, 2, 6], 6: [7], 7: [6]}
+q, k = pagerank(liens3, 7)
+print(k, "itérations")
+print(q)
+```
+
+```{.python caption="Sortie."}
+93 itérations
+[0.1216 0.1823 0.1228 0.0562 0.0801 0.2247 0.2124]
+```
+
+On retrouve le PageRank obtenu à la section \ref{sec:teleportation}. Dans
+le programme, l'addition d'un vecteur et d'un nombre ajoute ce nombre à
+chaque composante, ce qui réalise le terme $\frac{\beta s + 1 - \beta}{N}
+\,\vec{e}$ sans construire le vecteur $\vec{e}$.
+
+### Pourquoi la méthode converge : retour au théorème de Banach
+
+Le théorème \ref{thm:convergence-markov} garantit la convergence, mais
+il ne dit pas combien d'itérations sont nécessaires, et nous ne l'avons
+démontré que pour les matrices diagonalisables. Le théorème du point fixe
+de Banach du chapitre \ref{chap:metriques} fournit une démonstration
+complète, assortie d'une estimation de l'erreur. Comme l'annonçait la
+note historique \ref{hist:banach-histoire}, le PageRank est le point fixe
+d'une contraction.
+
+::: {.theorem #thm:G-contraction title="La matrice Google est une contraction"}
+Soit $\Delta$ l'ensemble des vecteurs de probabilités de $\R^N$, muni de
+la distance $d_1$. Pour tous $\vec{x}, \vec{y} \in \Delta$,
+$$
+  d_1(G\vec{x}, G\vec{y}) \leq \beta\, d_1(\vec{x}, \vec{y}) .
+$$
+L'application $\vec{x} \mapsto G\vec{x}$ est donc une contraction de
+rapport $\beta$ sur $(\Delta, d_1)$.
+:::
+
+::: {.proof}
+Posons $\vec{z} = \vec{x} - \vec{y}$. Les sommes des composantes de
+$\vec{x}$ et de $\vec{y}$ valent toutes deux $1$, donc
+$\vec{e}^{\mathsf{T}}\vec{z} = 0$, et
+$$
+  G\vec{z} = \beta B\vec{z} + \frac{1 - \beta}{N}\,\vec{e}\,(\vec{e}^{\mathsf{T}}\vec{z})
+  = \beta B\vec{z} .
+$$
+Il reste à voir que $d_1(B\vec{z}, \vec{0}) \leq d_1(\vec{z}, \vec{0})$.
+Par l'inégalité triangulaire dans $\R$, puis en échangeant l'ordre des
+sommes,
+$$
+  \sum_{i=1}^{N} \Big| \sum_{j=1}^{N} b_{ij} z_j \Big|
+  \leq \sum_{i=1}^{N} \sum_{j=1}^{N} b_{ij}\,|z_j|
+  = \sum_{j=1}^{N} |z_j| \sum_{i=1}^{N} b_{ij}
+  = \sum_{j=1}^{N} |z_j| ,
+$$
+puisque les coefficients de $B$ sont positifs et que la somme de chaque
+colonne de $B$ vaut $1$. Ainsi $d_1(G\vec{x}, G\vec{y}) = \beta\,
+d_1(B\vec{z}, \vec{0}) \leq \beta\, d_1(\vec{x}, \vec{y})$.
+:::
+
+L'espace métrique $(\Delta, d_1)$ est complet : si une suite de
+vecteurs de $\Delta$ est de Cauchy pour $d_1$, chacune de ses composantes
+est une suite de Cauchy de nombres réels, donc converge, et la limite
+a encore des composantes positives de somme $1$. Par le théorème de
+Banach, sous sa forme générale (remarque \ref{rem:banach-general}),
+l'application $\vec{x} \mapsto G\vec{x}$ possède un unique point fixe
+$\vec{q}$ dans $\Delta$, et la méthode des puissances converge vers
+$\vec{q}$ quel que soit le vecteur de départ. On retrouve ainsi
+l'existence et l'unicité du PageRank sans faire appel au théorème de
+Perron--Frobenius. La majoration de
+l'erreur (proposition \ref{prop:majoration-erreur}) devient
+$$
+  d_1(\vec{w}_k, \vec{q}) \leq \frac{\beta^k}{1 - \beta}\, d_1(\vec{w}_0, \vec{w}_1) .
+$$
+En l'appliquant à partir de $\vec{w}_{k-1}$ plutôt que de $\vec{w}_0$,
+avec un seul pas, on obtient aussi
+$d_1(\vec{w}_k, \vec{q}) \leq \frac{\beta}{1 - \beta}\,
+d_1(\vec{w}_{k-1}, \vec{w}_k)$ : lorsque le critère d'arrêt de
+l'algorithme \ref{algo:puissances} est satisfait, l'erreur est inférieure
+à $\frac{\num{0.85}}{\num{0.15}}\,\varepsilon \approx \num{5.7}\,\varepsilon$.
+
+Le nombre d'itérations nécessaires ne dépend donc pas de la taille du
+Web, mais seulement de $\beta$ et de la précision voulue. Comme deux
+vecteurs de probabilités sont à une distance $d_1$ d'au plus $2$, on a
+$d_1(\vec{w}_k, \vec{q}) \leq \beta^k\, d_1(\vec{w}_0, \vec{q}) \leq
+2\beta^k$ ; pour garantir une erreur inférieure à $10^{-8}$ avec
+$\beta = \num{0.85}$, il suffit que $2\,(\num{0.85})^k < 10^{-8}$,
+c'est-à-dire $k \geq 118$. Cette majoration est pessimiste : le programme
+précédent s'est arrêté après $93$ itérations. Page et ses collaborateurs
+rapportaient qu'une cinquantaine d'itérations suffisaient en pratique
+pour obtenir un classement stable sur une base de plusieurs centaines de
+millions de liens [@Page1999].
+
+::: {.remark #rem:seconde-vp title="Le rôle de la seconde valeur propre"}
+La vitesse de convergence de la méthode des puissances est gouvernée,
+comme à la section \ref{sec:stochastiques}, par le plus grand module
+$|\lambda_2|$ des valeurs propres de $G$ autres que $1$. On démontre que
+$|\lambda_2| \leq \beta$ pour toute matrice Google [@LangvilleMeyer2006],
+ce qui est cohérent avec le théorème \ref{thm:G-contraction}. Pour le
+mini-web 3, l'égalité est atteinte : $G$ possède une valeur propre égale
+à $-\num{0.85}$, héritée de la valeur propre $-1$ de la matrice $A$, qui
+traduit l'aller-retour entre les pages $6$ et $7$. Le facteur
+d'amortissement joue donc un double rôle : il règle le compromis entre
+fidélité à la structure des liens et poids de la téléportation
+(tableau \ref{tab:beta}), et il fixe la vitesse de convergence. Choisir
+$\beta$ proche de $1$ rend le calcul plus lent : avec $\beta =
+\num{0.99}$, il faudrait environ $\num{1900}$ itérations pour garantir la
+même précision.
+:::
+
+Pour conclure, rappelons que PageRank n'est qu'un des nombreux critères
+qu'utilisent les moteurs de recherche actuels, et que ses détails de
+mise en œuvre chez Google n'ont jamais été entièrement publiés. L'idée
+qu'il incarne a toutefois connu de nombreuses applications en dehors du
+Web : classer des articles scientifiques selon les citations qu'ils
+reçoivent, des équipes sportives selon leurs victoires, ou des espèces
+selon leur rôle dans un réseau alimentaire. Chaque fois, il s'agit de
+mesurer l'importance d'un élément d'un réseau par l'importance des
+éléments qui pointent vers lui, et le calcul se ramène à la recherche
+d'un vecteur propre associé à la valeur propre $1$.
+
+::: {.secondaire #rem:classe-classement title="Classer, une activité pour la classe"}
+Le principe de PageRank peut être exploré sans matrices. On présente
+aux élèves un petit réseau de quatre ou cinq pages, dessiné au tableau,
+et on leur demande d'abord de prédire un classement : la plupart
+compteront les liens entrants. On simule ensuite l'internaute aléatoire
+avec un dé, chaque élève ou chaque équipe notant les pages visitées
+pendant une trentaine de clics, et l'on compare les fréquences obtenues
+à la prédiction. Un réseau bien choisi, comme celui de la
+figure \ref{fig:miniweb1}, où une page qui reçoit peu de liens devance une
+page qui en reçoit autant, provoque une discussion sur ce que signifie
+« être important » dans un réseau. Dans la séquence Technico-sciences,
+on peut prolonger l'activité par le calcul de $A\vec{p}$ à l'aide d'un
+tableur, en lien avec la multiplication matricielle [@PDA2016].
+:::
+
+:::: {.historical #hist:page title="Larry Page"}
+::: {.portrait src="figures/portraits/larry-page.jpg" legende="Larry Page (né en 1973), en 2014." credit="Photo : Steve Jurvetson, CC BY 2.0, *Wikimedia Commons*."}
+Lawrence (Larry) Page est né en 1973 à East Lansing, au Michigan. Ses
+deux parents enseignaient l'informatique à l'Université d'État du
+Michigan, et il grandit entouré d'ordinateurs. Après des études de
+génie informatique à l'Université du Michigan, il entra en 1995 au
+doctorat en informatique de l'Université Stanford, sous la direction de
+Terry Winograd. C'est là qu'il rencontra Sergey Brin, un autre
+doctorant, né à Moscou la même année que lui.
+:::
+
+\medskip
+
+Page s'intéressait à la structure des liens du Web, plutôt qu'à son
+contenu. Il remarqua l'analogie avec les citations entre articles
+scientifiques : un article souvent cité, surtout par des articles
+eux-mêmes importants, est un article important. Pour appliquer cette
+idée au Web, il fallait d'abord en télécharger les liens, ce que fit le
+robot du projet *BackRub* à partir de 1996 ; le titre de l'article
+de 1999 sur PageRank, « The PageRank Citation Ranking » [@Page1999],
+garde la trace de cette analogie. Le nom de l'algorithme fait d'ailleurs
+un jeu de mots entre le nom de famille de son auteur et la *page*
+web. Le brevet sur la méthode, déposé par l'Université Stanford, porte
+le nom de Page comme inventeur ; Stanford en accorda une licence
+exclusive à Google.
+
+En septembre 1998, Page et Brin fondèrent l'entreprise Google, dans un
+garage de Menlo Park, en Californie ; Page abandonna son doctorat pour
+s'y consacrer. Il en fut le premier président-directeur général,
+jusqu'en 2001, puis de nouveau de 2011 à 2015, avant de diriger Alphabet,
+la société mère de Google, jusqu'en 2019. Son parcours illustre la
+distance parfois très courte entre une idée mathématique et ses
+applications : à l'origine de l'une des plus grandes entreprises du
+monde se trouve un projet de doctorat, dont le cœur est le calcul d'un
+vecteur propre associé à la valeur propre $1$.
+::::
+
+## Exercices {.unnumbered .exercices}
+
+:::: {.exercice #exo:M-florence}
+Florence a trouvé que $\vec{v} = (1, -2, 6)$ est un vecteur propre
+associé à une certaine valeur propre $\lambda$ d'une matrice $A$. En
+utilisant un logiciel pour vérifier son résultat, elle a plutôt obtenu
+le vecteur $\vec{w} = (-5, 10, -30)$. Ne trouvant pas son erreur, elle a
+demandé de l'aide à son enseignante, qui lui a expliqué que le vecteur
+obtenu par le logiciel est aussi une bonne réponse. Expliquer pourquoi.
+
+::: {.solution}
+Comme $\vec{w} = (-5, 10, -30) = -5\,(1, -2, 6) = -5\,\vec{v}$, les deux
+vecteurs sont colinéaires. Or, dès que $\vec{v}$ est un vecteur propre
+associé à $\lambda$, tout multiple non nul de $\vec{v}$ en est un aussi
+(exercice \ref{exo:M-multiple}) : $A\vec{w} = -5\,A\vec{v} = -5\lambda\vec{v}
+= \lambda\vec{w}$. Un vecteur propre n'est défini qu'à un facteur non nul
+près, et chaque logiciel choisit sa propre normalisation ; `numpy`,
+par exemple, renvoie des vecteurs propres de norme $1$.
+:::
+::::
+
+:::: {.exercice #exo:M-multiple}
+Montrer que si $\vec{v}$ est un vecteur propre d'une matrice $A$ associé
+à une valeur propre $\lambda$, alors $\mu\vec{v}$ est lui aussi un
+vecteur propre de $A$ associé à $\lambda$, quel que soit le nombre réel
+$\mu \neq 0$. Pourquoi faut-il exclure $\mu = 0$ ?
+
+::: {.solution}
+Par linéarité du produit matriciel, $A(\mu\vec{v}) = \mu\,A\vec{v} =
+\mu\lambda\vec{v} = \lambda\,(\mu\vec{v})$. De plus, $\mu\vec{v} \neq
+\vec{0}$, puisque $\mu \neq 0$ et $\vec{v} \neq \vec{0}$ ; c'est donc un
+vecteur propre associé à $\lambda$. Pour $\mu = 0$, l'égalité
+$A\vec{0} = \lambda\vec{0}$ est vraie, mais le vecteur nul est exclu par
+la définition \ref{def:D-valeur-propre} : il vérifierait l'égalité pour
+*toute* valeur de $\lambda$, et la notion de valeur propre
+perdrait son sens.
+:::
+::::
+
+:::: {.exercice #exo:M-polycar}
+Pour chacune des matrices suivantes, déterminer le polynôme
+caractéristique $p(\lambda) = \dete(A - \lambda I)$, les valeurs propres,
+et les vecteurs propres associés à chaque valeur propre.
+
+a) $\begin{pmatrix} 6 & 14 & 9\\ 0 & 3 & 0\\ 0 & -10 & -3 \end{pmatrix}$
+b) $\begin{pmatrix} 1 & 2 & 3\\ 3 & 2 & 1\\ 4 & 4 & 4 \end{pmatrix}$
+c) $\mat{a}{0}{0}{b}$, où $a, b \in \R$.
+d) $\begin{pmatrix} 1 & 0 & \tfrac13\\[2pt] 0 & \tfrac12 & \tfrac13\\[2pt]
+   0 & \tfrac12 & \tfrac13 \end{pmatrix}$. Cette matrice est-elle
+   stochastique ? Interpréter l'état $1$ dans la chaîne de Markov
+   correspondante.
+
+::: {.solution}
+Dans chaque cas, $t$ désigne un nombre réel non nul.
+
+a) $p(\lambda) = -\lambda^3 + 6\lambda^2 + 9\lambda - 54 =
+   -(\lambda - 6)(\lambda - 3)(\lambda + 3)$. Les valeurs propres sont $6$,
+   $3$ et $-3$, de vecteurs propres respectifs $(t, 0, 0)$, $(t, 3t, -5t)$
+   et $(t, 0, -t)$.
+b) $p(\lambda) = -\lambda^3 + 7\lambda^2 + 8\lambda =
+   -\lambda(\lambda - 8)(\lambda + 1)$. Les valeurs propres sont $8$, $-1$
+   et $0$, de vecteurs propres respectifs $(5t, 4t, 9t)$, $(t, -t, 0)$ et
+   $(t, -2t, t)$.
+c) $p(\lambda) = (a - \lambda)(b - \lambda)$. Si $a \neq b$, les valeurs
+   propres sont $a$ et $b$, de vecteurs propres respectifs $(t, 0)$ et
+   $(0, t)$. Si $a = b$, la matrice vaut $aI$ : la seule valeur propre est
+   $a$, et tout vecteur non nul est un vecteur propre (c'est le cas, en
+   particulier, de la matrice nulle, avec $a = b = 0$).
+d) $p(\lambda) = -\lambda^3 + \tfrac{11}{6}\lambda^2 - \tfrac56\lambda
+   = -\tfrac16\lambda(\lambda - 1)(6\lambda - 5)$. Les valeurs propres sont
+   $1$, $\tfrac56$ et $0$, de vecteurs propres respectifs $(t, 0, 0)$,
+   $(-2t, t, t)$ et $(t, 2t, -3t)$. La matrice est stochastique : ses
+   coefficients sont positifs et chaque colonne a une somme égale à $1$.
+   L'état $1$ est *absorbant* : une fois atteint, on y reste avec la
+   probabilité $1$. Le vecteur de probabilités $(1, 0, 0)$ est l'état
+   d'équilibre, et la valeur propre $\tfrac56$ indique que la probabilité de
+   ne pas encore avoir été absorbé diminue d'un facteur $\tfrac56$ à chaque
+   étape.
+:::
+::::
+
+:::: {.exercice #exo:M-puissances}
+Soit $P$ une matrice carrée ayant $\lambda$ comme valeur propre et
+$\vec{v}$ comme vecteur propre associé à $\lambda$. Montrer par
+récurrence que, pour tout entier $n \geq 1$, $\lambda^n$ est une valeur
+propre de $P^n$ et $\vec{v}$ est un vecteur propre de $P^n$ associé à
+$\lambda^n$.
+
+::: {.solution}
+Montrons par récurrence que $P^n\vec{v} = \lambda^n\vec{v}$. Pour
+$n = 1$, c'est l'hypothèse. Supposons l'égalité vraie pour un certain
+$n \geq 1$. Alors
+$$
+  P^{n+1}\vec{v} = P\,(P^n\vec{v}) = P\,(\lambda^n\vec{v})
+  = \lambda^n\,P\vec{v} = \lambda^n\lambda\vec{v} = \lambda^{n+1}\vec{v},
+$$
+ce qui établit l'égalité au rang $n + 1$. Comme $\vec{v} \neq \vec{0}$,
+l'égalité $P^n\vec{v} = \lambda^n\vec{v}$ signifie que $\lambda^n$ est
+une valeur propre de $P^n$, associée au vecteur propre $\vec{v}$. Ce
+résultat est utilisé dans la démonstration du
+théorème \ref{thm:convergence-markov}.
+:::
+::::
+
+:::: {.exercice #exo:M-colineaires}
+Montrer que deux vecteurs de probabilités *distincts* ne peuvent pas
+être colinéaires. En déduire que, si $1$ est une valeur propre simple
+d'une matrice stochastique, celle-ci possède au plus un état
+d'équilibre.
+
+::: {.solution}
+Soient $\vec{v}$ et $\vec{w}$ deux vecteurs de probabilités colinéaires :
+puisque $\vec{w} \neq \vec{0}$, il existe un nombre $c$ tel que
+$\vec{v} = c\,\vec{w}$. En additionnant les composantes, on obtient
+$1 = c \cdot 1$, donc $c = 1$ et $\vec{v} = \vec{w}$. Deux vecteurs de
+probabilités colinéaires sont donc égaux. Si $1$ est une valeur propre
+simple, ses vecteurs propres forment une droite, et deux états
+d'équilibre seraient deux vecteurs de probabilités colinéaires, donc
+égaux.
+:::
+::::
+
+:::: {.exercice #exo:M-vp-proba}
+Une matrice $M$ possède un vecteur propre $\vec{v}$ qui est un vecteur de
+probabilités. La matrice $M$ est-elle nécessairement stochastique ?
+Justifier.
+
+::: {.solution}
+Non. Par exemple, $M = \mat{1}{\tfrac12}{0}{2}$ vérifie
+$M\col{1}{0} = \col{1}{0}$ : le vecteur de probabilités $(1,0)$ est un
+vecteur propre associé à la valeur propre $1$. Pourtant, $M$ n'est pas
+stochastique, puisque la somme de sa seconde colonne vaut $\tfrac52$.
+Le vecteur propre ne renseigne que sur l'action de $M$ dans une seule
+direction.
+:::
+::::
+
+:::: {.exercice #exo:M-conserve}
+Soient $M$ une matrice stochastique et $\vec{v}$ un vecteur de
+probabilités. Montrer que $M\vec{v}$ est aussi un vecteur de
+probabilités (proposition \ref{prop:stoch-conserve}).
+
+::: {.solution}
+La $i$\ap{e} composante de $M\vec{v}$ est $\sum_j m_{ij}v_j$ ; c'est une
+somme de produits de nombres positifs, donc elle est positive. La somme
+des composantes vaut
+$$
+  \sum_{i=1}^{N} \sum_{j=1}^{N} m_{ij}v_j
+  = \sum_{j=1}^{N} v_j \Big(\sum_{i=1}^{N} m_{ij}\Big)
+  = \sum_{j=1}^{N} v_j \cdot 1 = 1 ,
+$$
+puisque la somme de chaque colonne de $M$ vaut $1$ et que celle des
+composantes de $\vec{v}$ vaut $1$. Par récurrence, $M^n\vec{v}$ est un
+vecteur de probabilités pour tout $n$.
+:::
+::::
+
+:::: {.exercice #exo:M-stoch-vp}
+Soit $M$ une matrice stochastique de taille $N$, et notons
+$\norme{\vec{v}}_1 = |v_1| + \cdots + |v_N|$.
+
+a) Montrer que $\norme{M\vec{v}}_1 \leq \norme{\vec{v}}_1$ pour tout
+   vecteur $\vec{v} \in \R^N$.
+b) En déduire que toute valeur propre réelle $\lambda$ de $M$
+   vérifie $|\lambda| \leq 1$.
+c) Montrer que si un vecteur propre de $M$ est un vecteur de
+   probabilités, la valeur propre associée vaut $1$.
+
+::: {.solution}
+a) C'est le calcul de la démonstration du
+   théorème \ref{thm:G-contraction} : par l'inégalité triangulaire,
+   $\norme{M\vec{v}}_1 = \sum_i \big|\sum_j m_{ij}v_j\big| \leq \sum_i
+   \sum_j m_{ij}|v_j| = \sum_j |v_j| \sum_i m_{ij} = \norme{\vec{v}}_1$.
+b) Si $M\vec{v} = \lambda\vec{v}$ avec $\vec{v} \neq \vec{0}$ réel,
+   alors $|\lambda|\,\norme{\vec{v}}_1 = \norme{M\vec{v}}_1 \leq
+   \norme{\vec{v}}_1$, et l'on divise par $\norme{\vec{v}}_1 > 0$.
+c) Si $M\vec{v} = \lambda\vec{v}$ et que $\vec{v}$ est un vecteur de
+   probabilités, la somme des composantes de $M\vec{v}$ vaut $1$
+   (exercice \ref{exo:M-conserve}), et celle de $\lambda\vec{v}$ vaut
+   $\lambda$. Donc $\lambda = 1$.
+:::
+::::
+
+:::: {.exercice .python #exo:M-normaliser}
+Écrire une fonction Python `vers_probabilites(v)` qui prend un
+vecteur $\vec{v}$ et renvoie le vecteur de probabilités colinéaire à
+$\vec{v}$, lorsqu'il existe. À quelle condition sur $\vec{v}$
+existe-t-il ? Est-il unique ? Tester la fonction sur les vecteurs propres
+renvoyés par `np.linalg.eig` pour la matrice $M$ du modèle
+météorologique.
+
+::: {.solution}
+Un vecteur de probabilités colinéaire à $\vec{v}$ s'écrit $c\,\vec{v}$,
+et la condition sur la somme impose $c = 1/(v_1 + \cdots + v_N)$. Il
+existe si et seulement si $\vec{v} \neq \vec{0}$ et si toutes ses
+composantes sont de même signe (positives ou nulles, ou négatives ou
+nulles) ; il est alors unique (exercice \ref{exo:M-colineaires}).
+
+```{.python}
+import numpy as np
+
+def vers_probabilites(v, tol=1e-12):
+    v = np.real(np.asarray(v, dtype=complex))
+    s = v.sum()
+    if abs(s) < tol:
+        raise ValueError("la somme des composantes est nulle")
+    p = v / s
+    if (p < -tol).any():        # erreurs d'arrondi tolérées
+        raise ValueError("composantes de signes différents")
+    return np.clip(p, 0, None)  # remplace -0.0 par 0
+
+M = np.array([[0.8, 0.4], [0.2, 0.6]])
+valeurs, vecteurs = np.linalg.eig(M)
+print(vers_probabilites(vecteurs[:, 0]))  # [0.66666667 0.33333333]
+```
+
+Le vecteur propre associé à $1$ que renvoie `numpy` est
+$(\num{0.894}\,;\ \num{0.447})$, de norme $1$ ; il est parfois renvoyé avec
+des composantes négatives, ce que la division par la somme corrige
+automatiquement. Le vecteur propre associé à $\num{0.4}$, proportionnel à
+$(1, -1)$, a une somme nulle : la fonction signale qu'aucun vecteur de
+probabilités ne lui est colinéaire.
+:::
+::::
+
+:::: {.exercice #exo:M-memoire}
+On reprend le modèle météorologique à mémoire de deux jours de la
+section \ref{sec:memoire}, de matrice $M_2$.
+
+a) Vérifier que $\vec{q} = \tfrac{1}{32}\,(21, 3, 3, 5)$ est l'état
+   d'équilibre de $M_2$.
+b) Il a plu hier et il fait beau aujourd'hui. Quelle est la
+   probabilité qu'il fasse beau après-demain ?
+c) À long terme, quelle est la probabilité de deux jours de pluie
+   consécutifs ? Comparer avec le modèle à deux états de la
+   section \ref{sec:meteo}.
+
+::: {.solution}
+a) On calcule $M_2\vec{q} = \tfrac{1}{32}\big(\num{0.9}\cdot 21 +
+   \num{0.7}\cdot 3,\ \num{0.5}\cdot 3 + \num{0.3}\cdot 5,\ \num{0.1}\cdot 21
+   + \num{0.3}\cdot 3,\ \num{0.5}\cdot 3 + \num{0.7}\cdot 5\big) =
+   \tfrac{1}{32}(21, 3, 3, 5) = \vec{q}$, et la somme des composantes vaut
+   $1$. La matrice $M_2$ est régulière (tous les coefficients de $M_2^2$ sont
+   strictement positifs), donc cet équilibre est unique.
+b) On part de l'état $PB$. Demain, on passe à $BB$ avec la probabilité
+   $\num{0.7}$, puis il fait beau après-demain avec la probabilité
+   $\num{0.9}$ ; ou l'on passe à $BP$ avec la probabilité $\num{0.3}$, puis
+   il fait beau avec la probabilité $\num{0.5}$. La probabilité cherchée est
+   $\num{0.7}\cdot\num{0.9} + \num{0.3}\cdot\num{0.5} = \num{0.78}$.
+c) C'est $q_{PP} = \tfrac{5}{32} \approx \num{0.156}$. Dans le modèle à
+   deux états, elle vaut $\P{X_n = P}\cdot \num{0.6} = \tfrac13 \cdot
+   \num{0.6} = \num{0.2}$. Le modèle à mémoire, où il fait aussi plus
+   souvent beau à long terme ($\tfrac34$ au lieu de $\tfrac23$), produit
+   moins de séquences de pluie.
+:::
+::::
+
+:::: {.exercice .python #exo:M-vehicules}
+Dans une ville, on distingue trois types de véhicules : les automobiles
+de type berline ou coupé ($A$), les véhicules utilitaires sport ($V$) et
+les camionnettes ($C$). Chaque année, on observe les transitions
+suivantes :
+
+- $\SI{3}{\percent}$ des propriétaires d'un $A$ l'échangent pour un
+  $V$, et $\SI{1}{\percent}$ l'échangent pour un $C$ ;
+- $\SI{2}{\percent}$ des propriétaires d'un $V$ l'échangent pour un
+  $A$, et $\SI{3}{\percent}$ l'échangent pour un $C$ ;
+- $\SI{5}{\percent}$ des propriétaires d'un $C$ l'échangent pour un
+  $V$, et $\SI{2}{\percent}$ l'échangent pour un $A$.
+
+Actuellement, les proportions sont de $\SI{65}{\percent}$ pour $A$,
+$\SI{30}{\percent}$ pour $V$ et $\SI{5}{\percent}$ pour $C$. En supposant
+que le nombre de véhicules reste constant, déterminer les proportions de
+chaque type dans $1$ an, dans $5$ ans, dans $10$ ans et à long terme.
+
+::: {.solution}
+Dans l'ordre $A$, $V$, $C$, la matrice de transition et la répartition
+initiale sont
+$$
+  M = \begin{pmatrix}
+  \num{0.96} & \num{0.02} & \num{0.02}\\
+  \num{0.03} & \num{0.95} & \num{0.05}\\
+  \num{0.01} & \num{0.03} & \num{0.93}
+  \end{pmatrix},
+  \qquad \vec{x}_0 = \begin{pmatrix} \num{0.65}\\ \num{0.30}\\ \num{0.05} \end{pmatrix} .
+$$
+On obtient
+$$
+  \vec{x}_1 = \begin{pmatrix} \num{0.631}\\ \num{0.307}\\ \num{0.062} \end{pmatrix},
+  \quad
+  \vec{x}_5 \approx \begin{pmatrix} \num{0.5657}\\ \num{0.3319}\\ \num{0.1024} \end{pmatrix},
+  \quad
+  \vec{x}_{10} \approx \begin{pmatrix} \num{0.5039}\\ \num{0.3568}\\ \num{0.1393} \end{pmatrix} .
+$$
+À long terme, la répartition se rapproche de l'état d'équilibre
+$\vec{q} = \big(\tfrac13, \tfrac{13}{30}, \tfrac{7}{30}\big)$, soit
+environ $\SI{33.3}{\percent}$ de $A$, $\SI{43.3}{\percent}$ de $V$ et
+$\SI{23.3}{\percent}$ de $C$.
+Les valeurs propres de $M$ sont $1$, $\num{0.94}$ et $\num{0.9}$ : la
+convergence est lente, et la répartition est encore loin de l'équilibre
+après dix ans, puisque $(\num{0.94})^{10} \approx \num{0.54}$.
+:::
+::::
+
+:::: {.exercice #exo:M-hamster}
+Doudou, le hamster paresseux, connaît trois endroits dans sa cage : les
+copeaux où il dort, la mangeoire où il mange, et la roue où il fait de
+l'exercice. Ses journées se ressemblent, et son activité peut être
+modélisée par une chaîne de Markov, en observant l'endroit où il se
+trouve à intervalles réguliers (par exemple chaque minute)^[Exemple tiré de l'article « Chaîne de Markov » de Wikipédia, qui utilise la convention des lignes (remarque \ref{rem:convention-colonnes}).].
+
+- Quand il dort, il a $\tfrac{9}{10}$ des chances de ne pas se
+  réveiller à l'observation suivante. Lorsqu'il se réveille, il a
+  une chance sur deux d'aller manger et une chance sur deux d'aller
+  faire de l'exercice.
+- Après avoir mangé, il a $\tfrac{7}{10}$ des chances de retourner
+  dormir et $\tfrac{3}{10}$ des chances d'aller courir.
+- Après avoir couru, il a $\tfrac{8}{10}$ des chances de retourner
+  dormir ; sinon, il continue à courir.
+
+Combien de temps Doudou passe-t-il à dormir, en moyenne, dans une
+journée ?
+
+::: {.solution}
+Dans l'ordre dormir ($D$), manger ($M$), courir ($R$), la matrice de
+transition est
+$$
+  H = \begin{pmatrix}
+  \num{0.9} & \num{0.7} & \num{0.8}\\
+  \num{0.05} & 0 & 0\\
+  \num{0.05} & \num{0.3} & \num{0.2}
+  \end{pmatrix} .
+$$
+Le système $(H - I)\vec{q} = \vec{0}$ donne $q_M = \num{0.05}\,q_D$, puis,
+par la troisième ligne, $\num{0.8}\,q_R = \num{0.05}\,q_D + \num{0.3}\,q_M
+= \num{0.065}\,q_D$, soit $q_R = \tfrac{13}{160}\,q_D$. Avec $q_D + q_M +
+q_R = 1$, on trouve $\vec{q} = \tfrac{1}{181}(160, 8, 13) \approx
+(\num{0.884}\,;\ \num{0.044}\,;\ \num{0.072})$. La matrice $H$ est régulière
+($H^2$ n'a que des coefficients strictement positifs) ; par le théorème
+ergodique (remarque \ref{rem:ergodique}), Doudou passe environ
+$\SI{88.4}{\percent}$ de son temps à dormir, soit environ
+$\num{0.884} \times 24 \approx \num{21.2}$ heures par jour, ou
+$21$ h $13$ min.
+:::
+::::
+
+:::: {.exercice .python #exo:M-policier}
+Un policier contrôle la circulation aux huit intersections illustrées
+ci-dessous. Lorsqu'il arrive à une intersection, il y demeure une heure,
+puis il décide au hasard d'aller à une intersection voisine ou de rester
+où il est, chaque possibilité ayant la même probabilité d'être choisie.
+Par exemple, s'il est à l'intersection $5$, il choisit d'aller à $2$,
+$4$, $5$ ou $8$, avec une probabilité de $\tfrac14$ pour chacune. À la
+fin de sa journée de travail, il choisit de la même façon le point de
+départ du lendemain.
+
+![](figures/tikz/exo-M-policier.tikz)
+
+Déterminer le pourcentage de son temps de travail que le policier passe
+à chacune des intersections.
+
+::: {.solution}
+Les voisines de chaque intersection sont : $1$ : $2, 4$ ; $2$ : $1, 5$ ;
+$3$ : $4, 6$ ; $4$ : $1, 3, 5, 7$ ; $5$ : $2, 4, 8$ ; $6$ : $3, 7$ ;
+$7$ : $4, 6, 8$ ; $8$ : $5, 7$. Depuis une intersection qui a $d$
+voisines, le policier se rend à chacune des $d + 1$ possibilités (en
+comptant l'intersection elle-même) avec la probabilité $1/(d+1)$. On
+construit la matrice de transition $8 \times 8$ avec la fonction
+`matrice_transition` du programme \ref{lst:miniweb1}, en ajoutant
+chaque intersection à la liste de ses voisines, puis on calcule l'état
+d'équilibre :
+$$
+  \vec{q} = \tfrac{1}{28}\,(3, 3, 3, 5, 4, 3, 4, 3) .
+$$
+Le policier passe donc environ $\SI{10.7}{\percent}$ de son temps à
+chacune des intersections $1$, $2$, $3$, $6$ et $8$, environ
+$\SI{17.9}{\percent}$ à l'intersection $4$, et environ
+$\SI{14.3}{\percent}$ à chacune des intersections $5$ et $7$. On remarque
+que $q_i$ est proportionnel à $d_i + 1$. Ce n'est pas un hasard : si
+$q_j = c\,(d_j + 1)$ pour tout $j$, la $i$\ap{e} composante de $M\vec{q}$
+est la somme, sur les $d_i + 1$ intersections $j$ voisines de $i$ ou
+égales à $i$, des termes $\frac{1}{d_j + 1}\,c\,(d_j + 1) = c$, soit
+$c\,(d_i + 1) = q_i$. La relation de voisinage étant symétrique, chaque
+intersection reçoit autant qu'elle donne.
+:::
+::::
+
+:::: {.exercice #exo:M-graphe-matrice}
+La matrice suivante est la matrice de transition d'une chaîne de Markov
+associée à un mini-web. Dessiner ce mini-web.
+$$
+  \begin{pmatrix}
+  0 & \tfrac12 & 0 & \tfrac12\\[2pt]
+  \tfrac13 & 0 & 0 & 0\\[2pt]
+  \tfrac13 & \tfrac12 & \tfrac12 & \tfrac12\\[2pt]
+  \tfrac13 & 0 & \tfrac12 & 0
+  \end{pmatrix}
+$$
+
+::: {.solution}
+La colonne $j$ décrit les liens qui partent de la page $j$ : la page $1$
+pointe vers $2$, $3$ et $4$ ; la page $2$, vers $1$ et $3$ ; la page $3$,
+vers elle-même et vers $4$ ; la page $4$, vers $1$ et $3$. Le coefficient
+$a_{33} = \tfrac12$ correspond à un lien de la page $3$ vers elle-même.
+
+![](figures/tikz/sol-M-graphe-matrice.tikz)
+:::
+::::
+
+:::: {.exercice #exo:M-cycle}
+Considérons le mini-web suivant.
+
+![](figures/tikz/exo-M-cycle.tikz)
+
+a) Sans faire de calculs, déterminer le PageRank de ce mini-web
+   (sans téléportation).
+b) Peut-on ajouter d'autres liens tout en conservant le même
+   PageRank ?
+c) La loi $\vec{p}_n$ d'un internaute qui part de la page $1$
+   converge-t-elle ? Comment interpréter alors le PageRank ?
+
+::: {.solution}
+a) L'internaute parcourt les trois pages à tour de rôle, et passe autant
+   de temps sur chacune : le PageRank est $\big(\tfrac13, \tfrac13,
+   \tfrac13\big)$. On peut aussi invoquer la symétrie : la permutation
+   $1 \to 2 \to 3 \to 1$ conserve le mini-web, donc les trois pages jouent le
+   même rôle.
+b) Oui. Il suffit d'ajouter des liens qui préservent cette symétrie, par
+   exemple tous les liens dans les deux sens, une boucle sur chaque page, ou
+   les deux.
+
+   ![](figures/tikz/sol-M-cycle.tikz)
+
+   Plus généralement, le PageRank reste uniforme dès que la somme de chaque
+   *ligne* de la matrice de transition vaut aussi $1$ : alors
+   $A\vec{e} = \vec{e}$, et la loi uniforme est un état d'équilibre.
+c) Non : partant de la page $1$, l'internaute est sur la page $1$ aux
+   étapes $0, 3, 6, \dots$, et la loi $\vec{p}_n$ parcourt cycliquement
+   $(1,0,0)$, $(0,1,0)$, $(0,0,1)$. La chaîne est périodique, comme celle de
+   l'exemple \ref{ex:stoch-oscille}, et la matrice n'est pas régulière. Le
+   PageRank s'interprète alors comme la proportion du temps passé sur
+   chaque page (remarque \ref{rem:ergodique}), qui vaut bien $\tfrac13$.
+   Dans la version de la troisième figure, les boucles rendent la matrice
+   régulière, et $\vec{p}_n$ converge.
+:::
+::::
+
+:::: {.exercice .python #exo:M-cinq-pages}
+Soit $\mathcal{W}$ le mini-web suivant.
+
+![](figures/tikz/exo-M-cinq-pages.tikz)
+
+a) Si un internaute commence sa promenade à la page $5$, quelle
+   proportion de son temps passera-t-il sur chaque page ?
+b) Que se passe-t-il s'il commence à la page $2$ ?
+c) Déterminer la matrice de transition $M$ de $\mathcal{W}$.
+d) Trouver un vecteur $\vec{v}$ non nul tel que $M\vec{v} = \vec{v}$.
+e) Trouver le polynôme caractéristique de $M$, puis ses valeurs
+   propres.
+f) Modifier la matrice pour tenir compte des pages sans liens
+   sortants. On appellera $N$ cette matrice.
+g) Calculer la matrice Google $G$ avec une probabilité de
+   téléportation de $\tfrac{1}{10}$, puis utiliser $G$ pour déterminer
+   le PageRank.
+
+::: {.solution}
+a) De la page $5$, l'internaute passe à la page $3$, puis il fait
+   indéfiniment l'aller-retour entre les pages $3$ et $1$ : à long terme, il
+   passe la moitié de son temps sur chacune des pages $1$ et $3$, et aucun
+   temps sur les autres.
+b) La page $2$ n'a aucun lien sortant : la promenade s'arrête, et le
+   modèle n'est pas défini. C'est le problème de la
+   section \ref{sec:pendantes}.
+c) La matrice de transition est
+   $$
+     M = \begin{pmatrix}
+     0 & 0 & 1 & 0 & 0\\
+     0 & 0 & 0 & \tfrac13 & 0\\
+     1 & 0 & 0 & \tfrac13 & 1\\
+     0 & 0 & 0 & 0 & 0\\
+     0 & 0 & 0 & \tfrac13 & 0
+     \end{pmatrix} .
+   $$
+   Sa deuxième colonne est nulle : $M$ n'est pas stochastique.
+d) $\vec{v} = (1, 0, 1, 0, 0)$. Le noyau de $M - I$ est la droite
+   engendrée par $\vec{v}$ ; le vecteur de probabilités correspondant,
+   $\big(\tfrac12, 0, \tfrac12, 0, 0\big)$, retrouve la réponse de a).
+e) $p(\lambda) = \dete(M - \lambda I) = -\lambda^5 + \lambda^3 =
+   -\lambda^3(\lambda - 1)(\lambda + 1)$. Les valeurs propres sont $0$ (de
+   multiplicité $3$), $1$ et $-1$ ; la valeur propre $-1$ traduit
+   l'aller-retour entre les pages $1$ et $3$.
+f) On remplace la deuxième colonne par une colonne de $\tfrac15$ :
+   $N = M + \tfrac15\,\vec{e}\,\vec{E}^{\mathsf{T}}$, avec $\vec{E} = (0, 1,
+   0, 0, 0)$.
+g) Avec $\beta = \num{0.9}$, $G = \num{0.9}\,N + \num{0.1}\cdot\tfrac15\,
+   \vec{e}\,\vec{e}^{\mathsf{T}}$ :
+   $$
+     G = \begin{pmatrix}
+     \tfrac{1}{50} & \tfrac15 & \tfrac{23}{25} & \tfrac{1}{50} & \tfrac{1}{50}\\[2pt]
+     \tfrac{1}{50} & \tfrac15 & \tfrac{1}{50} & \tfrac{8}{25} & \tfrac{1}{50}\\[2pt]
+     \tfrac{23}{25} & \tfrac15 & \tfrac{1}{50} & \tfrac{8}{25} & \tfrac{23}{25}\\[2pt]
+     \tfrac{1}{50} & \tfrac15 & \tfrac{1}{50} & \tfrac{1}{50} & \tfrac{1}{50}\\[2pt]
+     \tfrac{1}{50} & \tfrac15 & \tfrac{1}{50} & \tfrac{8}{25} & \tfrac{1}{50}
+     \end{pmatrix} .
+   $$
+   Son état d'équilibre est le PageRank $\vec{q} \approx (\num{0.4429}\,;
+   \ \num{0.0339}\,;\ \num{0.4631}\,;\ \num{0.0261}\,;\ \num{0.0339})$. Le classement
+   est : page $3$, page $1$, pages $2$ et $5$ à égalité, page $4$. La
+   page $4$, vers laquelle ne pointe aucun lien, n'est visitée que par
+   téléportation.
+:::
+::::
+
+:::: {.exercice .python #exo:M-sept-pages}
+Considérons le mini-web $\mathcal{W}$ ci-dessous.
+
+![](figures/tikz/exo-M-sept-pages.tikz)
+
+a) Trouver la matrice de transition de $\mathcal{W}$. Contient-il
+   des pages sans liens sortants ? des régions piégeantes ?
+b) Trouver la matrice Google de $\mathcal{W}$, avec une probabilité
+   de téléportation de $\num{0.15}$.
+c) À l'aide d'un outil informatique, trouver le PageRank de
+   $\mathcal{W}$, et classer les pages.
+
+::: {.solution}
+a) Les liens sortants sont : $1 \to 2$ ; $2 \to 1, 3$ ; $3 \to 1, 2, 5$ ;
+   $4 \to 1, 6$ ; $5 \to 3, 4$ ; $6 \to 7$ ; $7 \to 6$. D'où
+   $$
+     A = \begin{pmatrix}
+     0 & \tfrac12 & \tfrac13 & \tfrac12 & 0 & 0 & 0\\[2pt]
+     1 & 0 & \tfrac13 & 0 & 0 & 0 & 0\\[2pt]
+     0 & \tfrac12 & 0 & 0 & \tfrac12 & 0 & 0\\[2pt]
+     0 & 0 & 0 & 0 & \tfrac12 & 0 & 0\\[2pt]
+     0 & 0 & \tfrac13 & 0 & 0 & 0 & 0\\[2pt]
+     0 & 0 & 0 & \tfrac12 & 0 & 0 & 1\\[2pt]
+     0 & 0 & 0 & 0 & 0 & 1 & 0
+     \end{pmatrix} .
+   $$
+   Chaque page a au moins un lien sortant, mais les pages $6$ et $7$ forment
+   une région piégeante : sans téléportation, l'unique état d'équilibre est
+   $\big(0, 0, 0, 0, 0, \tfrac12, \tfrac12\big)$.
+b) Puisque $\vec{E} = \vec{0}$, on a $B = A$ et $G = \num{0.85}\,A +
+   \num{0.15}\cdot\tfrac17\,\vec{e}\,\vec{e}^{\mathsf{T}}$ : chaque coefficient
+   de $G$ vaut $\num{0.85}\,a_{ij} + \tfrac{\num{0.15}}{7}$.
+c) Avec la fonction `pagerank` du programme \ref{lst:puissances},
+   ou la fonction `equilibre` du programme \ref{lst:google}, on
+   obtient
+   $$
+     \vec{q} \approx (\num{0.1593}\,;\ \num{0.1931}\,;\ \num{0.1280}\,;\ \num{0.0460}\,;
+     \ \num{0.0577}\,;\ \num{0.2132}\,;\ \num{0.2027}) .
+   $$
+   Le classement est : page $6$, page $7$, page $2$, page $1$, page $3$, page
+   $5$, page $4$. Comme pour le mini-web 3, la région piégeante occupe les
+   deux premières places, avec environ $\SI{42}{\percent}$ du PageRank total.
+:::
+::::
+
+:::: {.exercice #exo:M-google-formule}
+Considérons un mini-web $\mathcal{W}$ de $N \geq 2$ pages, de matrice de
+transition $A$, et les vecteurs $\vec{e} = (1, 1, \dots, 1)$ et $\vec{E}
+= (E_1, \dots, E_N)$, où $E_j = 1$ si la page $j$ n'a pas de liens
+sortants et $E_j = 0$ sinon.
+
+a) À quoi correspond la matrice $\frac1N\,\vec{e}\,\vec{E}^{\mathsf{T}}$ ?
+b) Exprimer la matrice $B$ qui tient compte des pages sans liens
+   sortants.
+c) Montrer que la matrice Google, avec un facteur d'amortissement
+   $\beta$, peut s'écrire
+   $$
+     G = \beta A + \frac1N\,\vec{e}\,\big(\beta\vec{E}^{\mathsf{T}}
+     + (1 - \beta)\,\vec{e}^{\mathsf{T}}\big) .
+   $$
+d) Pourquoi $A$ est-elle une matrice creuse lorsque $\mathcal{W}$ est
+   le Web réel ? Pourquoi, si $0 < \beta < 1$, tous les coefficients de
+   $G$ sont-ils dans l'intervalle $\intoo{0}{1}$ ?
+
+::: {.solution}
+a) Le coefficient $(i, j)$ de $\vec{e}\,\vec{E}^{\mathsf{T}}$ vaut
+   $e_i E_j = E_j$. La matrice $\frac1N\,\vec{e}\,\vec{E}^{\mathsf{T}}$ a
+   donc pour $j$\ap{e} colonne le vecteur $\frac1N\,\vec{e}$, dont toutes
+   les composantes valent $\frac1N$, si la page $j$ n'a pas de lien sortant,
+   et le vecteur nul sinon. C'est la loi uniforme, placée dans les colonnes
+   des pages sans liens sortants.
+b) $B = A + \frac1N\,\vec{e}\,\vec{E}^{\mathsf{T}}$ : on ajoute la loi
+   uniforme dans les colonnes nulles de $A$, et dans celles-là seulement.
+c) $G = \beta B + (1 - \beta)\,\frac1N\,\vec{e}\,\vec{e}^{\mathsf{T}} =
+   \beta A + \frac{\beta}{N}\,\vec{e}\,\vec{E}^{\mathsf{T}} + \frac{1 -
+   \beta}{N}\,\vec{e}\,\vec{e}^{\mathsf{T}}$, et l'on met
+   $\frac1N\,\vec{e}$ en facteur à gauche dans les deux derniers termes.
+d) La $j$\ap{e} colonne de $A$ a autant de coefficients non nuls que la
+   page $j$ a de liens sortants, soit quelques dizaines au plus, alors que
+   $N$ se compte en milliards : la proportion de coefficients non nuls est
+   infime. Pour $G$, chaque coefficient est au moins égal à $(1-\beta)/N > 0$.
+   Comme la somme de chaque colonne de $G$ vaut $1$ et que chaque colonne
+   contient $N \geq 2$ coefficients strictement positifs, chacun d'eux est
+   strictement inférieur à $1$.
+:::
+::::
+
+:::: {.exercice .classe #exo:reflexion-ch4}
+Les chaînes de Markov ne figurent pas au programme du secondaire, mais
+plusieurs des notions qu'elles mobilisent y sont étudiées.
+
+a) Relever, dans la progression des apprentissages [@PDA2016],
+   trois notions du secondaire qui interviennent dans ce chapitre, et
+   préciser comment chacune y est utilisée.
+b) Concevoir les grandes lignes d'une activité d'environ une période,
+   destinée à des élèves du deuxième cycle, fondée sur le modèle
+   météorologique ou sur l'internaute aléatoire. Quelle conception
+   erronée du hasard l'activité permet-elle d'aborder ?
+c) Le programme de mathématique vise aussi à développer le jugement
+   critique des élèves. En quoi l'étude de PageRank peut-elle y
+   contribuer ?
+
+::: {.solution}
+Plusieurs réponses sont possibles ; en voici une.
+
+a) Les *probabilités conditionnelles* et le *diagramme en
+   arbre* : la matrice de transition regroupe des probabilités
+   conditionnelles, et la formule $\vec{x}_{n+1} = M\vec{x}_n$ est la règle
+   « multiplier le long des branches, additionner les branches »
+   (remarque \ref{rem:classe-proba}). Les *graphes orientés valués* :
+   le diagramme de transition et le mini-web en sont
+   (remarque \ref{rem:classe-graphes}). La *multiplication
+   matricielle*, dans la séquence Technico-sciences : elle permet de calculer
+   la loi d'un jour à partir de celle de la veille. On pourrait ajouter
+   l'espérance mathématique (exemple \ref{ex:meteo-esperance}) et la
+   comparaison entre probabilités fréquentielles et théoriques
+   (remarque \ref{rem:classe-simulation}).
+b) Les élèves reçoivent le diagramme du modèle météorologique et un dé
+   à dix faces. En équipe, ils simulent trente jours, d'abord en partant
+   d'un jour de beau temps, puis d'un jour de pluie. On compile au tableau
+   la proportion de beaux jours pour chaque équipe, et l'on compare les deux
+   points de départ : la proportion est proche de $\tfrac23$ dans les deux
+   cas. On calcule ensuite, à l'aide d'un arbre, la probabilité qu'il fasse
+   beau dans deux jours, puis l'on montre qu'un tableur permet de prolonger
+   le calcul. L'activité permet d'aborder l'idée que le hasard « n'a pas de
+   mémoire », souvent étendue à tort à toutes les situations : ici, au
+   contraire, le temps d'un jour dépend de celui de la veille, et les jours
+   de pluie se suivent en séquences. Elle permet aussi de discuter du biais
+   d'équiprobabilité : il n'y a que deux états, mais ils ne sont pas
+   également probables.
+c) Les élèves consultent quotidiennement des classements produits par
+   des algorithmes : résultats de recherche, fils d'actualité, suggestions
+   de vidéos. Étudier PageRank leur montre qu'un tel classement repose sur
+   un *modèle*, fondé sur des choix qui ne sont pas neutres : la
+   popularité n'est pas la fiabilité, le facteur $\beta$ est choisi par le
+   concepteur, et des régions piégeantes peuvent être créées pour manipuler
+   le classement. Comprendre qu'une page bien classée n'est pas
+   nécessairement une page exacte est une compétence citoyenne.
+:::
+::::

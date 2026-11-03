@@ -1,0 +1,10 @@
+\begin{tikzpicture}[scale=1.95, fractale/.style={fill=steelblue4!75, draw=sectioncolor, very thin, line join=round}]
+  \foreach \dep/\y in {carre/0, motif/-1.3, disque/-2.6}{
+    \foreach \n/\x in {0/0, 1/1.25, 2/2.5, 3/3.75, 5/5}{
+      \begin{scope}[shift={(\x,\y)}]
+        \draw[gray!45, very thin] (0,0) -- (1,0) -- (0.5,0.8660254) -- cycle;
+        \input{figures/fractales/hutchinson-\dep-\n.tikz}
+      \end{scope}}}
+  \foreach \n/\x in {0/0, 1/1.25, 2/2.5, 3/3.75, 5/5}
+    \node[etiq, sectioncolor] at (\x+0.5,1.2) {$W^{\n}(B)$};
+\end{tikzpicture}
