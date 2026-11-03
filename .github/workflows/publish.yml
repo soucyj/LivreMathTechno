@@ -35,6 +35,7 @@ jobs:
       # n'installe pas les paquets manquants. On les installe donc ici.
       - name: Installer les paquets LaTeX des figures
         run: |
+          tlmgr update --self
           tlmgr install standalone pgf pgfplots xkeyval xstring mathtools \
             fontspec unicode-math luaotfload lualibs lua-uni-algos luatex85 \
             babel-french hyphen-french siunitx translations tipa interval \
