@@ -1,0 +1,156 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{La dimension de similitude}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Entre les courbes et les surfaces}
+  \small
+  \begin{itemize}
+    \item Sierpiński : aire nulle, mais des segments de longueur totale
+      infinie.
+    \item Von Koch : longueur infinie, et aire nulle. La courbe sur un
+      segment de longueur $\ell$ tient dans un triangle isocèle d'aire
+      $\tfrac{\sqrt3}{12}\ell^2$ ; appliqué aux $4^n$ segments de $K_n$ :
+      \[
+        4^n\cdot\tfrac{\sqrt3}{12}\big(\tfrac13\big)^{2n}
+        = \tfrac{\sqrt3}{12}\big(\tfrac49\big)^n \to 0.
+      \]
+  \end{itemize}
+  \vspace{4pt}
+  Une notion de dimension va situer ces objets entre les courbes et les
+  surfaces, du point de vue de la mesure.
+\end{frame}
+
+\begin{frame}{Figure 3.8 --- Compter les copies}
+  \FigBox[0.36\textheight]{%
+    \begin{tikzpicture}[scale=1.05]
+      \draw[sectioncolor, very thick] (0,0.9) -- (3,0.9);
+      \foreach \x in {0,1,2,3} \draw[sectioncolor, thick] (\x,0.78) -- (\x,1.02);
+      \node[etiq, align=center] at (1.5,-0.55) {$s = 3$, $N = 3 = 3^1$};
+      \begin{scope}[shift={(4,0)}]
+        \fill[steelblue4!22] (0,0) rectangle (2.1,2.1);
+        \draw[sectioncolor, thin, step=0.7] (0,0) grid (2.1,2.1);
+        \draw[sectioncolor, thick] (0,0) rectangle (2.1,2.1);
+        \node[etiq, align=center] at (1.05,-0.55) {$s = 3$, $N = 9 = 3^2$};
+      \end{scope}
+      \begin{scope}[shift={(7.3,0)}, x={(0.7cm,0)}, y={(0,0.7cm)}, z={(0.32cm,0.24cm)}]
+        \fill[steelblue4!22] (0,0,0) -- (3,0,0) -- (3,3,0) -- (0,3,0) -- cycle;
+        \fill[steelblue4!34] (3,0,0) -- (3,0,3) -- (3,3,3) -- (3,3,0) -- cycle;
+        \fill[steelblue4!12] (0,3,0) -- (3,3,0) -- (3,3,3) -- (0,3,3) -- cycle;
+        \foreach \i in {1,2}{
+          \draw[sectioncolor, thin] (\i,0,0) -- (\i,3,0) -- (\i,3,3);
+          \draw[sectioncolor, thin] (0,\i,0) -- (3,\i,0) -- (3,\i,3);
+          \draw[sectioncolor, thin] (3,0,\i) -- (3,3,\i) -- (0,3,\i);}
+        \draw[sectioncolor, thick, line join=round] (0,0,0) -- (3,0,0) -- (3,0,3) -- (3,3,3)
+          -- (0,3,3) -- (0,3,0) -- cycle (3,0,0) -- (3,3,0) -- (0,3,0) (3,3,0) -- (3,3,3);
+        \node[etiq, align=center] at (1.9,-0.8,0) {$s = 3$, $N = 27 = 3^3$};
+      \end{scope}
+    \end{tikzpicture}}
+  \small Chaque arête divisée en $s$ parties : $N=s^d$ copies de rapport
+  $r=\tfrac1s$, où $d$ est la dimension usuelle :
+  \[
+    N = s^d \iff N = \left(\frac1r\right)^{\!d} \iff d = \frac{\ln N}{\ln(1/r)}.
+  \]
+  C'est le facteur $k^2$ (aires) et $k^3$ (volumes) du chapitre 1, lu à
+  l'envers.
+\end{frame}
+
+\begin{frame}{Définition 3.2 --- Dimension de similitude}
+  \begin{Enonce}{Définition 3.2 --- Dimension de similitude}
+    Soit $E$ un ensemble autosimilaire, réunion de $N$ copies
+    $w_1(E),\dots,w_N(E)$ de même rapport $r\in\intoo{0}{1}$, qui ne se
+    chevauchent pas. La \defi{dimension de similitude} de $E$ est
+    \[
+      \dims(E) = \frac{\ln N}{\ln(1/r)},
+    \]
+    c'est-à-dire l'unique réel $d$ tel que $Nr^d = 1$.
+  \end{Enonce}
+  \small Un même ensemble se découpe de plusieurs façons, mais la
+  dimension ne change pas : $N$ copies de rapport $r$ donnent, en
+  redécoupant, $N^m$ copies de rapport $r^m$, et
+  $\ln N^m/\ln(1/r^m) = \ln N/\ln(1/r)$. Par exemple, pour Sierpiński,
+  $\ln9/\ln4 = \ln3/\ln2$.
+\end{frame}
+
+\begin{frame}{Exemple 3.5 --- Quelques dimensions de similitude}
+  \begin{center}
+  \small
+  \begin{tabular}{lccc}
+    \toprule
+    Ensemble & $N$ & $r$ & $\dims(E) = \ln N/\ln(1/r)$ \\
+    \midrule
+    Ensemble de Cantor & $2$ & $\tfrac13$ & $\ln2/\ln3 \approx \num{0.6309}$ \\
+    Segment & $3$ & $\tfrac13$ & $1$ \\
+    Courbe de von Koch & $4$ & $\tfrac13$ & $\ln4/\ln3 \approx \num{1.2619}$ \\
+    Triangle de Sierpiński & $3$ & $\tfrac12$ & $\ln3/\ln2 \approx \num{1.5850}$ \\
+    Tapis de Sierpiński & $8$ & $\tfrac13$ & $\ln8/\ln3 \approx \num{1.8928}$ \\
+    Carré & $9$ & $\tfrac13$ & $2$ \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \small Cantor : entre un point et un segment. Von Koch : au-delà d'une
+  courbe. Tapis : presque une surface, malgré son aire nulle.
+\end{frame}
+
+\begin{frame}{Ce que mesure la dimension (raisonnement heuristique)}
+  \small Supposons une « taille $d$-dimensionnelle » $M_d$ (longueur,
+  aire, volume pour $d=1,2,3$) telle que $M_d\big(w(E)\big) = r^d M_d(E)$
+  pour toute similitude de rapport $r$. Si $E$ est la réunion de $N$
+  copies sans chevauchement :
+  \[
+    M_d(E) = N\,r^d\,M_d(E).
+  \]
+  Si $Nr^d=1$ ($d=\dims E$), toute valeur convient ; sinon $M_d(E)$ est
+  nulle ou infinie. Pour von Koch :
+  \begin{itemize}
+    \item $d=1$ : $4\cdot\tfrac13\neq1$ ; pas nulle (deux points à
+      distance $1$), donc la longueur est infinie ;
+    \item $d=2$ : $4\cdot\tfrac19\neq1$ ; pas infinie ($K$ est borné),
+      donc l'aire est nulle ;
+    \item seule $d=\ln4/\ln3$ peut donner une valeur finie non nulle.
+  \end{itemize}
+  Mesurer une surface avec une longueur donne l'infini ; l'aire d'un fil
+  idéal est nulle.
+\end{frame}
+
+\begin{frame}{Remarque 3.3 --- La dimension de Hausdorff ; qu'est-ce qu'une fractale ?}
+  \begin{Rem}{Remarque 3.3 --- La dimension de Hausdorff}
+    \footnotesize Le raisonnement reste heuristique : on n'a pas construit
+    $M_d$. Hausdorff l'a fait en 1918, pour tout sous-ensemble de $\R^n$
+    et tout $d\geq0$ : c'est la dimension de Hausdorff. Pour un ensemble
+    autosimilaire sans chevauchement, elle coïncide avec la dimension de
+    similitude (Hutchinson, 1981).
+  \end{Rem}
+  \small
+  \begin{itemize}
+    \item Mandelbrot : une fractale est un ensemble dont la dimension de
+      Hausdorff dépasse strictement la dimension topologique ($0$ pour
+      des points isolés, $1$ pour une courbe, $2$ pour une surface). Il
+      a lui-même reconnu que cette définition exclut des cas voulus.
+    \item Pour nous, une fractale : un ensemble irrégulier à toutes
+      les échelles, dont la forme se reproduit (exactement ou à peu près)
+      dans ses parties, et de dimension typiquement fractionnaire.
+    \item Réserve : le tétraèdre de Sierpiński est une fractale de
+      dimension exactement $2$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Pour la classe 3.3 --- Logarithmes et échelles de mesure}
+  \begin{Classe}{Logarithmes et échelles de mesure}
+    \small
+    \begin{itemize}
+      \item $3^d=4$ n'a pas de solution entière : on passe aux
+        logarithmes, dans la base de son choix,
+        $\log4/\log3 = \ln4/\ln3 = \log_3 4$ (changement de base,
+        $5^{\text{e}}$ secondaire).
+      \item La dimension est un exposant : « à quelle puissance élever
+        le facteur de réduction pour obtenir le nombre de copies ? »
+      \item Même idée dans les échelles logarithmiques : Richter (un
+        séisme de magnitude $6$ produit des ondes dix fois plus amples
+        qu'un séisme de magnitude $5$, et libère environ
+        $10^{\num{1.5}}\approx32$ fois plus d'énergie), pH, décibels.
+      \item Calculer la magnitude de séismes historiques, puis la
+        dimension de quelques fractales : deux applications d'un même
+        outil.
+    \end{itemize}
+  \end{Classe}
+\end{frame}

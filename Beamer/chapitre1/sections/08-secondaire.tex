@@ -1,0 +1,186 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Les transformations dans l'enseignement secondaire québécois}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Cette section vous concerne le plus directement}
+  \small Trois objectifs : situer les transformations dans le
+  programme québécois, traduire la notation du secondaire dans le
+  langage matriciel de ce chapitre, et recenser ce que le point de vue
+  supérieur apporte concrètement dans une classe.
+\end{frame}
+
+\subsection{Où sont-elles dans le programme ?}
+\begin{frame}{Table 1.3 --- Parcours dans le curriculum québécois}
+  \tiny
+  \begin{center}
+  \begin{tabular}{p{2.6cm}p{8.6cm}}
+    \toprule
+    Niveau & Ce qui est en jeu \\
+    \midrule
+    Primaire, $3^{\text{e}}$ cycle
+      & Réflexion, axe de symétrie ; frises et dallages ; vocabulaire
+        informel, pliage et miroir. \\
+    $1^{\text{re}}$ secondaire
+      & Translation, rotation, réflexion ; construction de l'image
+        d'une figure ; figures isométriques. \\
+    $2^{\text{e}}$ secondaire
+      & Homothétie ; figures semblables ; rapport de similitude. \\
+    $3^{\text{e}}$ secondaire
+      & Conditions minimales d'isométrie et de similitude ; rapports
+        $k,k^2,k^3$ pour longueurs, aires, volumes. \\
+    $4^{\text{e}}$ secondaire
+      & Géométrie analytique : distance, point de partage, droites. \\
+    $5^{\text{e}}$ secondaire (SN)
+      & Vecteurs : la translation devient enfin \emph{un vecteur}. \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \normalsize
+  \vspace{4pt}
+  \small \textbf{Deux observations :} (1) même ordre que la hiérarchie
+  de Klein (fig.~1.3) --- isométries, puis similitudes, jamais l'affine
+  général. (2) La synthèse n'a \textbf{jamais lieu} au secondaire :
+  transformations et vecteurs restent deux mondes séparés. C'est vous
+  qui apporterez ce lien.
+\end{frame}
+
+\subsection{Traduire la notation du secondaire}
+\begin{frame}{Table 1.4 --- Dictionnaire des notations}
+  \small
+  \begin{center}
+  \begin{tabular}{lll}
+    \toprule
+    Secondaire & Se lit & Représentation analytique \\
+    \midrule
+    $t_{(a,b)}$ & translation de $(a,b)$
+      & $\col{x}{y} \mapsto \col{x}{y} + \col{a}{b}$ \\[6pt]
+    $r_{O,\theta}$ & rotation de centre $O$, angle $\theta$
+      & $\col{x}{y} \mapsto r_\theta\col{x}{y}$ \\[6pt]
+    $r_{M,\theta}$ & rotation de centre $M$
+      & $r_\theta\left(\col{x}{y} - \vec{m}\right) + \vec{m}$ \\[6pt]
+    $s_{d}$ & réflexion d'axe $d$
+      & $R_\theta\col{x}{y}$ si $d$ passe par $O$ \\[6pt]
+    $h_{O,k}$ & homothétie de centre $O$, rapport $k$
+      & $k\col{x}{y}$ \\[6pt]
+    $h_{M,k}$ & homothétie de centre $M$
+      & $k\col{x}{y} + (1-k)\vec{m}$ \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{4pt}
+  \small \textbf{Seule ligne à retenir :} $s_d$ (« symétrie ») au
+  secondaire = $R_d$ (« réflexion ») dans ce cours.
+\end{frame}
+
+\begin{frame}{Pour la classe 1.9 --- Une notation à défendre}
+  \begin{Classe}{Une notation à défendre}
+    \small On reproche parfois à cette notation d'être lourde. Elle a
+    pourtant un mérite considérable : elle traite la transformation
+    comme un \textbf{objet} qu'on peut nommer, comparer, composer ---
+    plutôt qu'une action qu'on exécute. C'est le saut conceptuel que la
+    didactique identifie comme le plus difficile : passer de la
+    transformation-\emph{procédé} à la transformation-\emph{objet}.
+    Résistez à la tentation de l'abandonner.
+  \end{Classe}
+\end{frame}
+
+\subsection{Ce que le point de vue matriciel vous donne}
+\begin{frame}{Six choses que le point de vue matriciel change (1/2)}
+  \small Vous n'enseignerez pas de matrices au secondaire. Mais :
+  \begin{enumerate}
+    \item \textbf{Une seule idée au lieu de quatre.} Translation,
+      rotation, réflexion, homothétie : quatre cas de
+      $w\col{x}{y}=A\col{x}{y}+\vec t$. « Existe-t-il d'autres
+      transformations ? » --- vous savez que oui, et lesquelles.
+    \item \textbf{Pourquoi l'ordre compte.} $r\circ R \neq R\circ r$ :
+      un fait d'\textbf{algèbre} (produit de matrices non commutatif),
+      pas une bizarrerie géométrique.
+    \item \textbf{D'où vient le $k^2$.} Le déterminant --- ou,
+      simplement, une aire = produit de deux longueurs.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Six choses que le point de vue matriciel change (2/2)}
+  \begin{enumerate}
+    \setcounter{enumi}{3}
+    \item \textbf{Pourquoi les conditions minimales fonctionnent.}
+      \textsc{cac}, \textsc{aca}, \textsc{ccc}, \textsc{aa}\dots :
+      mystérieuses comme axiomes. Le théorème~1.15 en donne la raison
+      --- une application affine est déterminée par 3 points, une
+      similitude par 2.
+    \item \textbf{Le rôle central de la réflexion.} Le corollaire~1.14 :
+      la réflexion engendre tout. Justifie de lui donner plus de
+      temps, et de manipuler des miroirs.
+    \item \textbf{La liste des trois transformations est incomplète.}
+      La réflexion glissée existe --- savoir ce qui manque évite une
+      fausseté.
+  \end{enumerate}
+\end{frame}
+
+\subsection{Les difficultés d'apprentissage, et d'où elles viennent}
+\begin{frame}{Des obstacles bien documentés (1/2)}
+  \small Pas des erreurs de calcul : des \textbf{conceptions
+  cohérentes mais fausses} que les élèves --- et souvent les futurs
+  enseignants --- se construisent.
+  \begin{enumerate}
+    \item \textbf{Transformation vue comme un mouvement de la figure.}
+      Remède : demander l'image de points isolés, et du quadrillage
+      lui-même.
+    \item \textbf{Translation confondue avec « bouger sans tourner ».}
+      Remède : construire la translation par les seules coordonnées.
+    \item \textbf{Centre de rotation toujours placé sur la figure.}
+      Échec massif quand le centre est extérieur. Remède : la
+      conjugaison (prop.~1.5), « je vais au centre, je tourne, je
+      reviens ».
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Des obstacles bien documentés (2/2)}
+  \begin{enumerate}
+    \setcounter{enumi}{3}
+    \item \textbf{Homothétie réduite à un agrandissement.} $k<0$
+      n'est pas imaginé. Remède : tracer des rapports négatifs,
+      comparer systématiquement longueurs/aires/angles.
+    \item \textbf{« Semblable » compris comme « qui se ressemble ».}
+      Remède : la définition 1.11 elle-même --- \emph{toutes} les
+      distances multipliées par le \emph{même} nombre.
+    \item \textbf{Niveau de van Hiele.} Le raisonnement visuel
+      (« ça a l'air pareil ») ne produit pas de justification fondée
+      sur les propriétés, même avec les bonnes réponses.
+  \end{enumerate}
+  \begin{Classe}{Un test à faire passer}
+    \footnotesize « Rotation de $90°$ autour d'un point $M$ hors du
+    triangle $ABC$. $M$ a-t-il une image ? » --- révèle presque à coup
+    sûr la conception « mouvement ».
+  \end{Classe}
+\end{frame}
+
+\subsection{Des activités qui tiennent la route}
+\begin{frame}{Cinq activités}
+  \begin{enumerate}
+    \item \textbf{Deux miroirs.} Angle $\varphi$, compter les images ---
+      découverte expérimentale du théorème~1.13.
+    \item \textbf{La chasse aux symétries.} Logos, carrelages,
+      flocons : compter rotations et réflexions.
+    \item \textbf{Le pantographe.} Homothétie manipulable (prop.~1.5) ;
+      « où est le centre ? » devient concret.
+    \item \textbf{Programmer une transformation.} Écrire la fonction
+      qui calcule l'image d'un point --- force à expliciter que la
+      transformation agit sur \emph{tous} les points.
+    \item \textbf{La géométrie dynamique.} Construire, puis
+      \emph{déplacer} un sommet : ce qui reste invariant est ce que la
+      transformation conserve.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Pour la classe 1.11 --- Une mise en garde sur les outils}
+  \begin{Classe}{Une mise en garde sur les outils}
+    \small La géométrie dynamique et la programmation ne produisent
+    pas automatiquement de la compréhension. Un élève peut faire
+    glisser un curseur vingt minutes sans rien conclure. Ce qui fait
+    apprendre, c'est la \textbf{prédiction} : écrire à l'avance ce que
+    l'on croit obtenir, puis exécuter et comparer. Sans cette étape,
+    l'outil ne fait que \emph{montrer} ; avec elle, il
+    \emph{confronte}.
+  \end{Classe}
+\end{frame}

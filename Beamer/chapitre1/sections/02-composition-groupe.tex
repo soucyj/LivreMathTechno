@@ -1,0 +1,135 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Composer sans jamais sortir de l'ensemble}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Définition 1.2 --- Égalité et composition}
+  \begin{Enonce}{Définition 1.2 --- Égalité et composition}
+    Pour $f,g \in \Transf$ : $f = g$ si et seulement si $f(P) = g(P)$
+    pour tout $P$. La \defi{composée} $f \circ g$ est définie par
+    \[
+      (f \circ g)(P) = f\bigl(g(P)\bigr).
+    \]
+  \end{Enonce}
+  \vspace{6pt}
+  \textbf{Attention à l'ordre} : dans $f \circ g$, c'est $g$ qui agit
+  \emph{en premier}. Source d'erreurs constante --- et difficulté
+  classique au secondaire.
+  \vspace{4pt}
+
+  \small La composée de deux transformations est encore une
+  transformation (il suffit de vérifier les quatre conditions de la
+  définition~1.1).
+\end{frame}
+
+\begin{frame}{Exemple 1.4 --- La composition n'est pas commutative}
+  \small $r$ = rotation de $90°$ à l'origine ; $R$ = réflexion d'axe
+  des $x$. Même motif, deux ordres de composition :
+  \FigBox[0.46\textheight]{%
+    \begin{tikzpicture}[scale=1.05]
+      \begin{scope}
+        \draw[quadrillage] (-1.2,-1.2) grid (1.2,1.2);
+        \draw[axe] (-1.2,0) -- (1.35,0); \draw[axe] (0,-1.2) -- (0,1.35);
+        \fill[fig] \motifF;
+        \node[etiq, black] at (0,-1.45) {motif de départ};
+      \end{scope}
+      \begin{scope}[xshift=3.4cm]
+        \draw[quadrillage] (-1.2,-1.2) grid (1.2,1.2);
+        \draw[axe] (-1.2,0) -- (1.35,0); \draw[axe] (0,-1.2) -- (0,1.35);
+        \begin{scope}[cm={0,1,-1,0,(0,0)}]
+          \begin{scope}[cm={1,0,0,-1,(0,0)}]
+            \fill[figim] \motifF;
+          \end{scope}
+        \end{scope}
+        \node[etiq, black] at (0,-1.45) {$r \circ R$};
+      \end{scope}
+      \begin{scope}[xshift=6.8cm]
+        \draw[quadrillage] (-1.2,-1.2) grid (1.2,1.2);
+        \draw[axe] (-1.2,0) -- (1.35,0); \draw[axe] (0,-1.2) -- (0,1.35);
+        \begin{scope}[cm={1,0,0,-1,(0,0)}]
+          \begin{scope}[cm={0,1,-1,0,(0,0)}]
+            \fill[figaux] \motifF;
+          \end{scope}
+        \end{scope}
+        \node[etiq, black] at (0,-1.45) {$R \circ r$};
+      \end{scope}
+    \end{tikzpicture}}
+  Les deux images sont symétriques par rapport à l'origine :
+  $r \circ R \neq R \circ r$.
+\end{frame}
+
+\begin{frame}{Théorème 1.1 --- Propriétés de $(\Transf, \circ)$}
+  \begin{Enonce}{Théorème 1.1 --- Propriétés de $(\Transf, \circ)$}
+    \small Pour $f,g,h \in \Transf$ :
+    \begin{enumerate}
+      \item[(i)] \textbf{fermeture} : $f \circ g \in \Transf$ ;
+      \item[(ii)] \textbf{associativité} : $(f\circ g)\circ h = f\circ(g\circ h)$ ;
+      \item[(iii)] \textbf{identité} : $\mathrm{id} \in \Transf$,
+        $f \circ \mathrm{id} = \mathrm{id} \circ f = f$ ;
+      \item[(iv)] \textbf{inverse} : il existe $f^{-1}\in\Transf$ tel
+        que $f\circ f^{-1} = f^{-1}\circ f = \mathrm{id}$.
+    \end{enumerate}
+    En général $f \circ g \neq g \circ f$.
+  \end{Enonce}
+  \begin{AuTableau}
+    \small Idée : la fermeture se vérifie directement sur les 4
+    conditions ; l'associativité vaut pour toute composition de
+    fonctions ; l'inverse existe car $f$ est bijective, par
+    définition.
+  \end{AuTableau}
+\end{frame}
+
+\begin{frame}{Remarque 1.1 --- Inverser une composée}
+  \begin{Rem}{Remarque 1.1 --- Inverser une composée}
+    \[
+      (f \circ g)^{-1} = g^{-1} \circ f^{-1} \qquad\text{(l'ordre s'inverse !)}
+    \]
+    Image classique : « mettre ses bas » puis « mettre ses souliers ».
+    Pour défaire, on enlève d'abord les souliers.
+  \end{Rem}
+  \vspace{10pt}
+  \begin{Rem}{Remarque 1.2 --- Le mot groupe}
+    Fermeture, associativité, identité, inverse : les quatre axiomes
+    d'un \defi{groupe}. On dira d'un ensemble de transformations qu'il
+    est un \defi{sous-groupe} de $\Transf$ s'il est stable par
+    composition et par inversion. (Théorie complète : MAT-2903.)
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Figure 1.3 --- La hiérarchie des groupes de transformations}
+  \FigBox[0.62\textheight]{%
+    \begin{tikzpicture}[scale=1.05, every node/.style={font=\small}]
+      \foreach \i/\lab/\prop in {%
+         0/{$\Transf$ : toutes les transformations}/{aucun invariant métrique},
+         1/{$\Aff$ : transformations affines}/{alignement, parallélisme},
+         2/{$\Sim$ : similitudes}/{$+$ angles, rapports de longueurs},
+         3/{$\Iso$ : isométries}/{$+$ longueurs, aires},
+         4/{$\Iso^{+}$ : déplacements}/{$+$ orientation}}
+        {\pgfmathsetmacro{\w}{9.4-1.35*\i}
+         \pgfmathsetmacro{\y}{-0.95*\i}
+         \draw[rounded corners=2pt, fill=steelblue4!\the\numexpr8+10*\i\relax,
+               draw=sectioncolor!60]
+           ({-\w/2},{\y-0.36}) rectangle ({\w/2},{\y+0.36});
+         \node at (0,\y) {\lab};
+         \node[anchor=west, font=\scriptsize, gray!80!black]
+           at ({\w/2+0.25},\y) {\prop};}
+    \end{tikzpicture}}
+  \small Plus on descend, plus le groupe est petit, plus il conserve de
+  propriétés. C'est la lecture « à la Klein » --- et c'est le plan du
+  chapitre.
+\end{frame}
+
+\begin{frame}{Remarque 1.3 --- Où sont les applications affines non inversibles ?}
+  \begin{Rem}{Remarque 1.3}
+    \small Chaque famille de la figure 1.3 est emboîtée dans
+    $\Transf$ : par définition, elle n'est faite que de
+    \textbf{bijections}. Il existe pourtant des \emph{applications}
+    affines non bijectives (ex. une projection) : elles ne préservent
+    en général \textbf{ni l'alignement ni le parallélisme}, et ne
+    figurent dans \emph{aucune} des familles de la figure --- n'étant
+    pas bijectives, elles ne sont même pas dans $\Transf$.
+
+    \vspace{4pt}
+    \textbf{« Affine » n'implique pas l'inversibilité ; « transformation
+    affine », si.}
+  \end{Rem}
+\end{frame}

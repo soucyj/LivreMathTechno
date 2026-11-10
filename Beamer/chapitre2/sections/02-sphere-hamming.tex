@@ -1,0 +1,125 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Deux métriques appliquées : la sphère et les bits}
+% ═══════════════════════════════════════════════════════════════════════
+
+\subsection{La distance sur la sphère}
+
+\begin{frame}{La distance sphérique}
+  \begin{columns}[c]
+    \begin{column}{0.52\textwidth}
+      \small
+      \begin{itemize}
+        \item Le segment Montréal--Paris passe à l'intérieur de
+          la Terre : un avion ne peut pas le suivre.
+        \item On mesure plutôt le long de l'arc de grand cercle :
+          l'intersection de la sphère avec le plan passant par $u$, $v$
+          et le centre $O$.
+        \item Cette longueur d'arc est la distance sphérique (ou
+          du grand cercle) : le plus court chemin le long de la
+          surface.
+      \end{itemize}
+      \vspace{2pt}
+      \scriptsize Navigation aérienne, GPS : c'est pourquoi les vols vers
+      l'Europe semblent « courber vers le nord » sur une carte plane.
+    \end{column}
+    \begin{column}{0.46\textwidth}
+      \FigBox[0.62\textheight]{%
+        \begin{tikzpicture}[scale=1.3]
+          \draw[sectioncolor, thick] (0,0) circle (2);
+          \draw[sectioncolor!45, thick] (0,0) ellipse (2 and 0.55);
+          \draw[sectioncolor!25, thick, dashed] (-2,0) arc (180:360:2 and 0.55);
+          \node[pt, label={[etiq]above left:$u$}] (u) at (-1.05,1.1) {};
+          \node[pt, label={[etiq]above right:$v$}] (v) at (1.35,0.75) {};
+          \node[etiq] at (0,-0.22) {$O$};
+          \fill (0,0) circle (0.6pt);
+          \draw[firebrick3, thick, dashed] (u) -- (v);
+          \node[etiq, firebrick3] at (0.5,0.65) {corde};
+          \draw[sectioncolor, very thick] (u) to[bend left=35] (v);
+          \node[etiq, sectioncolor] at (0.15,1.55) {arc};
+          \draw[sectioncolor!60, thin] (0,0) -- (u);
+          \draw[sectioncolor!60, thin] (0,0) -- (v);
+        \end{tikzpicture}}
+      \begin{center}\scriptsize Figure 2.4\end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{Mesurer les erreurs}
+
+\begin{frame}{Définition 2.2 --- Distance de Hamming}
+  \small Un message binaire transmis peut voir certains bits inversés par
+  le bruit (canal informatique, disque, satellite). Pour détecter ---
+  voire corriger --- ces erreurs, il faut d'abord mesurer l'écart
+  entre deux messages.
+  \begin{Enonce}{Définition 2.2 --- Distance de Hamming}
+    Soit $n\in\Ns$. Pour $X=(x_1,\dots,x_n)$ et $Y=(y_1,\dots,y_n)$
+    dans $\{0,1\}^n$,
+    \[
+      \dHam(X,Y) = \sum_{i=1}^{n}|x_i-y_i|.
+    \]
+  \end{Enonce}
+  \small Comme $|x_i-y_i|\in\{0,1\}$, $\dHam(X,Y)$ est le nombre
+  de positions où $X$ et $Y$ diffèrent : le nombre minimal de bits à
+  inverser pour passer de $X$ à $Y$.
+\end{frame}
+
+\begin{frame}{Exemple 2.3 --- Un calcul de distance de Hamming}
+  \small $X=(1,0,0,1)$ et $Y=(1,1,0,0)$ dans $\{0,1\}^4$ :
+  \[
+    \dHam(X,Y) = |1-1|+|0-1|+|0-0|+|1-0| = 0+1+0+1 = 2.
+  \]
+  \FigBox[0.32\textheight]{%
+    \begin{tikzpicture}[scale=1, every node/.style={font=\sffamily}]
+      \foreach \i/\xb/\yb/\same in {1/1/1/1, 2/0/1/0, 3/0/0/1, 4/1/0/0} {
+        \pgfmathsetmacro{\xoff}{(\i-1)*1.05}
+        \node[draw=sectioncolor, thick, fill=steelblue4!15, minimum size=0.85cm]
+          at (\xoff,0.55) {\xb};
+        \ifnum\same=1
+          \node[draw=sectioncolor, thick, fill=steelblue4!15, minimum size=0.85cm]
+            at (\xoff,-0.55) {\yb};
+        \else
+          \node[draw=firebrick3, thick, fill=firebrick3!20, minimum size=0.85cm]
+            at (\xoff,-0.55) {\yb};
+        \fi
+      }
+      \node[etiq, left] at (-0.7,0.55) {$X$};
+      \node[etiq, left] at (-0.7,-0.55) {$Y$};
+    \end{tikzpicture}}
+  \small Les suites diffèrent exactement aux positions 2 et 4.
+\end{frame}
+
+\begin{frame}{$\dHam$ est bien une métrique}
+  \small
+  \begin{itemize}
+    \item Somme de valeurs absolues : positive ou nulle ; nulle
+      exactement quand chaque terme l'est, i.e. $X=Y$.
+    \item $|x_i-y_i| = |y_i-x_i|$ : symétrie.
+  \end{itemize}
+  \begin{AuTableau}[Vérification au tableau]
+    \small Inégalité triangulaire, position par position : si $X$ et $Y$
+    diffèrent en $i$ mais pas $X$ et $Z$, alors $Z$ et $Y$ y diffèrent
+    forcément. Chaque position comptée à gauche dans
+    $\dHam(X,Y)\leq\dHam(X,Z)+\dHam(Z,Y)$ l'est au moins une fois à
+    droite.
+  \end{AuTableau}
+\end{frame}
+
+\begin{frame}{Note historique 2.1 --- Richard Hamming et la détection d'erreurs}
+  \small
+  \begin{itemize}
+    \item 1950, laboratoires Bell : Richard Hamming (1915--1998)
+      travaille sur la fiabilité des premiers ordinateurs à relais.
+    \item Les arrêts de la machine les fins de semaine l'irritent : elle
+      détecte une erreur de lecture, mais ne sait pas la
+      corriger.
+    \item Son idée --- les codes de Hamming : choisir les messages
+      valides tous à distance de Hamming au moins 3 les uns des
+      autres.
+    \item Un message corrompu par une erreur reste alors
+      strictement plus proche (au sens de $\dHam$) du message original
+      que de tout autre message valide : on le corrige automatiquement.
+  \end{itemize}
+  \vspace{4pt}
+  Même idée aujourd'hui, sous une forme ou une autre, dans les CD, les
+  disques durs, les communications par satellite.
+\end{frame}

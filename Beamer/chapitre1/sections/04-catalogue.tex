@@ -1,0 +1,338 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Un catalogue d'applications affines}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Les briques du chapitre}
+  \small On passe en revue les applications affines élémentaires ---
+  toutes des transformations, sauf la dernière (la projection). Ce sont
+  les briques : toute application linéaire inversible du plan s'obtient
+  en les composant (théorème de décomposition, plus loin).
+
+  \vspace{6pt}
+  Convention de notation, valable pour tout le chapitre : rotations en
+  $r$ minuscule, réflexions en $R$ majuscule. $r_\theta$ / $R_\theta$ :
+  centrées à l'origine. $r_{M,\theta}$ / $R_d$ : centre ou axe précisé
+  explicitement --- \textbf{un indice à deux éléments}.
+\end{frame}
+
+\subsection{Translations}
+\begin{frame}{Définition 1.5 --- Translation}
+  \begin{Enonce}{Définition 1.5 --- Translation}
+    La \defi{translation} de vecteur $\vec t = \col{e}{f}$ est
+    \[
+      t_{\vec t}\col{x}{y} = \col{x}{y} + \col{e}{f}
+      = \mat{1}{0}{0}{1}\col{x}{y} + \col{e}{f}.
+    \]
+  \end{Enonce}
+  \vspace{6pt}
+  \small Partie linéaire = identité : aires et orientation préservées
+  --- première isométrie. Composer deux translations donne une
+  translation, et \textbf{l'ordre n'y change rien} :
+  $t_{\vec u}\circ t_{\vec v} = t_{\vec u+\vec v} = t_{\vec v}\circ t_{\vec u}$.
+\end{frame}
+
+\subsection{Homothéties}
+\begin{frame}{Définition 1.6 --- Homothétie de centre l'origine}
+  \begin{Enonce}{Définition 1.6}
+    L'\defi{homothétie} de centre $\vec 0$, rapport $c\in\Rs$ :
+    $h_c\col{x}{y} = \mat{c}{0}{0}{c}\col{x}{y}$. $0<c<1$ : contraction
+    uniforme ; $c>1$ : dilatation uniforme ; $c<0$ : retourne la figure
+    ($h_{-1}$ = symétrie centrale).
+  \end{Enonce}
+  \small $\dete(cI) = c^2 > 0$ : une homothétie ne renverse
+  \textbf{jamais} l'orientation, même si $c<0$ --- excellent sujet de
+  discussion en classe.
+\end{frame}
+
+\begin{frame}{Proposition 1.5 --- Homothétie de centre quelconque}
+  \begin{Enonce}{Proposition 1.5}
+    L'homothétie de centre $M=(h,k)$, rapport $c$ :
+    $h_{M,c} = t_{\vec m}\circ h_c \circ t_{-\vec m}$,
+    \[
+      h_{M,c}\col{x}{y} = \col{cx+h(1-c)}{cy+k(1-c)}.
+    \]
+  \end{Enonce}
+  \begin{AuTableau}
+    \small Technique de la \textbf{conjugaison} (sert partout) : on
+    ramène le centre à l'origine, on fait la transformation, on
+    revient. $P\mapsto P-\vec m\mapsto c(P-\vec m)\mapsto c(P-\vec
+    m)+\vec m$.
+  \end{AuTableau}
+\end{frame}
+
+\begin{frame}{Pour la classe 1.3 --- Lire une formule du secondaire}
+  \begin{Classe}{Lire une formule du secondaire}
+    \small $(x,y)\mapsto(cx+h(1-c), cy+k(1-c))$ --- exactement la
+    formule de 2\up{e} secondaire. Vue comme
+    $t_{\vec m}\circ h_c\circ t_{-\vec m}$ : « je vais au centre,
+    j'agrandis, je reviens » --- rien à retenir.
+  \end{Classe}
+\end{frame}
+
+\subsection{Rotations}
+\begin{frame}{Définition 1.7 --- Rotation de centre l'origine}
+  \begin{Enonce}{Définition 1.7}
+    La \defi{rotation} d'angle $\theta$, sens antihoraire, autour de
+    l'origine :
+    $r_\theta = \mat{\cos\theta}{-\sin\theta}{\sin\theta}{\cos\theta}$.
+  \end{Enonce}
+  \FigBox[0.42\textheight]{%
+    \begin{tikzpicture}[scale=1.4]
+      \repere{-1.35}{1.6}{-1.35}{1.6}
+      \draw[gray!45, thin] (0,0) circle (1);
+      \draw[fleche] (0,0) -- (1,0) node[etiq, below right] {$\vec{e}_1$};
+      \draw[fleche] (0,0) -- (0,1) node[etiq, below left] {$\vec{e}_2$};
+      \draw[fleche, firebrick3] (0,0) -- (37:1)
+        node[etiq, right] {$\col{\cos\theta}{\sin\theta}$};
+      \draw[fleche, firebrick3] (0,0) -- (127:1)
+        node[etiq, above left] {$\col{-\sin\theta}{\cos\theta}$};
+      \draw[firebrick3, thin] (0.42,0) arc (0:37:0.42);
+      \node[etiq, firebrick3] at (20:0.62) {$\theta$};
+      \draw[firebrick3, thin] (0,0.42) arc (90:127:0.42);
+    \end{tikzpicture}}
+  \begin{center}\small Figure 1.5. $\dete(r_\theta)=1$ : aires et
+    orientation préservées.\end{center}
+\end{frame}
+
+\begin{frame}{Remarque 1.7 --- Un ou deux indices ?}
+  \begin{Rem}{Remarque 1.7}
+    Un indice \textbf{seul}, comme $r_\theta$ : centrée à
+    \textbf{l'origine}. Dès que le centre n'est pas l'origine, on le
+    place en \textbf{premier} indice : $r_{M,\theta}$ --- l'indice
+    porte alors sur \emph{deux} objets, jamais sur l'angle seul. Même
+    lecture pour $h_c$ / $h_{M,c}$ et $R_\theta$ / $R_d$.
+  \end{Rem}
+  \[
+    r_{M,\theta}\col{x}{y}
+      = r_\theta\left(\col{x}{y} - \vec{m}\right) + \vec{m}
+      = r_\theta\col{x}{y} + (I - r_\theta)\,\vec{m}
+      \qquad\text{(conjugaison, encore.)}
+  \]
+\end{frame}
+
+\begin{frame}{Proposition 1.6 --- Composer deux rotations de même centre}
+  \begin{Enonce}{Proposition 1.6}
+    Pour $M$ quelconque :
+    $r_{M,\alpha}\,r_{M,\beta} = r_{M,\alpha+\beta} = r_{M,\beta}\,r_{M,\alpha}$,
+    et $r_{M,\theta}^{-1} = r_{M,-\theta}$.
+  \end{Enonce}
+  \begin{AuTableau}
+    \small Idée : cas $M=\vec 0$ par produit matriciel (les formules
+    d'addition d'angles apparaissent) ; cas général par conjugaison,
+    ramené au premier cas.
+  \end{AuTableau}
+  \begin{Classe}{Un cadeau pour la classe}
+    \small La démonstration (cas $M=\vec 0$) est une preuve de
+    $\cos(\alpha+\beta)=\cos\alpha\cos\beta-\sin\alpha\sin\beta$ et
+    $\sin(\alpha+\beta)=\sin\alpha\cos\beta+\cos\alpha\sin\beta$ --- la
+    plus courte qui soit, et elle explique \emph{pourquoi} : reflet
+    d'un produit de matrices. À garder pour la 5\up{e} secondaire.
+  \end{Classe}
+\end{frame}
+
+\subsection{Réflexions}
+\begin{frame}{Définition 1.8 --- Réflexions}
+  \begin{Enonce}{Définition 1.8 --- Réflexions par rapport aux axes}
+    $H = \mat{1}{0}{0}{-1}$ (axe des $x$), $V=\mat{-1}{0}{0}{1}$ (axe
+    des $y$).
+  \end{Enonce}
+  Plus généralement, réflexion d'axe passant par l'origine, angle
+  $\theta$ avec l'axe des $x$ :
+  \[
+    R_\theta = \mat{\cos 2\theta}{\sin 2\theta}{\sin 2\theta}{-\cos 2\theta}.
+  \]
+  \small $\dete(R_\theta) = -1$ : une réflexion renverse toujours
+  l'orientation (intuition du miroir). $\theta=0$ : $H$. $\theta=\pi/4$ :
+  réflexion d'axe $y=x$, matrice $\mat{0}{1}{1}{0}$ (échange les
+  coordonnées).
+\end{frame}
+
+\begin{frame}{Remarque 1.8 --- L'angle double}
+  \begin{Rem}{Remarque 1.8}
+    Le $2\theta$ n'est \textbf{pas} une coquille : faire tourner le
+    \emph{miroir} de $\theta$ fait tourner l'\emph{image} de
+    $2\theta$. Même phénomène : la composée de deux réflexions d'axes
+    sécants est une rotation d'angle \textbf{double} de l'angle des
+    axes (théorème~1.13, plus loin) --- l'un des plus beaux résultats
+    à faire découvrir au secondaire.
+  \end{Rem}
+\end{frame}
+
+\subsection{Cisaillements et contractions non uniformes}
+\begin{frame}{Définition 1.9 --- Cisaillement}
+  \begin{Enonce}{Définition 1.9}
+    \defi{Cisaillement horizontal} de rapport $m$ : $\mat{1}{m}{0}{1}$.
+    \defi{Cisaillement vertical} de rapport $m$ : $\mat{1}{0}{m}{1}$.
+  \end{Enonce}
+  \small Le cisaillement horizontal laisse fixe l'axe des $x$ et fait
+  glisser chaque droite horizontale proportionnellement à sa hauteur ---
+  un paquet de cartes qui penche. $\dete = 1$ : \textbf{un cisaillement
+  conserve les aires}, en déformant complètement angles et longueurs.
+  \begin{Classe}{Le cisaillement et l'aire du parallélogramme}
+    \small « Aire = base $\times$ hauteur » : un cisaillement bien
+    choisi transforme le parallélogramme en un rectangle de même base
+    et hauteur, en conservant l'aire. C'est exactement ce que l'on fait
+    au secondaire en découpant un triangle et en le déplaçant --- sans
+    savoir qu'on vient de faire un cisaillement.
+  \end{Classe}
+\end{frame}
+
+\begin{frame}{Définition 1.10 --- Contraction non uniforme}
+  \begin{Enonce}{Définition 1.10}
+    Application linéaire $\mat{a}{0}{0}{b}$, $0<a<1$, $0<b<1$.
+  \end{Enonce}
+  \small Si $a\neq b$ : contracte davantage dans une direction ---
+  un cercle devient une ellipse. Avec $a>1$, $0<b<1$ : dilatation
+  horizontale et contraction verticale. Essentielles dans la
+  construction des fractales \emph{auto-affines} (fougère de Barnsley).
+\end{frame}
+
+\begin{frame}{Figure 1.6 --- Le catalogue en images}
+  \FigBox[0.66\textheight]{%
+    \begin{tikzpicture}[scale=0.72]
+      \begin{scope}[shift={(0,0)}]
+        \draw[quadrillage] (-1.25,-1.25) grid (1.25,1.25);
+        \draw[axe] (-1.25,0) -- (1.4,0);
+        \draw[axe] (0,-1.25) -- (0,1.4);
+        \draw[steelblue4!55, thin] \motifF;
+        \begin{scope}[cm={1,0,0,1,(-0.9,-0.6)}]
+          \fill[figim] \motifF;
+        \end{scope}
+        \node[etiq, black, align=center] at (0,-1.72)
+          {translation\\$\vec{t}=(-0{,}9\,;-0{,}6)$};
+      \end{scope}
+      \begin{scope}[shift={(3.5,0)}]
+        \draw[quadrillage] (-1.25,-1.25) grid (1.25,1.25);
+        \draw[axe] (-1.25,0) -- (1.4,0);
+        \draw[axe] (0,-1.25) -- (0,1.4);
+        \draw[steelblue4!55, thin] \motifF;
+        \begin{scope}[cm={0,1,-1,0,(0,0)}]
+          \fill[figim] \motifF;
+        \end{scope}
+        \node[etiq, black, align=center] at (0,-1.72)
+          {rotation\\$\theta = 90°$};
+      \end{scope}
+      \begin{scope}[shift={(7,0)}]
+        \draw[quadrillage] (-1.25,-1.25) grid (1.25,1.25);
+        \draw[axe] (-1.25,0) -- (1.4,0);
+        \draw[axe] (0,-1.25) -- (0,1.4);
+        \draw[steelblue4!55, thin] \motifF;
+        \begin{scope}[cm={1,0,0,-1,(0,0)}]
+          \fill[figim] \motifF;
+        \end{scope}
+        \node[etiq, black, align=center] at (0,-1.72)
+          {réflexion\\d'axe $Ox$};
+      \end{scope}
+      \begin{scope}[shift={(0,-4.3)}]
+        \draw[quadrillage] (-1.25,-1.25) grid (1.25,1.25);
+        \draw[axe] (-1.25,0) -- (1.4,0);
+        \draw[axe] (0,-1.25) -- (0,1.4);
+        \draw[steelblue4!55, thin] \motifF;
+        \begin{scope}[cm={0.55,0,0,0.55,(0,0)}]
+          \fill[figim] \motifF;
+        \end{scope}
+        \node[etiq, black, align=center] at (0,-1.72)
+          {homothétie\\$c = 0{,}55$};
+      \end{scope}
+      \begin{scope}[shift={(3.5,-4.3)}]
+        \draw[quadrillage] (-1.25,-1.25) grid (1.25,1.25);
+        \draw[axe] (-1.25,0) -- (1.4,0);
+        \draw[axe] (0,-1.25) -- (0,1.4);
+        \draw[steelblue4!55, thin] \motifF;
+        \begin{scope}[cm={1,0.8,0,1,(0,0)}]
+          \fill[figim] \motifF;
+        \end{scope}
+        \node[etiq, black, align=center] at (0,-1.72)
+          {cisaillement\\vertical, $m=0{,}8$};
+      \end{scope}
+      \begin{scope}[shift={(7,-4.3)}]
+        \draw[quadrillage] (-1.25,-1.25) grid (1.25,1.25);
+        \draw[axe] (-1.25,0) -- (1.4,0);
+        \draw[axe] (0,-1.25) -- (0,1.4);
+        \draw[steelblue4!55, thin] \motifF;
+        \begin{scope}[cm={0.5,0,0,0.85,(0,0)}]
+          \fill[figim] \motifF;
+        \end{scope}
+        \node[etiq, black, align=center] at (0,-1.72)
+          {contraction\\non uniforme};
+      \end{scope}
+    \end{tikzpicture}}
+  \begin{center}\small Le « F » : seule la réflexion renverse
+  l'orientation.\end{center}
+\end{frame}
+
+\begin{frame}{Table 1.1 --- Récapitulatif}
+  \small
+  \begin{center}
+  \begin{tabular}{llcc}
+    \toprule
+    Transformation & Matrice $A$ & $\dete(A)$ & Isométrie ? \\
+    \midrule
+    Translation & $I$ & $1$ & oui \\[4pt]
+    Rotation d'angle $\theta$
+      & $\mat{\cos\theta}{-\sin\theta}{\sin\theta}{\cos\theta}$
+      & $1$ & oui \\[10pt]
+    Réflexion d'axe $\theta$
+      & $\mat{\cos 2\theta}{\sin 2\theta}{\sin 2\theta}{-\cos 2\theta}$
+      & $-1$ & oui \\[10pt]
+    Homothétie de rapport $c$
+      & $\mat{c}{0}{0}{c}$ & $c^2$ & si $\lvert c\rvert = 1$ \\[10pt]
+    Cisaillement de rapport $m$
+      & $\mat{1}{m}{0}{1}$ & $1$ & non (sauf $m=0$) \\[10pt]
+    Contraction non uniforme
+      & $\mat{a}{0}{0}{b}$ & $ab$ & non (sauf $\lvert a\rvert=\lvert b\rvert=1$) \\[10pt]
+    Projection sur $y=x$
+      & $\tfrac12\mat{1}{1}{1}{1}$ & $0$ & non (non inversible) \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\end{frame}
+
+\subsection{Le cas non inversible}
+\begin{frame}{Le cas non inversible}
+  \small On considère parfois des applications affines qui ne sont pas
+  des transformations : $\dete(A) = 0$. Tout le plan est alors écrasé
+  sur une droite ($A\neq 0$) ou un point ($A=0$).
+
+  \begin{Enonce}{Exemple 1.7 --- La projection orthogonale sur $y=x$}
+    \small $p\col{x}{y} = \tfrac{x+y}{2}\col{1}{1}
+      = \tfrac12\mat{1}{1}{1}{1}\col{x}{y}$. $\dete = 0$ : toutes les
+      aires sont écrasées à zéro. Notez $p\circ p = p$.
+  \end{Enonce}
+  \FigBox[0.32\textheight]{%
+    \begin{tikzpicture}[scale=1.15]
+      \repere{-1.4}{2.4}{-1.4}{2.4}
+      \draw[droite] (-1.3,-1.3) -- (2.3,2.3) node[etiq, right, black] {$y=x$};
+      \fill[fig] \motifF;
+      \draw[firebrick3, ultra thick] (0,0) -- (0.875,0.875);
+      \foreach \x/\y in {0/1, 0.75/1, 0.3/0, 0.6/0.55}
+        {\draw[gray!70, thin, dotted] (\x,\y) -- ({(\x+\y)/2},{(\x+\y)/2});
+         \node[pt, inner sep=0.7pt] at (\x,\y) {};
+         \node[ptim, inner sep=0.7pt] at ({(\x+\y)/2},{(\x+\y)/2}) {};}
+    \end{tikzpicture}}
+  \begin{center}\small Figure 1.7 --- Le motif tout entier écrasé sur un
+  segment. Pas une transformation du plan.\end{center}
+\end{frame}
+
+\subsection{Le théorème de décomposition}
+\begin{frame}{Théorème 1.7 --- Décomposition}
+  \begin{Enonce}{Théorème 1.7 --- Décomposition des applications linéaires}
+    Une application linéaire de $\R^2$ est inversible si et seulement
+    si elle est une composition d'homothéties, de rotations, de
+    réflexions, de cisaillements et de contractions/dilatations non
+    uniformes.
+  \end{Enonce}
+  \small C'est la version géométrique d'un fait d'algèbre linéaire :
+  toute matrice inversible est un produit de matrices élémentaires.
+  Cisaillements $\leftrightarrow$ addition d'un multiple d'une ligne à
+  une autre ; contractions non uniformes $\leftrightarrow$
+  multiplication d'une ligne par un scalaire ; réflexion d'axe $y=x$
+  $\leftrightarrow$ échange de deux lignes. \textbf{Gauss--Jordan est
+  une décomposition géométrique.}
+  \begin{Rem}{Remarque 1.9 --- Deux décompositions modernes}
+    \footnotesize \emph{Polaire} : $A=QS$ (rotation/réflexion, puis
+    déformation symétrique positive). \emph{SVD} : $A=U\Sigma V^\top$
+    --- « une rotation, un étirement selon les axes, une rotation ».
+    Explique pourquoi un cercle devient toujours une ellipse.
+  \end{Rem}
+\end{frame}

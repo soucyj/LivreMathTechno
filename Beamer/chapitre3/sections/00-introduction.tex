@@ -1,0 +1,68 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Des monstres aux fractales}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Ce que les deux premiers chapitres ont préparé}
+  \small
+  \begin{itemize}
+    \item Chapitre 1 : une transformation affine du plan tient en six
+      nombres ; similitudes et contractions.
+    \item Chapitre 2 : l'espace $\big(\Comp{\R^2},\dH\big)$ des
+      compacts du plan, et le théorème du point fixe de Banach.
+    \item Aujourd'hui : quelques transformations affines suffisent à
+      définir un flocon au contour infiniment dentelé, ou une fougère.
+    \item L'existence de ces figures sera justifiée par Banach,
+      appliqué à l'espace des compacts.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Figure 3.1 --- Le flocon de von Koch}
+  \begin{columns}[c]
+    \begin{column}{0.45\textwidth}
+      \FigBox[0.66\textheight]{%
+        \begin{tikzpicture}[scale=4.4]
+          \fill[steelblue4!14] (0,0) -- (0.5,0.8660254) -- (1,0) -- cycle;
+          \begin{scope}[fractale/.style={fill=steelblue4!22, draw=sectioncolor, thin, line join=round}]
+            \input{figures/fractales/flocon-koch-4.tikz}
+          \end{scope}
+          \draw[sectioncolor!45, dashed, thin] (0,0) -- (0.5,0.8660254) -- (1,0) -- cycle;
+        \end{tikzpicture}}
+    \end{column}
+    \begin{column}{0.52\textwidth}
+      \small
+      Quatrième étape de la construction, superposée au triangle de
+      départ (en pointillé).
+      \vspace{6pt}
+
+      À la limite : un contour de longueur infinie, qui délimite une
+      région d'aire finie.
+      \vspace{6pt}
+
+      Le mot fractale : Benoît Mandelbrot, 1975, du latin fractus,
+      « brisé ». Des irrégularités à toutes les échelles ;
+      l'agrandissement ne les rend jamais lisses.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Des monstres devenus modèles}
+  \small
+  \begin{itemize}
+    \item Plusieurs de ces objets sont connus depuis la fin du
+      \siecle{19} : des contre-exemples (courbes continues sans
+      tangente, ensembles troués à l'infini), qu'on appelait des
+      « monstres ».
+    \item L'ordinateur permet de les représenter, et de voir qu'ils
+      décrivent bien des formes naturelles : côtes, nuages, végétaux,
+      réseaux sanguins.
+  \end{itemize}
+  \vspace{6pt}
+  Le chemin du chapitre :
+  \begin{enumerate}
+    \item deux exemples : la courbe de von Koch, le triangle de Sierpiński ;
+    \item autosimilarité et dimension de similitude ;
+    \item systèmes itératifs de fonctions (SIF), justifiés par Banach ;
+    \item deux algorithmes de dessin ;
+    \item des monstres de Weierstrass aux modèles de Mandelbrot.
+  \end{enumerate}
+\end{frame}

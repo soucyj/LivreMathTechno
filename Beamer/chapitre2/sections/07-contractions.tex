@@ -1,0 +1,63 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Contractions}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Définition 2.14 --- Contraction}
+  \small Les exemples précédents invitent à regarder les fonctions qui
+  rapprochent les points.
+  \begin{Enonce}{Définition 2.14 --- Contraction}
+    Soit $(E,d)$ un espace métrique et $f:E\to E$. $f$ est une
+    \defi{contraction} sur $E$ s'il existe $k\in\intfo{0}{1}$ tel que
+    \[
+      d\big(f(x),f(y)\big)\leq k\cdot d(x,y)\qquad\forall\,x,y\in E.
+    \]
+    La constante $k$ est le \defi{rapport de contraction} de $f$.
+  \end{Enonce}
+  \small Chaque application de $f$ multiplie les distances par au plus
+  $k<1$.
+\end{frame}
+
+\begin{frame}{Exemple 2.10 --- Contractions du plan}
+  \small
+  \begin{itemize}
+    \item Une homothétie de rapport $k$, $|k|<1$ : contraction de
+      rapport $|k|$ sur $(\R^2,\dE)$.
+    \item Plus généralement, toute similitude de rapport $k<1$ (comme
+      celle de l'exemple 2.9).
+    \item Mais une contraction n'est pas forcément une
+      similitude :
+      \[
+        f\col{x}{y} = \mat{1/2}{0}{0}{2/3}\col{x}{y}
+      \]
+      est une contraction de rapport $2/3$ (elle réduit davantage
+      selon $x$ que selon $y$), sans préserver les angles.
+  \end{itemize}
+  \FigBox[0.28\textheight]{%
+    \begin{tikzpicture}[scale=1.1]
+      \begin{scope}
+        \fill[fig] \motifF;
+        \node[etiq] at (0.4,-0.3) {motif};
+      \end{scope}
+      \draw[fleche] (1.2,0.5) -- node[etiq, above]{$f$} (2.0,0.5);
+      \begin{scope}[xshift=2.5cm, xscale=0.5, yscale=0.6667]
+        \fill[figim] \motifF;
+      \end{scope}
+      \node[etiq] at (2.7,-0.3) {image};
+    \end{tikzpicture}}
+\end{frame}
+
+\begin{frame}{Remarque 2.10 --- Le rôle de la borne stricte $k<1$}
+  \begin{Rem}{Remarque 2.10}
+    La condition $k<1$, et non $k\leq1$, est essentielle.
+    \begin{itemize}
+      \item $f(x)=x+1$ sur $(\R,\dE)$ : $d(f(x),f(y)) = d(x,y)$. Elle
+        conserve les distances ($k=1$)… et n'a aucun point fixe
+        (exemple 2.8 (i)).
+      \item $f(x)=3x+2$ : $d(f(x),f(y)) = 3\,d(x,y)$. Non seulement
+        $k=3\geq1$, mais $f$ éloigne les points d'un facteur $3$.
+    \end{itemize}
+    \vspace{2pt}
+    C'est ce qui explique que l'itération de l'exemple 2.8 (iii)
+    s'éloigne de son unique point fixe $x=-1$ au lieu d'y converger.
+  \end{Rem}
+\end{frame}

@@ -1,0 +1,139 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{La notion de point fixe}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Définition 2.13 --- Point fixe}
+  \begin{Enonce}{Définition 2.13 --- Point fixe}
+    Soit $E$ un ensemble et $f:E\to E$. Un élément $x\in E$ est un
+    \defi{point fixe} de $f$ si $f(x)=x$.
+  \end{Enonce}
+  \vspace{4pt}
+  \small Un point que la fonction envoie sur lui-même. Pour $E=\R$ : les
+  intersections du graphe de $f$ avec la droite $y=x$.
+  \vspace{6pt}
+
+  Deux questions :
+  \begin{enumerate}
+    \item Une fonction donnée possède-t-elle un point fixe ?
+    \item Si oui, est-il unique ?
+  \end{enumerate}
+  Les réponses dépendent de la fonction.
+\end{frame}
+
+\begin{frame}{Exemple 2.8 --- Trois fonctions de $\R$ dans $\R$}
+  \FigBox[0.48\textheight]{%
+    \begin{tikzpicture}
+      \begin{scope}[shift={(0.25,0)}]
+        \draw[axe] (-2.3,0) -- (1.8,0) node[right, etiq]{$x$};
+        \draw[axe] (0,-2.3) -- (0,1.8);
+        \draw[sectioncolor!35, thick] (-2.3,-2.3) -- (1.8,1.8);
+        \node[etiq, sectioncolor!70, fill=white, inner sep=2pt, right] at (-1.7,-1.7) {$y=x$};
+        \draw[firebrick3, thick, domain=-2.3:0.8, samples=2] plot (\x,{\x+1});
+        \node[etiq, firebrick3, fill=white, inner sep=2pt, above left] at (-0.2,0.8) {$y=x+1$};
+        \node[font=\small, below] at (-0.25,-2.45) {(i) aucun point fixe};
+      \end{scope}
+      \begin{scope}[shift={(4.55,-1.8)}]
+        \draw[axe] (-1.3,0) -- (1.8,0) node[right, etiq]{$x$};
+        \draw[axe] (0,-0.5) -- (0,1.8);
+        \draw[sectioncolor!35, thick] (-0.5,-0.5) -- (1.8,1.8);
+        \node[etiq, sectioncolor!70, fill=white, inner sep=2pt, right] at (-0.4,-0.4) {$y=x$};
+        \draw[firebrick3, thick, domain=-1.15:1.35, samples=60, smooth]
+          plot (\x,{\x*\x});
+        \node[etiq, firebrick3, fill=white, inner sep=2pt, left] at (1.2,1.44) {$y=x^2$};
+        \node[ptim] at (0,0) {};
+        \node[ptim] at (1,1) {};
+        \node[font=\small, below] at (0.25,-0.65) {(ii) deux points fixes};
+      \end{scope}
+      \begin{scope}[shift={(9.2,0)}]
+        \draw[axe] (-1.8,0) -- (0.9,0) node[right, etiq]{$x$};
+        \draw[axe] (0,-2.3) -- (0,3.3);
+        \draw[sectioncolor!35, thick] (-1.8,-1.8) -- (0.9,0.9);
+        \node[etiq, sectioncolor!70, fill=white, inner sep=2pt, above] at (0.5,0.5) {$y=x$};
+        \draw[firebrick3, thick, domain=-1.15:0.35, samples=2] plot (\x,{3*\x+2});
+        \node[etiq, firebrick3, fill=white, inner sep=2pt] at (-0.85,1.5) {$y=3x+2$};
+        \node[ptim, label={[etiq]right:$(-1,-1)$}] at (-1,-1) {};
+        \node[font=\small, below] at (-0.45,-2.45) {(iii) un point fixe};
+      \end{scope}
+    \end{tikzpicture}}
+  \begin{center}\scriptsize Figure 2.12\end{center}
+  \footnotesize (i) $x+1=x$ : aucune solution. (ii) $x^2=x$ : $x=0$ et
+  $x=1$. (iii) $3x+2=x$ : $x=-1$ seulement --- mais en itérant
+  $f$ depuis $x_0\neq-1$, la suite s'éloigne de $-1$. Avoir un
+  point fixe ne garantit pas que l'itération y mène (on y revient en
+  section 8).
+\end{frame}
+
+\begin{frame}{Outil 2.2 --- Points fixes et itérations dans Desmos et GeoGebra}
+  \begin{Outil}{Points fixes et itérations dans Desmos et GeoGebra}
+    \small
+    Desmos : tracer $y=ax+b$ avec deux curseurs, et la droite
+    $y=x$. Le point fixe se lit à l'intersection ; les élèves peuvent
+    conjecturer qu'il vaut $b/(1-a)$, et voir qu'il disparaît quand
+    $a=1$ (cas (i)).
+    \vspace{4pt}
+
+    GeoGebra : \texttt{IterationList(f, x0, 20)} produit
+    $x_0,x_1,\dots,x_{20}$. Comparer $f(x)=3x+2$ et
+    $f(x)=\tfrac13x+2$ : la suite s'éloigne du point fixe dans le
+    premier cas, s'en approche dans le second.
+    \vspace{4pt}
+
+    Cela prépare la notion de contraction.
+  \end{Outil}
+\end{frame}
+
+\begin{frame}{Exemple 2.9 --- Une fonction de $\R^2$ dans $\R^2$}
+  \begin{columns}[c]
+    \begin{column}{0.52\textwidth}
+      \small
+      \[
+        f\col{x}{y} = \mat{\num{0.4}}{\num{-0.35}}{\num{0.35}}{\num{0.4}}\col{x}{y}.
+      \]
+      Forme $\mat{a}{-b}{b}{a}$ : une similitude directe (chapitre 1)
+      de rapport
+      $k=\sqrt{\num{0.4}^2+\num{0.35}^2}\approx\num{0.531}$.
+      \vspace{6pt}
+
+      Son unique point fixe est l'origine. Les images successives d'un
+      motif « F » sont tournées et réduites d'un facteur $k$, et
+      s'enroulent en spirale vers ce point fixe.
+    \end{column}
+    \begin{column}{0.46\textwidth}
+      \FigBox[0.62\textheight]{%
+        \begin{tikzpicture}[scale=1.35]
+          \foreach \i/\col in {0/sectioncolor, 1/steelblue4, 2/coveraccent,
+                               3/firebrick3} {
+            \begin{scope}[scale={(0.531)^\i}, rotate={\i*41.2}]
+              \draw[\col, thick, fill=\col, fill opacity=0.16]
+                (0,0) -- (0.9,0) -- (0.9,1.65) --
+                (1.8,1.65) -- (1.8,2.25) -- (0.9,2.25) -- (0.9,2.55) --
+                (2.25,2.55) -- (2.25,3) -- (0,3) -- cycle;
+            \end{scope}
+          }
+          \node[ptim] at (0,0) {};
+          \node[etiq, firebrick3, below right] at (0,0) {$\overline{x}=(0,0)$};
+        \end{tikzpicture}}
+      \begin{center}\scriptsize Figure 2.13\end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Remarque 2.9 --- Un autre résultat : le théorème de Brouwer}
+  \begin{Rem}{Remarque 2.9}
+    \small Brouwer : toute fonction continue d'un disque
+    fermé de $\R^2$ (plus généralement, d'un convexe compact de $\R^n$)
+    dans lui-même possède au moins un point fixe --- sans
+    hypothèse de contraction.
+    \vspace{4pt}
+
+    Mais il ne garantit
+    \begin{itemize}
+      \item ni l'unicité (pensons à $f=\mathrm{id}$),
+      \item ni une façon de calculer le point fixe.
+    \end{itemize}
+  \end{Rem}
+  \vspace{4pt}
+  \small Le théorème de Banach demande davantage, et donne davantage :
+  existence, unicité, un algorithme, et une estimation de la
+  vitesse de convergence.
+\end{frame}

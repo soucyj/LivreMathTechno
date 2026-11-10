@@ -1,0 +1,49 @@
+% ─────────────────────────────────────────────────────────────
+%  01-minimal.tex — un premier document LaTeX complet
+%  À compiler avec pdfLaTeX (réglage par défaut d'Overleaf).
+% ─────────────────────────────────────────────────────────────
+\documentclass[12pt]{article}   % classe du document et taille du texte
+
+% ── Préambule : réglages et extensions (packages) ────────────
+\usepackage[T1]{fontenc}         % accents et césures corrects
+\usepackage[french]{babel}       % typographie française
+\usepackage{amsmath, amssymb}    % outils mathématiques
+\usepackage{siunitx}             % nombres et unités
+\sisetup{output-decimal-marker = {,}}   % virgule décimale
+\usepackage[margin=2.5cm]{geometry}     % marges de la page
+
+\title{Mon premier document}
+\author{Prénom Nom}
+\date{\today}
+
+% ── Corps du document ────────────────────────────────────────
+\begin{document}
+
+\maketitle
+
+\section{Du texte}
+
+Un paragraphe se termine par une ligne vide.
+Un simple retour à la ligne, comme ici, ne change rien.
+
+Voici un nouveau paragraphe. Le symbole pour cent s'écrit \%,
+car le symbole seul commence un commentaire. % Ceci est un commentaire.
+
+\section{Des mathématiques}
+
+Dans le texte, on écrit $a^2 + b^2 = c^2$ entre deux symboles dollar.
+Une équation importante se met en évidence :
+\[
+  x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}.
+\]
+Un nombre décimal : $\num{3,75}$ ; une mesure : $\qty{12,5}{\centi\metre}$.
+
+\section{Une liste}
+
+\begin{enumerate}
+  \item Lire l'énoncé.
+  \item Faire un schéma.
+  \item Résoudre et valider.
+\end{enumerate}
+
+\end{document}

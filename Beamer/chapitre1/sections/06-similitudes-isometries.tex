@@ -1,0 +1,190 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Isométries et similitudes}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{On descend d'un cran dans la hiérarchie}
+  \small Parmi les transformations affines, celles qui intéressent le
+  secondaire sont celles qui respectent la \emph{forme} des figures.
+
+  \begin{Enonce}{Définition 1.11 --- Similitude, isométrie, contraction}
+    $w$ affine est une \defi{similitude} de rapport $k>0$ si
+    \[
+      \norme{w(P)-w(Q)} = k\,\norme{P-Q} \qquad \forall P,Q.
+    \]
+    $k=1$ : \defi{isométrie}. $0<k<1$ : \defi{contraction}.
+  \end{Enonce}
+  \small C'est la définition de « figures semblables » du secondaire,
+  énoncée comme propriété de la \emph{transformation}, non d'un couple
+  de figures.
+\end{frame}
+
+\begin{frame}{Propositions 1.8 et 1.9}
+  \begin{Enonce}{Proposition 1.8 --- Il suffit de regarder la partie linéaire}
+    \small $w$ affine de partie linéaire $A$ est une similitude de
+    rapport $k$ ssi $\col{x}{y}\mapsto A\col{x}{y}$ en est une, même
+    rapport. (La translation disparaît dans la différence
+    $w(P)-w(Q)$.)
+  \end{Enonce}
+  \begin{Enonce}{Proposition 1.9 --- Une composition de similitudes est une similitude}
+    \small $w_1,w_2$ similitudes de rapports $k_1,k_2$
+    $\Rightarrow$ $w_2\circ w_1$ similitude de rapport $k_1k_2$.
+  \end{Enonce}
+  \vspace{4pt}
+  \textbf{Conséquence.} Les similitudes forment un sous-groupe $\Sim$
+  de $\Aff$, les isométries un sous-groupe $\Iso$ de $\Sim$ : la figure
+  1.3 est maintenant justifiée.
+\end{frame}
+
+\subsection{L'anatomie des similitudes}
+\begin{frame}{L'anatomie des similitudes}
+  \small Homothéties, rotations, réflexions, translations sont des
+  similitudes, donc toutes leurs compositions aussi. On \textbf{admet}
+  la réciproque : ce sont les seules --- la partie linéaire d'une
+  similitude de rapport $k$ est toujours $k\,r_\theta$ (directe) ou
+  $k\,R_\theta$ (indirecte), pour un certain $\theta$. (Démonstration
+  complète hors cadre du cours.)
+\end{frame}
+
+\begin{frame}{Propositions 1.10 et 1.11}
+  \begin{Enonce}{Proposition 1.10 --- Déterminant d'une similitude}
+    \small $w$ similitude de rapport $k$, partie linéaire $A$ :
+    $\dete(A) = k^2$ ou $-k^2$. Donc $\lvert\dete(A)\rvert = k^2$, et
+    $w$ est une contraction ssi $\lvert\dete(A)\rvert < 1$.
+  \end{Enonce}
+  \begin{Enonce}{Proposition 1.11 --- Aires et rapport de similitude}
+    Si $w$ est une similitude de rapport $k$ et $D$ une région du
+    plan : $\Aire(w(D)) = k^2\,\Aire(D)$.
+  \end{Enonce}
+  \begin{Classe}{Le fameux $k^2$}
+    \small « Si on double les dimensions, l'aire $\times 4$ » --- l'un
+    des résultats les plus mal compris du secondaire. Deux preuves : le
+    déterminant (prop.~1.4), ou le fait qu'une aire est un produit de
+    deux longueurs, chacune $\times k$. Dimension 3 : $k^3$ pour les
+    volumes.
+  \end{Classe}
+\end{frame}
+
+\begin{frame}{Exemple 1.9 --- Reconnaître une similitude}
+  \small $A=\mat{0{,}8}{0}{a}{0{,}6}$ n'est \textbf{jamais} une
+  similitude ($\norme{A\vec e_1}\geq 0{,}8 \neq 0{,}6=\norme{A\vec
+  e_2}$, contradiction).
+
+  \vspace{6pt}
+  $A=\mat{0{,}5}{\alpha}{\beta}{0{,}5}$ : similitude pour
+  $\alpha=\beta=0$ (homothétie $\tfrac12$) et pour
+  $\alpha=\tfrac{\sqrt3}2,\beta=-\tfrac{\sqrt3}2$ --- on reconnaît la
+  matrice $r_{-\pi/3}$ : \textbf{c'est même une isométrie} ($k=1$).
+\end{frame}
+
+\subsection{Classification des isométries du plan}
+\begin{frame}{Théorème 1.12 --- Les quatre isométries du plan}
+  \begin{Enonce}{Théorème 1.12 (admis sans démonstration)}
+    \small Toute isométrie du plan est :
+    \begin{enumerate}
+      \item une \defi{translation} (identité incluse) ;
+      \item une \defi{rotation} autour d'un point ;
+      \item une \defi{réflexion} par rapport à une droite ;
+      \item une \defi{réflexion glissée} : réflexion suivie d'une
+        translation parallèle à l'axe.
+    \end{enumerate}
+  \end{Enonce}
+\end{frame}
+
+\begin{frame}{Table 1.2 --- Les isométries, résumé}
+  \begin{center}
+  \begin{tabular}{llll}
+    \toprule
+    Isométrie & $\dete(A)$ & Points fixes & Nom au secondaire\\
+    \midrule
+    Identité         & $+1$ & tout le plan  & --- \\
+    Translation      & $+1$ & aucun         & translation \\
+    Rotation         & $+1$ & un seul point & rotation \\
+    Réflexion        & $-1$ & une droite    & réflexion \\
+    Réflexion glissée & $-1$ & aucun         & (absente du programme) \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Pour la classe 1.7 --- La grande absente}
+  \begin{Classe}{La grande absente}
+    \small La réflexion glissée ne figure pas au programme québécois.
+    Elle explique les traces de pas dans la neige, la disposition des
+    feuilles, plusieurs frises. La liste « translation, rotation,
+    réflexion » que retiennent les élèves est \textbf{incomplète} :
+    composer une réflexion et une translation donne, en général,
+    quelque chose qui n'est aucune des trois.
+  \end{Classe}
+  \FigBox[0.3\textheight]{%
+    \begin{tikzpicture}[scale=0.85]
+      \draw[droite] (-0.5,0) -- (8.2,0);
+      \foreach \i in {0,1,2,3}{
+        \begin{scope}[shift={(2*\i,0)}, scale=0.55]
+          \fill[fig] \motifF;
+        \end{scope}
+        \begin{scope}[shift={(2*\i+1,0)}, scale=0.55, yscale=-1]
+          \fill[figim] \motifF;
+        \end{scope}}
+      \node[etiq, right] at (8.3,0) {axe};
+    \end{tikzpicture}}
+  \begin{center}\small Figure 1.9 --- Une frise engendrée par une
+  réflexion glissée.\end{center}
+\end{frame}
+
+\subsection{Tout se ramène aux réflexions}
+\begin{frame}{Théorème 1.13 --- Composée de deux réflexions}
+  \begin{Enonce}{Théorème 1.13}
+    \small Soient $d_1,d_2$, $R_1,R_2$ les réflexions correspondantes.
+    \begin{enumerate}
+      \item Si $d_1\parallel d_2$ : $R_2\circ R_1$ = translation de
+        vecteur $2\vec v$, $\vec v$ perpendiculaire de $d_1$ à $d_2$.
+      \item Si $d_1,d_2$ se coupent en $M$, angle $\varphi$ :
+        $R_2\circ R_1$ = rotation de centre $M$, angle $2\varphi$.
+    \end{enumerate}
+  \end{Enonce}
+  \FigBox[0.4\textheight]{%
+    \begin{tikzpicture}[scale=1.25]
+      \draw[droite] (-1.8,0) -- (1.8,0) node[etiq, right, black] {$d_1$};
+      \draw[droite] (35:-1.8) -- (35:1.8) node[etiq, right, black] {$d_2$};
+      \node[pt, label={[etiq]below left:$M$}] at (0,0) {};
+      \draw[sectioncolor, thin] (0.6,0) arc (0:35:0.6);
+      \node[etiq, sectioncolor] at (17:0.82) {$\varphi$};
+      \begin{scope}[shift={(0.75,0.25)}, scale=0.5]
+        \fill[fig] \motifF;
+      \end{scope}
+      \begin{scope}[cm={1,0,0,-1,(0,0)}]
+        \begin{scope}[shift={(0.75,0.25)}, scale=0.5]
+          \fill[figaux] \motifF;
+        \end{scope}
+      \end{scope}
+      \begin{scope}[rotate=70]
+        \begin{scope}[shift={(0.75,0.25)}, scale=0.5]
+          \fill[figim] \motifF;
+        \end{scope}
+      \end{scope}
+      \draw[-{Stealth[length=2mm]}, firebrick3, thick]
+        (1.35,0.75) arc (25:95:1.5);
+      \node[etiq, firebrick3] at (60:1.85) {$2\varphi$};
+    \end{tikzpicture}}
+  \begin{center}\small Figure 1.10\end{center}
+\end{frame}
+
+\begin{frame}{Corollaire 1.14, et une leçon de didactique}
+  \begin{AuTableau}[Idée de la démonstration --- au tableau]
+    \small Cas $2$ : quitte à translater, $M=\vec 0$ ; par
+    $R_{\alpha+\varphi}R_\alpha$, développement trigonométrique
+    $\Rightarrow r_{2\varphi}$.
+  \end{AuTableau}
+  \begin{Enonce}{Corollaire 1.14 --- Trois réflexions suffisent}
+    Toute isométrie du plan est la composée d'au plus \textbf{trois}
+    réflexions.
+  \end{Enonce}
+  \begin{Classe}{Une leçon de didactique}
+    \small La réflexion n'est pas une transformation « parmi
+    d'autres » : c'est \emph{la} transformation fondamentale, qui
+    engendre toutes les autres. On peut faire vivre ce résultat avec
+    deux miroirs, ou deux pliages successifs : les élèves découvrent
+    expérimentalement que deux réflexions donnent une rotation d'angle
+    double de l'angle entre les plis.
+  \end{Classe}
+\end{frame}

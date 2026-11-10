@@ -1,0 +1,203 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Les chaînes de Markov}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Définition 4.4 --- Chaîne de Markov}
+  \begin{Enonce}{Définition 4.4 --- Chaîne de Markov}
+    \small Une suite de variables aléatoires $X_0,X_1,X_2,\dots$ à
+    valeurs dans un ensemble fini d'\defi{états} $\{1,\dots,N\}$ est une
+    \defi{chaîne de Markov} si, pour tout $n$ et tous états
+    $i,j,i_0,\dots,i_{n-1}$,
+    \[
+      \P{X_{n+1}=i\mid X_n=j,\ X_{n-1}=i_{n-1},\ \dots,\ X_0=i_0}
+      = \P{X_{n+1}=i\mid X_n=j}
+    \]
+    (\defi{propriété de Markov}). Elle est \defi{homogène} si cette
+    probabilité ne dépend pas de $n$ ; on la note $m_{ij}$, et
+    $M=(m_{ij})$ est la \defi{matrice de transition}.
+  \end{Enonce}
+  \small
+  \begin{itemize}
+    \item Toutes nos chaînes sont homogènes.
+    \item Le hasard peut dépendre du passé, mais toute l'information utile
+      est contenue dans l'état présent.
+    \item Pile ou face : un cas extrême, chaque colonne vaut
+      $\big(\tfrac12,\tfrac12\big)$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Proposition 4.2 --- Évolution de la loi}
+  \begin{Enonce}{Proposition 4.2 --- Évolution de la loi}
+    Soit $(X_n)$ une chaîne de Markov homogène de matrice $M$, et
+    $\vec x_n$ la loi de $X_n$. Alors $\vec x_{n+1}=M\vec x_n$ pour tout
+    $n$, et donc $\vec x_n=M^n\vec x_0$.
+  \end{Enonce}
+  \begin{AuTableau}
+    \small Probabilités totales avec $B_j=\{X_n=j\}$ :
+    $\P{X_{n+1}=i}=\sum_j m_{ij}\,\P{X_n=j}$, la $i$\ap{e} composante de
+    $M\vec x_n$ ; puis récurrence.
+  \end{AuTableau}
+  \small Avec $\vec x_0=\vec e_j$ : la $j$\ap{e} colonne de $M^n$ est la
+  loi de $X_n$ partant de $j$. Le coefficient $(M^n)_{ij}$ est la
+  probabilité de passer de $j$ à $i$ en $n$ étapes.
+\end{frame}
+
+\begin{frame}{Pour la classe 4.2 --- Graphes et matrices au secondaire}
+  \begin{Classe}{Graphes et matrices au secondaire}
+    \small
+    \begin{itemize}
+      \item Le diagramme de transition est un graphe orienté valué :
+        sommets = états, arêtes orientées portant un poids.
+      \item La progression des apprentissages prévoit une introduction à
+        la théorie des graphes au deuxième cycle (graphes orientés et
+        valués).
+      \item En Technico-sciences, les matrices sont un registre de
+        représentation ; on y fait des multiplications matricielles.
+      \item Une chaîne de Markov réunit les deux registres : le graphe pour
+        décrire, la matrice pour calculer. Passer de l'un à l'autre oblige
+        à préciser ce que représente chaque ligne et chaque colonne.
+    \end{itemize}
+  \end{Classe}
+\end{frame}
+
+\subsection{Ville, banlieue et campagne}
+
+\begin{frame}{Figure 4.4 --- Le modèle de migration}
+  \small Chaque année : en ville, $\SI{85}{\percent}$ restent,
+  $\SI{10}{\percent}$ vont en banlieue, $\SI{5}{\percent}$ à la campagne ;
+  en banlieue, $\SI{90}{\percent}$ restent, $\SI{5}{\percent}$ vont en
+  ville et $\SI{5}{\percent}$ à la campagne ; à la campagne,
+  $\SI{85}{\percent}$ restent, $\SI{10}{\percent}$ vont en banlieue,
+  $\SI{5}{\percent}$ en ville. Population constante, taux fixes.
+  \FigBox[0.5\textheight]{%
+    \begin{tikzpicture}[scale=0.85]
+      \node[etat] (V) at (0,0) {$V$};
+      \node[etat] (B) at (4,0) {$B$};
+      \node[etat] (C) at (2,-3.2) {$C$};
+      \draw[lien] (V) to[bend left=15] node[proba] {$\num{0.10}$} (B);
+      \draw[lien] (B) to[bend left=15] node[proba] {$\num{0.05}$} (V);
+      \draw[lien] (B) to[bend left=15] node[proba] {$\num{0.05}$} (C);
+      \draw[lien] (C) to[bend left=15] node[proba] {$\num{0.10}$} (B);
+      \draw[lien] (C) to[bend left=15] node[proba] {$\num{0.05}$} (V);
+      \draw[lien] (V) to[bend left=15] node[proba] {$\num{0.05}$} (C);
+      \draw[lien] (V) to[loop left, min distance=9mm] node[proba, left] {$\num{0.85}$} (V);
+      \draw[lien] (B) to[loop right, min distance=9mm] node[proba, right] {$\num{0.90}$} (B);
+      \draw[lien] (C) to[loop below, min distance=9mm] node[proba, below] {$\num{0.85}$} (C);
+      \node[align=center, anchor=west] at (7.6,-1.4) {%
+        $M = \begin{pmatrix}
+          \num{0.85} & \num{0.05} & \num{0.05}\\
+          \num{0.10} & \num{0.90} & \num{0.10}\\
+          \num{0.05} & \num{0.05} & \num{0.85}
+        \end{pmatrix}$\\[6pt]
+        {\small colonnes : départ de $V$, de $B$, de $C$}\\
+        {\small lignes : arrivée en $V$, en $B$, en $C$}};
+    \end{tikzpicture}}
+\end{frame}
+
+\begin{frame}{Tableau 4.2 --- L'évolution de la répartition}
+  \small $\vec x_0=(\num{0.5}\,;\ \num{0.3}\,;\ \num{0.2})$, et
+  $\vec x_1=M\vec x_0=(\num{0.45}\,;\ \num{0.34}\,;\ \num{0.21})$.
+  \begin{center}
+  \footnotesize
+  \begin{tabular}{lccccccc}
+    \toprule
+    $n$ (années) & $0$ & $1$ & $2$ & $5$ & $10$ & $20$ & $50$ \\
+    \midrule
+    ville & $\num{0.50}$ & $\num{0.45}$ & $\num{0.41}$ & $\num{0.3319}$ & $\num{0.2768}$ & $\num{0.2529}$ & $\num{0.2500}$ \\
+    banlieue & $\num{0.30}$ & $\num{0.34}$ & $\num{0.372}$ & $\num{0.4345}$ & $\num{0.4785}$ & $\num{0.4977}$ & $\num{0.5000}$ \\
+    campagne & $\num{0.20}$ & $\num{0.21}$ & $\num{0.218}$ & $\num{0.2336}$ & $\num{0.2446}$ & $\num{0.2494}$ & $\num{0.2500}$ \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \small Gauss--Jordan sur $M-I$ : le noyau est engendré par $(1,2,1)$,
+  d'où $\vec q=\big(\tfrac14,\tfrac12,\tfrac14\big)$. À long terme, la
+  moitié de la population vit en banlieue.
+\end{frame}
+
+\begin{frame}{Exemple 4.3 --- Une formule exacte pour $\vec x_n$}
+  \small Soit $Q=\vec q\,\vec e^{\mathsf T}$ (trois colonnes égales à
+  $\vec q$). On vérifie que
+  \[
+    M = \num{0.8}\,I+\num{0.2}\,Q
+  \]
+  (première colonne : $(\num{0.8}+\num{0.05}\,;\ \num{0.1}\,;\ \num{0.05})$).
+  Chaque année, on garde son lieu avec probabilité $\num{0.8}$ ; avec
+  probabilité $\num{0.2}$, on « tire au sort » un milieu selon $\vec q$.
+  \begin{itemize}
+    \item Si $\vec e^{\mathsf T}\vec v=0$ : $Q\vec v=\vec0$, donc
+      $M\vec v=\num{0.8}\,\vec v$ (tout le plan $v_1+v_2+v_3=0$ est
+      propre).
+    \item $\vec x_0-\vec q$ est dans ce plan, d'où
+      \[
+        \vec x_n = \vec q+(\num{0.8})^n(\vec x_0-\vec q).
+      \]
+    \item L'écart diminue de $\SI{20}{\percent}$ par année ;
+      $(\num{0.8})^{10}\approx\num{0.107}$. Ce « tirage au sort »
+      reviendra dans la matrice Google.
+  \end{itemize}
+\end{frame}
+
+\subsection{Et si l'avenir dépendait de plusieurs jours ?}
+
+\begin{frame}{Une mémoire de deux jours}
+  \begin{columns}[c]
+    \begin{column}{0.4\textwidth}
+      \begin{center}
+      \small
+      \begin{tabular}{ccc}
+        \toprule
+        hier & aujourd'hui & $\P{\text{beau demain}}$ \\
+        \midrule
+        $B$ & $B$ & $\num{0.9}$ \\
+        $P$ & $B$ & $\num{0.7}$ \\
+        $B$ & $P$ & $\num{0.5}$ \\
+        $P$ & $P$ & $\num{0.3}$ \\
+        \bottomrule
+      \end{tabular}
+      \end{center}
+    \end{column}
+    \begin{column}{0.58\textwidth}
+      \small $(X_n)$ n'est plus une chaîne de Markov. Mais le couple
+      $Y_n=(X_{n-1},X_n)$ en est une, à quatre états ($BB$, $PB$, $BP$,
+      $PP$) :
+      \[
+        M_2 = \begin{pmatrix}
+          \num{0.9} & \num{0.7} & 0 & 0\\
+          0 & 0 & \num{0.5} & \num{0.3}\\
+          \num{0.1} & \num{0.3} & 0 & 0\\
+          0 & 0 & \num{0.5} & \num{0.7}
+        \end{pmatrix}.
+      \]
+    \end{column}
+  \end{columns}
+  \small
+  \begin{itemize}
+    \item Équilibre
+      $\vec q=\big(\tfrac{21}{32},\tfrac3{32},\tfrac3{32},\tfrac5{32}\big)$ ;
+      beau temps à long terme : $\tfrac{24}{32}=\tfrac34$.
+    \item En général, une mémoire de $k$ états donne $N^k$ états. Les
+      premiers générateurs de texte : l'état est formé des $k$ derniers
+      mots ; plus $k$ est grand, plus le texte est cohérent, mais le
+      nombre d'états explose.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Note historique 4.2 --- Les voyelles d'Eugène Onéguine}
+  \small En 1913, Markov applique son modèle aux $\num{20000}$ premières
+  lettres du roman en vers de Pouchkine, avec deux états : voyelle ou
+  consonne.
+  \begin{itemize}
+    \item $\num{8638}$ voyelles ; une voyelle est suivie d'une voyelle
+      $\num{1104}$ fois, soit une fréquence de $\num{0.128}$ ; une
+      consonne est suivie d'une voyelle avec une fréquence de
+      $\num{0.663}$.
+    \item Matrice de transition
+      $\mat{\num{0.128}}{\num{0.663}}{\num{0.872}}{\num{0.337}}$.
+    \item Équilibre des voyelles :
+      $\num{0.663}/(\num{0.872}+\num{0.663})\approx\num{0.432}$,
+      exactement la proportion $\num{8638}/\num{20000}$ du texte.
+  \end{itemize}
+  \vspace{4pt}
+  Ce calcul, fait à la main, est la première application d'une chaîne de
+  Markov à des données réelles.
+\end{frame}

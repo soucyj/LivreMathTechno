@@ -1,0 +1,200 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{L'anatomie d'un document}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}[fragile]{Trois parties, toujours dans cet ordre}
+  \begin{columns}[c]
+    \begin{column}{0.6\textwidth}
+\begin{CodeTeX}[title={main.tex}]
+\documentclass[12pt]{article}   % 1. la classe
+
+% 2. le préambule : les réglages
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath, amssymb}
+\title{Mon premier document}
+\author{Prénom Nom}
+
+\begin{document}               % 3. le corps
+\maketitle
+Le texte et les formules vont ici.
+\end{document}
+\end{CodeTeX}
+    \end{column}
+    \begin{column}{0.37\textwidth}
+      \small
+      \begin{enumerate}
+        \item La classe : le type de document.
+        \item Le préambule : extensions et réglages. Rien ne s'y
+          affiche.
+        \item Le corps, entre \cmd{begin\{document\}} et
+          \cmd{end\{document\}} : tout ce qui sera imprimé.
+      \end{enumerate}
+      \vspace{4pt}
+      Tout ce qui suit un \texttt{\%} sur une ligne est un commentaire,
+      ignoré à la compilation.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Les classes de documents}
+  \small \texttt{\textbackslash documentclass[options]\{classe\}} : la
+  première ligne décide du type de document.
+  \begin{center}
+  \begin{tabular}{lll}
+    \toprule
+    Classe & Pour quoi faire & Exemple en enseignement \\
+    \midrule
+    \texttt{article} & document court, sections & fiche d'activité,
+      plan de leçon \\
+    \texttt{report}, \texttt{book} & document long, chapitres & notes de
+      cours, cahier d'exercices \\
+    \texttt{exam} & questions, points, solutions & examen, quiz,
+      devoir \\
+    \texttt{beamer} & diapositives & présentation en classe (comme
+      celle-ci) \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{4pt}
+  Options courantes : taille du texte (\texttt{10pt}, \texttt{11pt},
+  \texttt{12pt}), format du papier (\texttt{letterpaper} est le défaut en
+  Amérique du Nord), \texttt{twocolumn}.
+\end{frame}
+
+\begin{frame}[fragile]{Un préambule en français, et pas plus}
+  \begin{columns}[c]
+    \begin{column}{0.56\textwidth}
+\begin{CodeTeX}[title={Le préambule de nos exemples}]
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{siunitx}
+\sisetup{output-decimal-marker = {,}}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{tikz}
+\end{CodeTeX}
+    \end{column}
+    \begin{column}{0.41\textwidth}
+      \footnotesize
+      \begin{itemize}
+        \item \texttt{fontenc}, \texttt{babel} : accents, césure et
+          typographie françaises (espaces avant « : ; ? ! »).
+        \item \texttt{amsmath}, \texttt{amssymb} : outils et symboles
+          mathématiques.
+        \item \texttt{siunitx} : nombres et unités, virgule décimale.
+        \item \texttt{geometry} : les marges.
+        \item \texttt{graphicx} : insérer des images.
+        \item \texttt{tikz} : dessiner des figures.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \vspace{4pt}
+  \begin{Rem}{Conseil}
+    \small Un préambule court est un préambule qui compile. Si l'IA vous
+    propose quinze extensions, demandez-lui à quoi sert chacune.
+  \end{Rem}
+\end{frame}
+
+\begin{frame}[fragile]{Commandes et environnements}
+  \small Deux formes à reconnaître, partout :
+\begin{CodeTeX}[title={Une commande, avec option et argument}]
+\commande[option facultative]{argument obligatoire}
+\section{Mise en situation}       \usepackage[french]{babel}
+\end{CodeTeX}
+\begin{CodeTeX}[title={Un environnement : un début et une fin qui se répondent}]
+\begin{nom}
+   ...contenu...
+\end{nom}
+\end{CodeTeX}
+  \begin{itemize}
+    \item Les accolades \texttt{\{ \}} entourent toujours un argument ; elles
+      vont par paires.
+    \item Les majuscules comptent : \cmd{Section} n'existe pas.
+    \item Chaque \cmd{begin\{x\}} doit avoir son \cmd{end\{x\}}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Structurer le texte}
+  \begin{columns}[T]
+    \begin{column}{0.55\textwidth}
+\begin{CodeTeX}[title={Sections et paragraphes}]
+\section{Mise en situation}
+Un paragraphe se termine par
+une ligne vide.
+
+Un nouveau paragraphe.
+
+\subsection{Matériel}
+Calculatrice, règle.
+\end{CodeTeX}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \small
+      \begin{itemize}
+        \item La numérotation des sections est automatique.
+        \item \cmd{section*\{...\}} : une section non numérotée.
+        \item Un seul retour à la ligne ne fait rien ; une ligne vide
+          commence un paragraphe.
+        \item Les espaces multiples comptent pour un seul.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Les listes}
+\begin{CodeRendu}[title={Numérotée ou à puces}]
+\begin{enumerate}
+  \item Lire l'énoncé.
+  \item Faire un schéma.
+\end{enumerate}
+\begin{itemize}
+  \item une puce
+\end{itemize}
+\end{CodeRendu}
+  \small Chaque élément commence par \cmd{item}. Dans un document de classe
+  \texttt{article}, le rendu est plus sobre que dans ces diapositives.
+\end{frame}
+
+\begin{frame}{Les caractères réservés}
+  \small Dix caractères ont un sens particulier pour \LaTeX. Pour les
+  afficher :
+  \begin{center}
+  \begin{tabular}{lll}
+    \toprule
+    Caractère & Son rôle & Pour l'écrire \\
+    \midrule
+    \texttt{\%} & commentaire & \texttt{\textbackslash\%} \\
+    \texttt{\$} & mode mathématique & \texttt{\textbackslash\$} \\
+    \texttt{\&} & colonnes d'un tableau & \texttt{\textbackslash\&} \\
+    \texttt{\#} & paramètre d'une commande & \texttt{\textbackslash\#} \\
+    \texttt{\_} \quad \texttt{\^{}} & indice, exposant (en mode math) &
+      \texttt{\textbackslash\_} \quad \texttt{\textbackslash\^{}\{\}} \\
+    \texttt{\{} \quad \texttt{\}} & arguments & \texttt{\textbackslash\{}
+      \quad \texttt{\textbackslash\}} \\
+    \texttt{\textbackslash} & début d'une commande &
+      \texttt{\textbackslash textbackslash} \\
+    \texttt{\~{}} & espace insécable & \texttt{\textbackslash\~{}\{\}} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \begin{AuTableau}[Piège fréquent]
+    \small « Une hausse de 15\% » : sans la barre oblique, \LaTeX\
+    ignore la fin de la ligne. Le symbole \texttt{\%} est le plus souvent
+    oublié.
+  \end{AuTableau}
+\end{frame}
+
+\begin{frame}{À vous}
+  \begin{Exercice}{Modifier à la main}
+    \small Dans \texttt{01-minimal.tex} :
+    \begin{enumerate}
+      \item Passez de \texttt{12pt} à \texttt{11pt} ; observez le PDF.
+      \item Ajoutez une section « Conclusion » avec deux paragraphes.
+      \item Écrivez la phrase « Le rabais est de 20 \% sur 45 \$. » de
+        façon qu'elle s'affiche correctement.
+      \item Transformez la liste numérotée en liste à puces.
+    \end{enumerate}
+  \end{Exercice}
+\end{frame}

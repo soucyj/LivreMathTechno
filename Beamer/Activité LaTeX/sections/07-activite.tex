@@ -1,0 +1,95 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Livrable 1 : une activité d'enseignement}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{La consigne}
+  \begin{Exercice}{Présenter une activité mathématique, en 2 à 3 pages}
+    \small
+    \begin{itemize}
+      \item Classe \texttt{article}, compilée sans erreur sur Overleaf.
+      \item Contenu : titre ; niveau visé, durée, intention, préalables,
+        matériel ; mise en situation ; déroulement ; tâche de l'élève ou de l'étudiant ;
+        corrigé et pistes d'intervention.
+      \item Au moins une figure (TikZ ou image) ou un tableau.
+      \item Des mathématiques en mode mathématique : formules propres,
+        virgule décimale, unités avec \cmd{qty}.
+      \item Un en-tête de page avec le niveau et le titre de l'activité.
+    \end{itemize}
+  \end{Exercice}
+  \small Point de départ possible : le fichier \texttt{02-activite.tex},
+  ou un squelette produit par l'IA avec le prompt suivant.
+\end{frame}
+
+\begin{frame}{Prompt type : la fiche d'activité}
+  \begin{Prompt}{Fiche de présentation d'une activité}
+    \footnotesize Tu es conseiller pédagogique en mathématiques
+    \champ{au secondaire ou au collégial} au Québec. Rédige en LaTeX (classe article, pdfLaTeX,
+    Overleaf) la présentation d'une activité de \champ{75} minutes pour
+    des \champ{élèves de 3\textsuperscript{e} secondaire, ou étudiants d'un
+    cours collégial} sur \champ{la relation de
+    Pythagore, dans le contexte de la taille des écrans de télévision}.
+
+    Structure : titre ; un tableau de présentation (niveau, durée,
+    intention, préalables, matériel) ; mise en situation ; déroulement
+    minuté ; tâche de l'élève en \champ{4} questions graduées ; corrigé
+    détaillé ; pistes d'intervention pour deux erreurs fréquentes.
+
+    Contraintes : 2 à 3 pages ; français ; une figure TikZ simple ; un
+    en-tête avec fancyhdr ; siunitx avec virgule décimale pour tous les
+    nombres décimaux et les unités ; extensions standard seulement.
+    Donne un seul fichier .tex complet, commenté.
+  \end{Prompt}
+\end{frame}
+
+\begin{frame}{Un exemple de rendu : \texttt{02-activite.tex}}
+  \begin{columns}[c]
+    \begin{column}{0.33\textwidth}
+      \centering
+      \fbox{\includegraphics[height=0.66\textheight, page=1]{02-activite.pdf}}
+    \end{column}
+    \begin{column}{0.33\textwidth}
+      \centering
+      \fbox{\includegraphics[height=0.66\textheight, page=2]{02-activite.pdf}}
+    \end{column}
+    \begin{column}{0.3\textwidth}
+      \small
+      \begin{itemize}
+        \item Titre, en-tête et pied de page.
+        \item Tableau de présentation (liste \texttt{description}).
+        \item Figure TikZ du téléviseur.
+        \item Tâche et corrigé numérotés a), b), c), d).
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Deux blocs de la fiche à savoir modifier}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+\begin{CodeTeX}[title={L'en-tête de page (préambule)}]
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}                % on efface tout
+\lhead{Mathématique, 3\textsuperscript{e} secondaire}
+\rhead{Activité : Pythagore au salon}
+\cfoot{\thepage}          % numéro au centre
+\end{CodeTeX}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+\begin{CodeTeX}[title={Une question et sa réponse (corps)}]
+\begin{enumerate}[label=\alph*)]
+  \item Calcule la largeur, en
+    centimètres, d'un écran de
+    \qty{55}{po}.
+\end{enumerate}
+...
+$k = \dfrac{55}{\sqrt{337}}
+   \approx \num{2,996}$
+\end{CodeTeX}
+    \end{column}
+  \end{columns}
+  \vspace{4pt}
+  \small \texttt{[label=\textbackslash alph*)]} (extension
+  \texttt{enumitem}) numérote a), b), c). Changer le niveau, le titre ou
+  une valeur numérique : une seule ligne à modifier, à la main.
+\end{frame}

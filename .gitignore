@@ -25,6 +25,22 @@
 /index.*
 !/index.qmd
 
+# ── Présentations Beamer : seulement les sources ─────────────────────────
+# Les PDF sont produits par _outils/compiler-presentations.sh (localement
+# ou par GitHub Actions) et publiés dans _book/presentations/.
+/Beamer/**/*.aux
+/Beamer/**/*.log
+/Beamer/**/*.nav
+/Beamer/**/*.out
+/Beamer/**/*.snm
+/Beamer/**/*.toc
+/Beamer/**/*.vrb
+/Beamer/**/*.listing
+/Beamer/**/*.fls
+/Beamer/**/*.fdb_latexmk
+/Beamer/**/*.synctex.gz
+/Beamer/**/*.pdf
+
 # ── Applications Shiny ───────────────────────────────────────────────────
 # Environnements Python (à recréer : voir README.md)
 **/.venv/

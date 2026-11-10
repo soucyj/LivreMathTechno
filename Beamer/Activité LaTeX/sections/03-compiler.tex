@@ -1,0 +1,92 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Compiler et corriger les erreurs}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Ce qui se passe quand on compile}
+  \small
+  \begin{itemize}
+    \item Le compilateur (pdfLaTeX sur Overleaf) lit le fichier
+      \texttt{.tex} de haut en bas, exécute les commandes et produit un
+      PDF.
+    \item Il écrit aussi un journal (le « log ») : avertissements et
+      erreurs, avec le numéro de la ligne en cause.
+    \item Avertissement (jaune) : le PDF est produit, mais quelque chose
+      est à vérifier (une ligne trop longue, une référence inconnue).
+    \item Erreur (rouge) : la compilation s'est arrêtée ou a dû deviner.
+      Il faut la corriger, même si un PDF s'affiche.
+  \end{itemize}
+  \vspace{4pt}
+  \begin{Rem}{Sur Overleaf}
+    \small Le bouton à côté de Recompiler (Journaux et fichiers produits,
+    ou Logs and output files) liste les problèmes ; un clic sur une erreur
+    amène à la ligne correspondante dans l'éditeur.
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Les quatre erreurs que vous verrez le plus}
+  \footnotesize
+  \begin{center}
+  \begin{tabular}{p{3.6cm}p{4.2cm}p{4.9cm}}
+    \toprule
+    Message & Cause probable & Correction \\
+    \midrule
+    \texttt{Undefined control sequence} & une commande mal écrite
+      (\cmd{fracc}) ou dont l'extension n'est pas chargée & corriger
+      l'orthographe, ou ajouter le \cmd{usepackage} \\
+    \texttt{Missing \$ inserted} & des mathématiques hors du mode
+      mathématique (\texttt{x\^{}2} dans le texte, un \texttt{\_}) &
+      entourer de \texttt{\$...\$} \\
+    \texttt{Runaway argument}, \texttt{Missing \} inserted} & une
+      accolade oubliée & compter les \texttt{\{} et les \texttt{\}} \\
+    \texttt{\textbackslash begin\{x\} ended by \textbackslash end\{y\}} &
+      environnements mal fermés ou croisés & refermer dans l'ordre
+      inverse d'ouverture \\
+    \texttt{File `xyz.sty' not found} & extension inexistante (souvent
+      inventée par l'IA) & retirer la ligne ou demander une
+      alternative \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \small Le numéro de ligne s'écrit \texttt{l.12} : c'est là que \LaTeX\
+  s'est aperçu du problème --- la cause est à cet endroit ou juste avant.
+\end{frame}
+
+\begin{frame}{Une méthode pour ne pas paniquer}
+  \small
+  \begin{enumerate}
+    \item Lire la première erreur seulement, et sa ligne.
+    \item Regarder cette ligne et celle d'avant : accolade, \texttt{\$},
+      orthographe, \cmd{end} manquant ?
+    \item Si on ne trouve pas : mettre des \texttt{\%} devant le bloc
+      suspect pour le neutraliser, recompiler, réduire le bloc.
+    \item Toujours pas ? Demander à l'IA en lui donnant le message
+      d'erreur complet et les lignes concernées (prompt plus loin).
+  \end{enumerate}
+  \vspace{4pt}
+  \begin{AuTableau}[Le bon réflexe]
+    \small Compiler après chaque petite modification. Une erreur dans
+    trois lignes que l'on vient d'écrire se trouve en dix secondes ; dans
+    trois pages, elle peut prendre une demi-heure.
+  \end{AuTableau}
+\end{frame}
+
+\begin{frame}[fragile]{À vous}
+  \begin{columns}[c]
+    \begin{column}{0.52\textwidth}
+      \begin{Exercice}{Réparer}
+        \small Copiez ces lignes dans le corps de votre document,
+        compilez, lisez les messages, et corrigez les cinq erreurs.
+      \end{Exercice}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+\begin{CodeTeX}[title={Cinq erreurs cachées}]
+\section{Exercice
+Calculer x^2 si $x = 3$.
+\begin{itemize}
+  \item La fraction $\frac{1}{2$.
+  \item Le rabais : 20%.
+\end{enumerate}
+\end{CodeTeX}
+    \end{column}
+  \end{columns}
+\end{frame}

@@ -1,0 +1,91 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Déterminer une transformation à partir de points}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{La question inverse}
+  \small Jusqu'ici : « voici une transformation, que fait-elle à cette
+  figure ? ». Maintenant, la question qui se pose \textbf{en pratique} :
+  « voici une figure et son image, quelle transformation les relie ? »
+  --- le problème que résout un logiciel de retouche photo, ou de
+  reconnaissance de formes.
+\end{frame}
+
+\begin{frame}{Théorème 1.15 --- Trois points suffisent}
+  \begin{Enonce}{Théorème 1.15}
+    \small $P_1,P_2,P_3$ \textbf{non alignés}, et $Q_1,Q_2,Q_3$
+    quelconques. Il existe une \textbf{unique} application affine $w$
+    telle que $w(P_i)=Q_i$, $i=1,2,3$.
+  \end{Enonce}
+  \small Surnommée \defi{méthode du bulldozer} : on écrit toutes les
+  conditions et on pousse tout dans un système linéaire.
+  \begin{AuTableau}
+    \small Idée : le système à 6 inconnues $(a,b,c,d,e,f)$ se
+    \textbf{découple} en deux systèmes $3\times 3$ de même matrice
+    \[
+      M = \begin{pmatrix} x_1&y_1&1\\x_2&y_2&1\\x_3&y_3&1\end{pmatrix},
+      \qquad \dete(M) = 2\cdot\text{aire orientée}(P_1P_2P_3) \neq 0.
+    \]
+  \end{AuTableau}
+\end{frame}
+
+\begin{frame}{Remarque 1.11 --- Une écriture plus compacte}
+  \begin{Rem}{Remarque 1.11}
+    \small En coordonnées homogènes, tout tient sur une ligne. Avec
+    $\widetilde P,\widetilde Q$ les matrices $3\times3$ des points
+    (en colonnes, ligne du bas = 1) :
+    \[
+      \widetilde W = \widetilde Q\,\widetilde P^{-1}.
+    \]
+    C'est la formule qu'implémentent les bibliothèques d'infographie.
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Exemple 1.10 --- Le problème des deux triangles}
+  \small $A=(-11,3)$, $B=(1,12)$, $C=(-1,14)$
+  $\longmapsto$ $P=(90,-68)$, $Q=(69,-53)$, $R=(83,-59)$.
+  \[
+    w\col{x}{y} = \mat{-4}{3}{2}{-1}\col{x}{y} + \col{37}{-43}.
+  \]
+  $\dete(A)=-2$ : renverse l'orientation, double les aires. Ni une
+  isométrie, ni une similitude ($A^\top A$ n'est pas multiple de $I$).
+  \FigBox[0.36\textheight]{%
+    \begin{tikzpicture}[scale=0.2]
+      \draw[quadrillage] (-12,-1) grid (3,16);
+      \draw[axe] (-12,0) -- (3.6,0) node[etiq, below] {$x$};
+      \draw[axe] (0,-1) -- (0,16.6) node[etiq, left] {$y$};
+      \fill[fig] (-11,3) -- (1,12) -- (-1,14) -- cycle;
+      \node[pt, label={[etiq]left:$A$}] at (-11,3) {};
+      \node[pt, label={[etiq]right:$B$}] at (1,12) {};
+      \node[pt, label={[etiq]above:$C$}] at (-1,14) {};
+    \end{tikzpicture}%
+    \hspace{1cm}
+    \begin{tikzpicture}[scale=0.2]
+      \begin{scope}[shift={(-77,59)}]
+        \draw[quadrillage] (68,-69) grid (91,-52);
+        \draw[axe] (68,-69) -- (91.6,-69);
+        \draw[axe] (68,-69) -- (68,-51.4);
+        \fill[figim] (90,-68) -- (69,-53) -- (83,-59) -- cycle;
+        \node[ptim, label={[etiq]right:$P$}] at (90,-68) {};
+        \node[ptim, label={[etiq]left:$Q$}] at (69,-53) {};
+        \node[ptim, label={[etiq]above right:$R$}] at (83,-59) {};
+      \end{scope}
+    \end{tikzpicture}}
+  \begin{center}\small Figure 1.11 --- Le problème du bulldozer.\end{center}
+\end{frame}
+
+\begin{frame}{Remarque 1.12 --- Combien de points pour quel groupe ?}
+  \begin{Rem}{Remarque 1.12}
+    \small Analogues du théorème 1.15 pour les sous-groupes :
+    \begin{itemize}
+      \item une \textbf{similitude} est déterminée par l'image de
+        \textbf{deux} points distincts (à ceci près : deux solutions,
+        directe/indirecte) ;
+      \item une \textbf{isométrie}, pareil ;
+      \item une \textbf{translation}, par l'image d'\textbf{un seul}
+        point.
+    \end{itemize}
+    Le nombre de points nécessaires mesure la « taille » du groupe ---
+    une manière concrète de faire sentir qu'une rotation est « plus
+    riche » qu'une translation.
+  \end{Rem}
+\end{frame}

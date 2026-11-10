@@ -1,0 +1,143 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Travailler avec l'IA}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Le bon partage des rôles}
+  \small
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{Rem}{Ce que l'IA fait bien}
+        \footnotesize
+        \begin{itemize}
+          \item Le squelette d'un document complet.
+          \item La mise en forme : tableaux, listes, en-têtes.
+          \item Les figures TikZ et les formules longues.
+          \item Expliquer un message d'erreur.
+          \item Proposer des variantes d'une question.
+        \end{itemize}
+      \end{Rem}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{AuTableau}[Ce qui reste votre travail]
+        \footnotesize
+        \begin{itemize}
+          \item Vérifier les mathématiques : calculs, corrigé, unités.
+          \item Ajuster le niveau, le vocabulaire, le contexte québécois.
+          \item Repérer l'anglais (Question, Points, Solution) et le
+            point décimal.
+          \item Refuser les extensions inutiles ou inventées.
+          \item Comprendre chaque bloc avant de le garder.
+        \end{itemize}
+      \end{AuTableau}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{L'anatomie d'un bon prompt}
+  \small
+  \begin{center}
+  \begin{tabular}{lp{9.5cm}}
+    \toprule
+    Contexte & qui vous êtes, pour quel niveau, quelle situation \\
+    Tâche & ce qu'il faut produire, et son contenu \\
+    Contraintes techniques & classe, pdfLaTeX sur Overleaf, extensions
+      permises, français, virgule décimale, longueur \\
+    Format de sortie & un seul fichier complet et compilable, commenté \\
+    Vérification & demander le corrigé, les étapes de calcul, la liste
+      des extensions et leur rôle \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{4pt}
+  Les crochets \champ{comme ceci} dans les prompts qui suivent sont à
+  remplacer par vos propres choix.
+\end{frame}
+
+\begin{frame}{Prompt type : le squelette d'un document}
+  \begin{Prompt}{Créer un document de départ}
+    Tu es un enseignant de mathématiques \champ{au secondaire ou au
+    collégial} au Québec et un expert de LaTeX.
+
+    Écris un document LaTeX complet de classe article, qui compile sans
+    erreur avec pdfLaTeX sur Overleaf. Il sera utilisé pour
+    \champ{une fiche de notes sur les fonctions affines, 3\textsuperscript{e}
+    secondaire} \champ{ou : un résumé sur les limites, Calcul différentiel au
+    collégial}.
+
+    Contraintes : texte en français ; extensions limitées à fontenc,
+    babel (french), amsmath, amssymb, siunitx (virgule décimale), geometry
+    et tikz ; aucune extension non standard ; pas de gras ni d'italique
+    décoratifs.
+
+    Ajoute un commentaire court à côté de chaque ligne du préambule pour
+    expliquer son rôle. Donne uniquement le fichier .tex.
+  \end{Prompt}
+\end{frame}
+
+\begin{frame}{Prompt type : corriger une erreur de compilation}
+  \begin{Prompt}{Comprendre et réparer}
+    Mon document LaTeX ne compile pas sur Overleaf (pdfLaTeX). Voici le
+    message d'erreur complet :
+
+    \champ{coller le message, par exemple : ! Missing \$ inserted.
+    l.27 ...}
+
+    Voici les lignes 20 à 30 de mon fichier :
+
+    \champ{coller les lignes}
+
+    Explique-moi en une ou deux phrases la cause de l'erreur, puis donne
+    seulement les lignes corrigées. Ne réécris pas le reste du document.
+  \end{Prompt}
+  \small Donner le message exact et le passage concerné : sans eux,
+  l'IA devine. Demander seulement les lignes corrigées : on garde le
+  contrôle de son fichier.
+\end{frame}
+
+\begin{frame}{Prompts types : comprendre, modifier, dessiner}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \begin{Prompt}{Expliquer un code}
+        \scriptsize Voici un extrait de code LaTeX produit par une IA :
+        \champ{extrait}. Explique ligne par ligne ce que fait chaque
+        commande, en termes simples, pour une personne qui débute.
+        Signale les lignes qui ne sont pas nécessaires.
+      \end{Prompt}
+      \vspace{2pt}
+      \begin{Prompt}{Modification ciblée}
+        \scriptsize Dans mon document, je veux \champ{ajouter une
+        colonne « Points » au tableau de la section 2}. Donne seulement
+        le bloc modifié, et indique où le placer.
+      \end{Prompt}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \begin{Prompt}{Une figure TikZ}
+        \scriptsize Écris le code TikZ d'une figure pour une fiche de
+        \champ{3\textsuperscript{e} secondaire} : \champ{un triangle rectangle $ABC$,
+        rectangle en $C$, avec $AC = 6$ cm et $BC = 8$ cm, le symbole
+        d'angle droit et les mesures des côtés}. Uniquement
+        l'environnement tikzpicture, avec des coordonnées entières et
+        une échelle de \champ{0,5}, sans extension autre que tikz.
+        Commente chaque ligne.
+      \end{Prompt}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Avant de coller le code de l'IA}
+  \begin{Rem}{Liste de vérification}
+    \small
+    \begin{enumerate}
+      \item Je compile le code tel quel, avant toute modification.
+      \item Je reconnais les trois parties : classe, préambule, corps.
+      \item Chaque extension a un rôle que je peux nommer.
+      \item Les nombres décimaux ont une virgule ; le texte est en
+        français, y compris dans les en-têtes et les tableaux de points.
+      \item J'ai refait moi-même les calculs du corrigé.
+      \item Le niveau, le vocabulaire et le contexte conviennent à mes
+        élèves ou à mes étudiants.
+      \item Je sais où modifier un titre, une question, une formule, une
+        coordonnée de figure.
+    \end{enumerate}
+  \end{Rem}
+\end{frame}

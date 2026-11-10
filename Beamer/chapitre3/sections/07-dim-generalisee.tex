@@ -1,0 +1,144 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{La dimension de similitude généralisée}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Des copies de rapports différents}
+  \small Si $E = w_1(E)\cup\cdots\cup w_N(E)$, où $w_i$ est une
+  similitude de rapport $r_i$, sans chevauchement, l'argument
+  heuristique de la section 5 donne
+  \[
+    M_d(E) = r_1^d\,M_d(E)+r_2^d\,M_d(E)+\cdots+r_N^d\,M_d(E),
+  \]
+  possible avec une taille finie non nulle seulement si
+  $r_1^d+\cdots+r_N^d = 1$.
+\end{frame}
+
+\begin{frame}{Proposition 3.5 --- L'équation de Moran}
+  \begin{Enonce}{Proposition 3.5 --- L'équation de Moran}
+    Soient $N\geq2$ et $r_1,\dots,r_N\in\intoo{0}{1}$. L'équation
+    \[
+      r_1^d+r_2^d+\cdots+r_N^d = 1 \tag{3.1}
+    \]
+    possède une unique solution $d>0$.
+  \end{Enonce}
+  \begin{AuTableau}
+    \footnotesize $\varphi(d)=\sum r_i^d=\sum\eu^{d\ln r_i}$ est continue
+    et strictement décroissante ; $\varphi(0)=N>1$, $\varphi(d)\to0$ ;
+    valeurs intermédiaires.
+  \end{AuTableau}
+\end{frame}
+
+\begin{frame}{Outil 3.2 --- Résoudre l'équation de Moran}
+  \begin{Outil}{Résoudre l'équation de Moran}
+    \small
+    \begin{itemize}
+      \item (3.1) ne se résout pas algébriquement en général, mais très
+        bien graphiquement. Dans Desmos : tracer
+        $y = 2(1/2)^x+3(1/3)^x$ et $y=1$, puis cliquer sur l'intersection.
+      \item Le graphe illustre la démonstration : courbe décroissante,
+        qui part de $N$ en $x=0$ et tend vers $0$.
+      \item WolframAlpha : \texttt{solve 2(1/2)\^{}d + 3(1/3)\^{}d = 1}.
+      \item En $5^{\text{e}}$ secondaire : comparer avec la résolution
+        par logarithmes du cas $Nr^d=1$ --- ce que les logarithmes
+        permettent, et ce qu'ils ne permettent pas.
+    \end{itemize}
+  \end{Outil}
+\end{frame}
+
+\begin{frame}{Définitions 3.4 et 3.5 --- Ne pas se chevaucher}
+  \begin{Enonce}{Définition 3.4 --- Condition de l'ouvert (Moran)}
+    \small Le SIF $\{w_1,\dots,w_N\}$ satisfait la \defi{condition de
+    l'ouvert} s'il existe un ouvert borné non vide $V$ tel que
+    (a) $w_i(V)\subseteq V$ pour tout $i$, et (b) les $w_i(V)$ sont deux
+    à deux disjoints.
+  \end{Enonce}
+  \small Sierpiński : $V$ = l'intérieur du triangle de départ. Ses trois
+  images sont disjointes, car les triangles ne se touchent qu'en des
+  sommets, sur leurs frontières. Ouvert et frontière (chapitre 2)
+  interviennent directement.
+  \begin{Enonce}{Définition 3.5 --- Dimension de similitude généralisée}
+    \small Soit $E$ l'attracteur d'un SIF de similitudes de rapports
+    $r_1,\dots,r_N$ qui satisfait la condition de l'ouvert. Sa
+    \defi{dimension de similitude généralisée} est l'unique solution
+    $d$ de (3.1).
+  \end{Enonce}
+\end{frame}
+
+\begin{frame}{Figure 3.12 --- Trois SIF de similitudes}
+  \FigBox[0.5\textheight]{%
+    \begin{tikzpicture}[scale=3.3]
+      \begin{scope}
+        \draw[sectioncolor!60, dashed, thin] (0,0) rectangle (1,1);
+        \input{figures/fractales/chevauchement-disjoint.tikz}
+        \node[etiq, align=center] at (0.5,-0.2) {(a) trois copies de rapport $\num{0.48}$ :\\ disjointes};
+      \end{scope}
+      \begin{scope}[shift={(1.35,0)}]
+        \draw[sectioncolor!60, dashed, thin] (0,0) rectangle (1,1);
+        \input{figures/fractales/chevauchement-touche.tikz}
+        \node[etiq, align=center] at (0.5,-0.2) {(b) deux copies de rapport $\tfrac12$,\\ une de rapport $\num{0.4}$ : elles se touchent};
+      \end{scope}
+      \begin{scope}[shift={(2.7,0)}]
+        \foreach \x/\y in {0/0, 0.5/0, 0/0.5, 0.5/0.5}
+          \fill[steelblue4, fill opacity=0.35] (\x,\y) rectangle ++(0.5,0.5);
+        \fill[firebrick3, fill opacity=0.45] (0.25,0.25) rectangle ++(0.5,0.5);
+        \draw[sectioncolor!60, dashed, thin] (0,0) rectangle (1,1);
+        \node[etiq, align=center] at (0.5,-0.2) {(c) cinq copies de rapport $\tfrac12$ :\\ elles se chevauchent};
+      \end{scope}
+    \end{tikzpicture}}
+  \small Le carré unité ouvert $V$ en pointillé. En (a) et (b), la
+  condition de l'ouvert est satisfaite ; en (c), la cinquième image
+  chevauche les quatre autres.
+\end{frame}
+
+\begin{frame}{Exemple 3.9 --- Pourquoi la condition de l'ouvert est nécessaire}
+  \small Cas (c) : cinq homothéties de rapport $\tfrac12$, qui envoient
+  le carré unité $C$ sur ses quatre quarts et sur le carré de côté
+  $\tfrac12$ centré en $\big(\tfrac12,\tfrac12\big)$.
+  \begin{itemize}
+    \item Les quatre coins reconstituent déjà $C$, et la cinquième copie
+      est contenue dans $C$ : $W(C)=C$, l'attracteur est le carré plein,
+      de dimension $2$.
+    \item Moran donnerait $5\big(\tfrac12\big)^d=1$, soit
+      $d=\ln5/\ln2\approx\num{2.32}$ --- impossible pour un ensemble plan.
+    \item Le chevauchement fait compter plusieurs fois certaines parties
+      du carré.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Exemple 3.10 --- Le calcul numérique d'une dimension}
+  \small Cas (b) : on résout
+  $f(d) = 2\big(\tfrac12\big)^d + (\num{0.4})^d - 1 = 0$ par la méthode
+  de Newton (chapitre 2), avec
+  $f'(d) = 2\big(\tfrac12\big)^d\ln\tfrac12 + (\num{0.4})^d\ln(\num{0.4})$
+  et $d_0=1$ :
+  \begin{center}
+  \small
+  \begin{tabular}{ccc}
+    \toprule
+    $n$ & $d_n$ & $f(d_n)$ \\
+    \midrule
+    $0$ & $\num{1.000000000}$ & $\num{4.0e-1}$ \\
+    $1$ & $\num{1.377478332}$ & $\num{5.3e-2}$ \\
+    $2$ & $\num{1.444094153}$ & $\num{1.3e-3}$ \\
+    $3$ & $\num{1.445852445}$ & $\num{8.9e-7}$ \\
+    $4$ & $\num{1.445853630}$ & $\num{4.0e-13}$ \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \small $d\approx\num{1.44585}$ : entre $\ln3/\ln(\num{2.5})\approx\num{1.199}$
+  (trois copies de rapport $\num{0.4}$) et $\ln3/\ln2\approx\num{1.585}$
+  (trois copies de rapport $\tfrac12$).
+\end{frame}
+
+\begin{frame}{Remarque 3.8 --- Et pour les SIF qui ne sont pas des similitudes ?}
+  \begin{Rem}{Remarque 3.8}
+    La définition 3.5 ne vaut que pour des similitudes. L'arbre, la
+    fougère, tout attracteur d'applications affines quelconques : une
+    application qui écrase davantage dans une direction ne multiplie pas
+    une « taille $d$-dimensionnelle » par un facteur bien défini.
+    \vspace{4pt}
+
+    La dimension de ces ensembles auto-affines demande d'autres outils,
+    et fait encore l'objet de recherches actives.
+  \end{Rem}
+\end{frame}

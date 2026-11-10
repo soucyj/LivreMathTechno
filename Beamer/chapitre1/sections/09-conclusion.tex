@@ -1,0 +1,58 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Synthèse}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Ce qu'il faut retenir}
+  \begin{itemize}
+    \item Une transformation = une \textbf{bijection} du plan ; toutes
+      les transformations \textbf{affines} tiennent dans
+      $w(P) = AP + \vec t$.
+    \item Une chaîne de sous-groupes emboîtés
+      $\Iso^+ \subset \Iso \subset \Sim \subset \Aff \subset \Transf$ :
+      plus le groupe est petit, plus il conserve de propriétés (Klein).
+    \item Le carré unité et ses colonnes-images : la façon la plus
+      rapide de \emph{voir} ce que fait une matrice.
+    \item Les coordonnées homogènes rendent l'affine linéaire, une
+      dimension plus haut --- toute l'infographie repose là-dessus.
+    \item Trois points déterminent une application affine ; deux
+      points, une similitude ; un point, une translation.
+    \item Toute isométrie est translation, rotation, réflexion ou
+      réflexion glissée --- et la réflexion engendre tout.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Figure 1.3, une dernière fois}
+  \FigBox[0.62\textheight]{%
+    \begin{tikzpicture}[scale=1.05, every node/.style={font=\small}]
+      \foreach \i/\lab/\prop in {%
+         0/{$\Transf$ : toutes les transformations}/{aucun invariant métrique},
+         1/{$\Aff$ : transformations affines}/{alignement, parallélisme},
+         2/{$\Sim$ : similitudes}/{$+$ angles, rapports de longueurs},
+         3/{$\Iso$ : isométries}/{$+$ longueurs, aires},
+         4/{$\Iso^{+}$ : déplacements}/{$+$ orientation}}
+        {\pgfmathsetmacro{\w}{9.4-1.35*\i}
+         \pgfmathsetmacro{\y}{-0.95*\i}
+         \draw[rounded corners=2pt, fill=steelblue4!\the\numexpr8+10*\i\relax,
+               draw=sectioncolor!60]
+           ({-\w/2},{\y-0.36}) rectangle ({\w/2},{\y+0.36});
+         \node at (0,\y) {\lab};
+         \node[anchor=west, font=\scriptsize, gray!80!black]
+           at ({\w/2+0.25},\y) {\prop};}
+    \end{tikzpicture}}
+  \small Chaque étage de cette pyramide a été démontré (ou admis)
+  aujourd'hui.
+\end{frame}
+
+\begin{frame}{Et maintenant}
+  \begin{itemize}
+    \item Les \textbf{démonstrations} laissées « au tableau »
+      aujourd'hui sont toutes dans les notes de cours, avec tous les
+      détails.
+    \item Les \textbf{exercices} du chapitre (avec solutions
+      complètes) couvrent chacun des résultats vus : à travailler
+      avant le prochain cours.
+    \item L'\textbf{annexe Python} des notes reprend en code toutes
+      les idées centrales (le bulldozer, la reconnaissance d'une
+      similitude, la décomposition d'une isométrie).
+  \end{itemize}
+\end{frame}

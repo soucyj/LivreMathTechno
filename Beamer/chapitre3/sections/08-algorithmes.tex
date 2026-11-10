@@ -1,0 +1,179 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Dessiner un attracteur à l'ordinateur}
+% ═══════════════════════════════════════════════════════════════════════
+
+\subsection{L'algorithme déterministe}
+
+\begin{frame}{Algorithme 3.1 --- Algorithme déterministe}
+  \small Le point (ii) de Hutchinson : partir d'une figure quelconque et
+  appliquer $W$ assez de fois. La figure la plus simple : un seul point
+  (un singleton est un compact non vide).
+  \begin{Algo}{Algorithme 3.1 --- Algorithme déterministe}
+    Données : un SIF $\{w_1,\dots,w_N\}$ ; un nombre d'étapes $n$.
+    \begin{enumerate}
+      \item Choisir un point de départ $P_0$ ; poser $\mathcal P=\{P_0\}$.
+      \item Répéter $n$ fois : remplacer $\mathcal P$ par
+        $W(\mathcal P)=w_1(\mathcal P)\cup\cdots\cup w_N(\mathcal P)$.
+      \item Dessiner les points de $\mathcal P$.
+    \end{enumerate}
+  \end{Algo}
+  \small Les notes donnent la mise en œuvre en Python : un nuage de
+  points est un tableau $2\times n$, une application affine un couple
+  $(A,\vec t)$.
+\end{frame}
+
+\begin{frame}{Ce que garantit l'algorithme, et sa limite}
+  \small Sierpiński, départ en l'origine (point fixe de $w_1$, donc dans
+  $S$), huit étapes : $3^8$ points, tous dans $S$, et répartis partout :
+  \[
+    \dH\big(W^8(\{O\}),S\big) = \dH\big(W^8(\{O\}),W^8(S)\big)
+    \leq \big(\tfrac12\big)^8\dH(\{O\},S) \leq \big(\tfrac12\big)^8
+    \approx \num{0.004}.
+  \]
+  La limite : l'étape $n$ compte $N^n$ points.
+  \begin{itemize}
+    \item Sierpiński : $N=3$, $k=\tfrac12$, une dizaine d'étapes suffit.
+    \item Fougère : $N=4$ et un rapport voisin de $\num{0.85}$ ; pour que
+      $\num{0.85}^n<10^{-3}$, il faut $n\approx40$, soit
+      $4^{40}\approx\num{1.2e24}$ points. Impraticable.
+  \end{itemize}
+\end{frame}
+
+\subsection{Le jeu du chaos}
+
+\begin{frame}{Le jeu du chaos, avec un dé}
+  \begin{columns}[c]
+    \begin{column}{0.5\textwidth}
+      \small Trois sommets $A$, $B$, $C$, un point de départ $P_0$
+      quelconque. On lance un dé : $1$ ou $2$ $\to A$ ; $3$ ou $4$
+      $\to B$ ; $5$ ou $6$ $\to C$. On marque $P_1$ à mi-chemin entre
+      $P_0$ et le sommet choisi ; on relance, et ainsi de suite.
+      \vspace{4pt}
+
+      Avancer à mi-chemin vers $S_i$, c'est appliquer
+      $h_{S_i,1/2}(P)=\tfrac12P+\tfrac12S_i$ : l'une des trois
+      applications du SIF de Sierpiński. On applique une seule $w_i$,
+      tirée au hasard, plutôt que toutes à la fois.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \FigBox[0.62\textheight]{%
+        \begin{tikzpicture}[scale=6.2]
+          \draw[sectioncolor, thick, line join=round] (0,0) -- (1,0) -- (0.5,0.8660254) -- cycle;
+          \node[pt, label={[etiq]below left:$A$}] at (0,0) {};
+          \node[pt, label={[etiq]below right:$B$}] at (1,0) {};
+          \node[pt, label={[etiq]above:$C$}] at (0.5,0.8660254) {};
+          \input{figures/fractales/chaos-premiers-coups.tikz}
+        \end{tikzpicture}}
+      \begin{center}\scriptsize Figure 3.13 --- Sommets tirés :
+      $A,B,B,C,A,C$.\end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Figure 3.14 --- Le hasard dessine une figure déterminée}
+  \FigBox[0.5\textheight]{%
+    \begin{tikzpicture}[scale=3.9]
+      \foreach \n/\x in {200/0, 2000/1.12, 15000/2.24}{
+        \begin{scope}[shift={(\x,0)}]
+          \input{figures/fractales/chaos-sierpinski-\n.tikz}
+          \node[etiq, sectioncolor] at (0.5,-0.09) {$\num{\n}$ points};
+        \end{scope}}
+    \end{tikzpicture}}
+  \small Après $200$, $\num{2000}$ et $\num{15000}$ coups (les vingt
+  premiers points omis) : le triangle de Sierpiński apparaît.
+\end{frame}
+
+\begin{frame}{Proposition 3.6 --- Le jeu du chaos se rapproche de l'attracteur}
+  \begin{Enonce}{Proposition 3.6}
+    \small Soit $A$ l'attracteur d'un SIF de rapport $k$, et $P_0$ un
+    point quelconque. Si $P_{m+1}=w_{i_m}(P_m)$, les indices $i_m$ étant
+    choisis de façon arbitraire, alors
+    \[
+      d(P_m,A)\leq k^m\,d(P_0,A)\qquad\text{pour tout } m\in\N,
+    \]
+    où $d(P,A)=\min_{a\in A}\dE(P,a)$.
+  \end{Enonce}
+  \begin{AuTableau}
+    \footnotesize Prendre $a\in A$ le plus proche de $P$ ; $w_i(a)\in A$,
+    donc $d(w_i(P),A)\leq\dE(w_i(P),w_i(a))\leq k\,d(P,A)$ ; récurrence.
+  \end{AuTableau}
+  \small Pour Sierpiński, après vingt coups, la distance est multipliée
+  par $2^{-20}\approx10^{-6}$ : on omet donc les premiers points.
+\end{frame}
+
+\begin{frame}{Pourquoi le nuage recouvre tout l'attracteur}
+  \small La proposition 3.6 explique que les points se rapprochent de
+  $A$, pas qu'ils le recouvrent en entier.
+  \begin{itemize}
+    \item $A$ est la réunion des $N^m$ petites pièces
+      $w_{j_1}\circ\cdots\circ w_{j_m}(A)$, de taille au plus $k^m$ fois
+      celle de $A$.
+    \item Si les $m$ derniers tirages ont été $j_m,\dots,j_1$, le point
+      courant tombe (à une erreur négligeable près) dans la pièce
+      correspondante.
+    \item Chaque suite de $m$ tirages a une probabilité strictement
+      positive : sur un grand nombre de coups, elle se produit, et même
+      régulièrement.
+  \end{itemize}
+  Toutes les petites pièces finissent par être visitées.
+\end{frame}
+
+\begin{frame}{Algorithme 3.2 --- Jeu du chaos}
+  \begin{Algo}{Algorithme 3.2 --- Jeu du chaos}
+    Données : un SIF $\{w_1,\dots,w_N\}$ ; des probabilités
+    $p_1,\dots,p_N>0$ de somme $1$ ; un nombre de points $n$.
+    \begin{enumerate}
+      \item Choisir un point de départ $P$ quelconque.
+      \item Répéter $n+20$ fois :
+        \begin{enumerate}
+          \item[(a)] tirer un indice $i$, avec probabilité $p_i$ ;
+          \item[(b)] remplacer $P$ par $w_i(P)$ ;
+          \item[(c)] si plus de vingt tirages ont eu lieu, dessiner $P$.
+        \end{enumerate}
+    \end{enumerate}
+  \end{Algo}
+  \small Coût proportionnel au nombre de points dessinés, et non plus
+  exponentiel en le nombre d'étapes : la fougère en une fraction de
+  seconde.
+\end{frame}
+
+\begin{frame}{Choisir les probabilités}
+  \small Les $p_i$ (tous $>0$) ne changent pas la figure limite, mais la
+  vitesse à laquelle le nuage la recouvre.
+  \begin{itemize}
+    \item Sierpiński : trois pièces égales, $p_i=\tfrac13$.
+    \item Fougère avec $p_i=\tfrac14$ : un point sur quatre sur la
+      minuscule base de la tige ; les folioles restent clairsemées.
+    \item Règle : $p_i$ proportionnel à l'aire de la pièce,
+      \[
+        p_i \approx \frac{|\dete(A_i)|}{|\dete(A_1)|+\cdots+|\dete(A_N)|}
+      \]
+      (un déterminant nul remplacé par une petite valeur positive).
+    \item Fougère : déterminants $0$ ; $\num{0.7241}$ ; $\num{0.1038}$ ;
+      $\num{-0.1088}$, d'où environ $\num{0.77}$ ; $\num{0.11}$ ;
+      $\num{0.12}$ pour les trois dernières pièces. Barnsley retenait
+      $\num{0.85}$ ; $\num{0.07}$ ; $\num{0.07}$, et $\num{0.01}$ pour la
+      tige.
+  \end{itemize}
+  \footnotesize Un SIF avec probabilités décrit aussi une répartition des
+  points (Barnsley et Demko) : utile pour les niveaux de gris.
+\end{frame}
+
+\begin{frame}{Pour la classe 3.4 --- Le jeu du chaos en classe}
+  \begin{Classe}{Le jeu du chaos en classe}
+    \small
+    \begin{itemize}
+      \item Trois sujets du secondaire réunis : géométrie (point milieu,
+        homothétie), probabilités (dé équilibré), notion de limite.
+      \item Chaque élève joue une vingtaine de coups sur un transparent
+        où le même triangle est tracé ; on omet les cinq premiers points,
+        puis on superpose les transparents de la classe.
+      \item Surprise : on attendait une répartition uniforme.
+      \item « Pourquoi jamais de point dans le grand trou central ? » Le
+        milieu d'un segment qui joint un point du triangle à un sommet
+        tombe toujours dans le petit triangle de coin de ce sommet.
+      \item Variante avec les quatre sommets d'un carré : un autre
+        résultat (exercice du chapitre).
+    \end{itemize}
+  \end{Classe}
+\end{frame}

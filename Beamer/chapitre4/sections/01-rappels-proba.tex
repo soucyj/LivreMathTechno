@@ -1,0 +1,138 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Rappels sur les probabilités}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Définition 4.1 --- Probabilité conditionnelle}
+  \small Expérience aléatoire, univers (ensemble des résultats),
+  événement (sous-ensemble de l'univers), probabilité
+  $\P{A}\in\intff{0}{1}$. Une information partielle modifie une
+  probabilité : s'il pleut ce matin, l'autobus est plus souvent en
+  retard.
+  \begin{Enonce}{Définition 4.1 --- Probabilité conditionnelle}
+    Soient $A$, $B$ deux événements, avec $\P{B}>0$. La
+    \defi{probabilité conditionnelle} de $A$ sachant $B$ est
+    \[
+      \P{A\mid B} = \frac{\P{A\cap B}}{\P{B}}.
+    \]
+  \end{Enonce}
+  \small Autrement dit $\P{A\cap B}=\P{A\mid B}\,\P{B}$ : la règle
+  « multiplier le long d'une branche » d'un diagramme en arbre.
+\end{frame}
+
+\begin{frame}{Proposition 4.1 --- Formule des probabilités totales}
+  \begin{Enonce}{Proposition 4.1 --- Formule des probabilités totales}
+    Soient $B_1,\dots,B_N$ deux à deux incompatibles, de probabilités non
+    nulles, de réunion l'univers. Pour tout événement $A$,
+    \[
+      \P{A} = \P{A\mid B_1}\P{B_1}+\P{A\mid B_2}\P{B_2}+\cdots
+      +\P{A\mid B_N}\P{B_N}.
+    \]
+  \end{Enonce}
+  \begin{AuTableau}
+    \small Les $A\cap B_j$ sont deux à deux incompatibles, de réunion $A$ ;
+    additionner, puis appliquer la définition 4.1.
+  \end{AuTableau}
+  \small C'est la règle « additionner les branches qui mènent au même
+  résultat ».
+\end{frame}
+
+\begin{frame}{Exemple 4.1 --- L'autobus du matin}
+  \begin{columns}[c]
+    \begin{column}{0.5\textwidth}
+      \small Il pleut un matin sur trois. S'il pleut, l'autobus est en
+      retard avec probabilité $\num{0.4}$ ; sinon, $\num{0.1}$.
+      $P$ : « il pleut » ; $R$ : « en retard ».
+      \[
+        \begin{aligned}
+          \P{R} &= \P{R\mid P}\P{P}+\P{R\mid\overline P}\P{\overline P}\\
+          &= \num{0.4}\cdot\tfrac13+\num{0.1}\cdot\tfrac23
+          = \tfrac{\num{0.6}}{3} = \num{0.2}.
+        \end{aligned}
+      \]
+      L'autobus est en retard un matin sur cinq.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \FigBox[0.55\textheight]{%
+        \begin{tikzpicture}[grow=right, level distance=2.9cm,
+            level 1/.style={sibling distance=2.1cm},
+            level 2/.style={sibling distance=1.0cm},
+            every node/.style={font=\small},
+            edge from parent/.style={draw, sectioncolor!80!black, thick}]
+          \node[pt] {}
+            child {node[right] {$\overline{P}$}
+              child {node[right] {$\overline{R}$ \quad $\tfrac23 \cdot \num{0.9}$}
+                     edge from parent node[proba, below] {$\num{0.9}$}}
+              child {node[right] {$R$ \quad $\tfrac23 \cdot \num{0.1}$}
+                     edge from parent node[proba, above] {$\num{0.1}$}}
+              edge from parent node[proba, below] {$\tfrac23$}}
+            child {node[right] {$P$}
+              child {node[right] {$\overline{R}$ \quad $\tfrac13 \cdot \num{0.6}$}
+                     edge from parent node[proba, below] {$\num{0.6}$}}
+              child {node[right] {$R$ \quad $\tfrac13 \cdot \num{0.4}$}
+                     edge from parent node[proba, above] {$\num{0.4}$}}
+              edge from parent node[proba, above] {$\tfrac13$}};
+        \end{tikzpicture}}
+      \begin{center}\scriptsize Figure 4.2\end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Définition 4.2 --- Variable aléatoire discrète, espérance}
+  \begin{Enonce}{Définition 4.2 --- Variable aléatoire discrète}
+    \small Une \defi{variable aléatoire discrète} $X$ associe un nombre à
+    chaque résultat, et ne prend qu'un nombre fini (ou une suite) de
+    valeurs $x_1,x_2,\dots$ Sa \defi{loi} : les $p_i=\P{X=x_i}$, positifs
+    et de somme $1$. Son \defi{espérance} :
+    $\Es{X} = \sum_i x_i\,p_i$.
+  \end{Enonce}
+  \small
+  \begin{itemize}
+    \item Un dé : $\Es{X}=\tfrac16(1+2+\cdots+6)=\num{3.5}$, qui n'est pas
+      une valeur possible : c'est une moyenne à long terme.
+    \item Linéarité : $\Es{X+Y}=\Es{X}+\Es{Y}$, même sans indépendance.
+    \item Indicatrice $\mathbb 1_A$ (vaut $1$ si $A$ se produit, $0$
+      sinon) : $\Es{\mathbb 1_A}=\P{A}$.
+  \end{itemize}
+  Ces deux propriétés permettent de compter en moyenne sans connaître la
+  loi d'une somme (exemple 4.2).
+\end{frame}
+
+\begin{frame}{Définition 4.3 --- Vecteur de probabilités}
+  \small Ici, une variable aléatoire décrit l'état d'un système (le
+  temps, un lieu de résidence, une page web), numéroté $1,\dots,N$ : sa
+  loi est un vecteur de $\R^N$.
+  \begin{Enonce}{Définition 4.3 --- Vecteur de probabilités}
+    Un vecteur $\vec p=(p_1,\dots,p_N)$ de $\R^N$ est un \defi{vecteur de
+    probabilités} si
+    \[
+      p_i\geq0 \text{ pour tout } i, \qquad p_1+p_2+\cdots+p_N = 1.
+    \]
+  \end{Enonce}
+  \small
+  \begin{itemize}
+    \item Dans $\R^2$ : le segment de $(1,0)$ à $(0,1)$ ; dans $\R^3$ : le
+      triangle de sommets $(1,0,0)$, $(0,1,0)$, $(0,0,1)$. C'est le
+      simplexe de $\R^N$.
+    \item Avec $\vec e=(1,1,\dots,1)$ : la condition de somme s'écrit
+      $\vec e^{\mathsf T}\vec p=1$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Pour la classe 4.1 --- Les probabilités conditionnelles au secondaire}
+  \begin{Classe}{Les probabilités conditionnelles au secondaire}
+    \small
+    \begin{itemize}
+      \item Diagrammes en arbre dès le primaire ; au deuxième cycle,
+        espérance (moyenne pondérée, équité d'un jeu) et décisions à
+        partir de probabilités conditionnelles.
+      \item L'arbre joue le rôle que jouera la matrice de transition :
+        les branches du second niveau portent des probabilités
+        conditionnelles, et « multiplier le long d'une branche,
+        additionner les branches » est la formule des probabilités
+        totales.
+      \item Mais un arbre devient vite illisible : avec deux états,
+        $2^{10}=1024$ branches après dix étapes. D'où la notation
+        matricielle.
+    \end{itemize}
+  \end{Classe}
+\end{frame}

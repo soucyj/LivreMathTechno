@@ -1,0 +1,126 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{La courbe de von Koch}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Figure 3.2 --- La construction}
+  \small Étape $K_0$ : un segment de longueur $1$. On le partage en trois,
+  on remplace le tiers central par les deux autres côtés d'un triangle
+  équilatéral : $K_1$, quatre segments de longueur $\tfrac13$. On
+  recommence sur chaque segment, et ainsi de suite.
+  \FigBox[0.5\textheight]{%
+    \begin{tikzpicture}[scale=5.5, courbe/.style={sectioncolor, line join=round, thick}]
+      \foreach \n/\x/\y in {0/0/0, 1/0/-0.42, 2/0/-0.84, 3/1.25/0, 4/1.25/-0.42}{
+        \begin{scope}[shift={(\x,\y)}]
+          \input{figures/fractales/koch-\n.tikz}
+          \node[etiq, left, sectioncolor] at (-0.02,0.04) {$K_{\n}$};
+        \end{scope}}
+      \begin{scope}[shift={(1.25,-0.84)}, courbe/.style={sectioncolor, line join=round, thin}]
+        \input{figures/fractales/koch-5.tikz}
+        \node[etiq, left, sectioncolor] at (-0.02,0.04) {$K_{5}$};
+      \end{scope}
+    \end{tikzpicture}}
+  \small La courbe de von Koch $K$ est la figure limite. Le sens de cette
+  limite, dans $\big(\Comp{\R^2},\dH\big)$, sera justifié en section 6.
+\end{frame}
+
+\begin{frame}{Première propriété : sa longueur est infinie}
+  \small À chaque étape, chaque segment est remplacé par quatre segments
+  trois fois plus courts : la longueur est multipliée par $\tfrac43$.
+  \[
+    L_n = \left(\frac43\right)^{\!n} \xrightarrow[n\to\infty]{} \infty .
+  \]
+  \begin{itemize}
+    \item $L_{10}\approx\num{17.8}$ ; $L_{50}\approx\num{1.8e6}$.
+    \item Si $K_0$ mesure un centimètre, $K_{50}$ est plus longue que la
+      distance de Québec à Montréal --- et pourtant la figure tient sur
+      un timbre-poste.
+    \item Aucune longueur finie ne peut être attribuée à $K$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Figure 3.3 --- Deuxième propriété : aucune tangente}
+  \FigBox[0.5\textheight]{%
+    \begin{tikzpicture}
+      \begin{scope}[xscale=2.1, yscale=1.4]
+        \draw[axe] (-0.1,0) -- (2.2,0);
+        \draw[sectioncolor, thick, domain=0:2, samples=60, smooth]
+          plot (\x, {1.2*sin(deg(\x*1.4))});
+        \draw[firebrick3, thick] (0.5,0.79) rectangle (0.7,0.99);
+        \node[etiq, sectioncolor] at (1.1,1.55) {une courbe lisse};
+      \end{scope}
+      \begin{scope}[shift={(5.6,0)}, xscale=2.1, yscale=1.4]
+        \draw[firebrick3, thick] (0,0) rectangle (1.5,1.5);
+        \clip (0,0) rectangle (1.5,1.5);
+        \draw[sectioncolor, thick, domain=0.5:0.7, samples=40, smooth]
+          plot ({(\x-0.5)/0.2*1.5}, {(1.2*sin(deg(1.4*\x))-0.79)/0.2*1.5});
+      \end{scope}
+      \node[etiq, sectioncolor] at (7.18,2.45) {agrandie : presque une droite};
+      \draw[fleche, firebrick3!70] (1.5,1.4) to[bend left=15] (5.5,1.6);
+      \begin{scope}[shift={(0,-3.4)}, scale=4.2, courbe/.style={sectioncolor, line join=round, thick}]
+        \input{figures/fractales/koch-5.tikz}
+        \draw[firebrick3, thick] (-0.01,-0.03) rectangle (0.343,0.13);
+        \node[etiq, sectioncolor] at (0.5,0.42) {la courbe de von Koch};
+      \end{scope}
+      \begin{scope}[shift={(5.6,-3.4)}, scale=4.2, courbe/.style={sectioncolor, line join=round, thick}]
+        \draw[firebrick3, thick] (-0.03,-0.09) rectangle (1.03,0.39);
+        \input{figures/fractales/koch-4.tikz}
+      \end{scope}
+      \node[etiq, sectioncolor] at (7.7,-1.5) {agrandie : la même courbe};
+      \draw[fleche, firebrick3!70] (1.5,-3.0) to[bend left=12] (5.5,-2.9);
+    \end{tikzpicture}}
+  \footnotesize Une courbe lisse, vue de près, ressemble à sa tangente. Le
+  premier quart de $K$, agrandi trois fois, redonne $K$ tout entière :
+  aucune échelle ne la rend lisse. On démontre qu'elle n'a de tangente en
+  aucun point.
+\end{frame}
+
+\begin{frame}{Le flocon de von Koch}
+  \small Trois courbes de von Koch sur les côtés d'un triangle
+  équilatéral, pointes vers l'extérieur : le flocon de la figure 3.1.
+  \begin{itemize}
+    \item Son contour, formé de trois courbes de longueur infinie, est de
+      longueur infinie.
+    \item L'aire qu'il délimite est finie : le flocon tient dans tout
+      disque qui contient le triangle de départ.
+    \item Le calcul exact de cette aire, par une série géométrique, est
+      un exercice du chapitre.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Note historique 3.1 --- Helge von Koch (1870--1924)}
+  \footnotesize
+  \begin{columns}[T]
+    \begin{column}{0.25\textwidth}
+      \includegraphics[width=\linewidth]{helge-von-koch.jpg}\\
+      {\scriptsize\color{gray}Helge von Koch (1870--1924).
+      Domaine public, Wikimedia Commons.}
+    \end{column}
+    \begin{column}{0.72\textwidth}
+      \begin{itemize}
+        \item Né à Stockholm ; élève de Gösta Mittag-Leffler, lui-même
+          disciple de Weierstrass. Thèse (1892) sur les déterminants
+          infinis et les équations différentielles linéaires.
+        \item Succède à Mittag-Leffler à l'université de Stockholm (1911).
+        \item 1901 : l'hypothèse de Riemann équivaut à une estimation
+          précise de l'erreur commise en comptant les nombres premiers
+          par le logarithme intégral.
+        \item 1904 : « Sur une courbe continue sans tangente, obtenue par
+          une construction géométrique élémentaire ».
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Note historique 3.1 (suite)}
+  \small
+  \begin{itemize}
+    \item Trente ans plus tôt, Weierstrass avait exhibé une fonction
+      continue dérivable nulle part (section 10) --- mais définie par
+      une série trigonométrique, difficile à interpréter
+      géométriquement.
+    \item Von Koch voulait montrer le même phénomène par une
+      construction qu'on puisse faire à la règle et au compas.
+    \item Trois quarts de siècle plus tard, son flocon devient l'une des
+      figures les plus connues de la géométrie fractale.
+  \end{itemize}
+\end{frame}

@@ -1,0 +1,183 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Systèmes itératifs de fonctions}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{La question à l'envers}
+  \small Jusqu'ici, on a reconnu des copies à l'intérieur d'une figure
+  donnée. Inversons : des contractions $w_1,\dots,w_N$ du plan étant
+  données,
+  \begin{itemize}
+    \item existe-t-il un ensemble $E$ tel que $E = w_1(E)\cup\cdots\cup w_N(E)$ ?
+    \item est-il unique ?
+    \item comment le construire ?
+  \end{itemize}
+  \vspace{4pt}
+  Réponse : le théorème de Banach, appliqué à $\big(\Comp{\R^2},\dH\big)$.
+\end{frame}
+
+\begin{frame}{Définition 3.3 --- Système itératif de fonctions}
+  \begin{Enonce}{Définition 3.3 --- Système itératif de fonctions}
+    Un \defi{système itératif de fonctions} (SIF) du plan est une famille
+    finie $\{w_1,\dots,w_N\}$ de contractions $w_i:\R^2\to\R^2$, de
+    rapports $k_1,\dots,k_N$. Le nombre $k=\max\{k_1,\dots,k_N\}$ est le
+    \defi{rapport de contraction} du SIF. Son \defi{opérateur de
+    Hutchinson} associe à un compact non vide $B$ la réunion de ses
+    images :
+    \[
+      W(B) = w_1(B)\cup w_2(B)\cup\cdots\cup w_N(B).
+    \]
+  \end{Enonce}
+  \small
+  \begin{itemize}
+    \item Dans ce cours, les $w_i$ sont toujours affines.
+    \item $W$ agit sur des figures : un « photocopieur à plusieurs
+      lentilles » (Barnsley). En anglais : iterated function system (IFS).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Remarque 3.4 --- Le rapport de contraction d'une application affine}
+  \begin{Rem}{Remarque 3.4}
+    \small Pour $w(\vec x)=A\vec x+\vec t$ : le plus grand facteur par
+    lequel $A$ allonge un vecteur, $\max\norme{A\vec u}$ sur les vecteurs
+    unitaires.
+    \begin{itemize}
+      \item Similitude : son rapport. Diagonale $\mat{a}{0}{0}{b}$ :
+        $\max\{|a|,|b|\}$ (le rapport $\tfrac23$ de l'exemple 2.10).
+      \item $A$ symétrique : la plus grande valeur propre en valeur absolue.
+      \item Mais pas en général : le cisaillement
+        $\mat{\tfrac12}{1}{0}{\tfrac12}$ n'a que la valeur propre
+        $\tfrac12$, et pourtant il envoie $(0,1)$ sur
+        $\big(1,\tfrac12\big)$, de norme $\tfrac{\sqrt5}{2}>1$ : ce n'est
+        pas une contraction.
+      \item Cas général : racine carrée de la plus grande valeur propre
+        de $A^{\mathsf T}A$.
+    \end{itemize}
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Théorème 3.1 --- Première hypothèse de Banach}
+  \small Il faut vérifier que $W$ envoie $\Comp{\R^2}$ dans lui-même
+  (admis : une contraction est continue, l'image continue d'un compact
+  est compacte, une réunion finie de compacts est compacte), puis :
+  \begin{Enonce}{Théorème 3.1 --- L'opérateur de Hutchinson est une contraction}
+    Soit un SIF de rapport $k$. Son opérateur $W$ est une contraction de
+    rapport $k$ de $\big(\Comp{\R^2},\dH\big)$ :
+    $\dH\big(W(A),W(B)\big)\leq k\,\dH(A,B)$.
+  \end{Enonce}
+  \begin{AuTableau}
+    \footnotesize Avec les $\varepsilon$-voisinages (définition 2.8) :
+    si $A\subseteq\Vois{B}{\varepsilon}$, alors
+    $w_i(A)\subseteq\Vois{w_i(B)}{k\varepsilon}$ ; réunir sur $i$
+    (annexe C des notes).
+  \end{AuTableau}
+\end{frame}
+
+\begin{frame}{Théorème 3.2 --- L'espace des compacts est complet}
+  \begin{Enonce}{Théorème 3.2 --- Complétude de l'espace des compacts}
+    L'espace métrique $\big(\Comp{\R^2},\dH\big)$ est complet.
+  \end{Enonce}
+  \small (Admis --- dû à Hausdorff ; une démonstration se trouve chez
+  Barnsley.)
+  \vspace{6pt}
+
+  Les deux hypothèses du théorème de Banach (forme générale,
+  remarque 2.11) sont réunies : un espace complet et une contraction.
+\end{frame}
+
+\begin{frame}{Théorème 3.3 --- Hutchinson (1981)}
+  \begin{Enonce}{Théorème 3.3 --- Hutchinson, 1981}
+    \small Soit un SIF du plan de rapport $k$, d'opérateur de Hutchinson $W$.
+    \begin{enumerate}
+      \item[(i)] Il existe un unique compact non vide $A$ tel que
+        $A = W(A) = w_1(A)\cup\cdots\cup w_N(A)$ ;
+      \item[(ii)] pour tout compact non vide $B$, la suite
+        $B,W(B),W^2(B),\ldots$ converge vers $A$ au sens de $\dH$ ;
+      \item[(iii)] $\dH\big(W^n(B),A\big)\leq\dfrac{k^n}{1-k}\,\dH\big(B,W(B)\big)$.
+    \end{enumerate}
+    L'ensemble $A$ s'appelle l'attracteur du SIF.
+  \end{Enonce}
+  \begin{AuTableau}
+    \small Banach (forme générale) : $W$ contraction (th.~3.1) d'un
+    espace complet (th.~3.2).
+  \end{AuTableau}
+\end{frame}
+
+\begin{frame}{Un point fixe qui est une figure}
+  \small
+  \begin{itemize}
+    \item Le « point fixe » garanti par Banach n'est pas un point du
+      plan, mais une figure entière : l'attracteur.
+    \item La suite qui y converge n'est pas une suite de points, mais une
+      suite de figures.
+    \item Le point (ii) dit de plus que la limite ne dépend pas de la
+      figure de départ.
+    \item Une démonstration courte, parce qu'elle s'appuie sur tout ce
+      qui a été construit aux chapitres 1 et 2.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Figure 3.9 --- La figure de départ n'a pas d'importance}
+  \FigBox[0.6\textheight]{%
+    \begin{tikzpicture}[scale=1.95, fractale/.style={fill=steelblue4!75, draw=sectioncolor, very thin, line join=round}]
+      \foreach \dep/\y in {carre/0, motif/-1.3, disque/-2.6}{
+        \foreach \n/\x in {0/0, 1/1.25, 2/2.5, 3/3.75, 5/5}{
+          \begin{scope}[shift={(\x,\y)}]
+            \draw[gray!45, very thin] (0,0) -- (1,0) -- (0.5,0.8660254) -- cycle;
+            \input{figures/fractales/hutchinson-\dep-\n.tikz}
+          \end{scope}}}
+      \foreach \n/\x in {0/0, 1/1.25, 2/2.5, 3/3.75, 5/5}
+        \node[etiq, sectioncolor] at (\x+0.5,1.2) {$W^{\n}(B)$};
+    \end{tikzpicture}}
+  \small Le SIF de Sierpiński appliqué à un carré, au motif « F » et à un
+  disque : chaque fois le même attracteur (point (ii)).
+\end{frame}
+
+\begin{frame}{Remarque 3.5 --- Les constructions des sections 2 et 3 sont justifiées}
+  \begin{Rem}{Remarque 3.5}
+    \small
+    \begin{itemize}
+      \item Le sens de la limite : le SIF de l'exemple 3.4 appliqué à
+        $K_0$ donne exactement $K_1$, puis $K_2=W(K_1)$, etc. La courbe de
+        von Koch est la limite de $K_n=W^n(K_0)$ au sens de $\dH$. De même
+        $S_n=W^n(S_0)$.
+      \item L'autosimilarité : un ensemble autosimilaire
+        $E=w_1(E)\cup\cdots\cup w_N(E)$ est un point fixe de $W$ ; par
+        unicité, c'est l'attracteur.
+    \end{itemize}
+    Les ensembles autosimilaires sont exactement les attracteurs des SIF
+    de similitudes.
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Exemple 3.6 --- Combien d'étapes pour le dessin ?}
+  \small Sierpiński dans un triangle de $10$~cm de côté, à un dixième de
+  millimètre près, soit $\num{0.001}$ fois le côté.
+  \begin{itemize}
+    \item $S_1\subseteq S_0$ ; le point de $S_0$ le plus loin de $S_1$
+      est le centre du triangle retiré :
+      $\dH(S_0,S_1) = \tfrac12\cdot\tfrac{\sqrt3}{6} = \tfrac{\sqrt3}{12}$.
+    \item Avec $k=\tfrac12$, le point (iii) donne
+      \[
+        \dH(S_n,S)\leq\frac{(1/2)^n}{1-1/2}\cdot\frac{\sqrt3}{12}
+        = \left(\frac12\right)^{\!n-1}\frac{\sqrt3}{12}.
+      \]
+    \item Environ $\num{0.00113}$ pour $n=8$ et $\num{0.00056}$ pour
+      $n=9$ : neuf étapes, soit $3^9=\num{19683}$ triangles.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Remarque 3.6 --- Les points fixes des $w_i$ sont dans l'attracteur}
+  \begin{Rem}{Remarque 3.6}
+    \small Chaque $w_i$ a un unique point fixe $\overline{x}_i$ (Banach).
+    Partant de $a\in A$, la suite $a,w_i(a),w_i^2(a),\ldots$ reste dans
+    $A$ (car $w_i(A)\subseteq W(A)=A$) et converge vers
+    $\overline{x}_i$ ; $A$ étant fermé, $\overline{x}_i\in A$.
+  \end{Rem}
+  \small
+  \begin{itemize}
+    \item Pour Sierpiński : les trois sommets $S_1$, $S_2$, $S_3$.
+    \item En appliquant des composées des $w_i$ à ces points, on obtient
+      d'autres points de $A$ --- le principe de l'algorithme
+      déterministe (section 9).
+  \end{itemize}
+\end{frame}

@@ -1,0 +1,187 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Livrable 2 : un examen avec la classe exam}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Pourquoi la classe exam}
+  \small
+  \begin{itemize}
+    \item Des questions, sous-questions et choix multiples numérotés
+      automatiquement.
+    \item Des points par question ; le total et la grille de correction se
+      calculent seuls.
+    \item Les solutions écrites sous chaque question : un seul fichier pour
+      la copie de l'élève et le corrigé.
+    \item Des espaces de réponse réglables : vide, lignes, cadre.
+    \item Des en-têtes et pieds de page avec « Page 1 de 3 ».
+  \end{itemize}
+  \vspace{4pt}
+  \begin{Rem}{Un seul interrupteur}
+    \small Avec \cmd{printanswers} dans le préambule, les solutions
+    s'affichent ; en le mettant en commentaire (\texttt{\%}), elles
+    disparaissent et l'espace de réponse est conservé.
+  \end{Rem}
+\end{frame}
+
+\begin{frame}[fragile]{La structure d'un examen}
+  \begin{columns}[T]
+    \begin{column}{0.56\textwidth}
+\begin{CodeTeX}[title={Le corps de 03-examen.tex (extrait)}]
+\begin{questions}
+\question[2] Lequel de ces triplets ... ?
+\begin{choices}
+  \CorrectChoice $3$, $4$ et $5$
+  \choice $4$, $5$ et $6$
+\end{choices}
+\question Un triangle rectangle ...
+\begin{parts}
+  \part[2] Calcule l'hypoténuse.
+  \begin{solution}
+    $c = \sqrt{6^2 + 8^2} = \qty{10}{\centi\metre}$.
+  \end{solution}
+\end{parts}
+\end{questions}
+\end{CodeTeX}
+    \end{column}
+    \begin{column}{0.41\textwidth}
+      \footnotesize
+      \begin{itemize}
+        \item \texttt{questions} : la liste de toutes les questions.
+        \item \cmd{question[2]} : une question de 2 points.
+        \item \texttt{parts}, \cmd{part[2]} : les sous-questions a), b).
+        \item \texttt{choices}, \cmd{choice} : un choix multiple ;
+          \cmd{CorrectChoice} marque la bonne réponse dans le corrigé.
+        \item \texttt{solution} : la réponse, visible seulement avec
+          \cmd{printanswers}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Mettre la classe exam en français}
+  \begin{columns}[T]
+    \begin{column}{0.56\textwidth}
+\begin{CodeTeX}[title={Préambule de 03-examen.tex (extrait)}]
+\documentclass[11pt, addpoints]{exam}
+% \printanswers   % corrigé : enlever le %
+\pointpoints{point}{points}
+\hqword{Question}
+\hpword{Points}
+\hsword{Résultat}
+\htword{Total}
+\renewcommand{\solutiontitle}{\noindent Solution : }
+\pagestyle{headandfoot}
+\firstpageheader{Mathématique, 3\textsuperscript{e} secondaire}
+                {}{Examen --- Relation de Pythagore}
+\firstpagefooter{}{Page \thepage\ de \numpages}{}
+\end{CodeTeX}
+    \end{column}
+    \begin{column}{0.41\textwidth}
+      \footnotesize
+      \begin{itemize}
+        \item \texttt{addpoints} : active le calcul du total.
+        \item Sans ces réglages, la grille affiche Question, Points,
+          Score : l'IA les oublie souvent.
+        \item En-tête et pied de page : trois cases (gauche, centre,
+          droite), entre accolades.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Grille, total et espaces de réponse}
+\begin{CodeTeX}[title={Quelques commandes utiles}]
+Cet examen compte \numquestions\ questions, pour un total de \numpoints\ points.
+\gradetable[h][questions]          % grille de correction horizontale
+
+\vspace{\stretch{1}}               % un espace qui partage la page restante
+\begin{solution}[3cm]              % 3 cm réservés si le corrigé est caché
+\fillwithlines{3cm}                % 3 cm de lignes pour écrire
+\makeemptybox{3cm}                 % un cadre vide de 3 cm
+\end{CodeTeX}
+  \small Comme pour les sections, rien n'est numéroté ni additionné à la
+  main : ajouter une question met à jour la numérotation, le total et la
+  grille à la compilation suivante.
+\end{frame}
+
+\begin{frame}{Le rendu : copie de l'élève et corrigé}
+  \begin{columns}[c]
+    \begin{column}{0.36\textwidth}
+      \centering
+      \fbox{\includegraphics[height=0.7\textheight]{03-examen.pdf}}\\[2pt]
+      \scriptsize sans \cmd{printanswers}
+    \end{column}
+    \begin{column}{0.36\textwidth}
+      \centering
+      \fbox{\includegraphics[height=0.7\textheight]{03-examen-corrige.pdf}}\\[2pt]
+      \scriptsize avec \cmd{printanswers}
+    \end{column}
+    \begin{column}{0.25\textwidth}
+      \small Le même fichier, une seule ligne de différence. La bonne
+      réponse du choix multiple apparaît en gras dans le corrigé (réglage
+      par défaut de la classe).
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{La consigne}
+  \begin{Exercice}{Un examen sur le même thème que votre activité}
+    \small
+    \begin{itemize}
+      \item Classe \texttt{exam}, avec l'option \texttt{addpoints} et la
+        classe réglée en français.
+      \item Au moins quatre questions, dont un choix multiple et une
+        question à sous-questions ; des points pour chacune.
+      \item Une grille de correction et le total calculés automatiquement.
+      \item Une solution pour chaque question ; remettre deux PDF : la
+        copie de l'élève et le corrigé.
+      \item En-tête avec le niveau, pied de page « Page x de y ».
+    \end{itemize}
+  \end{Exercice}
+\end{frame}
+
+\begin{frame}{Prompt type : l'examen}
+  \begin{Prompt}{Un examen avec la classe exam}
+    \footnotesize Rédige en LaTeX un examen de \champ{3\textsuperscript{e}
+    secondaire, ou d'un cours collégial} sur \champ{la relation de Pythagore}, avec la classe exam
+    (option addpoints), compilable avec pdfLaTeX sur Overleaf.
+
+    Contenu : \champ{5} questions pour un total de \champ{20} points ;
+    au moins un choix multiple (choices, CorrectChoice), une question avec
+    sous-questions (parts), et un problème en contexte réel. Mets une
+    solution détaillée dans un environnement solution sous chaque question,
+    et laisse un espace de réponse adapté.
+
+    Mise en forme : la classe exam entièrement en français (pointpoints,
+    hqword, hpword, hsword, htword, solutiontitle) ; une grille de
+    correction horizontale ; en-tête avec le niveau et le titre ; pied de
+    page « Page x de y ». Laisse \textbackslash printanswers en
+    commentaire au début du fichier. Utilise siunitx avec virgule décimale
+    pour les nombres et les unités. Donne un seul fichier .tex.
+  \end{Prompt}
+\end{frame}
+
+\begin{frame}{Prompts types : réutiliser ses questions}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \begin{Prompt}{Une version B}
+        \scriptsize Voici mon examen en LaTeX : \champ{fichier}. Produis
+        une version B de même difficulté : mêmes questions, mêmes points,
+        mais d'autres valeurs numériques, choisies pour que les réponses
+        restent simples. Recalcule toutes les solutions et montre-moi les
+        calculs pour que je les vérifie.
+      \end{Prompt}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \begin{Prompt}{Ajouter une question}
+        \scriptsize Ajoute à mon examen une question de \champ{4} points
+        sur \champ{la réciproque de la relation de Pythagore}, avec deux
+        sous-questions et leur solution. Donne seulement le bloc
+        \textbackslash question à insérer, dans le même style que les
+        autres.
+      \end{Prompt}
+    \end{column}
+  \end{columns}
+  \vspace{6pt}
+  \small Dans les deux cas : refaire soi-même les calculs du corrigé avant
+  de distribuer la copie.
+\end{frame}

@@ -57,6 +57,25 @@ jobs:
       - name: Générer le site et le PDF
         run: quarto render
 
+      # Les diaporamas Beamer (Beamer/chapitre*/) et le laboratoire LaTeX
+      # (Beamer/Activité LaTeX/) sont publiés avec le site, sous
+      # _book/presentations/ : le site du cours MAT-2901 y renvoie.
+      # Liste des paquets établie à partir des fichiers réellement lus par
+      # la compilation (lualatex -recorder), novembre 2026.
+      - name: Installer les paquets LaTeX des présentations
+        run: |
+          tlmgr install adjustbox amscls amsfonts beamer bigintcalc bitset \
+            booktabs cm cm-super collectbox ec enumitem environ exam \
+            fancyhdr fontname geometry gettitlestring hycolor hyperref \
+            ifoddpage iftex infwarerr intcalc koma-script kvdefinekeys \
+            kvoptions kvsetkeys listings ltxcmds lualatex-math pdfcol \
+            pdfescape pdftexcmds refcount rerunfilecheck sansmathaccent \
+            stringenc tcolorbox tikzfill translator trimspaces \
+            uniquecounter url varwidth lm lm-math
+
+      - name: Compiler les présentations Beamer
+        run: ./_outils/compiler-presentations.sh _book/presentations
+
       - name: Préparer l'artefact Pages
         uses: actions/upload-pages-artifact@v3
         with:

@@ -1,0 +1,53 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Synthèse}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Ce qu'il faut retenir}
+  \small
+  \begin{itemize}
+    \item Von Koch : longueur infinie, aucune tangente. Sierpiński : aire
+      nulle, longueur infinie.
+    \item Autosimilarité : $E = w_1(E)\cup\cdots\cup w_N(E)$, avec des
+      similitudes contractantes.
+    \item Dimension de similitude $\ln N/\ln(1/r)$ ; équation de Moran
+      $\sum r_i^d=1$ sous la condition de l'ouvert.
+    \item SIF et opérateur de Hutchinson $W$ : une contraction de
+      l'espace complet $\big(\Comp{\R^2},\dH\big)$ ; par Banach, un
+      unique attracteur, limite de $W^n(B)$ pour toute figure $B$.
+    \item Théorème du collage : trouver un SIF dont l'attracteur
+      ressemble à une image donnée.
+    \item Deux algorithmes : déterministe (coût exponentiel), jeu du
+      chaos (coût linéaire, probabilités proportionnelles aux aires).
+    \item Des monstres de Weierstrass aux modèles de Mandelbrot : côtes,
+      nature, finance.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Figure 3.9, une dernière fois}
+  \FigBox[0.42\textheight]{%
+    \begin{tikzpicture}[scale=1.95, fractale/.style={fill=steelblue4!75, draw=sectioncolor, very thin, line join=round}]
+      \foreach \n/\x in {0/0, 1/1.25, 2/2.5, 3/3.75, 5/5}{
+        \begin{scope}[shift={(\x,0)}]
+          \draw[gray!45, very thin] (0,0) -- (1,0) -- (0.5,0.8660254) -- cycle;
+          \input{figures/fractales/hutchinson-motif-\n.tikz}
+        \end{scope}
+        \node[etiq, sectioncolor] at (\x+0.5,1.1) {$W^{\n}(B)$};}
+    \end{tikzpicture}}
+  \small Les trois chapitres réunis : des transformations affines
+  (chapitre 1), une distance entre figures et le théorème de Banach
+  (chapitre 2), une figure fractale comme point fixe (chapitre 3).
+\end{frame}
+
+\begin{frame}{Et maintenant}
+  \begin{itemize}
+    \item Les démonstrations laissées « au tableau » aujourd'hui sont
+      dans les notes de cours ; celle du théorème 3.1 est à l'annexe C.
+    \item Les exercices du chapitre (avec solutions complètes) couvrent
+      chacun des résultats vus : à travailler avant le prochain cours.
+    \item L'annexe Python des notes reprend les deux algorithmes de
+      dessin.
+    \item Prochain chapitre : les chaînes de Markov et PageRank --- où le
+      théorème de Banach réapparaît, dans un espace de dimension égale au
+      nombre de pages du Web.
+  \end{itemize}
+\end{frame}

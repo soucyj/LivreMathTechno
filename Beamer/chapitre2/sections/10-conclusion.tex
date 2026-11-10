@@ -1,0 +1,55 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Synthèse}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Ce qu'il faut retenir}
+  \small
+  \begin{itemize}
+    \item Une métrique : quatre axiomes (positivité,
+      séparation, symétrie, inégalité triangulaire) --- sur
+      n'importe quel ensemble.
+    \item Un même ensemble peut porter plusieurs métriques ($\dE$,
+      $\dT$) ; la forme des boules en dépend.
+    \item Des métriques « appliquées » : distance sphérique
+      (navigation), distance de Hamming (codes correcteurs).
+    \item Ouvert, fermé, compact ; dans $\R^n$,
+      compact = fermé et borné (Heine-Borel).
+    \item La distance de Hausdorff fait de $\Comp{E}$ un espace
+      métrique dont les points sont des ensembles.
+    \item Complétude : toute suite de Cauchy converge dans
+      l'espace ($\R^n$ oui, $\Q$ non).
+    \item Banach : dans un espace complet, une contraction a un
+      unique point fixe, atteint en itérant depuis n'importe où, avec
+      une erreur en $k^n/(1-k)$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Le théorème de Banach, une dernière fois}
+  \FigBox[0.36\textheight]{%
+    \begin{tikzpicture}[
+        hyp/.style={draw=sectioncolor, fill=thmboxbg, rounded corners=2pt,
+          thick, align=center, font=\small, minimum height=1.1cm,
+          text width=3.2cm},
+        conc/.style={hyp, draw=coveraccent!85!black, fill=secboxbg,
+          text width=4.4cm}]
+      \node[hyp] (e) at (0,0.75) {$(E,d)$ complet};
+      \node[hyp] (f) at (0,-0.75) {$f$ contraction\\$k<1$};
+      \node[conc] (c) at (6.2,0) {un unique $\overline{x}$\\
+        $f^n(x_0)\to\overline{x}$ pour tout $x_0$\\
+        erreur $\leq\frac{k^n}{1-k}\,d(x_0,x_1)$};
+      \draw[fleche] (e.east) -- (c.west);
+      \draw[fleche] (f.east) -- (c.west);
+    \end{tikzpicture}}
+  \small
+  \begin{center}
+  \begin{tabular}{ll}
+    \toprule
+    Espace complet & Ce qu'on y trouve comme point fixe \\
+    \midrule
+    $I\subset\R$ fermé & le zéro cherché par la méthode de Newton \\
+    $\big(\Comp{\R^2},\dH\big)$ & une fractale (chapitre 3) \\
+    vecteurs de probabilité & le classement PageRank (chapitre 4) \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\end{frame}

@@ -1,0 +1,96 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Pourquoi \texorpdfstring{\LaTeX}{LaTeX} ?}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Le standard de l'écriture mathématique}
+  \small
+  \begin{columns}[c]
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item Créé par Donald Knuth (\TeX, 1978) puis Leslie Lamport
+          (\LaTeX, 1984), pour composer des mathématiques avec la qualité
+          d'un livre imprimé.
+        \item Utilisé pour presque tous les articles, manuels et notes de
+          cours de mathématiques --- y compris les notes de ce cours.
+        \item Gratuit, ouvert, et le même fichier compile partout, dans
+          dix ans comme aujourd'hui.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.46\textwidth}
+      \begin{tcolorbox}[codestyle]
+        \centering
+        $\displaystyle \sum_{k=1}^{n} k^2 = \frac{n(n+1)(2n+1)}{6}$
+        \\[8pt]
+        $\displaystyle \int_0^{\pi} \sin x \,\mathrm{d}x = 2$
+        \\[8pt]
+        $\displaystyle \lim_{n\to\infty}\left(1+\frac1n\right)^{\!n} = \mathrm{e}$
+      \end{tcolorbox}
+      \centering\scriptsize Trois lignes de code chacune, sans souris.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Traitement de texte ou \LaTeX ?}
+  \small
+  \begin{center}
+  \begin{tabular}{p{3.2cm}p{4.3cm}p{4.3cm}}
+    \toprule
+    & Traitement de texte & \LaTeX \\
+    \midrule
+    Formules & éditeur d'équations, à la souris & tapées au clavier, rendu
+      de qualité livre \\
+    Mise en page & vous la faites, à la main & calculée pour vous,
+      cohérente partout \\
+    Numérotation & à corriger quand on insère & automatique (sections,
+      questions, figures) \\
+    Format du fichier & binaire & texte brut : lisible, réutilisable,
+      généré par l'IA \\
+    Ce qu'on voit & le résultat, en direct & le code, puis le PDF
+      compilé \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{4pt}
+  On ne dessine pas la page : on décrit la structure (un titre, une
+  question, une formule) et \LaTeX\ s'occupe de la mise en page.
+\end{frame}
+
+\begin{frame}{Pourquoi c'est particulièrement utile en enseignement}
+  \begin{Classe}{Ce que \LaTeX\ change pour un enseignant de mathématiques}
+    \small
+    \begin{itemize}
+      \item Un examen et son corrigé dans un seul fichier : un
+        interrupteur affiche ou cache les solutions.
+      \item Le barème se calcule tout seul : points par question,
+        total, grille de correction.
+      \item Des banques de questions réutilisables d'une année à l'autre,
+        d'un groupe à l'autre (version A, version B).
+      \item Des figures précises (TikZ) : triangles, repères, graphes de
+        fonctions, à la bonne échelle.
+      \item Des documents cohérents pour toute une équipe (école ou département) :
+        mêmes en-têtes, même notation, même mise en page.
+      \item Avec l'IA, le premier jet ne prend que quelques minutes ;
+        le travail d'enseignant, c'est d'en vérifier et d'en ajuster le
+        contenu.
+    \end{itemize}
+  \end{Classe}
+\end{frame}
+
+\begin{frame}{Ce qu'il faut accepter}
+  \small
+  \begin{itemize}
+    \item \LaTeX\ n'est pas un logiciel « ce que vous voyez est ce que vous
+      obtenez » : on écrit du code, on compile, on regarde le PDF.
+    \item Une petite faute de frappe (une accolade oubliée) peut empêcher
+      la compilation.
+    \item L'IA écrit très bien du \LaTeX, mais elle se trompe aussi :
+      commandes inventées, extensions inutiles, mathématiques fausses,
+      texte en anglais.
+  \end{itemize}
+  \vspace{4pt}
+  \begin{Rem}{L'objectif d'aujourd'hui}
+    Pas de mémoriser des centaines de commandes. Comprendre assez la
+    structure d'un fichier pour lire ce que l'IA produit, le modifier à la
+    main sans tout casser, et réparer une erreur de compilation.
+  \end{Rem}
+\end{frame}

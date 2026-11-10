@@ -1,0 +1,160 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Autosimilarité}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Des copies réduites d'elle-même}
+  \small
+  \begin{itemize}
+    \item Figure 3.3 : le premier quart de $K$, agrandi trois fois,
+      redonne $K$. Idem pour les trois autres quarts (en les faisant aussi
+      tourner) : $K$ est formée de quatre copies réduites d'elle-même.
+    \item Le triangle de Sierpiński : trois copies de lui-même, deux fois
+      plus petites, dans ses trois coins.
+    \item Langage du chapitre 1 : une similitude de rapport $r$ multiplie
+      les distances par $r$ ; si $0<r<1$, c'est une contraction de
+      rapport $r$ (définition 2.14).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Définition 3.1 --- Ensemble autosimilaire}
+  \begin{Enonce}{Définition 3.1 --- Ensemble autosimilaire}
+    Soit $E$ un sous-ensemble compact non vide du plan. $E$ est
+    \defi{autosimilaire} s'il existe un nombre fini $N\geq2$ de
+    similitudes $w_1,\dots,w_N$, de rapports $r_1,\dots,r_N$ compris
+    strictement entre $0$ et $1$, telles que
+    \[
+      E = w_1(E)\cup w_2(E)\cup\cdots\cup w_N(E).
+    \]
+    Chaque $w_i(E)$ est une \defi{copie réduite} de $E$.
+  \end{Enonce}
+  \small
+  \begin{itemize}
+    \item $E$ doit être exactement la réunion de ses copies.
+    \item Les copies peuvent se toucher, et même se chevaucher (on y
+      revient en section 8).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Exemple 3.1 --- Le segment et le carré}
+  \small
+  \begin{itemize}
+    \item $\intff{0}{1}$ est la réunion de $\intff{0}{\tfrac12}$ et de
+      $\intff{\tfrac12}{1}$ : deux similitudes de rapport $\tfrac12$ (ou
+      trois de rapport $\tfrac13$, ou $m$ de rapport $\tfrac1m$).
+    \item Le carré unité $C$ est la réunion de quatre carrés de côté
+      $\tfrac12$ : $C = w_1(C)\cup w_2(C)\cup w_3(C)\cup w_4(C)$, avec
+      \[
+        w_i\col{x}{y} = \mat{\tfrac12}{0}{0}{\tfrac12}\col{x}{y} + \vec t_i,
+      \]
+      $\vec t_i$ parcourant $(0,0)$, $\big(\tfrac12,0\big)$,
+      $\big(0,\tfrac12\big)$, $\big(\tfrac12,\tfrac12\big)$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Exemple 3.2 --- Tout triangle est autosimilaire}
+  \begin{columns}[c]
+    \begin{column}{0.52\textwidth}
+      \small En joignant les milieux des côtés de $T$, on obtient quatre
+      triangles semblables à $T$, de rapport $\tfrac12$ :
+      \begin{itemize}
+        \item trois copies de coin : $h_{A,1/2}(T)$, $h_{B,1/2}(T)$,
+          $h_{C,1/2}(T)$ ;
+        \item la copie centrale, qui a subi un demi-tour :
+          $h_{G,-1/2}(T)$, où $G$ est le centre de gravité.
+      \end{itemize}
+      \[
+        \begin{aligned}
+          T = {}& h_{A,1/2}(T)\cup h_{B,1/2}(T)\\
+          &\cup h_{C,1/2}(T)\cup h_{G,-1/2}(T).
+        \end{aligned}
+      \]
+    \end{column}
+    \begin{column}{0.46\textwidth}
+      \FigBox[0.55\textheight]{%
+        \begin{tikzpicture}[scale=1.15]
+          \coordinate (A) at (0,0); \coordinate (B) at (4.2,0.3); \coordinate (C) at (1.3,2.6);
+          \coordinate (MAB) at ($(A)!0.5!(B)$); \coordinate (MBC) at ($(B)!0.5!(C)$);
+          \coordinate (MCA) at ($(C)!0.5!(A)$);
+          \fill[firebrick3!30] (A) -- (MAB) -- (MCA) -- cycle;
+          \fill[steelblue4!35] (MAB) -- (B) -- (MBC) -- cycle;
+          \fill[coveraccent!45] (MCA) -- (MBC) -- (C) -- cycle;
+          \fill[vertpiece!30] (MAB) -- (MBC) -- (MCA) -- cycle;
+          \draw[sectioncolor, thick, line join=round] (A) -- (B) -- (C) -- cycle;
+          \draw[sectioncolor, thin] (MAB) -- (MBC) -- (MCA) -- cycle;
+          \coordinate (G) at ($1/3*(A)+1/3*(B)+1/3*(C)$);
+          \node[pt, label={[etiq]below left:$A$}] at (A) {};
+          \node[pt, label={[etiq]below right:$B$}] at (B) {};
+          \node[pt, label={[etiq]above:$C$}] at (C) {};
+          \node[ptim, label={[etiq]above:$G$}] at (G) {};
+          \node[etiq] at ($1/3*(A)+1/3*(MAB)+1/3*(MCA)$) {$T_A$};
+          \node[etiq] at ($1/3*(MAB)+1/3*(B)+1/3*(MBC)$) {$T_B$};
+          \node[etiq] at ($1/3*(MCA)+1/3*(MBC)+1/3*(C)$) {$T_C$};
+          \node[etiq] at ($(G)+(0,-0.3)$) {$T_G$};
+        \end{tikzpicture}}
+      \begin{center}\scriptsize Figure 3.6\end{center}
+    \end{column}
+  \end{columns}
+  \small L'autosimilarité ne suffit donc pas à caractériser une fractale.
+\end{frame}
+
+\begin{frame}{Exemples 3.3 et 3.4 --- Sierpiński et von Koch}
+  \small
+  Sierpiński, sommets $S_1=(0,0)$, $S_2=(1,0)$,
+  $S_3=\big(\tfrac12,\tfrac{\sqrt3}2\big)$, $w_i=h_{S_i,1/2}$ :
+  \[
+    w_1\col{x}{y} = \tfrac12\col{x}{y},\quad
+    w_2\col{x}{y} = \tfrac12\col{x}{y}+\col{\tfrac12}{0},\quad
+    w_3\col{x}{y} = \tfrac12\col{x}{y}+\col{\tfrac14}{\tfrac{\sqrt3}{4}}.
+  \]
+  Von Koch, sur le segment de $(0,0)$ à $(1,0)$, avec les rotations
+  $r_{\pm\pi/3}$ :
+  \[
+    \begin{aligned}
+      w_1\col{x}{y} &= \tfrac13\col{x}{y}, &
+      w_2\col{x}{y} &= \tfrac13\,r_{\pi/3}\col{x}{y}+\col{\tfrac13}{0},\\
+      w_3\col{x}{y} &= \tfrac13\,r_{-\pi/3}\col{x}{y}+\col{\tfrac12}{\tfrac{\sqrt3}{6}}, &
+      w_4\col{x}{y} &= \tfrac13\col{x}{y}+\col{\tfrac23}{0}.
+    \end{aligned}
+  \]
+  Vérification : $w_2$ envoie $(1,0)$ sur
+  $\big(\tfrac12,\tfrac{\sqrt3}{6}\big)$, le sommet de la pointe. Sierpiński
+  est aussi formé de neuf copies de rapport $\tfrac14$, les
+  $w_i\circ w_j$.
+\end{frame}
+
+\begin{frame}{Figure 3.7 --- Les copies réduites}
+  \FigBox[0.58\textheight]{%
+    \begin{tikzpicture}[scale=4.3]
+      \input{figures/fractales/sierpinski-pieces.tikz}
+      \node[etiq, firebrick3, below] at (0.25,-0.02) {$w_1(S)$};
+      \node[etiq, steelblue4, below] at (0.75,-0.02) {$w_2(S)$};
+      \node[etiq, coveraccent!80!black, right] at (0.68,0.62) {$w_3(S)$};
+      \begin{scope}[shift={(1.3,0.18)}, scale=1.35]
+        \input{figures/fractales/koch-pieces.tikz}
+        \node[etiq, firebrick3, below] at (0.1667,-0.03) {$w_1(K)$};
+        \node[etiq, steelblue4, above left] at (0.36,0.25) {$w_2(K)$};
+        \node[etiq, coveraccent!80!black, above right] at (0.64,0.25) {$w_3(K)$};
+        \node[etiq, vertpiece, below] at (0.8333,-0.03) {$w_4(K)$};
+      \end{scope}
+    \end{tikzpicture}}
+  \small Tapis : huit homothéties de rapport $\tfrac13$. Cantor : deux
+  copies, $\tfrac13x$ et $\tfrac13x+\tfrac23$.
+\end{frame}
+
+\begin{frame}{Remarque 3.2 et pour la classe 3.2}
+  \begin{Rem}{Remarque 3.2 --- Une autosimilarité parfois seulement statistique}
+    \footnotesize Une côte rocheuse, un chou-fleur, un réseau de rivières
+    ne sont jamais exactement autosimilaires : un morceau agrandi ne
+    reproduit pas le tout, mais en a les caractéristiques statistiques,
+    et seulement sur une plage d'échelles (pas au grain de sable). C'est
+    l'autosimilarité statistique, au cœur des travaux de Mandelbrot.
+  \end{Rem}
+  \begin{Classe}{Une figure semblable à une partie d'elle-même}
+    \footnotesize Une figure autosimilaire est une figure semblable à
+    chacune de ses parties. Les élèves joignent les milieux des côtés
+    d'un triangle, mesurent, constatent quatre petits triangles
+    isométriques semblables au grand, de rapport $\tfrac12$. Recommencer
+    dans chaque petit triangle en noircissant celui du centre amorce la
+    construction de Sierpiński.
+  \end{Classe}
+\end{frame}

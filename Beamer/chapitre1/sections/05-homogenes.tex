@@ -1,0 +1,103 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Coordonnées homogènes : le tour de passe-passe de l'infographie}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Le problème}
+  \small Composer deux applications affines est pénible :
+  \[
+    (w_2\circ w_1)\col{x}{y} = (A_2A_1)\col{x}{y} + (A_2\vec t_1+\vec t_2)
+  \]
+  --- une règle pour $A$, une autre pour $\vec t$. Sur une carte
+  graphique qui compose des milliers de transformations par image, ce
+  n'est pas acceptable.
+
+  \vspace{6pt}
+  \textbf{L'astuce} : plonger le plan dans $\R^3$, à la hauteur $z=1$ :
+  $(x,y) \mapsto (x,y,1)$.
+  \[
+    \begin{pmatrix} a & b & e\\ c & d & f\\ 0 & 0 & 1\end{pmatrix}
+    \coliii{x}{y}{1} = \coliii{ax+by+e}{cx+dy+f}{1}.
+  \]
+  La translation devient une multiplication matricielle : l'affine est
+  redevenue linéaire, une dimension plus haut.
+\end{frame}
+
+\begin{frame}{Figure 1.8 --- Points et vecteurs, en coordonnées homogènes}
+  \FigBox[0.5\textheight]{%
+    \begin{tikzpicture}[scale=1.1]
+      \draw[sectioncolor!45, fill=steelblue4!10]
+        (0,1.6) -- (4.2,1.6) -- (5.4,2.9) -- (1.2,2.9) -- cycle;
+      \node[etiq, sectioncolor] at (5.05,2.55) {$z=1$};
+      \draw[gray!55, fill=gray!8]
+        (0,-0.5) -- (4.2,-0.5) -- (5.4,0.8) -- (1.2,0.8) -- cycle;
+      \node[etiq, gray!70!black] at (5.05,0.45) {$z=0$};
+      \node[pt] (O) at (2.1,0.15) {};
+      \node[etiq] at (1.75,-0.05) {$(0,0,0)$};
+      \node[pt, label={[etiq]above right:$(x,y,1)$}] (P) at (2.85,2.1) {};
+      \draw[fleche, dashed] (O) -- (P);
+      \node[etiq, align=left, sectioncolor] at (7.9,2.1)
+        {le plan des points,\\relevé à la hauteur~1};
+      \node[etiq, align=left, gray!70!black] at (7.9,0.15)
+        {le plan des vecteurs\\(directions)};
+    \end{tikzpicture}}
+  \small Les points vivent à $z=1$, les vecteurs (directions) à $z=0$.
+  La distinction point/vecteur redevient visible.
+\end{frame}
+
+\begin{frame}{Les avantages}
+  \begin{enumerate}
+    \item \textbf{Composer, c'est multiplier.} La matrice de
+      $w_2\circ w_1$ est le produit des deux matrices $3\times3$, dans
+      cet ordre. Une seule règle au lieu de deux.
+    \item \textbf{Inverser, c'est inverser.} La matrice de $w^{-1}$ est
+      l'inverse de la matrice $3\times3$.
+    \item \textbf{La distinction point/vecteur revient.} Point =
+      $(x,y,1)$ ; vecteur = $(x,y,0)$. La différence de deux points
+      donne un vecteur ; une translation ne change pas un vecteur.
+    \item \textbf{On peut aller plus loin.} En autorisant la troisième
+      ligne à différer de $(0,0,1)$ : transformations
+      \emph{projectives}, celles de la perspective en 3D.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Exemple 1.8 --- Faire pivoter, puis glisser, une maison}
+  \small Maison de sommets $(0,0),(2,0),(2,1{,}4),(1,2{,}2),(0,1{,}4)$.
+  $r$ = rotation $\pi/2$, puis $t$ = translation $(3,1)$ :
+  \[
+    M_r = \begin{pmatrix} 0&-1&0\\ 1&0&0\\ 0&0&1\end{pmatrix},\quad
+    M_t = \begin{pmatrix} 1&0&3\\ 0&1&1\\ 0&0&1\end{pmatrix},\quad
+    M_tM_r = \begin{pmatrix} 0&-1&3\\ 1&0&1\\ 0&0&1\end{pmatrix}.
+  \]
+  Coin $(2,0) = (2,0,1)$ : $M_tM_r\coliii{2}{0}{1} = \coliii{3}{3}{1}$ ---
+  identique au calcul affine direct
+  $r_{\pi/2}\col{2}{0}+\col{3}{1}$, en une seule multiplication.
+  \FigBox[0.32\textheight]{%
+    \begin{tikzpicture}[scale=0.85]
+      \repere{-0.6}{3.6}{-0.6}{3.6}
+      \fill[fig] (0,0) -- (2,0) -- (2,1.4) -- (1,2.2) -- (0,1.4) -- cycle;
+      \fill[figim] (3,1) -- (3,3) -- (1.6,3) -- (0.8,2) -- (1.6,1) -- cycle;
+      \node[etiq] at (0.6,-0.95) {maison};
+      \node[etiq] at (2.9,3.75) {$(t \circ r)(\text{maison})$};
+    \end{tikzpicture}}
+\end{frame}
+
+\begin{frame}{Attention à l'ordre, encore}
+  \small En composant dans l'autre ordre, $r\circ t$ (glisser, puis
+  tourner) :
+  \[
+    M_rM_t = \begin{pmatrix} 0&-1&0\\ 1&0&0\\ 0&0&1\end{pmatrix}
+    \begin{pmatrix} 1&0&3\\ 0&1&1\\ 0&0&1\end{pmatrix}
+    = \begin{pmatrix} 0&-1&-1\\ 1&0&3\\ 0&0&1\end{pmatrix}
+    \neq M_tM_r.
+  \]
+  La composition en coordonnées homogènes n'échappe pas à la remarque
+  1.1.
+
+  \begin{Rem}{Remarque 1.10 --- Où c'est réellement utilisé}
+    \small Un personnage qui bouge dans un jeu vidéo, un bras de robot,
+    une image redressée, une carte qui pivote : des produits de
+    matrices $3\times 3$ calculés par millions et par seconde ---
+    l'application des mathématiques du secondaire la plus omniprésente
+    et la moins connue des élèves.
+  \end{Rem}
+\end{frame}

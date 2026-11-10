@@ -1,0 +1,56 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Synthèse}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Ce qu'il faut retenir}
+  \small
+  \begin{itemize}
+    \item Probabilités totales : « multiplier le long d'une branche,
+      additionner les branches » --- une ligne d'un produit matriciel.
+    \item Chaîne de Markov : l'avenir ne dépend que du présent ; la loi
+      évolue par $\vec x_{n+1}=M\vec x_n$, avec $M$ stochastique (colonnes
+      de somme $1$).
+    \item L'équilibre $\vec q=M\vec q$ : un vecteur propre de valeur
+      propre $1$, et un point fixe ; limite des probabilités et proportion
+      du temps passé dans chaque état.
+    \item Si $M$ est régulière : un unique équilibre, atteint depuis
+      n'importe quel départ ; la vitesse dépend de $|\lambda_2|$.
+    \item PageRank : corriger les pages sans lien ($B$), puis téléporter
+      ($G=\beta B+(1-\beta)U$).
+    \item Méthode des puissances : $G$ est une contraction de rapport
+      $\beta$ pour $d_1$ ; Banach garantit la convergence et borne
+      l'erreur.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Un même point fixe, trois chapitres}
+  \small
+  \begin{center}
+  \begin{tabular}{lll}
+    \toprule
+    Chapitre & Espace complet & Point fixe \\
+    \midrule
+    2 & $I\subset\R$ fermé & le zéro cherché par Newton \\
+    3 & $\big(\Comp{\R^2},\dH\big)$ & une fractale \\
+    4 & $(\Delta,d_1)$ & le PageRank du Web \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{6pt}
+  À l'origine de l'une des plus grandes entreprises du monde : un projet
+  de doctorat dont le cœur est le calcul d'un vecteur propre associé à la
+  valeur propre $1$.
+\end{frame}
+
+\begin{frame}{Et maintenant}
+  \begin{itemize}
+    \item Les démonstrations laissées « au tableau » aujourd'hui sont
+      toutes dans les notes de cours, avec tous les détails.
+    \item Les exercices du chapitre (avec solutions complètes) couvrent
+      chacun des résultats vus : à travailler avant le prochain cours.
+    \item Les programmes Python des notes (météo, simulation, mini-webs,
+      méthode des puissances) sont à exécuter et à modifier.
+    \item Les rappels d'algèbre linéaire (valeurs propres,
+      diagonalisation) sont à l'annexe D.
+  \end{itemize}
+\end{frame}

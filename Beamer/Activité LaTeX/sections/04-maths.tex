@@ -1,0 +1,150 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Le mode mathématique}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}[fragile]{Dans le texte, ou hors du texte}
+\begin{CodeRendu}[title={Trois façons d'entrer en mode mathématique}]
+Le côté $c$ vérifie $a^2 + b^2 = c^2$.
+
+Hors texte, centré :
+\[ c = \sqrt{a^2 + b^2} \]
+
+Numéroté :
+\begin{equation}
+  A = \pi r^2
+\end{equation}
+\end{CodeRendu}
+  \small
+  \begin{itemize}
+    \item \texttt{\$...\$} : une formule dans la phrase.
+    \item \texttt{\textbackslash[ ... \textbackslash]} : une formule importante, sur sa
+      propre ligne.
+    \item \texttt{equation} : la même chose, avec un numéro qu'on peut citer.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{L'essentiel (1) : exposants, fractions, racines}
+\begin{CodeRendu}[title={Exposants et indices}]
+$x^2 \quad x^{10} \quad a_1
+ \quad a_{n+1} \quad 2^{-3}$
+\end{CodeRendu}
+\begin{CodeRendu}[title={Fractions et racines}]
+$\frac{3}{4} \quad \dfrac{x+1}{x-2}
+ \quad \sqrt{2} \quad \sqrt[3]{27}$
+\end{CodeRendu}
+  \small Plus d'un caractère en exposant ou en indice : des accolades
+  (\texttt{x\^{}10} donne $x^10$, et non $x^{10}$). \cmd{dfrac} : une
+  fraction en grand, même dans le texte.
+\end{frame}
+
+\begin{frame}[fragile]{L'essentiel (2) : opérations et symboles}
+\begin{CodeRendu}[title={Opérations et relations}]
+$3 \times 4 \quad 2 \cdot x \quad a \div b$
+
+$x \leq 5 \quad y \geq 0 \quad a \neq b
+ \quad \pi \approx 3{,}14$
+\end{CodeRendu}
+\begin{CodeRendu}[title={Lettres grecques et ensembles}]
+$\alpha \quad \beta \quad \theta
+ \quad \Delta \quad \pi$
+
+$x \in \mathbb{R} \quad n \in \mathbb{N}$
+\end{CodeRendu}
+\end{frame}
+
+\begin{frame}[fragile]{L'essentiel (3) : fonctions et texte}
+\begin{CodeRendu}[title={Fonctions : droites et bien espacées}]
+$\sin(30^\circ) = \frac12
+ \quad \log_2 8 = 3 \quad \cos \theta$
+\end{CodeRendu}
+\begin{CodeRendu}[title={Du texte dans une formule}]
+$P = 2(L + l) \text{ où } L
+ \text{ est la longueur}$
+\end{CodeRendu}
+  \small En mode mathématique, les espaces sont ignorés et les lettres
+  sont en italique : on écrit \cmd{sin}, jamais \texttt{sin}, et
+  \cmd{text\{...\}} pour des mots.
+\end{frame}
+
+\begin{frame}[fragile]{Parenthèses et systèmes}
+\begin{CodeRendu}[title={Parenthèses qui s'ajustent}]
+\[ \left( \frac{a}{b} \right)^2
+   = \frac{a^2}{b^2} \]
+\end{CodeRendu}
+\begin{CodeRendu}[title={Un système d'équations}]
+\[ \begin{cases}
+     2x + y = 7 \\
+     x - y = 2
+   \end{cases} \]
+\end{CodeRendu}
+\end{frame}
+
+\begin{frame}[fragile]{Une démarche alignée}
+\begin{CodeRendu}[title={L'environnement align*}]
+\begin{align*}
+  3x - 5 &= 10 \\
+  3x &= 15 \\
+  x &= 5
+\end{align*}
+\end{CodeRendu}
+  \small
+  \begin{itemize}
+    \item \texttt{\&} marque le point d'alignement (ici, avant le signe
+      $=$) ; \texttt{\textbackslash\textbackslash} passe à la ligne suivante.
+    \item Sans l'étoile, \texttt{align} numérote chaque ligne.
+    \item Idéal pour un corrigé : une étape par ligne, toutes alignées.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Les nombres à la française}
+  \begin{AuTableau}[Piège fréquent]
+    \footnotesize En mode mathématique, la virgule est une ponctuation :
+    \LaTeX\ ajoute une espace après elle, et $3,14$ s'affiche avec un trou.
+    Avec \texttt{siunitx} réglé sur la virgule décimale, \cmd{num} écrit
+    les décimaux et groupe les chiffres ; \cmd{qty} ajoute l'unité.
+  \end{AuTableau}
+\begin{CodeRendu}[title={Trois solutions}]
+Mauvais : $3,14$
+
+Accolades : $3{,}14$
+
+Avec siunitx : $\num{3,14}$
+et $\num{1234567,89}$
+
+Unités : \qty{12,5}{\centi\metre},
+\qty{4}{\centi\metre\squared}
+\end{CodeRendu}
+\end{frame}
+
+\begin{frame}[fragile]{Trouver un symbole qu'on ne connaît pas}
+  \small
+  \begin{itemize}
+    \item Detexify (\texttt{detexify.kirelabs.org}) : on dessine le
+      symbole, le site propose la commande.
+    \item L'IA : « Quelle est la commande \LaTeX\ du symbole “environ
+      égal” ? »
+    \item La documentation d'Overleaf (\texttt{overleaf.com/learn}).
+  \end{itemize}
+\begin{CodeRendu}[title={Quelques symboles utiles en géométrie}]
+$\angle ABC \quad 45^\circ \quad \overline{AB}
+ \quad \vec{u} \quad \parallel \quad \perp
+ \quad \sim \quad \cong$
+\end{CodeRendu}
+\end{frame}
+
+\begin{frame}{À vous}
+  \begin{Exercice}{Reproduire ces formules}
+    \small Dans votre document, écrivez le code qui produit exactement :
+    \begin{enumerate}
+      \item $f(x) = -2(x - 3)^2 + 1$
+      \item L'aire d'un disque de rayon \qty{5}{\centi\metre} est
+        $A = \pi r^2 \approx \qty{78,54}{\centi\metre\squared}$.
+      \item \( \displaystyle x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} \),
+        hors texte et centrée.
+      \item La démarche $2(x + 4) = 18$, puis $x + 4 = 9$, puis $x = 5$,
+        écrite sur trois lignes alignées sur les signes $=$.
+      \item $\sin(\theta) = \dfrac{\text{opposé}}{\text{hypoténuse}}$
+    \end{enumerate}
+    Les solutions sont à la fin de la présentation.
+  \end{Exercice}
+\end{frame}

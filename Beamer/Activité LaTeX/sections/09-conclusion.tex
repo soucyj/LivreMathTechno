@@ -1,0 +1,93 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Remise et ressources}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Avant de remettre}
+  \begin{Rem}{Liste de vérification finale}
+    \small
+    \begin{enumerate}
+      \item Les deux documents compilent sans erreur (aucun message rouge).
+      \item L'activité fait 2 à 3 pages et contient toutes les rubriques
+        demandées, avec au moins une figure ou un tableau.
+      \item L'examen affiche la grille et le bon total ; le corrigé
+        s'obtient en activant \cmd{printanswers}.
+      \item Tout est en français ; les décimaux ont une virgule.
+      \item Les mathématiques ont été vérifiées par vous, pas seulement
+        par l'IA.
+      \item Vous pouvez expliquer à quoi sert chaque ligne du préambule.
+    \end{enumerate}
+    À remettre : \texttt{activite.pdf}, \texttt{examen.pdf},
+    \texttt{examen-corrige.pdf}, et les fichiers \texttt{.tex}.
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Pour aller plus loin}
+  \small
+  \begin{itemize}
+    \item Overleaf, Learn LaTeX in 30 minutes et la documentation en ligne :
+      \texttt{overleaf.com/learn}.
+    \item Detexify, pour trouver un symbole en le dessinant :
+      \texttt{detexify.kirelabs.org}.
+    \item La documentation de la classe exam, très complète, avec de
+      nombreux exemples : \texttt{ctan.org/pkg/exam}.
+    \item La documentation de siunitx : \texttt{ctan.org/pkg/siunitx}.
+    \item Les trois fichiers d'exemple de ce laboratoire :
+      \texttt{01-minimal.tex}, \texttt{02-activite.tex},
+      \texttt{03-examen.tex}.
+  \end{itemize}
+  \vspace{6pt}
+  \begin{Classe}{Pour votre pratique}
+    \small Commencez une banque de questions dès vos premiers stages : un fichier
+    \texttt{exam} par notion, que vous enrichirez et réutiliserez pendant
+    toute votre carrière.
+  \end{Classe}
+\end{frame}
+
+\appendix
+
+\begin{frame}[fragile]{Solutions de l'exercice « Reproduire ces formules »}
+\begin{CodeTeX}[title={Une solution possible}]
+% 1.
+$f(x) = -2(x - 3)^2 + 1$
+% 2.
+L'aire d'un disque de rayon \qty{5}{\centi\metre} est
+$A = \pi r^2 \approx \qty{78,54}{\centi\metre\squared}$.
+% 3.
+\[ x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} \]
+% 4.
+\begin{align*}
+  2(x + 4) &= 18 \\
+  x + 4 &= 9 \\
+  x &= 5
+\end{align*}
+% 5.
+$\sin(\theta) = \dfrac{\text{opposé}}{\text{hypoténuse}}$
+\end{CodeTeX}
+\end{frame}
+
+\begin{frame}[fragile]{Solution de l'exercice « Réparer »}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+\begin{CodeTeX}[title={Code corrigé}]
+\section{Exercice}
+Calculer $x^2$ si $x = 3$.
+\begin{itemize}
+  \item La fraction $\frac{1}{2}$.
+  \item Le rabais : 20\%.
+\end{itemize}
+\end{CodeTeX}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \small
+      \begin{enumerate}
+        \item Accolade fermante oubliée après le titre de section.
+        \item \texttt{x\^{}2} hors du mode mathématique.
+        \item Accolade fermante oubliée dans \cmd{frac}.
+        \item \texttt{\%} non protégé : la fin de la ligne devient un
+          commentaire.
+        \item \cmd{begin\{itemize\}} fermé par
+          \cmd{end\{enumerate\}}.
+      \end{enumerate}
+    \end{column}
+  \end{columns}
+\end{frame}

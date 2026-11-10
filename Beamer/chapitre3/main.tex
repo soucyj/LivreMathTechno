@@ -1,0 +1,80 @@
+% !TEX program = lualatex
+% ═══════════════════════════════════════════════════════════════════════
+%  Chapitre 3 — Fractales et systèmes itératifs de fonctions
+%  Diaporama Beamer pour un exposé magistral (~5 heures)
+%  Jérôme Soucy — MAT-2901
+%
+%  Compilation : lualatex main.tex   (deux passages, pour le sommaire)
+%
+%  Ce diaporama reprend les définitions, propositions/théorèmes (énoncés
+%  seulement), exemples, figures et tableaux du chapitre 3 des notes de
+%  cours. Les démonstrations ne sont PAS reproduites : chaque résultat
+%  qui, dans les notes, porte une démonstration est plutôt marqué
+%  « DÉMONSTRATION AU TABLEAU », avec un rappel très court de l'idée, à
+%  l'intention de la personne qui présente.
+% ═══════════════════════════════════════════════════════════════════════
+\documentclass[aspectratio=169, 11pt]{beamer}
+\input{preambule}
+
+\title[Fractales]{Fractales et systèmes itératifs de fonctions}
+\subtitle{Chapitre 3 --- MAT-2901 : Mathématiques et technologie}
+\author{Jérôme Soucy}
+\institute{Université Laval --- Département de mathématiques et de statistique}
+\date{}
+
+\begin{document}
+
+\begin{frame}[plain]
+  \begin{center}
+    {\color{sectioncolor}\rule{0.5\textwidth}{0.8pt}}\\[3pt]
+    {\color{coveraccent}\rule{0.14\textwidth}{1.8pt}}
+
+    \vspace{0.55cm}
+    {\large\color{gray}Chapitre 3}\\[3pt]
+    {\LARGE\bfseries\color{sectioncolor}Fractales et systèmes\\[2pt]itératifs de fonctions}
+
+    \vspace{0.35cm}
+    {\normalsize\color{sectioncolor}MAT-2901 --- Mathématiques et technologie}
+
+    \vspace{0.45cm}
+    \begin{tikzpicture}[scale=1.2]
+      \begin{scope}[fractale/.style={fill=sectioncolor!85, draw=sectioncolor, very thin, line join=round}]
+        \input{figures/fractales/flocon-koch-3.tikz}
+      \end{scope}
+    \end{tikzpicture}
+
+    \vspace{0.35cm}
+    {\sffamily\color{sectioncolor}Jérôme Soucy}\\[1pt]
+    {\small\color{gray}Université Laval}
+
+    \vspace{0.35cm}
+    {\color{coveraccent}\rule{0.14\textwidth}{1.8pt}}\\[3pt]
+    {\color{sectioncolor}\rule{0.5\textwidth}{0.8pt}}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Plan de l'exposé}
+  \footnotesize
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \tableofcontents[hideallsubsections,sections={1-6}]
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \tableofcontents[hideallsubsections,sections={7-11}]
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\input{sections/00-introduction}
+\input{sections/01-koch}
+\input{sections/02-sierpinski}
+\input{sections/03-autosimilarite}
+\input{sections/04-dimension}
+\input{sections/05-sif}
+\input{sections/06-collage}
+\input{sections/07-dim-generalisee}
+\input{sections/08-algorithmes}
+\input{sections/09-monstres-modeles}
+\input{sections/10-conclusion}
+
+\end{document}

@@ -1,0 +1,162 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Ouverts, fermés et compacts}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Pourquoi ce détour ?}
+  \small Avant de définir une distance entre deux ensembles, il
+  faut le vocabulaire des ensembles ouverts, fermés et
+  compacts.
+  \begin{itemize}
+    \item Tout repose sur une seule notion : la boule ouverte.
+    \item Tout s'exprime dans le langage des espaces métriques.
+    \item On illustre surtout dans $\R^n$, où l'interprétation
+      géométrique est la plus parlante.
+  \end{itemize}
+\end{frame}
+
+\subsection{Boules et ensembles ouverts}
+
+\begin{frame}{Définition 2.3 --- Boule ouverte}
+  \begin{Enonce}{Définition 2.3 --- Boule ouverte}
+    Soit $(E,d)$ un espace métrique, $x_0\in E$ et $r>0$. La \defi{boule
+    ouverte} de centre $x_0$ et de rayon $r$ est
+    \[
+      \boule{x_0}{r} = \{x\in E : d(x,x_0) < r\}.
+    \]
+  \end{Enonce}
+  \FigBox[0.4\textheight]{%
+    \begin{tikzpicture}[scale=0.85]
+      \begin{scope}
+        \draw[sectioncolor, thick, dashed, fill=steelblue4!15] (0,0) circle (1.4);
+        \node[pt] (c) at (0,0) {};
+        \node[etiq, below] at (0,0) {$x_0$};
+        \draw[sectioncolor!70, thick, dashed] (0,0) -- (45:1.4) node[midway, above, etiq]{$r$};
+        \node[etiq, sectioncolor] at (0,-1.9) {$\boule{x_0}{r}$ dans $(\R^2,\dE)$};
+      \end{scope}
+      \begin{scope}[xshift=5.4cm]
+        \draw[firebrick3, thick, dashed, fill=firebrick3!15]
+          (0,1.4) -- (1.4,0) -- (0,-1.4) -- (-1.4,0) -- cycle;
+        \node[pt] (c2) at (0,0) {};
+        \node[etiq, below] at (0,0) {$x_0$};
+        \draw[firebrick3!70, thick, dashed] (0,0) -- (0.7,0.7) node[midway, above, etiq]{$r$};
+        \node[etiq, firebrick3] at (0,-1.9) {$\boule{x_0}{r}$ dans $(\R^2,\dT)$};
+      \end{scope}
+    \end{tikzpicture}}
+  \begin{center}\scriptsize Figure 2.5 --- Même ensemble, même centre :
+  un disque pour $\dE$, un carré tourné de $45^\circ$ pour $\dT$
+  ($|x-x_0|+|y-y_0|<r$).\end{center}
+\end{frame}
+
+\begin{frame}{Outil 2.1 --- Tracer des boules dans Desmos}
+  \begin{Outil}{Tracer des boules dans Desmos}
+    \small Desmos trace directement les régions définies par des
+    inégalités :
+    \begin{center}
+      \texttt{x\^{}2 + y\^{}2 < r\^{}2} \qquad et \qquad
+      \texttt{|x| + |y| < r},
+    \end{center}
+    avec un curseur pour $r$ : on obtient les deux boules de la
+    figure 2.5. Le bord est tracé en pointillé --- il
+    n'appartient pas à la boule ouverte. Avec \texttt{<=}, le bord
+    devient plein : boule ouverte vs boule fermée, visuellement.
+    \vspace{4pt}
+
+    En $4^{\text{e}}$ secondaire : comparer « à vol d'oiseau » et « en
+    taxi » à partir d'un point donné.
+  \end{Outil}
+\end{frame}
+
+\begin{frame}{Définition 2.4 --- Ensemble ouvert}
+  \begin{Enonce}{Définition 2.4 --- Ensemble ouvert}
+    Soit $(E,d)$ un espace métrique et $U\subseteq E$. $U$ est un
+    \defi{ensemble ouvert} si, pour tout $x\in U$, il existe $r>0$ tel
+    que $\boule{x}{r}\subseteq U$.
+  \end{Enonce}
+  \small Chaque point de $U$ est le centre d'une boule entièrement
+  contenue dans $U$ : aucun point de $U$ n'est sur sa frontière. Le
+  rayon peut dépendre du point --- plus petit près du bord, mais
+  toujours strictement positif.
+\end{frame}
+
+\begin{frame}{Figures 2.6 et 2.7 --- Ouvert, et pas ouvert}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \FigBox[0.42\textheight]{%
+        \begin{tikzpicture}[scale=0.85]
+          \draw[fig, dashed] plot[smooth cycle, tension=0.8]
+            coordinates {(0,0) (1.3,-0.7) (2.8,-0.3) (3.2,1.1) (2.1,2.2) (0.7,1.9) (-0.5,1)};
+          \node[pt, label={[etiq]above:$x_1$}] (x1) at (1.4,0.6) {};
+          \draw[sectioncolor!60, thick, dashed] (x1) circle (0.55);
+          \node[pt, label={[etiq]below:$x_2$}] (x2) at (2.5,1.6) {};
+          \draw[sectioncolor!60, thick, dashed] (x2) circle (0.22);
+        \end{tikzpicture}}
+      \scriptsize Figure 2.6. Un ouvert (frontière en pointillé,
+      exclue). Près du bord, $x_2$ demande un rayon plus petit que $x_1$
+      --- mais il en existe un.
+    \end{column}
+    \begin{column}{0.46\textwidth}
+      \FigBox[0.42\textheight]{%
+        \begin{tikzpicture}[scale=0.85]
+          \draw[fig] (0,0) circle (1.4);
+          \node[pt, label={[etiq]right:$x_2$}] (x2b) at (1.4,0) {};
+          \draw[firebrick3, thick, dashed] (x2b) circle (0.4);
+        \end{tikzpicture}}
+      \scriptsize Figure 2.7. Le disque plein, bord compris,
+      n'est pas ouvert : toute boule centrée en $x_2$, même
+      minuscule, déborde du disque.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{Ensembles fermés}
+
+\begin{frame}{Définition 2.5 --- Ensemble fermé}
+  \begin{Enonce}{Définition 2.5 --- Ensemble fermé}
+    Soit $(E,d)$ un espace métrique et $F\subseteq E$. $F$ est un
+    \defi{ensemble fermé} si son complément $\comp{F}$ est ouvert dans
+    $(E,d)$.
+  \end{Enonce}
+  \vspace{4pt}
+  \begin{Rem}{Remarque 2.3 --- Ni l'un ni l'autre, ou les deux}
+    « Ouvert » et « fermé » ne s'excluent pas :
+    \begin{itemize}
+      \item un ensemble peut n'être ni l'un ni l'autre (un disque qui
+        contient une partie, mais pas la totalité, de sa frontière) ;
+      \item $E$ et $\emptyset$ sont à la fois ouverts et fermés
+        dans $(E,d)$.
+    \end{itemize}
+  \end{Rem}
+\end{frame}
+
+\subsection{Ensembles compacts}
+
+\begin{frame}{Définition 2.6 et théorème 2.1 --- Borné, compact}
+  \begin{Enonce}{Définition 2.6 --- Ensemble borné}
+    Soit $(E,d)$ un espace métrique et $F\subseteq E$. $F$ est
+    \defi{borné} s'il existe $c\in\R$ tel que $d(x,y)\leq c$ pour tous
+    $x,y\in F$.
+  \end{Enonce}
+  \begin{Enonce}{Théorème 2.1 --- Heine-Borel}
+    Soit $K\subseteq\R^n$, muni de $\dE$. $K$ est compact si et
+    seulement s'il est à la fois fermé et borné.
+  \end{Enonce}
+  \small (Admis.) Convention du chapitre : dans $\R^n$, on
+  utilise « fermé et borné » comme définition d'un compact.
+\end{frame}
+
+\begin{frame}{Remarque 2.4 --- La compacité dans un espace général}
+  \begin{Rem}{Remarque 2.4}
+    « Fermé et borné » n'est pas, à proprement parler, la
+    définition d'un compact : c'en est une
+    caractérisation, valable dans $\R^n$, qui cesse d'être
+    vraie dans des espaces métriques plus généraux.
+    \vspace{4pt}
+
+    La véritable définition : de tout recouvrement de $K$ par des
+    ouverts, on peut extraire un nombre fini d'ouverts qui
+    recouvrent encore $K$.
+  \end{Rem}
+  \vspace{4pt}
+  \small Pour nos besoins --- dans $\R^n$ --- « fermé et borné »
+  suffira.
+\end{frame}

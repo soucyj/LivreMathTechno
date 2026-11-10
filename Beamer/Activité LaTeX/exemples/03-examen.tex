@@ -1,0 +1,88 @@
+% ─────────────────────────────────────────────────────────────
+%  03-examen.tex — un examen avec la classe exam
+%  À compiler avec pdfLaTeX (réglage par défaut d'Overleaf).
+%  Pour imprimer le corrigé : décommenter \printanswers.
+% ─────────────────────────────────────────────────────────────
+\documentclass[11pt, addpoints]{exam}   % addpoints : total automatique
+% \printanswers                          % affiche les solutions
+
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{siunitx}
+\sisetup{output-decimal-marker = {,}}
+\usepackage[margin=2.2cm]{geometry}
+
+% ── La classe exam en français ───────────────────────────────
+\pointpoints{point}{points}
+\hqword{Question}
+\hpword{Points}
+\hsword{Résultat}
+\htword{Total}
+\renewcommand{\solutiontitle}{\noindent Solution : }
+
+% ── En-tête et pied de page ──────────────────────────────────
+\pagestyle{headandfoot}
+\firstpageheader{Mathématique, 3\textsuperscript{e} secondaire}
+                {}{Examen --- Relation de Pythagore}
+\runningheader{}{}{Relation de Pythagore}
+\firstpagefooter{}{Page \thepage\ de \numpages}{}
+\runningfooter{}{Page \thepage\ de \numpages}{}
+
+\begin{document}
+
+\noindent Nom : \makebox[8cm]{\hrulefill} \hfill Groupe : \makebox[2cm]{\hrulefill}
+
+\vspace{4mm}
+\noindent Cet examen compte \numquestions\ questions, pour un total de
+\numpoints\ points. La calculatrice est permise.
+
+\begin{center}
+  \gradetable[h][questions]
+\end{center}
+
+\begin{questions}
+
+\question[2] Lequel de ces triplets peut représenter les mesures des
+côtés d'un triangle rectangle ?
+\begin{choices}
+  \CorrectChoice $3$, $4$ et $5$
+  \choice $4$, $5$ et $6$
+  \choice $5$, $11$ et $12$
+  \choice $6$, $7$ et $9$
+\end{choices}
+
+\question Un triangle rectangle a des cathètes de \qty{6}{\centi\metre}
+et de \qty{8}{\centi\metre}.
+\begin{parts}
+  \part[2] Calcule la longueur de l'hypoténuse.
+  \begin{solution}
+    $c = \sqrt{6^2 + 8^2} = \sqrt{100} = \qty{10}{\centi\metre}$.
+  \end{solution}
+  \vspace{\stretch{1}}
+  \part[2] Calcule l'aire de ce triangle.
+  \begin{solution}
+    $A = \dfrac{6 \cdot 8}{2} = \qty{24}{\centi\metre\squared}$.
+  \end{solution}
+  \vspace{\stretch{1}}
+\end{parts}
+
+\question[4] Un téléviseur de format $16:9$ a une diagonale de
+\qty{32}{po}. Calcule sa largeur, en pouces, au dixième près.
+\begin{solution}[3cm]
+  La largeur vaut $16k$ et la hauteur $9k$, donc
+  $(16k)^2 + (9k)^2 = 32^2$, soit $337k^2 = 1024$ et
+  $k \approx \num{1,743}$. La largeur est d'environ \qty{27,9}{po}.
+\end{solution}
+
+\question[3] Le triangle dont les côtés mesurent \qty{7}{\centi\metre},
+\qty{24}{\centi\metre} et \qty{25}{\centi\metre} est-il rectangle ?
+Justifie ta réponse.
+\begin{solution}[3cm]
+  Oui : $7^2 + 24^2 = 49 + 576 = 625 = 25^2$. Par la réciproque de la
+  relation de Pythagore, le triangle est rectangle.
+\end{solution}
+
+\end{questions}
+
+\end{document}

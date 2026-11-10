@@ -1,0 +1,193 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Un premier modèle : la météo à deux états}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Figure 4.3 --- Le diagramme de transition}
+  \small Dans une ville imaginaire :
+  \begin{itemize}
+    \item après un beau jour : beau le lendemain avec probabilité
+      $\num{0.8}$, pluie avec probabilité $\num{0.2}$ ;
+    \item après un jour de pluie : beau avec probabilité $\num{0.4}$,
+      pluie avec probabilité $\num{0.6}$.
+  \end{itemize}
+  Seul compte le temps de la veille (ni la saison, ni les jours
+  précédents).
+  \FigBox[0.3\textheight]{%
+    \begin{tikzpicture}
+      \node[etat] (B) at (0,0) {$B$};
+      \node[etat] (P) at (4,0) {$P$};
+      \draw[lien] (B) to[bend left=25] node[proba, above] {$\num{0.2}$} (P);
+      \draw[lien] (P) to[bend left=25] node[proba, below] {$\num{0.4}$} (B);
+      \draw[lien] (B) to[loop left, min distance=9mm] node[proba, left] {$\num{0.8}$} (B);
+      \draw[lien] (P) to[loop right, min distance=9mm] node[proba, right] {$\num{0.6}$} (P);
+    \end{tikzpicture}}
+  \small Les probabilités des flèches qui partent d'un même état ont une
+  somme égale à $1$.
+\end{frame}
+
+\begin{frame}{Prévoir le temps des jours suivants}
+  \small Il fait beau le jour $0$ ; $X_n$ : le temps dans $n$ jours.
+  $\P{X_1=B}=\num{0.8}$. Probabilités totales :
+  \[
+    \P{X_2=B} = \num{0.8}\cdot\num{0.8}+\num{0.4}\cdot\num{0.2} = \num{0.72}.
+  \]
+  En général :
+  \[
+    \left\{\begin{aligned}
+      \P{X_{n+1}=B} &= \num{0.8}\,\P{X_n=B}+\num{0.4}\,\P{X_n=P},\\
+      \P{X_{n+1}=P} &= \num{0.2}\,\P{X_n=B}+\num{0.6}\,\P{X_n=P}.
+    \end{aligned}\right. \tag{4.1}
+  \]
+  Un produit matriciel : avec $\vec x_n=\big(\P{X_n=B}\,;\ \P{X_n=P}\big)$,
+  \[
+    \vec x_{n+1} = M\vec x_n,\qquad
+    M = \mat{\num{0.8}}{\num{0.4}}{\num{0.2}}{\num{0.6}},\qquad
+    \vec x_n = M^n\vec x_0 .
+  \]
+  $M$ est la matrice de transition ; $m_{ij}$ est la probabilité de
+  passer de l'état $j$ à l'état $i$. Prévoir le temps : calculer une
+  puissance de matrice.
+\end{frame}
+
+\begin{frame}{Remarque 4.1 --- Lignes ou colonnes ?}
+  \begin{Rem}{Remarque 4.1}
+    \begin{itemize}
+      \item Ici, les probabilités qui partent d'un même état forment une
+        colonne : $\vec x_{n+1}=M\vec x_n$, comme les vecteurs de
+        l'annexe D. La somme de chaque colonne de $M$ vaut $1$.
+      \item Beaucoup d'ouvrages de probabilités (et Wikipédia) font
+        l'inverse : une ligne, une loi en vecteur ligne $\vec\pi$, et
+        $\vec\pi_{n+1}=\vec\pi_nP$.
+      \item Équivalent, puisque $P=M^{\mathsf T}$ --- mais il faut repérer
+        la convention d'une source avant d'en reprendre les calculs.
+    \end{itemize}
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Tableau 4.1 --- L'évolution de la loi}
+  \small $\P{X_n=B}$, selon le temps du jour $0$ :
+  \begin{center}
+  \footnotesize
+  \begin{tabular}{lcccccccc}
+    \toprule
+    $n$ & $0$ & $1$ & $2$ & $3$ & $4$ & $5$ & $6$ & $7$ \\
+    \midrule
+    beau le jour $0$ & $1$ & $\num{0.8}$ & $\num{0.72}$ & $\num{0.688}$ & $\num{0.6752}$ & $\num{0.6701}$ & $\num{0.6680}$ & $\num{0.6672}$ \\
+    pluie le jour $0$ & $0$ & $\num{0.4}$ & $\num{0.56}$ & $\num{0.624}$ & $\num{0.6496}$ & $\num{0.6598}$ & $\num{0.6639}$ & $\num{0.6656}$ \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \small Dans les deux cas, la loi se rapproche rapidement de
+  $\big(\tfrac23\,;\ \tfrac13\big)\approx(\num{0.6667}\,;\ \num{0.3333})$ :
+  après une semaine, le temps du jour $0$ n'a presque plus d'influence.
+\end{frame}
+
+\begin{frame}{L'état d'équilibre}
+  \small Si $\vec x_n\to\vec q$, alors $\vec q=M\vec q$ : un état
+  d'équilibre (ou loi stationnaire).
+  \begin{itemize}
+    \item Algèbre linéaire : un vecteur propre de $M$ associé à la
+      valeur propre $1$.
+    \item Chapitre 2 : un point fixe de $\vec x\mapsto M\vec x$.
+  \end{itemize}
+  $(M-I)\vec q=\vec 0$ : $-\num{0.2}\,q_1+\num{0.4}\,q_2=0$ (deux fois),
+  d'où $q_1=2q_2$ ; avec $q_1+q_2=1$ :
+  \[
+    \vec q = \big(\tfrac23\,;\ \tfrac13\big).
+  \]
+  À long terme, il fait beau deux jours sur trois.
+\end{frame}
+
+\begin{frame}{Pourquoi la convergence est-elle si rapide ?}
+  \small Polynôme caractéristique :
+  $\lambda^2-\num{1.4}\,\lambda+\num{0.4} = (\lambda-1)(\lambda-\num{0.4})$.
+  Seconde valeur propre $\lambda_2=\num{0.4}$, vecteur propre
+  $\vec v_2=(1,-1)$.
+  \vspace{4pt}
+
+  Pour $\vec x_0=(1,0)$ : $\vec x_0=\vec q+\tfrac13\vec v_2$, donc
+  \[
+    \vec x_n = M^n\vec q+\tfrac13M^n\vec v_2
+    = \vec q+\tfrac13(\num{0.4})^n\,\vec v_2 .
+  \]
+  \begin{itemize}
+    \item L'écart à l'équilibre est multiplié par $\num{0.4}$ chaque
+      jour : environ $\num{0.0005}$ après une semaine (tableau 4.1).
+    \item La seconde valeur propre gouverne la vitesse de convergence
+      (on y revient en section 7).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Exemple 4.2 --- Combien de beaux jours dans la semaine ?}
+  \small Il fait beau aujourd'hui. $Y$ : le nombre de beaux jours parmi
+  les sept suivants. $Y=\mathbb 1_1+\cdots+\mathbb 1_7$, où
+  $\mathbb 1_n$ indique « beau le jour $n$ ». Pas d'indépendance, mais la
+  linéarité suffit :
+  \[
+    \Es{Y} = \sum_{n=1}^7\P{X_n=B}
+    \approx \num{0.8}+\num{0.72}+\num{0.688}+\cdots+\num{0.6672}
+    \approx \num{4.89}.
+  \]
+  Un peu plus que les $7\cdot\tfrac23\approx\num{4.67}$ jours de
+  l'équilibre, puisque la semaine commence par un beau jour.
+\end{frame}
+
+\begin{frame}[fragile]{Programme 4.1 --- Le calcul avec Python}
+  \begin{columns}[T]
+    \begin{column}{0.6\textwidth}
+\begin{lstlisting}
+import numpy as np
+np.set_printoptions(precision=4,
+                    suppress=True)
+
+# colonnes : départ d'un beau jour,
+#            puis d'un jour de pluie
+M = np.array([[0.8, 0.4],
+              [0.2, 0.6]])
+x0 = np.array([1.0, 0.0])   # il fait beau
+
+for n in [1, 2, 5, 10, 20]:
+    print(n, np.linalg.matrix_power(M, n) @ x0)
+
+valeurs, vecteurs = np.linalg.eig(M)
+print("valeurs propres :", valeurs)
+v = vecteurs[:, np.argmax(valeurs)]  # associé à 1
+print("équilibre :", v / v.sum())    # somme = 1
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.38\textwidth}
+      \small
+      \begin{itemize}
+        \item \texttt{np.linalg.eig} renvoie des vecteurs propres de
+          norme $1$ : on divise par la somme des composantes pour obtenir
+          un vecteur de probabilités.
+        \item Sortie : équilibre $(\num{0.6667}\,;\ \num{0.3333})$,
+          valeurs propres $1$ et $\num{0.4}$.
+        \item Simulation sur dix mille jours (programme 4.3 des notes) :
+          proportion de beaux jours $\num{0.6644}$, proche de $\tfrac23$.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \vspace{2pt}
+  \small Deux lectures de l'équilibre : limite des probabilités, et
+  proportion du temps passé dans chaque état --- au cœur de PageRank.
+\end{frame}
+
+\begin{frame}{Outil 4.1 --- Puissances de matrices sans programmer}
+  \begin{Outil}{Puissances de matrices sans programmer}
+    \small
+    \begin{itemize}
+      \item WolframAlpha : \texttt{\{\{0.8, 0.4\}, \{0.2, 0.6\}\}\^{}10}
+        calcule $M^{10}$ ; \texttt{eigenvectors \{\{0.8, 0.4\}, \{0.2,
+        0.6\}\}} donne les vecteurs propres.
+      \item GeoGebra : \texttt{M = \{\{0.8, 0.4\}, \{0.2, 0.6\}\}}, puis
+        \texttt{M\^{}n} avec un curseur $n$ : les deux colonnes de $M^n$
+        deviennent presque égales à $\big(\tfrac23\,;\ \tfrac13\big)$.
+      \item Si toutes les colonnes de $M^n$ sont proches de $\vec q$, alors
+        $M^n\vec x_0$ est proche de $\vec q$ pour tout vecteur de
+        probabilités $\vec x_0$ : le point de départ est oublié.
+      \item Un tableur convient aussi : une ligne par jour, calculée à
+        partir de la précédente par (4.1).
+    \end{itemize}
+  \end{Outil}
+\end{frame}

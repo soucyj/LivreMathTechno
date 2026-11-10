@@ -1,0 +1,135 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Matrices stochastiques et états d'équilibre}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Définition 4.5 et proposition 4.3 --- Matrices stochastiques}
+  \small Dans les deux modèles, la loi converge vers un unique équilibre,
+  quel que soit le départ. Est-ce toujours le cas ?
+  \begin{Enonce}{Définition 4.5 --- Matrice stochastique}
+    \small Une matrice carrée $M$ est \defi{stochastique} si ses
+    coefficients sont positifs ou nuls et si chaque colonne a une somme
+    égale à $1$ : chaque colonne est un vecteur de probabilités, et
+    $\vec e^{\mathsf T}M=\vec e^{\mathsf T}$.
+  \end{Enonce}
+  \small Toute matrice de transition est stochastique, et réciproquement.
+  \begin{Enonce}{Proposition 4.3 --- Une matrice stochastique conserve les lois}
+    \small Si $M$ est stochastique et $\vec v$ un vecteur de probabilités,
+    alors $M\vec v$ (et donc $M^n\vec v$) est un vecteur de probabilités.
+  \end{Enonce}
+  \small Lecture matricielle :
+  $\vec e^{\mathsf T}(M\vec v)=(\vec e^{\mathsf T}M)\vec v
+  =\vec e^{\mathsf T}\vec v=1$ (le reste : un exercice du chapitre).
+\end{frame}
+
+\begin{frame}{Théorèmes 4.4 et 4.5 --- La valeur propre $1$}
+  \begin{Enonce}{Théorème 4.4 --- Valeur propre d'une matrice stochastique}
+    \small Si $M$ est stochastique, alors $1$ est une valeur propre de $M$.
+  \end{Enonce}
+  \begin{AuTableau}
+    \footnotesize $M$ et $M^{\mathsf T}$ ont le même polynôme
+    caractéristique ; et $M^{\mathsf T}\vec e=\vec e$ (transposer
+    $\vec e^{\mathsf T}M=\vec e^{\mathsf T}$).
+  \end{AuTableau}
+  \small Ce vecteur propre a-t-il des composantes positives ?
+  Perron--Frobenius (admis) :
+  \begin{Enonce}{Théorème 4.5 --- Perron--Frobenius, cas stochastique}
+    \small Soit $M$ stochastique. (i) Toute valeur propre $\lambda$
+    (réelle ou complexe) vérifie $|\lambda|\leq1$. (ii) Il existe un
+    vecteur de probabilités $\vec q$ tel que $M\vec q=\vec q$.
+  \end{Enonce}
+  \footnotesize Toute chaîne à un nombre fini d'états a au moins un
+  équilibre.
+\end{frame}
+
+\begin{frame}{Exemples 4.4 et 4.5 --- Deux chaînes qui ne convergent pas}
+  \small
+  \begin{itemize}
+    \item $I$ (taille $2$) : chaque état est conservé. Tout vecteur de
+      probabilités est un équilibre, et $\vec x_n=\vec x_0$ : équilibre
+      non unique, limite qui dépend du départ. Cela arrive dès que deux
+      groupes d'états ne communiquent pas.
+    \item $S=\mat{0}{1}{1}{0}$ : l'état change à chaque étape. Unique
+      équilibre $\big(\tfrac12,\tfrac12\big)$, mais depuis l'état $1$ la
+      loi alterne entre $(1,0)$ et $(0,1)$.
+      \begin{itemize}
+        \item Valeurs propres $1$ et $-1$ : la composante selon $-1$ change
+          de signe au lieu de disparaître. Chaîne périodique.
+        \item La proportion du temps passé dans chaque état converge,
+          elle, vers $\tfrac12$.
+      \end{itemize}
+  \end{itemize}
+  \vspace{4pt}
+  Dans les deux cas, $1$ n'est pas la seule valeur propre de module $1$.
+\end{frame}
+
+\begin{frame}{Définition 4.6 --- Matrice stochastique régulière}
+  \begin{Enonce}{Définition 4.6 --- Matrice stochastique régulière}
+    Une matrice stochastique $M$ est \defi{régulière} s'il existe un
+    entier $k\geq1$ tel que tous les coefficients de $M^k$ soient
+    strictement positifs.
+  \end{Enonce}
+  \small
+  \begin{itemize}
+    \item Après $k$ étapes, tous les états sont accessibles depuis tous
+      les états.
+    \item Météo et migration : régulières dès $k=1$.
+    \item $I$ et $S$ ne le sont pas : leurs puissances valent $I$ ou $S$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Théorème 4.6 --- Convergence vers l'équilibre}
+  \begin{Enonce}{Théorème 4.6 --- Convergence vers l'équilibre}
+    \small Soit $M$ une matrice stochastique régulière de taille $N$.
+    \begin{enumerate}
+      \item[(i)] $1$ est une valeur propre simple de $M$, et toute autre
+        valeur propre vérifie $|\lambda|<1$ ;
+      \item[(ii)] il existe un unique vecteur de probabilités $\vec q$ tel
+        que $M\vec q=\vec q$, à composantes strictement positives ;
+      \item[(iii)] pour tout vecteur de probabilités $\vec x_0$,
+        $\vec x_n=M^n\vec x_0\to\vec q$.
+    \end{enumerate}
+  \end{Enonce}
+  \begin{AuTableau}
+    \footnotesize (i), (ii) : Perron--Frobenius, admis. (iii) si $M$ est
+    diagonalisable : $\vec x_0=\alpha_1\vec q+\sum\alpha_i\vec v_i$, donc
+    $\vec x_n=\alpha_1\vec q+\sum\alpha_i\lambda_i^n\vec v_i\to\alpha_1\vec q$ ;
+    la somme des composantes reste $1$ (prop.~4.3), d'où $\alpha_1=1$.
+  \end{AuTableau}
+  \small La vitesse : le plus grand $|\lambda_i|$, $i\geq2$. Météo :
+  $\num{0.4}$ ; migration : $\num{0.8}$, plus lent (tableaux 4.1 et 4.2).
+\end{frame}
+
+\begin{frame}{Remarque 4.2 --- Proportion du temps et temps de retour}
+  \begin{Rem}{Remarque 4.2}
+    \small
+    \begin{itemize}
+      \item Première lecture (théorème 4.6) : $\P{X_n=i}\to q_i$.
+      \item Deuxième lecture, sur une seule trajectoire : la proportion
+        des étapes passées dans l'état $i$ tend vers $q_i$, avec
+        probabilité $1$ --- le théorème ergodique (admis), une loi des
+        grands nombres pour des étapes dépendantes. Vrai aussi pour les
+        chaînes périodiques, si l'équilibre est unique.
+      \item Troisième lecture : la chaîne revient en moyenne dans
+        l'état $i$ toutes les $1/q_i$ étapes. Météo : un jour de pluie
+        tous les $3$ jours, un beau jour tous les $\num{1.5}$ jour.
+    \end{itemize}
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Pour la classe 4.3 --- Simuler une chaîne de Markov en classe}
+  \begin{Classe}{Simuler une chaîne de Markov en classe}
+    \small
+    \begin{itemize}
+      \item Probabilités fréquentielles et théoriques : au cœur de
+        l'enseignement dès le premier cycle.
+      \item Dé à dix faces : s'il fait beau, « pluie » sur $1$ et $2$ ;
+        s'il pleut, « beau » sur $1$ à $4$. Chaque équipe simule un mois ;
+        on met en commun.
+      \item La proportion de beaux jours se rapproche de $\tfrac23$.
+        Question non évidente : pourquoi ne dépend-elle pas du premier
+        jour ?
+      \item Les jours de pluie arrivent en séquences : l'occasion de
+        discuter la conception erronée d'un hasard « bien mélangé ».
+    \end{itemize}
+  \end{Classe}
+\end{frame}

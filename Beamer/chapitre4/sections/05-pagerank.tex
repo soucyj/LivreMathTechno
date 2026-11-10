@@ -1,0 +1,357 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{L'algorithme PageRank}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Contenu et popularité}
+  \small Un moteur de recherche classe les pages selon deux types de
+  critères :
+  \begin{itemize}
+    \item le contenu : présence des mots cherchés, position dans le titre
+      ou le texte, proximité ;
+    \item la popularité, mesurée par la structure des liens du Web.
+  \end{itemize}
+  PageRank (Brin et Page, 1998) relève du second type.
+  \vspace{6pt}
+
+  L'internaute aléatoire : sur une page qui contient $k$ liens, il clique
+  sur l'un d'eux, chacun avec probabilité $1/k$. La proportion du temps
+  qu'il passe sur une page mesure son importance.
+\end{frame}
+
+\subsection{L'internaute aléatoire}
+
+\begin{frame}{La matrice de transition du mini-web}
+  \begin{columns}[c]
+    \begin{column}{0.55\textwidth}
+      \small Départ sur la page $3$ (trois liens : vers $2$, $4$, $5$).
+      Pour être sur la page $1$ après deux clics, il faut passer par $2$
+      ou par $5$ :
+      \[
+        \P{X_2=1} = \tfrac12\cdot\tfrac13+\tfrac12\cdot\tfrac13 = \tfrac13.
+      \]
+      La page visitée est une chaîne de Markov ; $a_{ij}=1/k_j$ si la page
+      $j$ (avec $k_j$ liens) pointe vers $i$, $0$ sinon :
+      \[
+        A = \begin{pmatrix}
+          0 & \tfrac12 & 0 & 0 & \tfrac12\\[2pt]
+          1 & 0 & \tfrac13 & 0 & \tfrac12\\[2pt]
+          0 & \tfrac12 & 0 & \tfrac12 & 0\\[2pt]
+          0 & 0 & \tfrac13 & 0 & 0\\[2pt]
+          0 & 0 & \tfrac13 & \tfrac12 & 0
+        \end{pmatrix}.
+      \]
+    \end{column}
+    \begin{column}{0.43\textwidth}
+      \FigBox[0.4\textheight]{%
+        \begin{tikzpicture}[scale=1.15]
+          \node[pageweb] (p1) at (0,2.4) {$1$};
+          \node[pageweb] (p5) at (3.2,2.4) {$5$};
+          \node[pageweb] (p2) at (0,0) {$2$};
+          \node[pageweb] (p3) at (2.2,0) {$3$};
+          \node[pageweb] (p4) at (4.4,0) {$4$};
+          \draw[lien2] (p1) -- (p2);
+          \draw[lien2] (p2) -- (p3);
+          \draw[lien2] (p3) -- (p4);
+          \draw[lien] (p3) -- (p5);
+          \draw[lien] (p4) -- (p5);
+          \draw[lien] (p5) -- (p1);
+          \draw[lien] (p5) -- (p2);
+        \end{tikzpicture}}
+      \small Colonnes : liens qui sortent d'une page. Lignes : liens qui
+      y entrent.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Programme 4.5 --- Le PageRank du mini-web}
+  \begin{columns}[T]
+    \begin{column}{0.62\textwidth}
+\begin{lstlisting}
+def matrice_transition(liens, N):
+    """liens[j] : pages vers lesquelles pointe j."""
+    A = np.zeros((N, N))
+    for j, sorties in liens.items():
+        for i in sorties:
+            A[i - 1, j - 1] = 1 / len(sorties)
+    return A
+
+liens = {1: [2], 2: [1, 3], 3: [2, 4, 5],
+         4: [3, 5], 5: [1, 2]}
+A = matrice_transition(liens, 5)
+valeurs, vecteurs = np.linalg.eig(A)
+k = np.argmin(abs(valeurs - 1))
+q = np.real(vecteurs[:, k])
+q = q / q.sum()
+print("fois 55 :", 55 * q)  # [13. 20. 12. 4. 6.]
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.36\textwidth}
+      \small
+      \begin{itemize}
+        \item \texttt{eig} peut renvoyer des complexes (matrice non
+          symétrique) : \texttt{np.real}.
+        \item On ne sait pas où se trouve la valeur propre $1$ dans la
+          liste : on cherche la plus proche.
+        \item Avec $\vec p_0=(0,0,1,0,0)$ :\\
+          $\vec p_1=\big(0,\tfrac13,0,\tfrac13,\tfrac13\big)$,\\
+          $\vec p_2=\big(\tfrac13,\tfrac16,\tfrac13,0,\tfrac16\big)$.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Le PageRank du mini-web}
+  \small
+  \[
+    \vec q = \tfrac1{55}\,(13, 20, 12, 4, 6).
+  \]
+  \begin{itemize}
+    \item $A$ est régulière (coefficients de $A^5$ tous $>0$) : le
+      théorème 4.6 s'applique, quel que soit le départ.
+    \item Classement : page $2$, page $1$, page $3$, page $5$, page $4$.
+  \end{itemize}
+  La deuxième ligne de $\vec q=A\vec q$ :
+  \[
+    q_2 = 1\cdot q_1+\tfrac13\,q_3+\tfrac12\,q_5
+    = \tfrac{13}{55}+\tfrac13\cdot\tfrac{12}{55}+\tfrac12\cdot\tfrac6{55}
+    = \tfrac{20}{55}.
+  \]
+  \begin{itemize}
+    \item L'importance d'une page est la somme des « votes » des pages qui
+      pointent vers elle ; chaque page partage son PageRank également
+      entre ses liens sortants.
+    \item La page $1$ (deux liens entrants) devance la page $3$ (deux
+      aussi) : l'un de ses liens vient de la page $2$, la plus importante.
+    \item Circulaire en apparence ; l'algèbre linéaire en fait la solution
+      d'un système.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Note historique 4.3 --- Le gogol et un vecteur propre à 25 milliards}
+  \small
+  \begin{itemize}
+    \item Le projet de Page et Brin sur les liens du Web donne naissance à
+      Google (article de 1998).
+    \item Google vient de googol (gogol en français) : le nombre
+      $10^{100}$. Selon Edward Kasner (Mathematics and the Imagination,
+      1940), le mot aurait été inventé par son neveu de neuf ans, Milton
+      Sirotta.
+    \item Kurt Bryan et Tanya Leise ont popularisé l'analyse mathématique
+      de l'algorithme sous le titre « The \$25,000,000,000 eigenvector ».
+      Tout repose sur les notions de ce chapitre.
+  \end{itemize}
+\end{frame}
+
+\subsection{Les pages sans liens sortants}
+
+\begin{frame}{Figure 4.5 --- Le mini-web 2}
+  \begin{columns}[c]
+    \begin{column}{0.4\textwidth}
+      \FigBox[0.55\textheight]{%
+        \begin{tikzpicture}[scale=1.05]
+          \node[pageweb] (p1) at (0,2.4) {$1$};
+          \node[pageweb] (p5) at (3.2,2.4) {$5$};
+          \node[pageweb] (p2) at (0,0) {$2$};
+          \node[pageweb] (p3) at (2.2,0) {$3$};
+          \node[pageweb] (p4) at (4.4,0) {$4$};
+          \node[pageweb, fill=firebrick3!15, draw=firebrick3] (p6) at (3.2,4.4) {$6$};
+          \draw[lien2] (p1) -- (p2);
+          \draw[lien2] (p2) -- (p3);
+          \draw[lien2] (p3) -- (p4);
+          \draw[lien] (p3) -- (p5);
+          \draw[lien] (p4) -- (p5);
+          \draw[lien] (p5) -- (p1);
+          \draw[lien] (p5) -- (p2);
+          \draw[lien] (p5) -- (p6);
+        \end{tikzpicture}}
+    \end{column}
+    \begin{column}{0.58\textwidth}
+      \small PDF, images, pages en construction : la page $6$ n'a aucun
+      lien. La sixième colonne de $A$ est nulle : $A$ n'est plus
+      stochastique, la probabilité « s'échappe ».
+      \vspace{4pt}
+
+      Correction : depuis une page sans lien, l'internaute choisit une
+      page au hasard parmi les $N$ (probabilité $1/N$ chacune). Avec
+      $\vec E$, l'indicatrice des pages sans lien
+      ($\vec E=(0,0,0,0,0,1)$ ici) :
+      \[
+        B = A+\frac1N\,\vec e\,\vec E^{\mathsf T}. \tag{4.2}
+      \]
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Le PageRank du mini-web 2}
+  \small
+  \[
+    B = \begin{pmatrix}
+      0 & \tfrac12 & 0 & 0 & \tfrac13 & \tfrac16\\[2pt]
+      1 & 0 & \tfrac13 & 0 & \tfrac13 & \tfrac16\\[2pt]
+      0 & \tfrac12 & 0 & \tfrac12 & 0 & \tfrac16\\[2pt]
+      0 & 0 & \tfrac13 & 0 & 0 & \tfrac16\\[2pt]
+      0 & 0 & \tfrac13 & \tfrac12 & 0 & \tfrac16\\[2pt]
+      0 & 0 & 0 & 0 & \tfrac13 & \tfrac16
+    \end{pmatrix}
+    \qquad \text{stochastique et régulière.}
+  \]
+  \[
+    \vec q = \tfrac1{127}\,(27, 42, 27, 10, 15, 6)
+    \approx (\num{0.213}\,;\ \num{0.331}\,;\ \num{0.213}\,;\
+    \num{0.079}\,;\ \num{0.118}\,;\ \num{0.047}).
+  \]
+  Classement : page $2$, pages $1$ et $3$ à égalité, page $5$, page $4$,
+  page $6$. Peu de changements : la page $1$ rejoint la page $3$, en
+  partie parce que la page $5$ partage maintenant son vote entre trois
+  liens.
+\end{frame}
+
+\subsection{Les régions piégeantes et la téléportation}
+
+\begin{frame}{Figure 4.6 --- Le mini-web 3 : une région piégeante}
+  \begin{columns}[c]
+    \begin{column}{0.4\textwidth}
+      \FigBox[0.55\textheight]{%
+        \begin{tikzpicture}[scale=1.05]
+          \node[pageweb] (p1) at (0,2.4) {$1$};
+          \node[pageweb] (p5) at (3.2,2.4) {$5$};
+          \node[pageweb] (p2) at (0,0) {$2$};
+          \node[pageweb] (p3) at (2.2,0) {$3$};
+          \node[pageweb] (p4) at (4.4,0) {$4$};
+          \node[pageweb, fill=firebrick3!15, draw=firebrick3] (p6) at (3.2,4.4) {$6$};
+          \node[pageweb, fill=firebrick3!15, draw=firebrick3] (p7) at (0.8,4.4) {$7$};
+          \draw[lien2] (p1) -- (p2);
+          \draw[lien2] (p2) -- (p3);
+          \draw[lien2] (p3) -- (p4);
+          \draw[lien] (p3) -- (p5);
+          \draw[lien] (p4) -- (p5);
+          \draw[lien] (p5) -- (p1);
+          \draw[lien] (p5) -- (p2);
+          \draw[lien] (p5) -- (p6);
+          \draw[lien2] (p6) -- (p7);
+        \end{tikzpicture}}
+    \end{column}
+    \begin{column}{0.58\textwidth}
+      \small Une page $7$, et des liens $6\leftrightarrow7$. On entre dans
+      la région $\{6,7\}$ par la page $5$, mais on ne peut plus en sortir.
+      \begin{itemize}
+        \item $A$ est stochastique mais pas régulière.
+        \item Unique équilibre
+          $\vec q=\big(0,0,0,0,0,\tfrac12,\tfrac12\big)$ : les pages $1$ à
+          $5$ ont un PageRank nul. Inutilisable.
+        \item La loi ne converge même pas (aller-retour entre $6$ et $7$,
+          comme l'exemple 4.5) ; $-1$ est valeur propre de $A$.
+        \item Sur le Web réel, de telles régions se forment spontanément,
+          ou délibérément pour accaparer le PageRank.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{La téléportation}
+  \small À chaque étape, l'internaute suit un lien avec probabilité
+  $\beta$, et avec probabilité $1-\beta$ saute vers une page choisie au
+  hasard parmi les $N$ (il tape une nouvelle adresse). $\beta\in\intoo01$
+  est le facteur d'amortissement ; Brin et Page utilisaient
+  $\beta=\num{0.85}$.
+  \[
+    G = \beta B+(1-\beta)\,U,\qquad U = \frac1N\,\vec e\,\vec e^{\mathsf T}
+    \quad\text{(tous les coefficients valent $1/N$).} \tag{4.3}
+  \]
+  C'est le « tirage au sort » de l'exemple 4.3, avec la loi uniforme.
+  \begin{Enonce}{Proposition 4.7 --- Propriétés de la matrice $G$}
+    \small Si $0<\beta<1$, $G$ est stochastique à coefficients
+    strictement positifs ; elle est donc régulière, et a un unique
+    équilibre $\vec q$, à composantes strictement positives.
+  \end{Enonce}
+  \begin{AuTableau}
+    \footnotesize Somme d'une colonne : $\beta\cdot1+(1-\beta)\cdot1=1$ ;
+    chaque coefficient est au moins $(1-\beta)/N>0$ ; $k=1$.
+  \end{AuTableau}
+\end{frame}
+
+\begin{frame}[fragile]{Programme 4.7 --- La matrice Google}
+  \begin{columns}[T]
+    \begin{column}{0.6\textwidth}
+\begin{lstlisting}
+def matrice_google(liens, N, beta=0.85):
+    A = matrice_transition(liens, N)
+    E = (A.sum(axis=0) == 0).astype(float)
+    e = np.ones(N)
+    B = A + np.outer(e, E) / N    # pages sans sortie
+    U = np.outer(e, e) / N        # téléportation
+    return beta * B + (1 - beta) * U
+
+def equilibre(M):
+    valeurs, vecteurs = np.linalg.eig(M)
+    k = np.argmin(abs(valeurs - 1))
+    q = np.real(vecteurs[:, k])
+    return q / q.sum()
+
+liens3 = {1: [2], 2: [1, 3], 3: [2, 4, 5],
+          4: [3, 5], 5: [1, 2, 6],
+          6: [7], 7: [6]}
+G3 = matrice_google(liens3, 7)
+print(equilibre(G3))
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.38\textwidth}
+      \small
+      \begin{itemize}
+        \item \texttt{np.outer(u, v)} : le produit
+          $\vec u\,\vec v^{\mathsf T}$.
+        \item \texttt{beta=1} : seulement la correction des pages sans
+          lien (mini-web 2).
+        \item Avec $\beta=\num{0.85}$, classement : $6$, $7$, $2$, $3$,
+          $1$, $5$, $4$.
+        \item La région piégeante reste en tête, sans monopoliser le
+          classement.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Tableau 4.3 --- Le choix de $\beta$}
+  \small PageRank du mini-web 3 ; dernière colonne : la part de la région
+  piégeante.
+  \begin{center}
+  \footnotesize
+  \begin{tabular}{cccccccc|c}
+    \toprule
+    $\beta$ & $q_1$ & $q_2$ & $q_3$ & $q_4$ & $q_5$ & $q_6$ & $q_7$ & $q_6+q_7$ \\
+    \midrule
+    $\num{0.5}$ & $\num{0.137}$ & $\num{0.183}$ & $\num{0.141}$ & $\num{0.095}$ & $\num{0.119}$ & $\num{0.169}$ & $\num{0.156}$ & $\num{0.325}$ \\
+    $\num{0.85}$ & $\num{0.122}$ & $\num{0.182}$ & $\num{0.123}$ & $\num{0.056}$ & $\num{0.080}$ & $\num{0.225}$ & $\num{0.212}$ & $\num{0.437}$ \\
+    $\num{0.99}$ & $\num{0.031}$ & $\num{0.048}$ & $\num{0.031}$ & $\num{0.012}$ & $\num{0.017}$ & $\num{0.432}$ & $\num{0.429}$ & $\num{0.861}$ \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \small
+  \begin{itemize}
+    \item $\beta$ proche de $1$ : fidèle à la structure des liens, mais la
+      région piégeante accapare le PageRank.
+    \item $\beta$ petit : le classement se rapproche de la loi uniforme et
+      perd son information.
+  \end{itemize}
+\end{frame}
+
+\subsection{La matrice Google}
+
+\begin{frame}{La matrice Google}
+  \small Les deux corrections réunies :
+  \[
+    G = \beta B+(1-\beta)U
+    = \beta A+\frac1N\,\vec e\,\big(\beta\vec E^{\mathsf T}+(1-\beta)\,\vec e^{\mathsf T}\big),
+  \]
+  et le PageRank est l'unique vecteur de probabilités tel que
+  $G\vec q=\vec q$.
+  \begin{itemize}
+    \item Web réel : $N$ en milliards ; $G$ aurait plus de $10^{18}$
+      coefficients, tous non nuls. Impossible à stocker.
+    \item Inutile : il suffit de $A$, $\vec E$ et $\beta$.
+    \item $A$ est creuse : quelques dizaines de liens par page au plus.
+      On stocke les coefficients non nuls et leurs positions, c'est-à-dire
+      la liste des liens.
+    \item Reste à calculer $\vec q$ sans jamais former $G$.
+  \end{itemize}
+\end{frame}

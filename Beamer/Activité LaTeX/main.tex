@@ -1,0 +1,95 @@
+% !TEX program = lualatex
+% ═══════════════════════════════════════════════════════════════════════
+%  Laboratoire informatique — Introduction à LaTeX
+%  Activité sur Overleaf, avec l'aide de l'IA.
+%  Jérôme Soucy
+%
+%  Compilation : lualatex main.tex   (deux passages, pour le sommaire)
+%  Les fichiers d'exemple (à distribuer aux étudiants) sont dans
+%  exemples/ ; ils se compilent avec pdfLaTeX, comme sur Overleaf.
+% ═══════════════════════════════════════════════════════════════════════
+\documentclass[aspectratio=169, 11pt]{beamer}
+\input{preambule}
+
+\title[Laboratoire LaTeX]{Écrire des mathématiques avec \LaTeX}
+\subtitle{Laboratoire informatique --- Formation à l'enseignement des mathématiques}
+\author{Jérôme Soucy}
+\institute{Université Laval --- Département de mathématiques et de statistique}
+\date{}
+
+\begin{document}
+
+\begin{frame}[plain]
+  \begin{center}
+    {\color{sectioncolor}\rule{0.5\textwidth}{0.8pt}}\\[3pt]
+    {\color{coveraccent}\rule{0.14\textwidth}{1.8pt}}
+
+    \vspace{0.55cm}
+    {\large\color{gray}Laboratoire informatique}\\[3pt]
+    {\LARGE\bfseries\color{sectioncolor}Écrire des mathématiques avec \LaTeX}
+
+    \vspace{0.35cm}
+    {\normalsize\color{sectioncolor}Overleaf, l'IA, et ce qu'il faut comprendre}
+
+    \vspace{0.5cm}
+    {\color{sectioncolor}%
+      $\displaystyle x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$}
+
+    \vspace{0.5cm}
+    {\sffamily\color{sectioncolor}Jérôme Soucy}\\[1pt]
+    {\small\color{gray}Université Laval}
+
+    \vspace{0.35cm}
+    {\color{coveraccent}\rule{0.14\textwidth}{1.8pt}}\\[3pt]
+    {\color{sectioncolor}\rule{0.5\textwidth}{0.8pt}}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Le déroulement du laboratoire}
+  \small
+  \begin{center}
+  \begin{tabular}{rll}
+    \toprule
+    & Étape & Ce que vous faites \\
+    \midrule
+    1 & Pourquoi \LaTeX ? & on écoute, on discute \\
+    2 & Overleaf & créer un compte, un premier projet \\
+    3 & Anatomie d'un document & modifier un fichier existant \\
+    4 & Compiler et corriger & réparer des erreurs \\
+    5 & Le mode mathématique & reproduire des formules \\
+    6 & Travailler avec l'IA & écrire de bons prompts \\
+    7 & Livrable 1 : une activité & fiche de 2 à 3 pages \\
+    8 & Livrable 2 : un examen & classe \texttt{exam}, corrigé \\
+    9 & Remise & vérifier, déposer les PDF \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{4pt}
+  Trois fichiers d'exemple vous sont fournis : un document minimal, une
+  fiche d'activité et un examen. Ils compilent tels quels sur Overleaf.
+\end{frame}
+
+\begin{frame}{Plan de l'exposé}
+  \footnotesize
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \tableofcontents[hideallsubsections,sections={1-5}]
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \tableofcontents[hideallsubsections,sections={6-10}]
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\input{sections/00-pourquoi}
+\input{sections/01-overleaf}
+\input{sections/02-anatomie}
+\input{sections/03-compiler}
+\input{sections/04-maths}
+\input{sections/05-figures}
+\input{sections/06-ia}
+\input{sections/07-activite}
+\input{sections/08-examen}
+\input{sections/09-conclusion}
+
+\end{document}

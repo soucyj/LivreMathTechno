@@ -1,0 +1,181 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Suites de Cauchy et complétude}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Pourquoi la complétude ?}
+  \small Le théorème de Banach construit une solution comme
+  limite d'une suite. Encore faut-il que cette limite
+  appartienne à l'espace dans lequel on travaille.
+  \vspace{6pt}
+
+  C'est exactement ce qu'exprime la complétude. Pour la définir,
+  il faut distinguer :
+  \begin{itemize}
+    \item les suites convergentes (on compare les termes à une
+      limite connue) ;
+    \item les suites de Cauchy (on compare les termes
+      entre eux, sans connaître de limite).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Définition 2.10 --- Suite convergente}
+  \begin{Enonce}{Définition 2.10 --- Suite convergente}
+    Soit $(E,d)$ un espace métrique et $(x_n)$ une suite de $E$. $(x_n)$
+    \defi{converge} dans $(E,d)$ s'il existe $\overline{x}\in E$ tel que,
+    pour tout $\varepsilon>0$, il existe $N\in\N$ avec
+    \[
+      d(x_n,\overline{x}) < \varepsilon \quad\text{pour tout } n>N.
+    \]
+    $\overline{x}$ est la \defi{limite} de $(x_n)$ :
+    $\overline{x} = \lim_{n\to\infty}x_n$.
+  \end{Enonce}
+  \small Remarquer : $\overline{x}\in E$ fait partie de la définition.
+\end{frame}
+
+\begin{frame}{Exemple 2.5 --- Une suite convergente dans le plan}
+  \begin{columns}[c]
+    \begin{column}{0.48\textwidth}
+      \small $x_n = \big(\tfrac1n, \tfrac{(-1)^n}{n}\big)$, $n\geq1$ :
+      les termes alternent de part et d'autre de l'axe des $x$.
+      \begin{itemize}
+        \item Pour $\varepsilon=\num{0.3}$ : $\dE(x_n,(0,0))<\num{0.3}$
+          dès que $n\geq5$ ; $N=4$ convient.
+        \item En général, $\dE(x_n,(0,0)) = \sqrt2/n\to0$.
+      \end{itemize}
+      Donc $(x_n)$ converge vers $\overline{x}=(0,0)$.
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \FigBox[0.62\textheight]{%
+        \begin{tikzpicture}[scale=3.4]
+          \draw[sectioncolor!50, dashed, thick] (0,0) circle (0.3);
+          \draw[sectioncolor!50, thin] (0,0) -- (135:0.3) node[midway, above, etiq]{$\varepsilon$};
+          \node[ptim, label={[etiq]below left:$\overline{x}=(0,0)$}] at (0,0) {};
+          \node[pt, fill=firebrick3, label={[etiq, firebrick3]above:$x_1$}] at (1,-1) {};
+          \node[pt, fill=firebrick3, label={[etiq, firebrick3]above:$x_2$}] at (0.5,0.5) {};
+          \node[pt, fill=firebrick3, label={[etiq, firebrick3]above:$x_3$}] at (0.3333,-0.3333) {};
+          \node[pt, fill=firebrick3, label={[etiq, firebrick3]right:$x_4$}] at (0.25,0.25) {};
+          \node[pt, inner sep=0.9pt] at (0.2,-0.2) {};
+          \node[pt, inner sep=0.9pt] at (0.1667,0.1667) {};
+          \node[pt, inner sep=0.9pt] at (0.1429,-0.1429) {};
+          \node[pt, inner sep=0.9pt] at (0.125,0.125) {};
+          \draw[fleche, sectioncolor] (0.45,-0.55) -- (0.22,-0.22);
+          \node[etiq, sectioncolor, align=left] at (0.75,-0.65) {$x_n$ pour\\$n > N=4$};
+        \end{tikzpicture}}
+      \begin{center}\scriptsize Figure 2.10\end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Exemple 2.6 --- Une suite divergente dans le plan}
+  \small $x_n = \big((-1)^n,0\big)$ : alternativement $(-1,0)$ et
+  $(1,0)$, indéfiniment.
+  \FigBox[0.36\textheight]{%
+    \begin{tikzpicture}[scale=1.7]
+      \draw[axe] (-1.6,0) -- (1.6,0) node[right, etiq]{$x$};
+      \node[pt, label={[etiq, align=center]below:$x_1,x_3,x_5,\ldots$}] (m1) at (-1,0) {};
+      \node[pt, label={[etiq, align=center]below:$x_2,x_4,x_6,\ldots$}] (p1) at (1,0) {};
+      \draw[fleche, firebrick3, {Stealth[length=2mm]}-{Stealth[length=2mm]}]
+        (m1) to[bend left=35] node[midway, above, etiq, firebrick3]{toujours $2$} (p1);
+    \end{tikzpicture}}
+  \begin{center}\scriptsize Figure 2.11\end{center}
+  \small Elle ne converge vers aucun point de $\R^2$ : il faudrait que
+  $\dE(x_n,\overline{x})$ devienne aussi petit qu'on veut, impossible
+  tant que $x_n$ oscille entre deux points à distance $2$.
+\end{frame}
+
+\begin{frame}{Définition 2.11 --- Suite de Cauchy}
+  \begin{Enonce}{Définition 2.11 --- Suite de Cauchy}
+    Soit $(E,d)$ un espace métrique et $(x_n)$ une suite de $E$. $(x_n)$
+    est une \defi{suite de Cauchy} dans $(E,d)$ si, pour tout
+    $\varepsilon>0$, il existe $N\in\N$ tel que
+    \[
+      d(x_m,x_n)<\varepsilon \quad\text{pour tous } m,n>N.
+    \]
+  \end{Enonce}
+  \begin{center}
+  \small
+  \begin{tabular}{lll}
+    \toprule
+    & on compare… & limite à connaître ? \\
+    \midrule
+    convergente & les termes à $\overline{x}$ & oui \\
+    de Cauchy & les termes entre eux & non \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Remarque 2.7 --- Les deux exemples et la condition de Cauchy}
+  \begin{Rem}{Remarque 2.7}
+    \small
+    Exemple 2.5 : de Cauchy. Sur la figure 2.10, pour
+    $m,n>N=4$, $x_m$ et $x_n$ sont dans le disque de rayon
+    $\varepsilon=\num{0.3}$, donc à distance au plus
+    $2\varepsilon=\num{0.6}$ : le même $N$ fonctionne, quitte à doubler
+    $\varepsilon$.
+    \vspace{4pt}
+
+    Exemple 2.6 : pas de Cauchy. Quel que soit $N$, il existe
+    $m,n>N$ (un pair, un impair) avec $d(x_m,x_n)=2$ : aucun
+    $\varepsilon<2$ ne convient.
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Proposition 2.2 --- Convergente $\Rightarrow$ Cauchy}
+  \begin{Enonce}{Proposition 2.2}
+    Soit $(x_n)$ une suite convergente dans un espace métrique $(E,d)$.
+    Alors $(x_n)$ est une suite de Cauchy dans $(E,d)$.
+  \end{Enonce}
+  \begin{AuTableau}
+    \small Idée : choisir $N$ pour $\varepsilon/2$ dans la définition de
+    convergence, puis inégalité triangulaire :
+    $d(x_m,x_n)\leq d(x_m,\overline{x})+d(\overline{x},x_n)<\varepsilon$.
+  \end{AuTableau}
+  \vspace{4pt}
+  \small La réciproque est fausse en général --- c'est
+  précisément ce qui motive la définition suivante.
+\end{frame}
+
+\begin{frame}{Définition 2.12 --- Espace métrique complet}
+  \begin{Enonce}{Définition 2.12 --- Espace métrique complet}
+    Un espace métrique $(E,d)$ est \defi{complet} si toute suite de
+    Cauchy dans $(E,d)$ converge vers un élément de $E$.
+  \end{Enonce}
+  \vspace{6pt}
+  \small Dans un espace complet, pour montrer qu'une suite converge, il
+  suffit de montrer qu'elle est de Cauchy --- sans avoir à
+  deviner la limite. C'est exactement la stratégie de la preuve du
+  théorème de Banach.
+\end{frame}
+
+\begin{frame}{Exemple 2.7 --- Les rationnels ne forment pas un espace complet}
+  \small Dans $(\Q,\dE)$, la suite des troncatures décimales de $\sqrt2$ :
+  \[
+    x_0=1,\quad x_1=\num{1.4},\quad x_2=\num{1.41},\quad
+    x_3=\num{1.414},\quad x_4=\num{1.4142},\quad\ldots
+  \]
+  \begin{itemize}
+    \item Chaque $x_n\in\Q$, et $0\leq\sqrt2-x_n<10^{-n}$ : $(x_n)$
+      converge vers $\sqrt2$ dans $(\R,\dE)$.
+    \item Donc $(x_n)$ est de Cauchy (proposition 2.2).
+    \item Mais $\sqrt2\notin\Q$ : dans $(\Q,\dE)$, la suite est de Cauchy
+      sans converger.
+  \end{itemize}
+  \vspace{4pt}
+  $(\Q,\dE)$ n'est pas complet.
+\end{frame}
+
+\begin{frame}{Remarque 2.8 --- La complétude des réels}
+  \begin{Rem}{Remarque 2.8}
+    $\R$ « complète » $\Q$ en ajoutant tous les nombres --- $\sqrt2$,
+    $\uppi$, … --- qui sont limites de suites de rationnels sans être
+    rationnels.
+  \end{Rem}
+  \vspace{6pt}
+  \begin{Enonce}{Fait admis}
+    Pour tout $n$, $(\R^n,\dE)$ est un espace métrique complet.
+  \end{Enonce}
+  \vspace{4pt}
+  \small C'est ce qui permettra d'appliquer le théorème de Banach dans
+  $\R^2$ (section 9).
+\end{frame}

@@ -1,0 +1,137 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Qu'est-ce qu'une distance ?}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Ce que l'on sait déjà de la distance euclidienne}
+  Si $P$, $Q$, $R$ sont trois points du plan :
+  \begin{enumerate}
+    \item $d(P,Q)$ est toujours un nombre positif ou nul ;
+    \item $d(P,Q) = 0$ exactement quand $P$ et $Q$ sont le même point ;
+    \item $d(P,Q) = d(Q,P)$ ;
+    \item $d(P,Q) \leq d(P,R) + d(R,Q)$ : un détour par $R$ n'est jamais
+      plus court que le chemin direct.
+  \end{enumerate}
+  \vspace{6pt}
+  \begin{Rem}{Observation}
+    Ces quatre propriétés ne font intervenir ni les
+    coordonnées, ni le fait que $P,Q,R$ soient des points du plan. On
+    peut donc les reprendre telles quelles sur un ensemble quelconque.
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Définition 2.1 --- Métrique, espace métrique}
+  \begin{Enonce}{Définition 2.1 --- Métrique, espace métrique}
+    Soit $E$ un ensemble. Une \defi{métrique} (ou \defi{distance}) sur
+    $E$ est une fonction $d : E\times E\to\R$ telle que, pour tous
+    $x,y,z\in E$ :
+    \begin{center}
+    \begin{tabular}{lll}
+      (a) & $d(x,y)\geq 0$ & (positivité) \\
+      (b) & $d(x,y)=0 \iff x=y$ & (séparation) \\
+      (c) & $d(x,y)=d(y,x)$ & (symétrie) \\
+      (d) & $d(x,y)\leq d(x,z)+d(z,y)$ & (inégalité triangulaire)
+    \end{tabular}
+    \end{center}
+    Le couple $(E,d)$ s'appelle alors un \defi{espace métrique}.
+  \end{Enonce}
+\end{frame}
+
+\begin{frame}{Figure 2.2 --- L'inégalité triangulaire}
+  \FigBox[0.45\textheight]{%
+    \begin{tikzpicture}[scale=1.25]
+      \node[pt, label={[etiq]below:$x$}] (x) at (0,0) {};
+      \node[pt, label={[etiq]right:$y$}] (y) at (3.4,0.5) {};
+      \node[pt, label={[etiq]above:$z$}] (z) at (1.3,2.1) {};
+      \draw[sectioncolor, thick] (x) -- (y) node[midway, below, etiq]{$d(x,y)$};
+      \draw[sectioncolor!70, thick, dashed] (x) -- (z) node[midway, left, etiq]{$d(x,z)$};
+      \draw[sectioncolor!70, thick, dashed] (z) -- (y) node[midway, above right, etiq]{$d(z,y)$};
+    \end{tikzpicture}}
+  \small Le nom vient du cas $E=\R^2$ : dans un triangle, chaque côté est
+  au plus égal à la somme des deux autres. La propriété du secondaire
+  devient un axiome, valable pour des ensembles beaucoup plus
+  généraux.
+\end{frame}
+
+\begin{frame}{Remarque 2.1 --- La propriété de séparation}
+  \begin{Rem}{Remarque 2.1}
+    La condition (b) réunit deux implications à distinguer :
+    \begin{itemize}
+      \item $d(x,x)=0$ pour tout $x$ : la distance d'un point à
+        lui-même est nulle (intuitif) ;
+      \item si $d(x,y)=0$, alors $x=y$ : seuls deux points
+        confondus sont à distance nulle.
+    \end{itemize}
+    D'où le nom : une métrique sépare toujours deux points
+    distincts par une distance strictement positive.
+  \end{Rem}
+  \vspace{6pt}
+  \small Cette condition devra être vérifiée avec attention pour la
+  distance de Hausdorff (section 5).
+\end{frame}
+
+\subsection{Les distances euclidienne et de Manhattan}
+
+\begin{frame}{Exemple 2.1 --- La distance euclidienne dans $\R$ et $\R^n$}
+  \small
+  Sur $\R$ : $\dE(x,y) = |x-y|$. Positivité, séparation, symétrie :
+  propriétés de la valeur absolue. Inégalité triangulaire :
+  $|a+b|\leq|a|+|b|$ avec $a=x-z$, $b=z-y$.
+
+  \vspace{6pt}
+  Sur $\R^n$, pour $X=(x_1,\dots,x_n)$ et $Y=(y_1,\dots,y_n)$ :
+  \[
+    \dE(X,Y) = \sqrt{\sum_{i=1}^{n}(x_i-y_i)^2}\,,
+  \]
+  la distance euclidienne. Pour $n=2$ : le théorème de Pythagore
+  appliqué à la différence des coordonnées.
+
+  \vspace{6pt}
+  Convention : sauf mention contraire, c'est la métrique
+  utilisée sur $\R^n$.
+\end{frame}
+
+\begin{frame}{Exemple 2.2 --- La taxi-distance}
+  \begin{columns}[c]
+    \begin{column}{0.48\textwidth}
+      \small Pour $X=(x_1,y_1)$, $Y=(x_2,y_2)$ dans $\R^2$ :
+      \[
+        \dT(X,Y) = |x_2-x_1| + |y_2-y_1|.
+      \]
+      Une autre métrique sur $\R^2$ (inégalité triangulaire : coordonnée
+      par coordonnée). C'est la taxi-distance, ou distance
+      de Manhattan : un taxi sur un quadrillage de rues
+      perpendiculaires, sans trajet diagonal.
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \FigBox[0.6\textheight]{%
+        \begin{tikzpicture}[scale=0.62]
+          \draw[quadrillage] (-0.4,-0.4) grid (7.4,5.4);
+          \node[pt, label={[etiq]below left:$A$}] (A) at (1,1) {};
+          \node[pt, label={[etiq]above right:$B$}] (B) at (6,4) {};
+          \draw[sectioncolor, thick] (A) -- (B);
+          \node[etiq, sectioncolor] at (3.5,5.0) {$\dE(A,B) = \sqrt{5^2+3^2}=\sqrt{34}$};
+          \draw[firebrick3, very thick]
+            (1,1) -- (2,1) -- (2,2) -- (3,2) -- (3,3) -- (4,3) -- (5,3) -- (5,4) -- (6,4);
+          \node[etiq, firebrick3] at (3.5,0.5) {$\dT(A,B) = 5 + 3 = 8$};
+        \end{tikzpicture}}
+      \begin{center}\scriptsize Figure 2.3 --- Tout chemin en escalier a
+      la même longueur.\end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Remarque 2.2 --- Même paire de points, deux distances}
+  \begin{Rem}{Remarque 2.2}
+    $\dE$ et $\dT$ sont deux métriques distinctes sur le
+    même ensemble $\R^2$ : sur la figure 2.3,
+    $\sqrt{34}\approx\num{5.83}$ contre $8$.
+    \vspace{4pt}
+
+    Un même ensemble, deux métriques : deux espaces métriques
+    différents, $(\R^2,\dE)$ et $(\R^2,\dT)$, bien qu'ils aient
+    les mêmes éléments.
+  \end{Rem}
+  \vspace{6pt}
+  \small À retenir pour la section 4 : la forme d'une boule
+  dépend de la métrique, pas seulement de l'ensemble.
+\end{frame}

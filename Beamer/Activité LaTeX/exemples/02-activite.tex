@@ -1,0 +1,113 @@
+% ─────────────────────────────────────────────────────────────
+%  02-activite.tex — fiche de présentation d'une activité
+%  mathématique pour le secondaire (2 à 3 pages).
+%  À compiler avec pdfLaTeX (réglage par défaut d'Overleaf).
+% ─────────────────────────────────────────────────────────────
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{siunitx}
+\sisetup{output-decimal-marker = {,}}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{tikz}                 % figures dessinées en LaTeX
+\usepackage{enumitem}             % réglage des listes
+\usepackage{fancyhdr}             % en-tête et pied de page
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Mathématique, 3\textsuperscript{e} secondaire}
+\rhead{Activité : Pythagore au salon}
+\cfoot{\thepage}
+
+\title{Pythagore au salon : la taille d'un téléviseur}
+\author{Prénom Nom}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{fancy}
+
+\section{Présentation de l'activité}
+
+\begin{description}[leftmargin=3.6cm, style=nextline, font=\normalfont]
+  \item[Niveau visé] 3\textsuperscript{e} secondaire (à adapter selon
+    le groupe).
+  \item[Durée] Une période de \qty{75}{\minute}.
+  \item[Intention] Réinvestir la relation de Pythagore dans un contexte
+    réel, et travailler les rapports et la proportionnalité.
+  \item[Préalables] Relation de Pythagore, racine carrée, rapport et
+    proportion.
+  \item[Matériel] Calculatrice, ruban à mesurer, publicités de
+    téléviseurs.
+\end{description}
+
+\section{Mise en situation}
+
+Les téléviseurs sont vendus selon la longueur de leur diagonale,
+exprimée en pouces ($\qty{1}{po} = \qty{2,54}{\centi\metre}$).
+Un écran « 55 pouces » mesure donc \qty{55}{po} d'un coin à
+l'autre. Mais quelle place occupera-t-il réellement sur le meuble du
+salon ?
+
+Les écrans actuels ont un format $16:9$ : la largeur et la hauteur
+sont dans le rapport $16$ à $9$.
+
+\begin{center}
+\begin{tikzpicture}[scale=0.11]
+  \draw[thick] (0,0) rectangle (48,27);
+  \draw[dashed] (0,0) -- node[sloped, above, fill=white, inner sep=2pt]
+    {diagonale \qty{55}{po}} (48,27);
+  \node[below] at (24,0) {largeur $16k$};
+  \node[right] at (48,13.5) {hauteur $9k$};
+\end{tikzpicture}
+\end{center}
+
+\section{Déroulement}
+
+\begin{enumerate}[label=\arabic*.]
+  \item Mise en situation en grand groupe (\qty{10}{\minute}) :
+    les élèves estiment la largeur d'un écran de \qty{55}{po}.
+  \item Travail en équipe (\qty{35}{\minute}) : tâche de la section 4.
+  \item Retour collectif (\qty{20}{\minute}) : comparaison des
+    démarches, validation à l'aide d'un ruban à mesurer.
+  \item Synthèse (\qty{10}{\minute}) : ce que la diagonale ne dit pas
+    sur un écran.
+\end{enumerate}
+
+\section{Tâche de l'élève}
+
+\begin{enumerate}[label=\alph*)]
+  \item Montre que la diagonale d'un écran $16:9$ vaut
+    $k\sqrt{337}$ si sa largeur est $16k$ et sa hauteur, $9k$.
+  \item Calcule la largeur et la hauteur, en centimètres, d'un écran de
+    \qty{55}{po}.
+  \item Le meuble du salon mesure \qty{120}{\centi\metre} de large.
+    L'écran de \qty{55}{po} y entre-t-il ? Justifie ta réponse.
+  \item Un écran de \qty{110}{po} a une diagonale deux fois plus
+    longue. Son aire est-elle deux fois plus grande ? Explique.
+\end{enumerate}
+
+\section{Corrigé et pistes d'intervention}
+
+\begin{enumerate}[label=\alph*)]
+  \item Par Pythagore,
+    $d^2 = (16k)^2 + (9k)^2 = 256k^2 + 81k^2 = 337k^2$, donc
+    $d = k\sqrt{337}$.
+  \item $k = \dfrac{55}{\sqrt{337}} \approx \num{2,996}$, d'où une
+    largeur de $16k \approx \qty{47,9}{po} \approx \qty{121,8}{\centi\metre}$
+    et une hauteur de $9k \approx \qty{27,0}{po} \approx
+    \qty{68,5}{\centi\metre}$.
+  \item Non : il manque près de \qty{2}{\centi\metre}, sans compter le
+    cadre de l'écran.
+  \item Non : les deux dimensions doublent, donc l'aire est multipliée
+    par $2^2 = 4$.
+\end{enumerate}
+
+\noindent Pistes d'intervention : un élève qui calcule $55 \div 16$
+confond la diagonale avec la largeur ; lui faire tracer le rectangle à
+l'échelle. La question d) prépare le lien entre rapport de similitude
+et rapport des aires.
+
+\end{document}

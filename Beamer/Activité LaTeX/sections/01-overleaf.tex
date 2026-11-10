@@ -1,0 +1,90 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Overleaf : \texorpdfstring{\LaTeX}{LaTeX} dans le navigateur}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Démarrer sur Overleaf}
+  \small
+  \begin{enumerate}
+    \item Aller sur \texttt{overleaf.com} et créer un compte gratuit.
+    \item Nouveau projet (New Project) $\to$ Projet vide (Blank Project),
+      lui donner un nom.
+    \item Pour partir d'un fichier fourni : Nouveau projet $\to$
+      Téléverser un projet (Upload Project), ou téléverser le
+      \texttt{.tex} dans un projet existant.
+    \item Rien à installer : la compilation se fait sur les serveurs
+      d'Overleaf.
+  \end{enumerate}
+  \vspace{4pt}
+  \begin{Rem}{Bon à savoir}
+    \small Le compilateur par défaut est pdfLaTeX : c'est celui que
+    supposent nos fichiers d'exemple. On peut le changer dans le
+    menu (Menu $\to$ Compilateur), mais ce n'est pas nécessaire
+    aujourd'hui.
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{L'interface}
+  \FigBox[0.6\textheight]{%
+    \begin{tikzpicture}[x=1cm, y=1cm, font=\scriptsize\sffamily]
+      \draw[sectioncolor, thick, rounded corners=2pt] (0,0) rectangle (13,6.2);
+      \fill[sectioncolor!12] (0,5.6) rectangle (13,6.2);
+      \node[anchor=west] at (0.2,5.9) {Menu \quad Mon projet};
+      \node[fill=vertpiece!80!black, text=white, rounded corners=2pt,
+        inner sep=3pt] at (8.3,5.9) {Recompiler};
+      \draw[sectioncolor!60] (2.6,0) -- (2.6,5.6);
+      \draw[sectioncolor!60] (7.4,0) -- (7.4,5.6);
+      \node[anchor=north west, align=left] at (0.15,5.45)
+        {Fichiers\\[2pt] \texttt{main.tex}\\ \texttt{figure.png}};
+      \node[anchor=north west, align=left, font=\scriptsize\ttfamily] at (2.75,5.45)
+        {\textbackslash documentclass\{article\}\\
+         \textbackslash usepackage[french]\{babel\}\\[2pt]
+         \textbackslash begin\{document\}\\
+         Bonjour !\\
+         \textbackslash end\{document\}};
+      \fill[white] (7.7,0.3) rectangle (12.7,5.3);
+      \draw[gray!60] (7.7,0.3) rectangle (12.7,5.3);
+      \node at (10.2,4.6) {Bonjour !};
+      \node[firebrick3, align=center] at (1.3,-0.5) {1. les fichiers\\ du projet};
+      \node[firebrick3, align=center] at (5,-0.5) {2. l'éditeur :\\ le code \texttt{.tex}};
+      \node[firebrick3, align=center] at (10.2,-0.5) {3. l'aperçu :\\ le PDF compilé};
+      \node[firebrick3, align=center] at (10.4,6.65) {4. compiler (Ctrl+Entrée,\\ Cmd+Entrée sur Mac)};
+    \end{tikzpicture}}
+  \small On modifie le code à gauche, on recompile, on regarde le PDF à
+  droite. Les erreurs s'affichent près du bouton Recompiler.
+\end{frame}
+
+\begin{frame}{Le cycle de travail}
+  \FigBox[0.32\textheight]{%
+    \begin{tikzpicture}[
+        etape/.style={draw=sectioncolor, fill=thmboxbg, rounded corners=2pt,
+          thick, align=center, font=\small, minimum height=1.1cm,
+          text width=2.8cm}]
+      \node[etape] (a) at (0,0) {Écrire ou modifier\\le code \texttt{.tex}};
+      \node[etape] (b) at (4.2,0) {Compiler\\(pdfLaTeX)};
+      \node[etape] (c) at (8.4,0) {Lire le PDF\\(ou l'erreur)};
+      \draw[fleche] (a) -- (b);
+      \draw[fleche] (b) -- (c);
+      \draw[fleche] (c.south) to[out=-150, in=-30] (a.south);
+    \end{tikzpicture}}
+  \small
+  \begin{itemize}
+    \item Compiler souvent : après chaque petite modification.
+    \item Une erreur à la fois : la première erreur signalée est presque
+      toujours la vraie ; les suivantes en découlent souvent.
+    \item Le PDF reste celui de la dernière compilation réussie : vérifier
+      qu'il a bien changé.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{À vous}
+  \begin{Exercice}{Un premier projet}
+    \small
+    \begin{enumerate}
+      \item Créez un projet sur Overleaf et téléversez le fichier
+        \texttt{01-minimal.tex}.
+      \item Compilez-le : vous devez obtenir une page avec trois sections.
+      \item Remplacez « Prénom Nom » par votre nom, recompilez.
+      \item Ajoutez un quatrième élément à la liste, recompilez.
+    \end{enumerate}
+  \end{Exercice}
+\end{frame}

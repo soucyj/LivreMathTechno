@@ -1,0 +1,215 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Les transformations affines}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Du plan géométrique au plan des coordonnées}
+  \small Jusqu'ici, tout a été dit sans calcul (point de vue
+  \emph{synthétique}). On choisit maintenant un repère : chaque point
+  devient un couple de nombres, chaque transformation devient une
+  formule (point de vue \emph{analytique}).
+  \[
+    d(P,Q) = \norme{P - Q} = \sqrt{(x_P-x_Q)^2 + (y_P-y_Q)^2}.
+  \]
+  \begin{Rem}{Remarque 1.4 --- Points ou vecteurs ?}
+    \small On confond volontairement point $P$ et vecteur
+    $\overrightarrow{OP}$ (même colonne de nombres) --- abus commode et
+    universel en infographie. Cela explique pourquoi une translation
+    n'est \textbf{pas} une application linéaire.
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Définition 1.3 --- Application affine du plan}
+  \begin{Enonce}{Définition 1.3 --- Application affine du plan}
+    Une \defi{application affine} du plan est $w:\R^2\to\R^2$,
+    \[
+      w\col{x}{y} = \mat{a}{b}{c}{d}\col{x}{y} + \col{e}{f}
+      = A\col{x}{y} + \vec{t}, \qquad a,b,c,d,e,f\in\R.
+    \]
+    $A$ : \defi{partie linéaire} ; $\vec t$ : \defi{partie translation}.
+  \end{Enonce}
+  \vspace{4pt}
+  Une application affine = une application linéaire \textbf{suivie
+  d'une translation}. Cette phrase anodine décrit exactement les
+  translations, rotations, réflexions, homothéties, cisaillements ---
+  et leurs compositions.
+\end{frame}
+
+\begin{frame}{Remarque 1.5 --- Pourquoi « affine » et non « linéaire » ?}
+  \begin{Rem}{Remarque 1.5}
+    Une application linéaire $T$ vérifie $T(\vec 0) = \vec 0$ : elle
+    fixe l'origine. Une translation ne fixe \textbf{aucun} point : les
+    translations ne sont donc pas linéaires. On ajoute le terme
+    $\vec t$ précisément pour les inclure --- d'où « affine ».
+  \end{Rem}
+  \vspace{6pt}
+  \small (Un tour de passe-passe --- les coordonnées homogènes ---
+  permettra de récupérer la linéarité, au prix d'une dimension : voir
+  section~5.)
+
+  \vspace{10pt}
+  \textbf{Vocabulaire fixé pour tout le chapitre :}
+  \begin{itemize}
+    \item \defi{application affine} : n'importe quelle fonction de
+      cette forme, \emph{sans condition sur $A$} ;
+    \item \defi{transformation affine} : une application affine
+      \textbf{bijective}, i.e. un élément de $\Aff$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Proposition 1.2 --- Inversibilité}
+  \begin{Enonce}{Proposition 1.2 --- Inversibilité}
+    \small Une application affine de partie linéaire $A$, translation
+    $\vec t$, est bijective si et seulement si $\dete(A) \neq 0$. Alors
+    \[
+      w^{-1}\col{x}{y} = A^{-1}\col{x}{y} - A^{-1}\vec{t}.
+    \]
+  \end{Enonce}
+  \begin{AuTableau}
+    \small Idée : $\dete(A)\neq 0 \Leftrightarrow A$ inversible
+    $\Leftrightarrow$ $A$ injective (algèbre linéaire) ; on vérifie
+    directement que la formule proposée est une réciproque.
+  \end{AuTableau}
+  \vspace{6pt}
+  \textbf{Conséquence.} Les applications affines inversibles forment un
+  sous-groupe $\Aff$ de $\Transf$ : le \defi{groupe affine} du plan.
+\end{frame}
+
+\begin{frame}{Proposition 1.3 --- Ce qu'une transformation affine conserve}
+  \begin{Enonce}{Proposition 1.3}
+    \footnotesize Soit $w$ une transformation affine. Alors :
+    \begin{enumerate}
+      \item l'image d'une droite est une droite ;
+      \item l'image d'une droite par l'origine passe par $(e,f)$ ;
+      \item l'image de deux droites parallèles reste parallèle ;
+      \item l'image d'un segment est un segment ; le milieu va sur le milieu ;
+      \item plus généralement : $w$ préserve les rapports de longueurs
+        \emph{sur une même droite} ;
+      \item l'image d'un parallélogramme est un parallélogramme.
+    \end{enumerate}
+  \end{Enonce}
+  \begin{AuTableau}
+    \footnotesize Idée : écriture paramétrique d'une droite,
+    $P + s\vec u$ ; $w(P+s\vec u) = w(P) + s(A\vec u)$, et $A\vec u \neq
+    \vec 0$ car $A$ est inversible.
+  \end{AuTableau}
+\end{frame}
+
+\begin{frame}{Remarque 1.6 --- Ce qu'elle ne conserve \emph{pas}}
+  \begin{Rem}{Remarque 1.6}
+    Une transformation affine ne préserve \textbf{en général} ni les
+    longueurs, ni les angles, ni la perpendicularité, ni les rapports
+    de longueurs entre deux directions différentes. Un carré peut
+    devenir un parallélogramme quelconque ; un cercle devient une
+    ellipse.
+    \vspace{4pt}
+
+    En revanche, elle multiplie \textbf{toutes} les aires par le même
+    facteur (à venir).
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Visualiser : l'image du carré unité}
+  \small Le geste le plus utile du chapitre : pour comprendre une
+  transformation, regarder ce qu'elle fait au carré unité
+  $[0,1]\times[0,1]$. Les \textbf{colonnes de $A$} sont les images de
+  $\vec e_1,\vec e_2$ : le carré devient le parallélogramme qu'elles
+  engendrent.
+  \FigBox[0.5\textheight]{%
+    \begin{tikzpicture}[scale=1.0]
+      \begin{scope}
+        \repere{-0.6}{2.6}{-0.6}{2.6}
+        \fill[fig] (0,0) rectangle (1,1);
+        \draw[fleche] (0,0) -- (1,0) node[etiq, below right] {$\vec{e}_1$};
+        \draw[fleche] (0,0) -- (0,1) node[etiq, above left] {$\vec{e}_2$};
+        \node[etiq] at (1.3,-1.15) {le carré unité};
+      \end{scope}
+      \begin{scope}[xshift=5.2cm]
+        \repere{-0.6}{2.6}{-0.6}{2.6}
+        \fill[figim] (0,0) -- (1.5,0.4) -- (2.0,1.7) -- (0.5,1.3) -- cycle;
+        \draw[fleche, firebrick3] (0,0) -- (1.5,0.4)
+          node[etiq, below right] {$A\vec{e}_1 = \col{a}{c}$};
+        \draw[fleche, firebrick3] (0,0) -- (0.5,1.3)
+          node[etiq, above left] {$A\vec{e}_2 = \col{b}{d}$};
+        \node[etiq] at (1.3,-1.15) {son image par $A$};
+      \end{scope}
+    \end{tikzpicture}}
+  \begin{center}\small Figure 1.4\end{center}
+\end{frame}
+
+\begin{frame}{Définition 1.4 --- Orientation}
+  \begin{Enonce}{Définition 1.4 --- Orientation d'une base, du plan}
+    \small $(\vec u,\vec v)$ est \defi{directe} si l'on passe de $\vec
+    u$ à $\vec v$, par le plus petit angle, dans le sens
+    trigonométrique ; \defi{indirecte} sinon. $w$
+    \defi{préserve l'orientation} si elle envoie toute base directe sur
+    une base directe ; elle la \defi{renverse} sinon.
+  \end{Enonce}
+  \FigBox[0.36\textheight]{%
+    \begin{tikzpicture}[scale=1.0]
+      \begin{scope}
+        \draw[fleche] (0,0) -- (1,0) node[etiq, below right] {$\vec u$};
+        \draw[fleche] (0,0) -- (55:1) node[etiq, above] {$\vec v$};
+        \draw[sectioncolor, thin, -{Stealth[length=1.6mm]}]
+          (0.42,0) arc (0:55:0.42);
+        \node[etiq] at (0.2,-0.75) {base directe};
+      \end{scope}
+      \begin{scope}[xshift=3.4cm]
+        \draw[fleche] (0,0) -- (1,0) node[etiq, below right] {$\vec u$};
+        \draw[fleche] (0,0) -- (-55:1) node[etiq, below right] {$\vec v$};
+        \draw[sectioncolor, thin, -{Stealth[length=1.6mm]}]
+          (0.42,0) arc (0:-55:0.42);
+        \node[etiq] at (0.2,-1.05) {base indirecte};
+      \end{scope}
+    \end{tikzpicture}}
+\end{frame}
+
+\begin{frame}{Proposition 1.4 --- Aire et déterminant}
+  \begin{Enonce}{Proposition 1.4 --- Aire et déterminant}
+    Soit $w$ affine de partie linéaire $A$, et $D$ une région d'aire
+    $S$. Alors $\Aire(w(D)) = \lvert \dete(A)\rvert \cdot S$. Si
+    $\dete(A) \neq 0$ : $w$ préserve l'orientation si $\dete(A)>0$, la
+    renverse si $\dete(A)<0$.
+  \end{Enonce}
+  \small (Admis --- relève du théorème du changement de variables.
+  Intuition : vrai pour le carré unité par définition du déterminant,
+  donc pour tout carré du quadrillage, donc pour toute région
+  raisonnable.)
+  \begin{Classe}{Le F est-il à l'endroit ?}
+    \small Le signe du déterminant : $\dete(A)>0$, la figure se lit
+    dans le même sens ; $\dete(A)<0$, elle est retournée comme dans un
+    miroir. D'où l'usage d'un motif en « F » dans les figures : un F
+    retourné se repère au premier coup d'œil.
+  \end{Classe}
+\end{frame}
+
+\begin{frame}{Exemple 1.5 --- Image d'un rectangle}
+  \small $w\col{x}{y} = \mat{1}{-1}{2}{0}\col{x}{y}+\col{-1}{1}$,
+  $R=\intff{0}{2}\times\intff{0}{1}$. Il suffit de calculer l'image des
+  4 sommets (prop.~1.3).
+  \FigBox[0.42\textheight]{%
+    \begin{tikzpicture}[scale=0.62]
+      \begin{scope}
+        \repere{-2.6}{2.6}{-0.6}{5.6}
+        \fill[fig] (0,0) rectangle (2,1);
+        \node[etiq] at (1,0.5) {$R$};
+      \end{scope}
+      \begin{scope}[xshift=7.6cm]
+        \repere{-2.6}{2.6}{-0.6}{5.6}
+        \fill[figim] (-1,1) -- (1,5) -- (0,5) -- (-2,1) -- cycle;
+        \node[etiq, ptim, label={[etiq]below right:$(-1,1)$}] at (-1,1) {};
+        \node[ptim, label={[etiq]right:$(1,5)$}] at (1,5) {};
+        \node[etiq] at (-0.55,3) {$w(R)$};
+      \end{scope}
+    \end{tikzpicture}}
+  Vérification par les aires : $\dete(A) = 2$, aire de $R$ = 2, donc
+  aire de $w(R) = 4$ (confirmé).
+\end{frame}
+
+\begin{frame}{Exemple 1.6 --- Image d'un triangle}
+  \small Même $w$. Triangle plein $A=(1,1)$, $B=(0,0)$, $C=(-1,1)$
+  (isocèle) $\longmapsto$ triangle plein $(-1,3)$, $(-1,1)$, $(-3,-1)$
+  (\textbf{pas} isocèle).
+
+  \vspace{6pt}
+  \textbf{Une transformation affine ne respecte pas les longueurs.}
+\end{frame}

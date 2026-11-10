@@ -1,0 +1,256 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Des monstres aux modèles}
+% ═══════════════════════════════════════════════════════════════════════
+
+\subsection{La fonction de Weierstrass}
+
+\begin{frame}{Une fonction continue dérivable nulle part (1872)}
+  \small Jusqu'au milieu du \siecle{19}, on tient pour acquis qu'une
+  fonction continue est dérivable, sauf en quelques points isolés. Le
+  18 juillet 1872, Weierstrass présente
+  \[
+    W(x) = \sum_{n=0}^{\infty} a^n\cos\big(b^n\uppi x\big),
+    \qquad 0<a<1,\ b \text{ entier impair assez grand.}
+  \]
+  \begin{itemize}
+    \item Chaque terme est lisse ; la série est majorée par $\sum a^n$,
+      et sa somme est continue.
+    \item Pourtant $W$ n'est dérivable en aucun point (Hardy, 1916 :
+      $ab\geq1$ suffit, d'où $a=\tfrac12$, $b=3$).
+    \item Des amplitudes $a^n$ qui décroissent, des fréquences $b^n$ qui
+      croissent beaucoup plus vite : des oscillations de plus en plus
+      petites mais de plus en plus raides ; la pente ne se stabilise
+      jamais.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Figure 3.15 --- Le graphe de $W$, et un agrandissement}
+  \FigBox[0.5\textheight]{%
+    \begin{tikzpicture}[courbe/.style={sectioncolor, line join=round, very thin}]
+      \begin{scope}[xscale=3.1, yscale=1.05]
+        \draw[axe] (-1.08,0) -- (1.1,0) node[etiq, right] {$x$};
+        \draw[axe] (0,-2.05) -- (0,2.25);
+        \foreach \x in {-1,1} \draw[gray!70] (\x,0.05) -- (\x,-0.05) node[etiq, below] {$\x$};
+        \foreach \y in {-1,1} \draw[gray!70] (0.02,\y) -- (-0.02,\y) node[etiq, left] {$\y$};
+        \input{figures/fractales/weierstrass.tikz}
+        \draw[firebrick3, thick] (0.3,-0.55) rectangle (0.4,0.14);
+      \end{scope}
+      \begin{scope}[shift={(7.9,0.55)}, xscale=1.55, yscale=3.1]
+        \clip (-1.02,-0.56) rectangle (1.02,0.15);
+        \input{figures/fractales/weierstrass-zoom.tikz}
+      \end{scope}
+      \draw[firebrick3, thick] (6.3,-1.21) rectangle (9.5,1.04);
+      \draw[fleche, firebrick3!70] (1.3,0.3) to[bend left=20] (6.25,0.6);
+      \node[etiq, sectioncolor] at (7.9,1.3) {agrandissement de $[\num{0.3} \mathbin{;} \num{0.4}]$};
+    \end{tikzpicture}}
+  \small $a=\tfrac12$, $b=3$, dix-huit termes. Identité
+  $W(x)=\cos(\uppi x)+a\,W(bx)$ : au terme lisse près, le graphe est une
+  copie de lui-même comprimée d'un facteur $b$ horizontalement et $1/a$
+  verticalement --- une copie auto-affine. Dimension de Hausdorff
+  $2+\ln a/\ln b\approx\num{1.37}$ (démontré en 2018).
+\end{frame}
+
+\begin{frame}{« La logique parfois engendre des monstres »}
+  \small
+  \begin{itemize}
+    \item Hermite à Stieltjes (1893) : « Je me détourne avec effroi et
+      horreur de cette plaie lamentable des fonctions continues qui n'ont
+      point de dérivées. »
+    \item Poincaré (1908) :
+  \end{itemize}
+  \begin{tcolorbox}[boxrem]
+    \footnotesize La logique parfois engendre des monstres. Depuis un
+    demi-siècle on a vu surgir une foule de fonctions bizarres qui
+    semblent s'efforcer de ressembler aussi peu que possible aux
+    honnêtes fonctions qui servent à quelque chose. […] Autrefois, quand
+    on inventait une fonction nouvelle, c'était en vue de quelque but
+    pratique ; aujourd'hui, on les invente tout exprès pour mettre en
+    défaut les raisonnements de nos pères, et on n'en tirera jamais que
+    cela.
+  \end{tcolorbox}
+  \small Une soixantaine d'années plus tard, ces objets serviront à
+  représenter des côtes, des montagnes et des variations boursières.
+\end{frame}
+
+\begin{frame}{Note historique 3.3 --- Karl Weierstrass (1815--1897)}
+  \footnotesize
+  \begin{columns}[T]
+    \begin{column}{0.25\textwidth}
+      \includegraphics[width=\linewidth]{karl-weierstrass.jpg}\\
+      {\scriptsize\color{gray}Portrait de Conrad Fehr (1895).
+      Domaine public, Wikimedia Commons.}
+    \end{column}
+    \begin{column}{0.72\textwidth}
+      \begin{itemize}
+        \item Né en Westphalie ; envoyé étudier le droit à Bonn, il y
+          passe quatre ans surtout à faire de l'escrime et à fréquenter
+          les tavernes, et repart sans diplôme.
+        \item Près de quinze ans enseignant au secondaire dans de petites
+          villes de Prusse : mathématiques, physique, mais aussi
+          allemand, botanique, géographie, gymnastique, calligraphie.
+        \item Il poursuit ses recherches seul, le soir. Avant l'analyse,
+          il a donc exercé le métier auquel vous vous préparez.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Note historique 3.3 (suite)}
+  \small
+  \begin{itemize}
+    \item 1854 : un article sur les fonctions abéliennes attire
+      l'attention ; doctorat honorifique de Königsberg ; appelé à Berlin
+      en 1856, à quarante ans.
+    \item L'un des professeurs les plus influents de son siècle : la
+      rigueur de l'analyse moderne, les définitions de limite et de
+      continuité par $\varepsilon$ et $\delta$ --- celles du chapitre 2.
+    \item Élèves : Cantor, Schwarz, Mittag-Leffler (directeur de thèse de
+      von Koch), et Sofia Kovalevskaïa, à qui il donne des leçons privées
+      pendant quatre ans, l'université refusant alors les femmes ; elle
+      devient en 1889 l'une des premières professeures de mathématiques
+      en Europe.
+    \item Sa fonction de 1872 n'est publiée qu'en 1875, par Paul du
+      Bois-Reymond.
+  \end{itemize}
+\end{frame}
+
+\subsection{Mandelbrot et la géométrie de la nature}
+
+\begin{frame}{Combien mesure la côte de la Grande-Bretagne ? (1967)}
+  \small
+  \begin{itemize}
+    \item Richardson : la longueur mesurée d'une côte dépend de l'unité.
+      Plus le compas est petit ($\varepsilon$), plus il épouse de baies,
+      plus la longueur est grande :
+      $L(\varepsilon)\approx C\,\varepsilon^{1-D}$, avec
+      $D\approx\num{1.25}$ pour la côte ouest britannique.
+    \item Mandelbrot y voit une dimension fractionnaire. Von Koch mesurée
+      avec des segments de longueur $\big(\tfrac13\big)^n$ :
+      $\big(\tfrac43\big)^n = \varepsilon^{1-D}$ avec $D=\ln4/\ln3$.
+    \item Une côte est autosimilaire au sens statistique
+      (remarque 3.2) ; sa dimension mesure son irrégularité.
+    \item The Fractal Geometry of Nature (1982) : « Les nuages ne sont pas
+      des sphères, les montagnes ne sont pas des cônes, les côtes ne sont
+      pas des cercles, l'écorce n'est pas lisse, et l'éclair ne se propage
+      pas en ligne droite. »
+    \item L'ensemble de Mandelbrot ($z\mapsto z^2+c$) ne provient pas d'un
+      SIF : hors du cadre de ce chapitre.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Note historique 3.4 --- Benoît Mandelbrot (1924--2010)}
+  \footnotesize
+  \begin{columns}[T]
+    \begin{column}{0.25\textwidth}
+      \includegraphics[width=\linewidth]{benoit-mandelbrot.jpg}\\
+      {\scriptsize\color{gray}En 2010. Photo : Steve Jurvetson,
+      CC BY 2.0, Wikimedia Commons.}
+    \end{column}
+    \begin{column}{0.72\textwidth}
+      \begin{itemize}
+        \item Né à Varsovie, famille juive d'origine lituanienne, émigrée
+          en France en 1936 ; son oncle Szolem Mandelbrojt est professeur
+          au Collège de France.
+        \item Sous l'Occupation, la famille se cache ; scolarité
+          interrompue. Faute de formation régulière, il développe une
+          approche fondée sur la visualisation géométrique.
+        \item Polytechnique (1944), aéronautique à Caltech, thèse à Paris
+          (1952) sur la distribution statistique des mots.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Note historique 3.4 (suite)}
+  \small
+  \begin{itemize}
+    \item 1958 : choisit IBM, près de New York, plutôt qu'une université ;
+      il y reste trente-cinq ans.
+    \item Linguistique, économie, hydrologie, physique, astronomie : des
+      déplacements entre disciplines qui suscitent la méfiance, mais lui
+      font voir des structures communes.
+    \item 1975 : forge le mot « fractal » (Les objets fractals : forme,
+      hasard et dimension).
+    \item Prix Wolf de physique (1993), prix du Japon (2003) ; professeur
+      titulaire à Yale en 1999, à $75$ ans. Mort en 2010.
+  \end{itemize}
+\end{frame}
+
+\subsection{Les fractales et la finance}
+
+\begin{frame}{Le modèle classique, et ce que Mandelbrot observe}
+  \small
+  \begin{itemize}
+    \item Bachelier (1900, Théorie de la spéculation) : le cours d'une
+      action comme une marche au hasard, variations indépendantes et
+      normales --- à la limite, le mouvement brownien. Fondement de la
+      finance moderne (portefeuille, Black et Scholes, 1973).
+    \item Mandelbrot (1963), prix du coton sur plusieurs décennies :
+      \begin{enumerate}
+        \item les grandes variations sont beaucoup trop fréquentes
+          (« queues épaisses », lois stables de Lévy) : l'effet Noé ;
+        \item la forme des variations ne dépend pas de l'échelle de
+          temps : le graphe est statistiquement auto-affine ; sans les
+          axes, impossible de dire s'il couvre un jour, un mois ou un an.
+      \end{enumerate}
+    \item Plus tard : périodes agitées et calmes se regroupent, une
+      forme de mémoire --- l'effet Joseph.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Figure 3.16 --- Une « caricature » de cours boursier}
+  \small Tendance de $(0,0)$ à $(1,1)$ ; générateur $(0,0)$,
+  $\big(\tfrac49,\tfrac23\big)$, $\big(\tfrac59,\tfrac13\big)$, $(1,1)$.
+  C'est l'attracteur du SIF
+  \[
+    w_1 = \mat{\tfrac49}{0}{0}{\tfrac23}\vec x,\quad
+    w_2 = \mat{\tfrac19}{0}{0}{-\tfrac13}\vec x+\col{\tfrac49}{\tfrac23},\quad
+    w_3 = \mat{\tfrac49}{0}{0}{\tfrac23}\vec x+\col{\tfrac59}{\tfrac13},
+  \]
+  avec $|\Delta y|=\sqrt{\Delta x}$ sur chaque morceau, comme le
+  mouvement brownien.
+  \FigBox[0.36\textheight]{%
+    \begin{tikzpicture}[courbe/.style={sectioncolor, line join=round, thick}]
+      \begin{scope}[scale=2.5]
+        \draw[gray!50, dashed] (0,0) -- (1,1);
+        \input{figures/fractales/cartoon-1.tikz}
+        \foreach \p/\t/\pos in {(0,0)/{$(0,0)$}/right, (0.4444,0.6667)/{$(\frac49,\frac23)$}/left,
+                              (0.5556,0.3333)/{$(\frac59,\frac13)$}/right, (1,1)/{$(1,1)$}/left}
+          \node[pt, label={[etiq]\pos:\t}] at \p {};
+        \node[etiq, sectioncolor] at (0.5,-0.18) {le générateur};
+      \end{scope}
+      \begin{scope}[shift={(3.4,0)}, scale=2.5]
+        \input{figures/fractales/cartoon-2.tikz}
+        \node[etiq, sectioncolor] at (0.5,-0.18) {deuxième étape};
+      \end{scope}
+      \begin{scope}[shift={(6.8,0)}, scale=2.5, courbe/.style={sectioncolor, line join=round, very thin}]
+        \input{figures/fractales/cartoon-7.tikz}
+        \node[etiq, sectioncolor] at (0.5,-0.18) {septième étape};
+      \end{scope}
+      \begin{scope}[shift={(10.2,0)}, scale=2.5, courbe/.style={firebrick3, line join=round, very thin}]
+        \input{figures/fractales/cartoon-melange.tikz}
+        \node[etiq, firebrick3, align=center] at (0.5,-0.22) {septième étape,\\ pièces mélangées};
+      \end{scope}
+    \end{tikzpicture}}
+\end{frame}
+
+\begin{frame}{Les conséquences}
+  \small
+  \begin{itemize}
+    \item En mélangeant au hasard l'ordre des trois morceaux à chaque
+      remplacement, on obtient une courbe qui ressemble à un cours
+      boursier. En déplaçant les points intérieurs du générateur :
+      alternance de périodes calmes et agitées --- le modèle
+      multifractal (1997, avec Calvet et Fisher).
+    \item Les modèles gaussiens sous-estiment le risque de catastrophe :
+      le 19 octobre 1987, le Dow Jones perd près de $\SI{23}{\percent}$
+      en une séance, un événement presque impossible pour un modèle
+      gaussien.
+    \item The (Mis)behavior of Markets (2004, avec R. Hudson) : tenir
+      compte des queues épaisses et de la mémoire des marchés.
+    \item Accueil prudent (modèles plus difficiles ; Black et Scholes
+      reste un outil de base), mais la crise de 2008 a ravivé l'intérêt,
+      et les « queues épaisses » font partie du vocabulaire de la gestion
+      des risques.
+  \end{itemize}
+\end{frame}
