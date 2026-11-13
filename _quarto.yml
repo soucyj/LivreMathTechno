@@ -39,13 +39,14 @@ book:
     - 03-fractales.qmd
     - 04-markov.qmd
     - 05-acp.qmd
-  # Annexes : numérotées A, B, C, D (\appendix dans le PDF) ; les solutions
+  # Annexes : numérotées A, B, C, D, E (\appendix dans le PDF) ; les solutions
   # et la bibliographie suivent, sans numéro.
   appendices:
     - annexe-a-python.qmd
     - annexe-b-ia.qmd
     - annexe-c-theorie.qmd
     - annexe-d-algebre.qmd
+    - annexe-e-nombres.qmd
     - solutions.qmd
     - references.qmd
   downloads: [pdf]

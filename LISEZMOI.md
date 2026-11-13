@@ -16,7 +16,7 @@ en environnements de `livrejs.cls`, et c'est LaTeX qui compose le livre.
 
 Un fichier par chapitre (`03-fractales.qmd`), déclaré dans `_quarto.yml`
 sous `chapters:` ; les annexes (`annexe-d-algebre.qmd`) sont déclarées sous
-`appendices:` et numérotées A, B, C, D (`\appendix` dans le PDF).
+`appendices:` et numérotées A, B, C, D, E (`\appendix` dans le PDF).
 
 | LaTeX (ancien `Livre.tex`) | Markdown (`.qmd`) |
 |---|---|

@@ -1,0 +1,2261 @@
+# Éléments de théorie des nombres {#annexe:nombres}
+
+Cette annexe rappelle les principaux résultats d'arithmétique vus dans
+le cours d'éléments de mathématiques. Elle ne prétend pas en remplacer
+les notes. L'objectif est de disposer, en un seul endroit, des
+définitions, des énoncés et surtout des démonstrations, rédigées de
+façon suffisamment détaillée pour qu'on puisse les reprendre, les
+adapter ou s'en inspirer devant une classe du secondaire.
+
+Toute l'annexe porte sur l'ensemble des entiers
+$\Z = \{\dots, -2, -1, 0, 1, 2, \dots\}$. Nous partirons de la notion
+de divisibilité et de la division avec reste, que les élèves
+pratiquent depuis le primaire. Nous présenterons ensuite les nombres
+premiers, puis le plus grand commun diviseur et l'algorithme d'Euclide
+qui permet de le calculer. Le théorème de Bachet--Bézout et le lemme de
+Gauss qui en découle nous permettront de démontrer complètement le
+théorème fondamental de l'arithmétique : tout entier se décompose, et
+d'une seule façon, en produit de nombres premiers. La seconde moitié de
+l'annexe est consacrée aux congruences, l'« arithmétique de l'horloge »
+inventée par Gauss, et à trois de leurs résultats phares : le petit
+théorème de Fermat, le théorème d'Euler et le théorème des restes
+chinois.
+
+L'ordre de présentation diffère un peu de l'ordre habituel des listes de
+matières (on y trouve souvent la factorisation première avant
+l'algorithme d'Euclide). Nous l'avons choisi pour que chaque démonstration
+ne s'appuie que sur des résultats déjà établis. La factorisation première
+est ainsi traitée en deux temps : son existence à la
+section \ref{sec:E-premiers}, et son unicité à la
+section \ref{sec:E-gauss}.
+
+Ces notions, qui ont longtemps passé pour les plus « pures » des
+mathématiques, sont aujourd'hui au cœur de la technologie. Le
+chiffrement RSA, qui protège les échanges sur Internet, repose sur le
+théorème d'Euler (remarque \ref{rem:E-rsa}). Les chiffres de contrôle
+des codes ISBN, des cartes bancaires ou des numéros d'assurance sociale
+sont des calculs de congruences (exercice \ref{exo:E-isbn}). Les
+ordinateurs eux-mêmes calculent modulo $2^{32}$ ou $2^{64}$ lorsqu'ils
+additionnent des entiers.
+
+## Divisibilité et division euclidienne {#sec:E-divisibilite}
+
+::: {.definition #def:E-divisibilite title="Divisibilité"}
+Soient $a$ et $b$ deux entiers, avec $a \neq 0$. On dit que $a$
+[divise]{.defi} $b$, et on écrit $a \mid b$, s'il existe un entier $k$
+tel que $b = ka$. On dit aussi que $a$ est un [diviseur]{.defi} de $b$,
+ou que $b$ est un [multiple]{.defi} de $a$. Lorsque $a$ ne divise pas
+$b$, on écrit $a \nmid b$.
+:::
+
+Par exemple, $3 \mid 12$ puisque $12 = 4 \times 3$, et $-5 \mid 35$
+puisque $35 = (-7) \times (-5)$ ; en revanche, $4 \nmid 10$, car aucun
+entier $k$ ne vérifie $10 = 4k$. Tout entier non nul divise $0$,
+puisque $0 = 0 \times a$.
+
+::: {.remark #rem:E-notation-divise title="Une relation, pas une opération"}
+Il ne faut pas confondre $a \mid b$, qui est une affirmation (vraie ou
+fausse), et $a / b$, qui est un nombre. Ainsi, « $3 \mid 12$ » est une
+phrase vraie, tandis que $12/3$ est le nombre $4$. Cette confusion est
+fréquente chez les élèves comme chez les étudiants. Il est utile de
+lire systématiquement la barre verticale à voix haute : « $3$ divise
+$12$ ».
+:::
+
+L'intérêt de la définition est qu'elle ramène une question sur la
+divisibilité à l'existence d'un entier $k$. Toutes les démonstrations
+de cette section suivent le même schéma : on écrit les hypothèses sous
+la forme « $b = ka$ », on calcule, puis on reconnaît dans le résultat
+un multiple de l'entier voulu.
+
+::: {.proposition #prop:E-divisibilite title="Propriétés de la divisibilité"}
+Soient $a$, $b$ et $c$ des entiers, avec $a \neq 0$.
+
+(i) On a $a \mid a$, $a \mid 0$ et $1 \mid b$.
+(ii) Si $a \mid b$, alors $a \mid bc$.
+(iii) Si $a \mid b$ et $b \mid c$ (avec $b \neq 0$), alors $a \mid c$.
+(iv) Si $a \mid b$ et $a \mid c$, alors $a \mid (bx + cy)$ pour tous
+     les entiers $x$ et $y$.
+(v) Si $a \mid b$ et $b \neq 0$, alors $|a| \leq |b|$.
+(vi) Si $a \mid b$ et $b \mid a$, alors $a = b$ ou $a = -b$.
+:::
+
+::: {.proof}
+Le point (i) découle de $a = 1 \times a$, $0 = 0 \times a$ et
+$b = b \times 1$. Les points (ii), (iii) et (vi) font l'objet de
+l'exercice \ref{exo:E-divisibilite}. Démontrons (iv) et (v).
+
+Pour (iv), les hypothèses fournissent deux entiers $k$ et $j$ tels que
+$b = ka$ et $c = ja$. Pour tous les entiers $x$ et $y$, on a donc
+$$
+  bx + cy = kax + jay = (kx + jy)\,a .
+$$
+Puisque $kx + jy$ est un entier, $bx + cy$ est un multiple de $a$.
+
+Pour (v), écrivons $b = ka$. Comme $b \neq 0$, l'entier $k$ n'est pas
+nul, de sorte que $|k| \geq 1$. Il suit que
+$|b| = |k|\,|a| \geq |a|$.
+:::
+
+Le point (iv) sera utilisé constamment : un diviseur commun de deux
+nombres divise toutes leurs [combinaisons linéaires]{.defi} (à
+coefficients entiers). En particulier, il divise leur somme et leur
+différence. Le point (v) dit qu'un entier non nul n'a qu'un nombre fini de
+diviseurs, tous compris entre $-|b|$ et $|b|$.
+
+### La division euclidienne
+
+Lorsque $a$ ne divise pas $b$, la division « ne tombe pas juste » ; il
+reste quelque chose. C'est la division avec reste que les élèves
+apprennent au primaire : $17$ divisé par $5$ donne $3$, reste $2$, car
+$17 = 3 \times 5 + 2$. Pour énoncer et démontrer ce résultat avec soin,
+nous aurons besoin d'une propriété des entiers naturels qui paraît
+évidente, mais sur laquelle reposent presque toutes les démonstrations
+d'arithmétique.
+
+::: {.remark #rem:E-bon-ordre title="Le principe du bon ordre"}
+Toute partie non vide de $\N = \{0, 1, 2, \dots\}$ possède un plus
+petit élément. Cette propriété est fausse dans $\Z$ (l'ensemble des
+entiers négatifs n'a pas de plus petit élément) ou dans
+$\intoo{0}{1}$ (il n'y a pas de plus petit réel strictement positif).
+Elle est équivalente au principe de récurrence. Nous l'utiliserons sous
+la forme suivante : si une propriété est fausse pour au moins un entier
+naturel, il existe un plus petit entier pour lequel elle est fausse.
+On l'appelle un [plus petit contre-exemple]{.defi}.
+:::
+
+::: {.theorem #thm:E-division title="Division euclidienne"}
+Soient $a \in \Z$ et $b$ un entier strictement positif. Il existe un
+unique couple d'entiers $(q, r)$ tel que
+$$
+  a = bq + r \qquad\text{et}\qquad 0 \leq r < b .
+$$
+L'entier $q$ s'appelle le [quotient]{.defi} et $r$ le [reste]{.defi} de
+la division euclidienne de $a$ par $b$.
+:::
+
+::: {.proof}
+L'idée est simple : parmi les nombres $a$, $a - b$, $a - 2b$, $a - 3b$,
+…, et $a + b$, $a + 2b$, …, on retient le plus petit qui soit encore
+positif ou nul.
+
+Existence. Considérons l'ensemble
+$$
+  S = \{\, a - kb \;:\; k \in \Z \text{ et } a - kb \geq 0 \,\}.
+$$
+C'est une partie de $\N$. Elle n'est pas vide : pour $k = -|a|$, on
+a $a - kb = a + |a|\,b \geq a + |a| \geq 0$, puisque $b \geq 1$. Par le
+principe du bon ordre, $S$ possède un plus petit élément, que nous
+notons $r$ ; il s'écrit $r = a - qb$ pour un certain entier $q$. Par
+construction, $a = bq + r$ et $r \geq 0$. Supposons par l'absurde que
+$r \geq b$. Alors $r - b = a - (q+1)b$ est un élément de $S$ (il est
+positif ou nul) strictement plus petit que $r$, ce qui contredit le
+choix de $r$. Donc $r < b$.
+
+Unicité. Supposons que $a = bq + r = bq' + r'$, avec $0 \leq r < b$ et
+$0 \leq r' < b$. En soustrayant, on obtient $b(q - q') = r' - r$. Le
+membre de droite est strictement compris entre $-b$ et $b$ ; c'est
+aussi un multiple de $b$. Le seul multiple de $b$ dans
+$\intoo{-b}{b}$ est $0$. Ainsi $r' = r$, puis $b(q-q') = 0$, d'où
+$q = q'$ puisque $b \neq 0$.
+:::
+
+::: {.example #ex:E-division title="Avec un dividende négatif"}
+Pour diviser $-47$ par $6$, il ne suffit pas de diviser $47$ par $6$
+et de changer les signes : $-47 = 6 \times (-7) - 5$ ne convient pas,
+car le reste doit être positif ou nul. On descend d'un cran :
+$$
+  -47 = 6 \times (-8) + 1, \qquad 0 \leq 1 < 6 .
+$$
+Le quotient est $-8$ et le reste est $1$. Géométriquement, les
+multiples de $6$ découpent la droite numérique en intervalles de
+longueur $6$, et $q$ est le numéro de l'intervalle
+$\intfo{6q}{6q+6}$ qui contient $a$ ; ici, $-47$ est dans
+$\intfo{-48}{-42}$.
+:::
+
+On remarque que $b \mid a$ si et seulement si le reste de la division
+de $a$ par $b$ est nul. C'est ce critère qu'appliquent les calculatrices
+et les langages de programmation : en Python, `a % b` donne le reste et
+`a // b` le quotient, avec la même convention que ci-dessus lorsque
+$b > 0$ (`-47 % 6` vaut bien `1`).
+
+### Diviseurs communs et multiples communs
+
+::: {.definition #def:E-pgcd title="PGCD, PPCM, nombres premiers entre eux"}
+Soient $a$ et $b$ deux entiers qui ne sont pas tous les deux nuls. Le
+[plus grand commun diviseur]{.defi} de $a$ et de $b$, noté
+$\pgcd(a, b)$, est le plus grand entier qui divise à la fois $a$ et $b$.
+Lorsque $\pgcd(a,b) = 1$, on dit que $a$ et $b$ sont
+[premiers entre eux]{.defi} (ou [copremiers]{.defi}).
+
+Si $a$ et $b$ sont tous deux non nuls, leur
+[plus petit commun multiple]{.defi}, noté $\ppcm(a, b)$, est le plus
+petit entier strictement positif qui est à la fois un multiple de $a$
+et un multiple de $b$.
+:::
+
+Le PGCD est bien défini : $1$ est un diviseur commun, et si par exemple
+$a \neq 0$, tout diviseur commun est au plus $|a|$ par le point (v) de
+la proposition \ref{prop:E-divisibilite}. Il est donc toujours au moins
+égal à $1$. Le PPCM est bien défini aussi, puisque $|ab|$ est un
+multiple commun strictement positif. On a par exemple
+$\pgcd(12, 18) = 6$, $\ppcm(12, 18) = 36$, $\pgcd(8, 15) = 1$ et
+$\pgcd(a, 0) = |a|$ pour tout $a \neq 0$. Les signes ne jouent aucun
+rôle : $\pgcd(a,b) = \pgcd(|a|, |b|)$. C'est pourquoi, dans la suite,
+nous travaillerons le plus souvent avec des entiers positifs.
+
+::: {.secondaire title="Le PGCD et le PPCM en classe"}
+Au primaire et au premier cycle du secondaire, les élèves rencontrent
+les diviseurs et les multiples, les nombres premiers, les critères de
+divisibilité par $2$, $3$, $5$, $9$ et $10$ ainsi que la notation
+exponentielle. Le PGCD intervient lorsqu'on réduit une fraction à sa plus
+simple expression ($\tfrac{12}{18} = \tfrac{2}{3}$, en divisant le
+numérateur et le dénominateur par $6$) et le PPCM lorsqu'on cherche le
+plus petit dénominateur commun ($\tfrac{1}{12} + \tfrac{1}{18} =
+\tfrac{3}{36} + \tfrac{2}{36}$). On les calcule alors en dressant la
+liste des diviseurs ou des multiples, ou à l'aide de la factorisation
+première. Les méthodes de cette annexe, en particulier l'algorithme
+d'Euclide, sont bien plus efficaces dès que les nombres deviennent
+grands, et elles expliquent pourquoi les méthodes scolaires fonctionnent.
+:::
+
+## Nombres premiers {#sec:E-premiers}
+
+::: {.definition #def:E-premier title="Nombre premier"}
+Un entier $p \geq 2$ est [premier]{.defi} si ses seuls diviseurs
+positifs sont $1$ et $p$. Un entier $n \geq 2$ qui n'est pas premier est
+dit [composé]{.defi} : il s'écrit alors $n = ab$ avec
+$1 < a < n$ et $1 < b < n$.
+:::
+
+Les premiers nombres premiers sont $2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
+31, 37, 41, 43, 47$. Le nombre $1$ n'est pas premier ; nous verrons à
+la remarque \ref{rem:E-un-premier} que cette convention n'a rien
+d'arbitraire.
+
+::: {.lemma #lem:E-diviseur-premier title="Tout entier a un diviseur premier"}
+Soit $n \geq 2$ un entier.
+
+(i) Le plus petit diviseur de $n$ strictement supérieur à $1$ est un
+    nombre premier. En particulier, $n$ possède au moins un diviseur
+    premier.
+(ii) Si $n$ est composé, son plus petit diviseur premier $p$ vérifie
+     $p \leq \sqrt{n}$.
+:::
+
+::: {.proof}
+(i) L'ensemble des diviseurs de $n$ strictement supérieurs à $1$ n'est
+pas vide, puisqu'il contient $n$. Par le principe du bon ordre, il
+possède un plus petit élément $p$. Supposons que $p$ ne soit pas
+premier : il aurait alors un diviseur $d$ avec $1 < d < p$. Comme
+$d \mid p$ et $p \mid n$, on aurait $d \mid n$ (point (iii) de la
+proposition \ref{prop:E-divisibilite}). Ainsi $d$ serait un diviseur
+de $n$ strictement supérieur à $1$ et plus petit que $p$, ce qui est
+impossible. Donc $p$ est premier.
+
+(ii) Si $n$ est composé, écrivons $n = pm$, où $p$ est son plus petit
+diviseur supérieur à $1$. Puisque $n$ n'est pas premier, $p < n$ et
+donc $m > 1$. Alors $m$ est lui aussi un diviseur de $n$ supérieur à
+$1$, donc $m \geq p$ par minimalité de $p$. On en tire
+$n = pm \geq p \cdot p = p^2$, c'est-à-dire $p \leq \sqrt{n}$.
+:::
+
+Le point (ii) fournit un test de primalité : pour savoir si $n$ est
+premier, il suffit de vérifier qu'aucun nombre premier
+$p \leq \sqrt{n}$ ne le divise. Par exemple, $\sqrt{97} < 10$ et ni $2$,
+ni $3$, ni $5$, ni $7$ ne divisent $97$ ; c'est donc un nombre premier.
+Le même raisonnement est à la base du [crible d'Ératosthène]{.defi}.
+Pour obtenir tous les nombres premiers jusqu'à $N$, on écrit les
+entiers de $2$ à $N$ ; on entoure $2$ et on raye ses multiples ; on
+entoure le premier nombre non rayé ($3$) et on raye ses multiples ; et
+ainsi de suite. On peut s'arrêter dès que le nombre entouré dépasse
+$\sqrt{N}$ : tous les nombres non rayés qui restent sont alors premiers.
+
+### Une infinité de nombres premiers
+
+Les nombres premiers se raréfient à mesure qu'on avance : il y en a
+$25$ entre $1$ et $100$, mais seulement $16$ entre $\num{1001}$ et
+$\num{1100}$. On pourrait croire qu'ils finissent par disparaître. Le
+résultat suivant, démontré par Euclide il y a plus de deux mille ans,
+affirme qu'il n'en est rien.
+
+::: {.theorem #thm:E-euclide-infini title="Euclide"}
+Il existe une infinité de nombres premiers.
+:::
+
+::: {.proof}
+Raisonnons par l'absurde et supposons qu'il n'y ait qu'un nombre fini
+de nombres premiers, que nous énumérons tous : $p_1, p_2, \dots, p_k$.
+Formons le nombre
+$$
+  N = p_1 p_2 \cdots p_k + 1 .
+$$
+Comme $N \geq 2 + 1 \geq 2$, le lemme \ref{lem:E-diviseur-premier}
+garantit que $N$ possède un diviseur premier $p$. Puisque la liste
+$p_1, \dots, p_k$ contient tous les nombres premiers, $p$ est l'un
+d'eux, disons $p = p_i$. Alors $p$ divise $N$, et $p$ divise aussi le
+produit $p_1 p_2 \cdots p_k$, dont il est un des facteurs. Par le
+point (iv) de la proposition \ref{prop:E-divisibilite}, $p$ divise la
+différence
+$$
+  N - p_1 p_2 \cdots p_k = 1 .
+$$
+Or aucun nombre premier ne divise $1$, puisque $p \geq 2$. Cette
+contradiction montre que notre hypothèse était fausse : la liste des
+nombres premiers ne peut pas être finie.
+:::
+
+::: {.remark #rem:E-euclide-N title="Le nombre N n'est pas forcément premier"}
+On lit parfois que la démonstration d'Euclide « fabrique » un nouveau
+nombre premier $N$. C'est inexact : la démonstration montre seulement que
+$N$ a un facteur premier qui n'est pas dans la liste. Avec les six
+premiers nombres premiers, on obtient
+$$
+  2 \cdot 3 \cdot 5 \cdot 7 \cdot 11 \cdot 13 + 1 = \num{30031}
+  = 59 \times 509 ,
+$$
+qui n'est pas premier ; mais ses facteurs $59$ et $509$ sont bien
+absents de la liste de départ. Il est aussi instructif de remarquer que
+la démonstration n'est pas une recette pour trouver « le » nombre
+premier suivant : elle ne fait qu'établir qu'on ne peut jamais les avoir
+tous.
+:::
+
+:::: {.historical #hist:euclide title="Euclide d'Alexandrie" needspace="18"}
+::: {.portrait src="figures/portraits/euclide.jpg" legende="Euclide, tel que l'imaginait Juste de Gand vers 1474 (palais ducal d'Urbino). L'inscription « Euclidi Megaren » le confond avec le philosophe Euclide de Mégare." credit="Domaine public, Wikimedia Commons."}
+On ne sait presque rien de la vie d'Euclide, sinon qu'il enseignait à
+Alexandrie vers $300$ av. J.-C., sous le règne de Ptolémée Ier. Aucun
+portrait d'époque ne nous est parvenu ; celui-ci est imaginé, près de
+dix-huit siècles plus tard. Son œuvre, en revanche, est sans doute le
+manuel de mathématiques le plus lu de l'histoire. Les Éléments, en
+treize livres, rassemblent et organisent le savoir géométrique et
+arithmétique des Grecs à partir d'un petit nombre de définitions, de
+postulats et de notions communes [@EuclideVitrac1994].
+:::
+
+\medskip
+
+Les livres VII, VIII et IX sont consacrés à l'arithmétique. On y trouve
+la définition des nombres premiers et des nombres premiers entre eux,
+l'algorithme qui porte aujourd'hui le nom d'Euclide (livre VII,
+propositions 1 et 2), une forme du lemme qui sera appelé plus tard lemme
+de Gauss (livre VII, proposition 30) et la démonstration de l'infinitude
+des nombres premiers (livre IX, proposition 20). Euclide ne dit d'ailleurs
+pas « il y a une infinité de nombres premiers », notion que les Grecs
+évitaient : il affirme que « les nombres premiers sont plus nombreux que
+toute multitude de nombres premiers proposée ». Plus que ses résultats,
+c'est sa méthode qui a marqué les mathématiques : chaque énoncé y est
+démontré à partir des précédents. Pendant plus de deux mille ans, les
+Éléments ont servi de modèle à ce qu'on appelle une démonstration
+[@MacTutorEuclide].
+::::
+
+### Existence de la factorisation première
+
+::: {.proposition #prop:E-factorisation-existence title="Existence de la factorisation"}
+Tout entier $n \geq 2$ peut s'écrire comme un produit de nombres
+premiers (un produit d'un seul facteur étant permis).
+:::
+
+::: {.proof}
+Supposons le contraire. Par le principe du bon ordre, il existe alors un
+plus petit entier $n \geq 2$ qui n'est pas un produit de nombres
+premiers. Cet entier $n$ n'est pas premier, sinon il serait un produit
+d'un seul facteur premier. Il est donc composé : $n = ab$, avec
+$1 < a < n$ et $1 < b < n$. Comme $a$ et $b$ sont plus petits que $n$
+et au moins égaux à $2$, ils s'écrivent, par minimalité de $n$, comme des
+produits de nombres premiers. En mettant ces deux produits bout à bout,
+on obtient une écriture de $n = ab$ comme produit de nombres premiers,
+ce qui est une contradiction.
+:::
+
+En pratique, on obtient la factorisation en divisant successivement
+par les nombres premiers $2, 3, 5, 7, \dots$ : par exemple,
+$360 = 2 \times 180 = 2^2 \times 90 = 2^3 \times 45 = 2^3 \times 3^2
+\times 5$. Rien, à ce stade, ne garantit qu'une autre façon de
+procéder (commencer par $360 = 10 \times 36$, par exemple) mène au
+même résultat. Cette unicité, que tout le monde tient pour acquise,
+demande en fait un argument supplémentaire : le lemme de Gauss, que nous
+démontrerons à la section \ref{sec:E-gauss}.
+
+## Le PGCD et l'algorithme d'Euclide {#sec:E-euclide}
+
+Pour calculer $\pgcd(1071, 462)$, on pourrait énumérer les diviseurs des
+deux nombres, ou les factoriser. Ces méthodes deviennent vite
+impraticables : factoriser un nombre de quelques centaines de chiffres
+est hors de portée des ordinateurs actuels. L'algorithme d'Euclide
+calcule le PGCD sans jamais factoriser, à l'aide de divisions
+euclidiennes successives. Il repose sur l'observation suivante.
+
+::: {.lemma #lem:E-pgcd-reste title="Le PGCD ne change pas quand on remplace a par son reste"}
+Soient $a$ et $b$ des entiers, avec $b > 0$, et soit $a = bq + r$ la
+division euclidienne de $a$ par $b$. Alors $a$ et $b$ ont exactement les
+mêmes diviseurs communs que $b$ et $r$. En particulier,
+$$
+  \pgcd(a, b) = \pgcd(b, r) .
+$$
+:::
+
+::: {.proof}
+Soit $d$ un diviseur commun de $a$ et de $b$. Par le point (iv) de la
+proposition \ref{prop:E-divisibilite}, $d$ divise la combinaison
+$a - qb = r$ ; c'est donc un diviseur commun de $b$ et de $r$.
+Réciproquement, si $d$ divise $b$ et $r$, il divise la combinaison
+$qb + r = a$, et c'est un diviseur commun de $a$ et de $b$. Les deux
+ensembles de diviseurs communs sont donc égaux. Ils ont en particulier
+le même plus grand élément.
+:::
+
+En répétant ce remplacement, on obtient des nombres de plus en plus
+petits, sans changer le PGCD.
+
+::: {.algorithme #algo:E-euclide title="Algorithme d'Euclide"}
+Données : deux entiers $a \geq b > 0$.
+
+1. Poser $r_0 = a$, $r_1 = b$ et $k = 1$.
+2. Tant que $r_k \neq 0$ : effectuer la division euclidienne de
+   $r_{k-1}$ par $r_k$, $r_{k-1} = q_k r_k + r_{k+1}$ avec
+   $0 \leq r_{k+1} < r_k$, puis remplacer $k$ par $k + 1$.
+3. Renvoyer le dernier reste non nul, $r_{k-1}$.
+:::
+
+::: {.theorem #thm:E-euclide-algo title="Validité de l'algorithme d'Euclide"}
+Pour tous les entiers $a \geq b > 0$, l'algorithme \ref{algo:E-euclide}
+s'arrête après un nombre fini d'étapes, et le dernier reste non nul
+qu'il renvoie est $\pgcd(a, b)$.
+:::
+
+::: {.proof}
+Arrêt. Les restes successifs vérifient
+$b = r_1 > r_2 > r_3 > \cdots \geq 0$. Une suite strictement
+décroissante d'entiers positifs ou nuls ne peut pas compter plus de
+$b + 1$ termes : il existe donc un indice $n$ pour lequel
+$r_n \neq 0$ et $r_{n+1} = 0$, et l'algorithme s'arrête.
+
+Résultat. Par le lemme \ref{lem:E-pgcd-reste}, appliqué à chacune des
+divisions effectuées,
+$$
+  \pgcd(a, b) = \pgcd(r_0, r_1) = \pgcd(r_1, r_2) = \cdots
+  = \pgcd(r_n, r_{n+1}) = \pgcd(r_n, 0) = r_n .
+$$
+La dernière égalité vient de ce que le plus grand diviseur de $r_n > 0$
+est $r_n$ lui-même, et que $r_n$ divise $0$.
+:::
+
+::: {.example #ex:E-euclide title="Le PGCD de 1071 et 462"}
+Les divisions successives donnent
+\begin{align*}
+  1071 &= 2 \times 462 + 147,\\
+  462  &= 3 \times 147 + 21,\\
+  147  &= 7 \times 21 + 0 .
+\end{align*}
+Le dernier reste non nul est $21$ : $\pgcd(1071, 462) = 21$. Trois
+divisions ont suffi, alors que l'énumération des diviseurs de $1071$
+en demande beaucoup plus. On vérifie que $1071 = 21 \times 51$ et
+$462 = 21 \times 22$, et que $51$ et $22$ sont bien premiers entre eux.
+:::
+
+::: {.remark #rem:E-lame title="Un algorithme très rapide"}
+En 1844, Gabriel Lamé a démontré que le nombre de divisions effectuées
+par l'algorithme d'Euclide ne dépasse jamais cinq fois le nombre de
+chiffres du plus petit des deux nombres. Le pire cas est atteint par
+deux nombres de Fibonacci consécutifs, comme $34$ et $21$, pour
+lesquels tous les quotients valent $1$. Ainsi, le PGCD de deux nombres
+de $300$ chiffres s'obtient en au plus $\num{1500}$ divisions, soit une
+fraction de seconde pour un ordinateur, alors qu'aucun algorithme connu
+ne permet de les factoriser en un temps raisonnable. Ce contraste entre
+la facilité du PGCD et la difficulté de la factorisation est
+précisément ce qui rend possible le chiffrement RSA
+(remarque \ref{rem:E-rsa}).
+:::
+
+### Une interprétation géométrique : paver un rectangle
+
+L'algorithme d'Euclide a une interprétation visuelle très parlante,
+qui en est d'ailleurs la forme la plus ancienne. Considérons un
+rectangle de dimensions $a \times b$, avec $a \geq b$, et cherchons le
+plus grand carré qui permette de le paver exactement, c'est-à-dire de
+le recouvrir avec des copies de ce carré, sans chevauchement ni
+découpe.
+
+On commence par découper dans le rectangle autant de carrés de côté
+$b$ que possible. On en place $q_1$, où $q_1$ est le quotient de $a$
+par $b$, et il reste une bande de dimensions $r_2 \times b$, où $r_2$
+est le reste. Dans cette bande, on découpe à nouveau le plus possible de
+carrés de côté $r_2$ ; il reste une bande plus petite. On recommence
+jusqu'à ce que la dernière bande soit entièrement remplie de carrés.
+Chaque étape correspond exactement à une division de l'algorithme
+d'Euclide, et le côté des derniers carrés est le dernier reste non nul,
+c'est-à-dire le PGCD.
+
+La figure \ref{fig:E-pavage} illustre le cas d'un rectangle
+$42 \times 30$. On y découpe un carré $30 \times 30$
+($42 = 1 \times 30 + 12$), puis deux carrés $12 \times 12$ dans la
+bande restante ($30 = 2 \times 12 + 6$), puis deux carrés $6 \times 6$
+($12 = 2 \times 6$), qui remplissent exactement ce qui reste. Le
+PGCD est $6$, et le rectangle tout entier se pave avec
+$7 \times 5 = 35$ carrés de côté $6$.
+
+::: {#fig:E-pavage}
+![](figures/tikz/fig-E-pavage.tikz)
+
+L'algorithme d'Euclide appliqué au rectangle $42 \times 30$. À gauche, on découpe successivement les plus grands carrés possibles : un carré de côté $30$, deux de côté $12$, puis deux de côté $6$, qui remplissent la dernière bande. À droite, les carrés de côté $6 = \pgcd(42, 30)$ pavent le rectangle entier ; ce sont les plus grands carrés qui le permettent.
+:::
+
+::: {.proposition #prop:E-pavage title="Le PGCD comme plus grand carré pavant"}
+Soient $a$ et $b$ des entiers strictement positifs. Un rectangle
+$a \times b$ peut être pavé par des carrés identiques de côté entier
+$c$ si et seulement si $c$ est un diviseur commun de $a$ et de $b$. Le
+plus grand carré qui permet de le paver a donc pour côté
+$\pgcd(a, b)$.
+:::
+
+::: {.proof}
+Si $c \mid a$ et $c \mid b$, on place $a/c$ carrés le long du côté de
+longueur $a$ et $b/c$ carrés le long du côté de longueur $b$ ; les
+$(a/c)(b/c)$ carrés ainsi disposés en grille pavent le rectangle.
+
+Réciproquement, supposons que des carrés de côté $c$ pavent le
+rectangle. Considérons le côté inférieur, de longueur $a$. Les carrés
+qui touchent ce côté sont posés côte à côte et le recouvrent
+exactement, sans chevaucher : s'il y en a $m$, alors $a = mc$, donc
+$c \mid a$. Le même argument appliqué au côté gauche montre que
+$c \mid b$. Les côtés possibles sont donc exactement les diviseurs
+communs, et le plus grand est le PGCD.
+:::
+
+Cette interprétation fournit aussi une justification visuelle du
+lemme \ref{lem:E-pgcd-reste} : un carré qui pave le rectangle de départ
+pave chacun des carrés découpés (son côté divise $b$) et donc aussi la
+bande restante ; inversement, un carré qui pave la bande restante et les
+carrés découpés pave le rectangle entier.
+
+:::: {.historical #hist:euclide-algorithme title="Le plus vieil algorithme encore en usage"}
+Euclide ne parle pas de divisions, mais de soustractions répétées :
+« le plus petit nombre étant continuellement retranché du plus grand »
+(livre VII, proposition 2). Les Grecs appelaient ce procédé
+anthyphérèse, littéralement « soustraction réciproque », et l'appliquaient
+aussi bien aux nombres qu'aux longueurs. C'est exactement le découpage de
+carrés de la figure \ref{fig:E-pavage}. Appliqué à deux longueurs comme le
+côté et la diagonale d'un carré, le procédé ne s'arrête jamais. C'est l'une
+des façons dont les Grecs ont compris que ces deux longueurs n'ont pas de
+commune mesure, autrement dit que $\sqrt{2}$ est irrationnel.
+
+Donald Knuth, l'un des fondateurs de l'informatique théorique, voit
+dans l'algorithme d'Euclide le doyen de tous les algorithmes : c'est le
+plus ancien algorithme non trivial qui soit encore utilisé aujourd'hui
+[@Knuth1997]. Il tourne en effet, sous une forme à peine modifiée, des
+milliards de fois par jour dans les navigateurs Web et les cartes à puce,
+chaque fois qu'une connexion sécurisée calcule un inverse modulaire
+(section \ref{sec:E-congruences}).
+::::
+
+## Le théorème de Bachet--Bézout {#sec:E-bezout}
+
+En « remontant » les calculs de l'algorithme d'Euclide, on peut écrire
+le PGCD de $a$ et de $b$ comme une combinaison de $a$ et de $b$. Ce
+résultat, d'apparence technique, est la clé de presque tout ce qui suit.
+
+::: {.theorem #thm:E-bezout title="Bachet--Bézout"}
+Soient $a$ et $b$ deux entiers non tous les deux nuls, et
+$d = \pgcd(a, b)$. Il existe des entiers $u$ et $v$ tels que
+$$
+  au + bv = d .
+$$
+:::
+
+::: {.proof}
+Comme $\pgcd(a, b) = \pgcd(|a|, |b|)$ et qu'il suffit de changer le
+signe de $u$ ou de $v$ pour passer de $a$ à $-a$, ou de $b$ à $-b$, on
+peut supposer $a \geq b \geq 0$. Si $b = 0$, alors $d = a$ et l'on prend
+$u = 1$, $v = 0$. Supposons donc $b > 0$, et reprenons les notations de
+l'algorithme \ref{algo:E-euclide} : $r_0 = a$, $r_1 = b$ et
+$r_{k+1} = r_{k-1} - q_k r_k$, jusqu'au dernier reste non nul
+$r_n = d$.
+
+Montrons que chaque reste $r_k$ est une combinaison de $a$ et de $b$,
+c'est-à-dire qu'il s'écrit $r_k = au_k + bv_k$ pour des entiers $u_k$
+et $v_k$. C'est vrai pour $r_0 = a = a \cdot 1 + b \cdot 0$ et pour
+$r_1 = b = a \cdot 0 + b \cdot 1$. Supposons-le vrai pour deux restes
+consécutifs $r_{k-1}$ et $r_k$. Alors
+$$
+  r_{k+1} = r_{k-1} - q_k r_k
+          = (au_{k-1} + bv_{k-1}) - q_k(au_k + bv_k)
+          = a\,(u_{k-1} - q_k u_k) + b\,(v_{k-1} - q_k v_k),
+$$
+et $r_{k+1}$ est aussi une combinaison de $a$ et de $b$. De proche en
+proche, la propriété est vraie pour tous les restes, en particulier pour
+$r_n = d$.
+:::
+
+La démonstration est constructive : elle fournit un moyen de calculer
+$u$ et $v$, appelé [algorithme d'Euclide étendu]{.defi}. On dispose les
+calculs en lignes de la forme $r = au + bv$, qu'on combine comme les
+lignes d'une matrice dans la méthode de Gauss--Jordan
+(section \ref{sec:D-gauss}). Chaque nouvelle ligne est l'avant-dernière
+moins le quotient fois la dernière.
+
+::: {.example #ex:E-bezout title="Coefficients de Bézout pour 1071 et 462"}
+Reprenons l'exemple \ref{ex:E-euclide}. Le tableau
+\ref{tab:E-euclide-etendu} donne $21 = 1071 \times (-3) + 462 \times
+7$. On le vérifie : $-3213 + 3234 = 21$.
+
+On peut aussi remonter les divisions à la main, en partant de l'avant-dernière :
+\begin{align*}
+  21 &= 462 - 3 \times 147\\
+     &= 462 - 3 \times (1071 - 2 \times 462)\\
+     &= 7 \times 462 - 3 \times 1071 .
+\end{align*}
+Les coefficients ne sont pas uniques : la dernière ligne du tableau
+montre que $1071 \times 22 - 462 \times 51 = 0$. On peut donc ajouter
+$22$ à $u$ et retrancher $51$ de $v$ autant de fois qu'on le veut :
+$21 = 1071 \times 19 + 462 \times (-44)$, par exemple.
+:::
+
+::: {#tab:E-euclide-etendu}
+L'algorithme d'Euclide étendu pour $a = 1071$ et $b = 462$. Chaque ligne vérifie $r = 1071\,u + 462\,v$ ; l'opération indiquée dans la première colonne utilise le quotient de la division de l'avant-dernier reste par le dernier.
+
+| Ligne | $r$ | $u$ | $v$ |
+|:--|:-:|:-:|:-:|
+| $L_0$ | $1071$ | $1$ | $0$ |
+| $L_1$ | $462$ | $0$ | $1$ |
+| $L_2 = L_0 - 2L_1$ | $147$ | $1$ | $-2$ |
+| $L_3 = L_1 - 3L_2$ | $21$ | $-3$ | $7$ |
+| $L_4 = L_2 - 7L_3$ | $0$ | $22$ | $-51$ |
+:::
+
+::: {.corollary #cor:E-bezout title="Conséquences du théorème de Bachet--Bézout"}
+Soient $a$ et $b$ deux entiers non tous les deux nuls, et
+$d = \pgcd(a, b)$.
+
+(i) Tout diviseur commun de $a$ et de $b$ divise $d$.
+(ii) Les entiers de la forme $au + bv$, avec $u, v \in \Z$, sont
+     exactement les multiples de $d$.
+(iii) Les entiers $a$ et $b$ sont premiers entre eux si et seulement
+      s'il existe des entiers $u$ et $v$ tels que $au + bv = 1$.
+:::
+
+::: {.proof}
+(i) Écrivons $d = au + bv$. Un diviseur commun de $a$ et de $b$ divise
+cette combinaison, donc divise $d$.
+
+(ii) Comme $d$ divise $a$ et $b$, il divise toute combinaison
+$au + bv$. Inversement, un multiple $md$ de $d$ s'écrit
+$md = a(mu) + b(mv)$.
+
+(iii) Si $\pgcd(a, b) = 1$, le théorème donne directement $u$ et $v$.
+Réciproquement, si $au + bv = 1$, alors $d$ divise $1$ par le point (ii),
+de sorte que $d = 1$.
+:::
+
+Le point (iii) ne s'étend pas à d'autres valeurs que $1$ : l'égalité
+$au + bv = 6$ montre seulement que $\pgcd(a,b)$ divise $6$. Par
+exemple, $4 \times 3 + 2 \times (-3) = 6$, mais $\pgcd(4, 2) = 2$.
+
+::: {.remark #rem:E-bachet title="Bachet ou Bézout ?"}
+Le résultat pour les entiers figure dans la deuxième édition (1624) des
+Problèmes plaisants et délectables qui se font par les nombres de Claude-Gaspard
+Bachet de Méziriac, un recueil d'énigmes arithmétiques. Étienne Bézout
+l'a étendu aux polynômes en 1779, dans un ouvrage sur les équations
+algébriques. L'usage, surtout en France, a longtemps retenu le seul nom
+de Bézout ; on parle de plus en plus du théorème de Bachet--Bézout, ou de
+l'identité de Bézout pour l'égalité $au + bv = d$ elle-même.
+:::
+
+## Le lemme de Gauss et l'unicité de la factorisation {#sec:E-gauss}
+
+::: {.theorem #thm:E-gauss title="Lemme de Gauss"}
+Soient $a$, $b$ et $c$ des entiers, avec $a \neq 0$. Si $a \mid bc$ et
+si $\pgcd(a, b) = 1$, alors $a \mid c$.
+:::
+
+::: {.proof}
+Puisque $a$ et $b$ sont premiers entre eux, le théorème de
+Bachet--Bézout fournit des entiers $u$ et $v$ tels que $au + bv = 1$.
+En multipliant cette égalité par $c$, on obtient
+$$
+  c = acu + bcv .
+$$
+L'entier $a$ divise $acu$, évidemment, et il divise $bcv$ puisqu'il
+divise $bc$ par hypothèse. Il divise donc leur somme, qui est $c$.
+:::
+
+L'hypothèse $\pgcd(a,b) = 1$ est indispensable : $6$ divise
+$4 \times 9 = 36$, mais $6$ ne divise ni $4$ ni $9$. Le cas particulier
+où $a$ est un nombre premier mérite d'être énoncé à part.
+
+::: {.corollary #cor:E-lemme-euclide title="Lemme d'Euclide"}
+Soit $p$ un nombre premier. Si $p \mid bc$, alors $p \mid b$ ou
+$p \mid c$. Plus généralement, si $p$ divise un produit
+$a_1 a_2 \cdots a_k$, alors $p$ divise au moins l'un des facteurs $a_i$.
+:::
+
+::: {.proof}
+Supposons que $p \nmid b$. Les seuls diviseurs positifs de $p$ sont $1$
+et $p$ ; comme $p$ ne divise pas $b$, le seul diviseur commun positif de
+$p$ et de $b$ est $1$, et $\pgcd(p, b) = 1$. Le lemme de Gauss donne
+alors $p \mid c$.
+
+Pour un produit de $k$ facteurs, on raisonne par récurrence sur $k$.
+Si $p \mid a_1 (a_2 \cdots a_k)$, le premier cas montre que $p \mid a_1$
+ou $p \mid a_2 \cdots a_k$ ; dans le second cas, l'hypothèse de
+récurrence s'applique au produit de $k - 1$ facteurs.
+:::
+
+::: {.corollary #cor:E-produit-diviseurs title="Deux diviseurs premiers entre eux"}
+Soient $a$, $b$ et $c$ des entiers, avec $a$ et $b$ non nuls. Si
+$a \mid c$, $b \mid c$ et $\pgcd(a, b) = 1$, alors $ab \mid c$.
+:::
+
+::: {.proof}
+Écrivons $c = ak$. Alors $b \mid ak$ et $\pgcd(b, a) = 1$ ; le lemme de
+Gauss donne $b \mid k$, c'est-à-dire $k = bl$ pour un certain entier
+$l$. Ainsi $c = abl$, et $ab \mid c$.
+:::
+
+Là encore, l'hypothèse est nécessaire : $4 \mid 12$ et $6 \mid 12$, mais
+$24 \nmid 12$.
+
+### Le théorème fondamental de l'arithmétique
+
+::: {.theorem #thm:E-fondamental title="Théorème fondamental de l'arithmétique"}
+Tout entier $n \geq 2$ s'écrit comme un produit de nombres premiers,
+et cette écriture est unique à l'ordre des facteurs près. Autrement dit,
+il existe des nombres premiers distincts $p_1 < p_2 < \cdots < p_k$ et
+des exposants $\alpha_1, \dots, \alpha_k \geq 1$, déterminés de façon
+unique par $n$, tels que
+$$
+  n = p_1^{\alpha_1} p_2^{\alpha_2} \cdots p_k^{\alpha_k} .
+$$
+:::
+
+::: {.proof}
+L'existence a été établie à la
+proposition \ref{prop:E-factorisation-existence}. Montrons l'unicité,
+encore une fois à l'aide d'un plus petit contre-exemple. Supposons qu'il
+existe des entiers qui admettent deux factorisations différentes, et
+soit $n$ le plus petit d'entre eux :
+$$
+  n = p_1 p_2 \cdots p_r = q_1 q_2 \cdots q_s ,
+$$
+où les $p_i$ et les $q_j$ sont des nombres premiers (pas forcément
+distincts), et où les deux listes ne sont pas formées des mêmes nombres,
+répétitions comprises.
+
+Le nombre premier $p_1$ divise $n = q_1 q_2 \cdots q_s$. Par le lemme
+d'Euclide (corollaire \ref{cor:E-lemme-euclide}), il divise l'un des
+$q_j$. Or les seuls diviseurs de $q_j$ supérieurs à $1$ sont $q_j$
+lui-même ; donc $p_1 = q_j$. Quitte à renuméroter les $q$, on peut
+supposer que $p_1 = q_1$. En simplifiant par $p_1$, on obtient
+$$
+  \frac{n}{p_1} = p_2 \cdots p_r = q_2 \cdots q_s .
+$$
+Si $n/p_1 = 1$, les deux produits sont vides ($r = s = 1$) et les
+factorisations de départ étaient identiques, ce qui est exclu. Sinon,
+$n/p_1$ est un entier compris entre $2$ et $n - 1$ qui admet deux
+factorisations différentes (puisqu'on a retiré le même facteur des deux
+listes, qui étaient différentes). Cela contredit la minimalité de $n$.
+:::
+
+::: {.remark #rem:E-un-premier title="Pourquoi 1 n'est pas premier"}
+Si l'on décrétait que $1$ est premier, l'unicité tomberait aussitôt :
+$6 = 2 \times 3 = 1 \times 2 \times 3 = 1 \times 1 \times 2 \times 3$.
+Exclure $1$ des nombres premiers n'est donc pas un caprice : c'est ce qui
+permet d'énoncer simplement le théorème fondamental. Il est aussi
+instructif de constater que l'unicité n'a rien d'évident. Dans
+l'ensemble des nombres pairs $\{2, 4, 6, 8, \dots\}$, où l'on appellerait
+« premier » un nombre pair qui n'est pas produit de deux nombres pairs
+($2$, $6$, $10$, $14$, $18$, …), on a $36 = 2 \times 18 = 6 \times 6$ :
+deux factorisations différentes en « premiers ». C'est le lemme de Gauss,
+et à travers lui le théorème de Bachet--Bézout, qui empêche ce
+phénomène dans $\Z$.
+:::
+
+La factorisation permet de lire directement le PGCD et le PPCM. Si l'on
+écrit $a$ et $b$ à l'aide des mêmes nombres premiers, en acceptant des
+exposants nuls,
+$$
+  a = p_1^{\alpha_1} \cdots p_k^{\alpha_k}, \qquad
+  b = p_1^{\beta_1} \cdots p_k^{\beta_k},
+$$
+un entier positif $d$ divise $a$ si et seulement si sa factorisation
+ne fait intervenir que des $p_i$, chacun avec un exposant au plus égal à
+$\alpha_i$. (C'est une conséquence de l'unicité : si $a = dm$, la
+factorisation de $a$ s'obtient en juxtaposant celles de $d$ et de $m$.)
+
+::: {.proposition #prop:E-pgcd-ppcm title="PGCD et PPCM à partir des factorisations"}
+Avec les notations précédentes,
+$$
+  \pgcd(a, b) = \prod_{i=1}^{k} p_i^{\min(\alpha_i, \beta_i)}, \qquad
+  \ppcm(a, b) = \prod_{i=1}^{k} p_i^{\max(\alpha_i, \beta_i)} .
+$$
+En particulier, $\pgcd(a, b) \cdot \ppcm(a, b) = ab$.
+:::
+
+::: {.proof}
+Un diviseur commun de $a$ et de $b$ a, pour chaque $p_i$, un exposant au
+plus égal à $\alpha_i$ et au plus égal à $\beta_i$, donc au plus égal
+à $\min(\alpha_i, \beta_i)$. Le plus grand s'obtient en prenant
+exactement cet exposant pour chaque $p_i$. Le raisonnement est le même
+pour le PPCM, avec des exposants au moins égaux à $\alpha_i$ et à
+$\beta_i$. Enfin, pour deux nombres $x$ et $y$, on a toujours
+$\min(x, y) + \max(x, y) = x + y$ ; en multipliant les deux formules,
+l'exposant de chaque $p_i$ est donc $\alpha_i + \beta_i$, qui est son
+exposant dans $ab$.
+:::
+
+::: {.example #ex:E-pgcd-ppcm title="Le PGCD et le PPCM de 252 et 198"}
+On a $252 = 2^2 \cdot 3^2 \cdot 7$ et $198 = 2 \cdot 3^2 \cdot 11$. En
+écrivant les deux nombres avec les mêmes facteurs premiers,
+$252 = 2^2 \cdot 3^2 \cdot 7^1 \cdot 11^0$ et
+$198 = 2^1 \cdot 3^2 \cdot 7^0 \cdot 11^1$, d'où
+$$
+  \pgcd(252, 198) = 2^1 \cdot 3^2 = 18, \qquad
+  \ppcm(252, 198) = 2^2 \cdot 3^2 \cdot 7 \cdot 11 = 2772 .
+$$
+On vérifie que $18 \times 2772 = \num{49896} = 252 \times 198$.
+:::
+
+### Les équations diophantiennes linéaires
+
+Une [équation diophantienne]{.defi} est une équation dont on cherche les
+solutions entières. Le théorème de Bachet--Bézout et le lemme de Gauss
+permettent de résoudre complètement les plus simples d'entre elles.
+
+::: {.proposition #prop:E-diophante title="Équation ax + by = c"}
+Soient $a$ et $b$ des entiers non nuls, $c$ un entier et
+$d = \pgcd(a, b)$. L'équation $ax + by = c$ a des solutions entières si
+et seulement si $d \mid c$. Dans ce cas, si $(x_0, y_0)$ est une
+solution particulière, les solutions sont exactement les couples
+$$
+  x = x_0 + \frac{b}{d}\,t, \qquad y = y_0 - \frac{a}{d}\,t,
+  \qquad t \in \Z .
+$$
+:::
+
+::: {.proof}
+Existence. Si $ax + by = c$, alors $d$, qui divise $a$ et $b$, divise
+$c$. Réciproquement, si $c = dm$, le théorème de Bachet--Bézout fournit
+$au + bv = d$, et $(x_0, y_0) = (mu, mv)$ est une solution.
+
+Forme des solutions. On vérifie directement que les couples proposés
+sont des solutions :
+$a(x_0 + \tfrac{b}{d}t) + b(y_0 - \tfrac{a}{d}t) = ax_0 + by_0 = c$.
+Inversement, soit $(x, y)$ une solution. En soustrayant
+$ax_0 + by_0 = c$, on obtient $a(x - x_0) = -b(y - y_0)$, puis, en
+divisant par $d$,
+$$
+  a'(x - x_0) = -b'(y - y_0), \qquad\text{où } a' = \frac{a}{d}
+  \text{ et } b' = \frac{b}{d} .
+$$
+Les entiers $a'$ et $b'$ sont premiers entre eux (un diviseur commun
+$e > 1$ de $a'$ et $b'$ ferait de $de$ un diviseur commun de $a$ et $b$
+plus grand que $d$). Puisque $b'$ divise $a'(x - x_0)$ et que
+$\pgcd(b', a') = 1$, le lemme de Gauss donne $b' \mid x - x_0$ :
+$x - x_0 = b't$ pour un certain entier $t$. En reportant, on obtient
+$a'b't = -b'(y - y_0)$, d'où $y - y_0 = -a't$.
+:::
+
+::: {.example #ex:E-diophante title="Payer 100 dollars avec des jetons de 7 et de 5 dollars"}
+Dans un jeu, on dispose de jetons de $7$ dollars et de $5$ dollars. De
+combien de façons peut-on payer exactement $100$ dollars ? On cherche les solutions
+positives ou nulles de $7x + 5y = 100$. Comme $\pgcd(7, 5) = 1$ divise
+$100$, il y a des solutions entières. On remarque que $(x_0, y_0) =
+(0, 20)$ en est une ; à défaut, l'égalité de Bézout
+$7 \times (-2) + 5 \times 3 = 1$, multipliée par $100$, aurait fourni
+$(-200, 300)$. Les solutions entières sont
+$$
+  x = 5t, \qquad y = 20 - 7t, \qquad t \in \Z .
+$$
+Les conditions $x \geq 0$ et $y \geq 0$ imposent $0 \leq t \leq
+\tfrac{20}{7}$, soit $t \in \{0, 1, 2\}$. Il y a trois façons de
+payer : $(0, 20)$, $(5, 13)$ et $(10, 6)$.
+:::
+
+## Les congruences {#sec:E-congruences}
+
+Dans bien des situations, seul le reste d'une division nous intéresse.
+Quel jour de la semaine serons-nous dans $100$ jours ? Quelle heure
+indiquera l'horloge dans $50$ heures ? Un grand nombre est-il pair ? Les
+congruences, introduites par Gauss, fournissent une notation et des
+règles de calcul pour ces questions.
+
+::: {.definition #def:E-congruence title="Congruence modulo n"}
+Soit $n \geq 1$ un entier. Deux entiers $a$ et $b$ sont
+[congrus modulo]{.defi} $n$, ce qu'on note
+$$
+  a \equiv b \pmod{n},
+$$
+si $n$ divise $a - b$. L'entier $n$ s'appelle le [module]{.defi}.
+:::
+
+Ainsi, $17 \equiv 2 \pmod{5}$ puisque $5 \mid 15$, et
+$-3 \equiv 4 \pmod{7}$ puisque $7 \mid -7$. Un entier est pair si et
+seulement s'il est congru à $0$ modulo $2$. Dire que $a \equiv 0
+\pmod{n}$, c'est dire que $n \mid a$.
+
+::: {.proposition #prop:E-congruence-reste title="Congruence et reste"}
+Soit $n \geq 1$. Deux entiers $a$ et $b$ sont congrus modulo $n$ si et
+seulement s'ils ont le même reste dans la division euclidienne par $n$.
+En particulier, tout entier est congru modulo $n$ à exactement un des
+entiers $0, 1, \dots, n - 1$, à savoir son reste.
+:::
+
+::: {.proof}
+Écrivons $a = nq + r$ et $b = nq' + r'$, avec $0 \leq r, r' < n$. Alors
+$a - b = n(q - q') + (r - r')$. Si $r = r'$, on voit que $n \mid a - b$.
+Réciproquement, si $n \mid a - b$, alors $n$ divise
+$(a - b) - n(q - q') = r - r'$. Or $-n < r - r' < n$, et le seul
+multiple de $n$ dans cet intervalle est $0$ ; donc $r = r'$. Pour la
+dernière affirmation, $a = nq + r$ donne $a - r = nq$, donc
+$a \equiv r \pmod n$ ; et deux entiers distincts de
+$\{0, \dots, n-1\}$ ne sont pas congrus, puisqu'ils sont eux-mêmes leurs
+propres restes.
+:::
+
+Les entiers se répartissent donc en $n$ familles, ou
+[classes de congruence]{.defi}, selon leur reste. Modulo $7$, par
+exemple, la classe de $3$ est $\{\dots, -11, -4, 3, 10, 17, \dots\}$.
+Calculer modulo $n$, c'est calculer en ne gardant que la classe des
+nombres, comme on le fait sur une horloge, où $13$ h est « la même chose »
+que $1$ h (modulo $12$).
+
+::: {.proposition #prop:E-congruence-proprietes title="Règles de calcul"}
+Soient $n \geq 1$ et $a$, $b$, $c$, $d$ des entiers.
+
+(i) La congruence modulo $n$ est une relation d'équivalence :
+    $a \equiv a$ ; si $a \equiv b$, alors $b \equiv a$ ; si
+    $a \equiv b$ et $b \equiv c$, alors $a \equiv c$ (modulo $n$).
+(ii) Si $a \equiv b \pmod n$ et $c \equiv d \pmod n$, alors
+     $$
+       a + c \equiv b + d, \qquad a - c \equiv b - d, \qquad
+       ac \equiv bd \pmod{n} .
+     $$
+(iii) Si $a \equiv b \pmod n$, alors $a^k \equiv b^k \pmod n$ pour
+      tout entier $k \geq 1$.
+:::
+
+::: {.proof}
+Le point (i) et les deux premières congruences du point (ii) découlent
+directement de la proposition \ref{prop:E-divisibilite} ; leur
+démonstration fait l'objet de l'exercice \ref{exo:E-congruences}.
+Démontrons la règle du produit. Par hypothèse, $a - b = nk$ et
+$c - d = nj$ pour des entiers $k$ et $j$. L'astuce consiste à ajouter et
+retrancher $bc$ :
+$$
+  ac - bd = ac - bc + bc - bd = (a - b)\,c + b\,(c - d) = n\,(kc + bj).
+$$
+Ainsi $n \mid ac - bd$, c'est-à-dire $ac \equiv bd \pmod n$.
+
+Le point (iii) s'obtient en appliquant la règle du produit $k - 1$ fois :
+de $a \equiv b$ et $a \equiv b$, on tire $a^2 \equiv b^2$ ; de
+$a^2 \equiv b^2$ et $a \equiv b$, on tire $a^3 \equiv b^3$ ; et ainsi
+de suite.
+:::
+
+Ces règles autorisent, dans une somme, un produit ou une puissance, à
+remplacer n'importe quel nombre par un autre de la même classe, en
+général plus petit. C'est ce qui rend les congruences si efficaces.
+
+::: {.example #ex:E-congruences title="Quelques calculs modulaires"}
+Nous sommes un jeudi. Comme $100 = 14 \times 7 + 2$, on a
+$100 \equiv 2 \pmod 7$, et dans $100$ jours nous serons deux jours
+après un jeudi, soit un samedi.
+
+Le dernier chiffre de $7^{100}$ est son reste modulo $10$. Or
+$7^2 = 49 \equiv -1 \pmod{10}$ ; donc $7^4 \equiv (-1)^2 = 1$, et
+$7^{100} = (7^4)^{25} \equiv 1^{25} = 1 \pmod{10}$. Le nombre $7^{100}$,
+qui compte $85$ chiffres, se termine par $1$.
+
+Les critères de divisibilité s'expliquent de la même façon. Comme
+$10 \equiv 1 \pmod 9$, on a $10^k \equiv 1 \pmod 9$ pour tout $k$, et un
+nombre $\overline{c_m \cdots c_1 c_0} = c_m 10^m + \cdots + c_1 10 + c_0$
+est congru modulo $9$ à la somme $c_m + \cdots + c_1 + c_0$ de ses
+chiffres. Ainsi, $\num{738261}$ est congru à
+$7 + 3 + 8 + 2 + 6 + 1 = 27 \equiv 0 \pmod 9$ : il est divisible par $9$.
+Le même raisonnement, modulo $3$, justifie le critère de divisibilité
+par $3$.
+:::
+
+::: {.remark #rem:E-division-congruence title="On ne peut pas toujours simplifier"}
+L'addition, la soustraction et la multiplication se comportent bien,
+mais pas la division. On a $2 \times 3 \equiv 2 \times 8 \pmod{10}$,
+puisque $6 \equiv 16$, et pourtant $3 \not\equiv 8 \pmod{10}$. La
+simplification par $a$ est permise lorsque $\pgcd(a, n) = 1$ :
+si $ax \equiv ay \pmod n$, alors $n \mid a(x - y)$, et le lemme de
+Gauss donne $n \mid x - y$. Lorsque $n$ est premier, on peut donc
+simplifier par tout $a$ non divisible par $n$.
+:::
+
+### Inverses modulaires et congruences linéaires
+
+::: {.definition #def:E-inverse title="Inverse modulo n"}
+Soit $n \geq 2$. Un entier $a'$ est un [inverse de $a$ modulo $n$]{.defi}
+si $aa' \equiv 1 \pmod n$. On dit alors que $a$ est
+[inversible modulo]{.defi} $n$.
+:::
+
+Par exemple, $3 \times 5 = 15 \equiv 1 \pmod 7$ : $5$ est un inverse de
+$3$ modulo $7$. En revanche, $2$ n'a pas d'inverse modulo $4$, car
+$2a'$ est toujours pair et ne peut pas être congru à $1$ modulo $4$.
+
+::: {.proposition #prop:E-inverse title="Quand un entier est-il inversible ?"}
+Soit $n \geq 2$. Un entier $a$ est inversible modulo $n$ si et
+seulement si $\pgcd(a, n) = 1$. Dans ce cas, son inverse est unique
+modulo $n$, et on l'obtient à l'aide de l'algorithme d'Euclide étendu.
+:::
+
+::: {.proof}
+Dire que $aa' \equiv 1 \pmod n$, c'est dire qu'il existe un entier $k$
+tel que $aa' - 1 = kn$, c'est-à-dire $aa' + n(-k) = 1$. Par le
+point (iii) du corollaire \ref{cor:E-bezout}, de tels entiers $a'$ et
+$k$ existent si et seulement si $\pgcd(a, n) = 1$. Les coefficients de
+Bézout $u$ et $v$ de l'égalité $au + nv = 1$ fournissent l'inverse
+$a' = u$.
+
+Si $a'$ et $a''$ sont deux inverses de $a$, alors
+$a' \equiv a'(aa'') = (a'a)a'' \equiv a'' \pmod n$.
+:::
+
+::: {.example #ex:E-inverse title="L'inverse de 7 modulo 26"}
+On applique l'algorithme d'Euclide à $26$ et $7$ :
+$26 = 3 \times 7 + 5$, $7 = 1 \times 5 + 2$, $5 = 2 \times 2 + 1$. En
+remontant,
+\begin{align*}
+  1 &= 5 - 2 \times 2 = 5 - 2\,(7 - 5) = 3 \times 5 - 2 \times 7\\
+    &= 3\,(26 - 3 \times 7) - 2 \times 7 = 3 \times 26 - 11 \times 7 .
+\end{align*}
+Ainsi $7 \times (-11) \equiv 1 \pmod{26}$, et l'inverse de $7$ est
+$-11 \equiv 15 \pmod{26}$. On vérifie : $7 \times 15 = 105 = 4 \times
+26 + 1$. Ce calcul est celui qu'il faut faire pour déchiffrer un
+message codé par le chiffrement affine $x \mapsto 7x + 3 \pmod{26}$, où
+chaque lettre est remplacée par son rang dans l'alphabet.
+:::
+
+::: {.proposition #prop:E-congruence-lineaire title="Congruences linéaires"}
+Soient $n \geq 2$, $a$ et $b$ des entiers, et $d = \pgcd(a, n)$. La
+congruence $ax \equiv b \pmod n$ a des solutions si et seulement si
+$d \mid b$. Dans ce cas, ses solutions forment une seule classe modulo
+$n/d$, c'est-à-dire $d$ classes distinctes modulo $n$.
+:::
+
+::: {.proof}
+La congruence $ax \equiv b \pmod n$ équivaut à l'existence d'un entier
+$y$ tel que $ax - b = ny$, c'est-à-dire $ax + n(-y) = b$. C'est une
+équation diophantienne linéaire ; par la
+proposition \ref{prop:E-diophante}, elle a des solutions si et seulement
+si $d \mid b$, et ses solutions en $x$ sont alors les
+$x = x_0 + \tfrac{n}{d}\,t$, $t \in \Z$. Ce sont exactement les entiers
+congrus à $x_0$ modulo $n/d$. Parmi $0, 1, \dots, n - 1$, on en trouve
+$d$ : $x_0, x_0 + \tfrac{n}{d}, \dots, x_0 + (d-1)\tfrac{n}{d}$
+(réduits modulo $n$).
+:::
+
+Lorsque $\pgcd(a, n) = 1$, la solution est unique modulo $n$ : il suffit
+de multiplier les deux membres par l'inverse $a'$ de $a$, ce qui donne
+$x \equiv a'b \pmod n$.
+
+::: {.example #ex:E-congruence-lineaire title="Une congruence à deux solutions"}
+Ici $d = \pgcd(4, 10) = 2$ divise $6$, et il y a deux solutions modulo
+$10$. En divisant tout par $2$ (y compris le module), la congruence
+devient $2x \equiv 3 \pmod 5$. L'inverse de $2$ modulo $5$ est $3$
+($2 \times 3 = 6 \equiv 1$), d'où $x \equiv 3 \times 3 = 9 \equiv 4
+\pmod 5$. Les solutions modulo $10$ sont donc $x \equiv 4$ et
+$x \equiv 9 \pmod{10}$. On vérifie que $4 \times 4 = 16 \equiv 6$ et
+$4 \times 9 = 36 \equiv 6 \pmod{10}$. Par contre, la congruence
+$4x \equiv 5 \pmod{10}$ n'a pas de solution, puisque $2 \nmid 5$ : le
+membre de gauche est toujours pair modulo $10$, le membre de droite
+impair.
+:::
+
+:::: {.historical #hist:gauss title="Carl Friedrich Gauss" needspace="18"}
+::: {.portrait src="figures/portraits/carl-friedrich-gauss.jpg" legende="Carl Friedrich Gauss (1777--1855), portrait de Christian Albrecht Jensen (1840)." credit="Domaine public, Wikimedia Commons."}
+Carl Friedrich Gauss naît en 1777 à Brunswick, dans une famille modeste.
+Selon une anecdote célèbre, sans doute embellie, son instituteur aurait
+demandé à la classe d'additionner les entiers de $1$ à $100$, et le
+jeune Gauss aurait aussitôt donné la réponse, $\num{5050}$, en
+regroupant les termes deux par deux ($1 + 100$, $2 + 99$, …). Repéré
+pour son talent, il étudie grâce au soutien du duc de Brunswick. À
+dix-neuf ans, il montre qu'on peut construire à la règle et au compas
+le polygone régulier à $17$ côtés, un problème resté ouvert depuis les
+Grecs. Cette découverte, raconte-t-on, le décide à se consacrer aux
+mathématiques plutôt qu'aux langues anciennes.
+:::
+
+\medskip
+
+En 1801, à vingt-quatre ans, il publie les Disquisitiones arithmeticae
+(« Recherches arithmétiques ») [@Gauss1801], l'ouvrage qui fonde la
+théorie des nombres moderne. Gauss y introduit la notation
+$a \equiv b \pmod n$ et le calcul des congruences, dont il fait un
+langage systématique. Il y énonce et démontre clairement l'unicité de la
+factorisation en nombres premiers, que les Éléments d'Euclide ne
+formulaient pas sous cette forme. Il y donne aussi la première
+démonstration de la loi de réciprocité quadratique, qu'il appelait le
+« théorème d'or ». C'est également dans cet ouvrage qu'apparaît la
+notation $\varphi(n)$ pour l'indicatrice d'Euler
+(section \ref{sec:E-euler}). Le lemme qui porte son nom dans la tradition
+française (théorème \ref{thm:E-gauss}) figure en germe chez Euclide,
+mais c'est Gauss qui en fait l'outil central de l'arithmétique.
+
+L'œuvre de Gauss déborde largement la théorie des nombres : astronomie
+(en 1801, il calcule l'orbite de l'astéroïde Cérès, perdu de vue
+après quelques semaines d'observation, ce qui permet de le retrouver ;
+il s'appuie pour cela sur la méthode des moindres carrés, qu'il avait
+mise au point), géodésie, magnétisme,
+géométrie différentielle, statistique (la loi normale porte aussi le
+nom de loi de Gauss) et, nous l'avons vu à l'annexe \ref{annexe:algebre},
+résolution des systèmes linéaires. Surnommé de son vivant le « prince
+des mathématiciens », il aurait affirmé que les mathématiques sont la
+reine des sciences, et l'arithmétique la reine des mathématiques
+[@MacTutorGauss].
+::::
+
+## Le petit théorème de Fermat {#sec:E-fermat}
+
+Calculons les puissances successives de $3$ modulo $7$ :
+$$
+  3^1 \equiv 3, \quad 3^2 \equiv 2, \quad 3^3 \equiv 6, \quad
+  3^4 \equiv 4, \quad 3^5 \equiv 5, \quad 3^6 \equiv 1 \pmod 7 .
+$$
+On retombe sur $1$ à l'exposant $6 = 7 - 1$. Si l'on recommence avec
+$2$, on trouve $2^3 \equiv 1$, et donc $2^6 \equiv 1$ aussi. Ce n'est
+pas une coïncidence.
+
+::: {.theorem #thm:E-fermat title="Petit théorème de Fermat"}
+Soient $p$ un nombre premier et $a$ un entier non divisible par $p$.
+Alors
+$$
+  a^{p-1} \equiv 1 \pmod p .
+$$
+:::
+
+Avant de démontrer ce théorème, observons ce qui se passe pour $p = 7$
+et $a = 3$. Multiplions par $3$ chacun des nombres $1, 2, 3, 4, 5, 6$,
+et réduisons modulo $7$ :
+$$
+  3, \; 6, \; 9 \equiv 2, \; 12 \equiv 5, \; 15 \equiv 1, \;
+  18 \equiv 4 .
+$$
+On retrouve les mêmes six nombres, dans un autre ordre. Le produit des
+six nombres de gauche est donc congru au produit des six nombres de
+départ :
+$$
+  (3 \cdot 1)(3 \cdot 2)(3 \cdot 3)(3 \cdot 4)(3 \cdot 5)(3 \cdot 6)
+  \equiv 1 \cdot 2 \cdot 3 \cdot 4 \cdot 5 \cdot 6 \pmod 7,
+$$
+c'est-à-dire $3^6 \cdot 6! \equiv 6! \pmod 7$. Comme $6! = 720$ n'est pas
+divisible par $7$, on peut simplifier (remarque
+\ref{rem:E-division-congruence}), et il reste $3^6 \equiv 1 \pmod 7$. La
+démonstration générale suit exactement ce chemin.
+
+::: {.proof}
+Considérons les $p - 1$ entiers
+$$
+  a, \; 2a, \; 3a, \; \dots, \; (p-1)a .
+$$
+
+Aucun d'eux n'est divisible par $p$. En effet, si $p \mid ka$ avec
+$1 \leq k \leq p - 1$, le lemme d'Euclide donnerait $p \mid k$ ou
+$p \mid a$ ; or $p \nmid a$ par hypothèse, et $p \nmid k$ puisque
+$0 < k < p$. Leurs restes modulo $p$ sont donc tous dans
+$\{1, 2, \dots, p - 1\}$.
+
+Leurs restes sont deux à deux distincts. Supposons en effet que
+$ia \equiv ja \pmod p$ avec $1 \leq i < j \leq p - 1$. Alors
+$p \mid (j - i)a$ ; comme $p \nmid a$, le lemme d'Euclide donne
+$p \mid j - i$, ce qui est impossible puisque $0 < j - i < p$.
+
+Ainsi, les restes de $a, 2a, \dots, (p-1)a$ sont $p - 1$ nombres
+distincts de l'ensemble $\{1, 2, \dots, p - 1\}$, qui compte exactement
+$p - 1$ éléments : ce sont donc tous les éléments de cet ensemble, dans
+un certain ordre. En multipliant ces congruences entre elles (point (ii)
+de la proposition \ref{prop:E-congruence-proprietes}), on obtient
+$$
+  a \cdot 2a \cdot 3a \cdots (p-1)a \equiv 1 \cdot 2 \cdot 3 \cdots (p-1)
+  \pmod p,
+  \qquad\text{soit}\qquad
+  a^{p-1} \, (p-1)! \equiv (p-1)! \pmod p .
+$$
+Enfin, $p$ ne divise pas $(p-1)! = 1 \cdot 2 \cdots (p-1)$, encore par
+le lemme d'Euclide, puisqu'il ne divise aucun des facteurs. Donc
+$\pgcd\big((p-1)!, p\big) = 1$, et l'on peut simplifier par $(p-1)!$
+(remarque \ref{rem:E-division-congruence}) : $a^{p-1} \equiv 1 \pmod p$.
+:::
+
+::: {.corollary #cor:E-fermat title="Forme générale"}
+Si $p$ est premier, alors $a^p \equiv a \pmod p$ pour tout entier $a$.
+:::
+
+::: {.proof}
+Si $p \nmid a$, on multiplie par $a$ la congruence
+$a^{p-1} \equiv 1$. Si $p \mid a$, les deux membres sont congrus à $0$.
+:::
+
+::: {.example #ex:E-fermat title="Réduire un exposant"}
+Cherchons le reste de $2^{100}$ dans la division par $13$. Comme $13$ est
+premier et ne divise pas $2$, on a $2^{12} \equiv 1 \pmod{13}$. Or
+$100 = 8 \times 12 + 4$, d'où
+$$
+  2^{100} = \left(2^{12}\right)^8 \cdot 2^4 \equiv 1^8 \cdot 16
+  \equiv 3 \pmod{13} .
+$$
+De façon générale, modulo un nombre premier $p$, on peut réduire
+l'exposant modulo $p - 1$ (lorsque la base n'est pas un multiple de $p$).
+:::
+
+::: {.remark #rem:E-test-fermat title="Un test de primalité, et ses limites"}
+Le petit théorème de Fermat fournit un moyen de démontrer qu'un nombre
+n'est pas premier, sans le factoriser : si $2^{n-1} \not\equiv 1
+\pmod n$, alors $n$ est composé. Par exemple,
+$2^{14} = \num{16384} \equiv 4 \pmod{15}$, ce qui prouve que $15$ n'est
+pas premier. La réciproque est fausse : $341 = 11 \times 31$ vérifie
+$2^{340} \equiv 1 \pmod{341}$ (exercice \ref{exo:E-fermat}). Des
+versions plus fines de ce test, comme celui de Miller et Rabin, sont
+utilisées par les ordinateurs pour produire les très grands nombres
+premiers dont a besoin la cryptographie.
+:::
+
+Pierre de Fermat, magistrat à Toulouse et mathématicien amateur, énonce ce
+résultat en 1640 dans une lettre à Bernard Frénicle de Bessy, sans
+démonstration, en ajoutant qu'il lui enverrait la preuve s'il ne
+craignait d'être trop long. La première démonstration publiée est due à
+Leonhard Euler, en 1736. Euler le généralisera à un module quelconque,
+comme nous allons le voir.
+
+## L'indicatrice d'Euler et le théorème d'Euler {#sec:E-euler}
+
+Lorsque le module $n$ n'est pas premier, le petit théorème de Fermat
+tombe en défaut : $2^3 = 8 \equiv 0 \pmod 4$. Pour le généraliser, il
+faut compter les entiers qui « se comportent bien » modulo $n$, c'est-à-
+dire ceux qui sont inversibles.
+
+::: {.definition #def:E-phi title="Indicatrice d'Euler"}
+Pour un entier $n \geq 1$, on note $\varphi(n)$ le nombre d'entiers $k$
+compris entre $1$ et $n$ qui sont premiers avec $n$. La fonction
+$\varphi$ s'appelle l'[indicatrice d'Euler]{.defi}.
+:::
+
+Par exemple, les entiers de $1$ à $12$ premiers avec $12$ sont $1$, $5$,
+$7$ et $11$ ; donc $\varphi(12) = 4$. Les premières valeurs sont données
+dans le tableau \ref{tab:E-phi}.
+
+::: {#tab:E-phi}
+Les premières valeurs de l'indicatrice d'Euler.
+
+| $n$ | $1$ | $2$ | $3$ | $4$ | $5$ | $6$ | $7$ | $8$ | $9$ | $10$ | $11$ | $12$ |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| $\varphi(n)$ | $1$ | $1$ | $2$ | $2$ | $4$ | $2$ | $6$ | $4$ | $6$ | $4$ | $10$ | $4$ |
+:::
+
+::: {.proposition #prop:E-phi title="Calcul de l'indicatrice d'Euler"}
+(i) Si $p$ est premier, $\varphi(p) = p - 1$.
+(ii) Si $p$ est premier et $k \geq 1$, $\varphi(p^k) = p^k - p^{k-1}$.
+(iii) Si $\pgcd(m, n) = 1$, alors $\varphi(mn) = \varphi(m)\,\varphi(n)$.
+(iv) Par conséquent, si $n = p_1^{\alpha_1} \cdots p_k^{\alpha_k}$ est
+     la factorisation de $n$,
+     $$
+       \varphi(n) = n \left(1 - \frac{1}{p_1}\right) \cdots
+       \left(1 - \frac{1}{p_k}\right).
+     $$
+:::
+
+::: {.proof}
+(i) Les entiers $1, 2, \dots, p - 1$ ne sont pas divisibles par $p$ ;
+comme les seuls diviseurs positifs de $p$ sont $1$ et $p$, ils sont tous
+premiers avec $p$. Seul $p$ lui-même ne l'est pas.
+
+(ii) La démonstration fait l'objet de l'exercice \ref{exo:E-phi}.
+
+(iii) Ce point est une conséquence du théorème des restes chinois ; il
+est démontré au corollaire \ref{cor:E-phi-multiplicative}.
+
+(iv) Par (iii), appliqué de proche en proche aux facteurs
+$p_i^{\alpha_i}$, qui sont premiers entre eux deux à deux, puis par (ii),
+$$
+  \varphi(n) = \prod_{i=1}^{k} \left(p_i^{\alpha_i} - p_i^{\alpha_i - 1}\right)
+  = \prod_{i=1}^{k} p_i^{\alpha_i}\left(1 - \frac{1}{p_i}\right)
+  = n \prod_{i=1}^{k} \left(1 - \frac{1}{p_i}\right).
+$$
+:::
+
+Par exemple, $\varphi(100) = 100 \left(1 - \tfrac12\right)
+\left(1 - \tfrac15\right) = 40$ : parmi les entiers de $1$ à $100$,
+$40$ ne sont divisibles ni par $2$ ni par $5$.
+
+::: {.theorem #thm:E-euler title="Théorème d'Euler"}
+Soient $n \geq 1$ un entier et $a$ un entier premier avec $n$. Alors
+$$
+  a^{\varphi(n)} \equiv 1 \pmod n .
+$$
+:::
+
+::: {.proof}
+La démonstration reprend celle du petit théorème de Fermat, en
+remplaçant la liste $1, 2, \dots, p - 1$ par la liste des entiers
+premiers avec $n$. Notons $k_1, k_2, \dots, k_m$ les entiers de
+$\{1, \dots, n\}$ premiers avec $n$, où $m = \varphi(n)$, et considérons
+les produits
+$$
+  ak_1, \; ak_2, \; \dots, \; ak_m .
+$$
+
+Chacun est premier avec $n$. Si un nombre premier $p$ divisait à la fois
+$n$ et $ak_i$, il diviserait $a$ ou $k_i$ (lemme d'Euclide), et serait
+donc un diviseur commun de $n$ et de $a$, ou de $n$ et de $k_i$ ; c'est
+impossible, puisque ces paires sont premières entre elles. Le reste de
+$ak_i$ modulo $n$ est donc lui aussi premier avec $n$ (un diviseur commun
+de $n$ et du reste diviserait aussi $ak_i$). Il fait donc partie de la
+liste $k_1, \dots, k_m$.
+
+Leurs restes sont deux à deux distincts. Si $ak_i \equiv ak_j \pmod n$,
+on peut simplifier par $a$, puisque $\pgcd(a, n) = 1$
+(remarque \ref{rem:E-division-congruence}) ; on obtient
+$k_i \equiv k_j \pmod n$, d'où $k_i = k_j$, puisque ces deux nombres
+sont compris entre $1$ et $n$.
+
+Les restes de $ak_1, \dots, ak_m$ sont donc les nombres $k_1, \dots,
+k_m$, dans un certain ordre. En multipliant,
+$$
+  a^m \, k_1 k_2 \cdots k_m \equiv k_1 k_2 \cdots k_m \pmod n .
+$$
+Le produit $k_1 \cdots k_m$ est premier avec $n$, puisque chacun de ses
+facteurs l'est ; on peut donc simplifier, et $a^m \equiv 1 \pmod n$.
+:::
+
+Lorsque $n = p$ est premier, $\varphi(p) = p - 1$, et l'on retrouve le
+petit théorème de Fermat. Le théorème d'Euler permet, comme
+celui-ci, de réduire les exposants : si $\pgcd(a, n) = 1$, on peut
+remplacer l'exposant par son reste modulo $\varphi(n)$.
+
+::: {.example #ex:E-euler title="Le dernier chiffre d'une grande puissance"}
+Comme $\pgcd(3, 10) = 1$ et $\varphi(10) = 4$, on a $3^4 \equiv 1
+\pmod{10}$ (en effet, $3^4 = 81$). Puisque $2026 = 4 \times 506 + 2$,
+$$
+  3^{2026} = \left(3^4\right)^{506} \cdot 3^2 \equiv 1 \cdot 9 = 9
+  \pmod{10} .
+$$
+Le nombre $3^{2026}$ se termine par $9$. Pour obtenir les deux derniers
+chiffres d'une puissance, on travaillera de même modulo $100$, avec
+$\varphi(100) = 40$.
+:::
+
+::: {.remark #rem:E-rsa title="Une application : le chiffrement RSA"}
+Le chiffrement RSA, publié en 1977 par Ronald Rivest, Adi Shamir et
+Leonard Adleman, est une application directe du théorème d'Euler. Le
+destinataire choisit deux grands nombres premiers $p$ et $q$ (de plusieurs
+centaines de chiffres) et calcule $n = pq$ et
+$\varphi(n) = (p-1)(q-1)$. Il choisit un exposant $e$ premier avec
+$\varphi(n)$ et calcule son inverse $d$ modulo $\varphi(n)$ par
+l'algorithme d'Euclide étendu. Il publie la clé $(n, e)$ et garde $d$
+secret. Pour envoyer un message représenté par un entier $m < n$, on
+transmet $c \equiv m^e \pmod n$. Le destinataire calcule alors
+$c^d \equiv m^{ed} \pmod n$. Comme $ed = 1 + k\,\varphi(n)$ pour un
+certain entier $k$, le théorème d'Euler donne, si $\pgcd(m, n) = 1$,
+$$
+  m^{ed} = m \cdot \left(m^{\varphi(n)}\right)^k \equiv m \cdot 1^k = m
+  \pmod n,
+$$
+et le message est retrouvé. (On montre que le résultat reste vrai
+lorsque $m$ n'est pas premier avec $n$, à l'aide du théorème des restes
+chinois.)
+
+Avec des nombres minuscules : $p = 3$, $q = 11$, $n = 33$,
+$\varphi(n) = 20$, $e = 3$ et $d = 7$ (car $3 \times 7 = 21 \equiv 1
+\pmod{20}$). Le message $m = 4$ devient $c \equiv 4^3 = 64 \equiv 31
+\pmod{33}$. Pour déchiffrer, on calcule $31^7 \pmod{33}$ ; comme
+$31 \equiv -2$, cela donne $(-2)^7 = -128 \equiv -128 + 4 \times 33 = 4
+\pmod{33}$. La sécurité repose sur le fait que, pour calculer $d$, il
+faut connaître $\varphi(n)$, donc factoriser $n$, ce qu'on ne sait pas
+faire en un temps raisonnable lorsque $p$ et $q$ sont très grands
+(remarque \ref{rem:E-lame}).
+:::
+
+## Le théorème des restes chinois {#sec:E-chinois}
+
+Un problème du Sunzi suanjing, un manuel chinois de calcul rédigé entre
+le \siecle{3} et le \siecle{5}, demande : « Soit des objets dont on
+ignore le nombre. Comptés par trois, il en reste deux ; comptés par
+cinq, il en reste trois ; comptés par sept, il en reste deux. Combien
+y a-t-il d'objets ? » En langage de congruences, on cherche $x$ tel que
+$$
+  x \equiv 2 \pmod 3, \qquad x \equiv 3 \pmod 5, \qquad
+  x \equiv 2 \pmod 7 .
+$$
+
+::: {.theorem #thm:E-chinois title="Théorème des restes chinois"}
+Soient $m$ et $n$ deux entiers supérieurs ou égaux à $1$, premiers entre
+eux. Pour tous les entiers $a$ et $b$, le système
+$$
+  x \equiv a \pmod m, \qquad x \equiv b \pmod n
+$$
+a des solutions, et ces solutions forment une seule classe modulo
+$mn$ : si $x_0$ est une solution, les solutions sont exactement les
+entiers $x \equiv x_0 \pmod{mn}$.
+
+Plus généralement, si $n_1, n_2, \dots, n_k$ sont premiers entre eux deux
+à deux, le système $x \equiv a_i \pmod{n_i}$ ($i = 1, \dots, k$) a des
+solutions, qui forment une seule classe modulo $n_1 n_2 \cdots n_k$.
+:::
+
+::: {.proof}
+Existence. Puisque $\pgcd(m, n) = 1$, le théorème de Bachet--Bézout
+fournit des entiers $u$ et $v$ tels que $mu + nv = 1$. Cette égalité
+dit deux choses :
+$$
+  nv = 1 - mu \equiv 1 \pmod m \qquad\text{et}\qquad
+  mu = 1 - nv \equiv 1 \pmod n .
+$$
+Le nombre $nv$ « vaut $1$ modulo $m$ et $0$ modulo $n$ », et le nombre
+$mu$ « vaut $0$ modulo $m$ et $1$ modulo $n$ ». Posons alors
+$$
+  x_0 = a \cdot nv + b \cdot mu .
+$$
+Modulo $m$, on a $nv \equiv 1$ et $mu \equiv 0$, d'où
+$x_0 \equiv a \cdot 1 + b \cdot 0 = a$. Modulo $n$, de même,
+$x_0 \equiv a \cdot 0 + b \cdot 1 = b$. Ainsi $x_0$ est une solution.
+
+Unicité modulo $mn$. Si $x \equiv x_0 \pmod{mn}$, alors $mn \mid x - x_0$,
+donc $m \mid x - x_0$ et $n \mid x - x_0$ : $x$ est aussi une solution.
+Réciproquement, si $x$ est une solution, alors $x \equiv a \equiv x_0
+\pmod m$ et $x \equiv b \equiv x_0 \pmod n$. Les entiers $m$ et $n$
+divisent donc tous deux $x - x_0$ ; comme ils sont premiers entre eux, le
+corollaire \ref{cor:E-produit-diviseurs} donne $mn \mid x - x_0$.
+
+Cas de $k$ modules. On procède par récurrence sur $k$. Les deux
+premières congruences équivalent, par ce qui précède, à une seule
+congruence $x \equiv c \pmod{n_1 n_2}$. Le nombre $n_1 n_2$ est premier
+avec $n_3$ : un nombre premier qui diviserait $n_1 n_2$ et $n_3$
+diviserait $n_1$ ou $n_2$ (lemme d'Euclide), alors que ceux-ci sont
+premiers avec $n_3$. On se ramène ainsi à un système de $k - 1$
+congruences dont les modules $n_1 n_2, n_3, \dots, n_k$ sont encore
+premiers entre eux deux à deux.
+:::
+
+::: {.example #ex:E-sunzi title="Le problème de Sunzi"}
+Résolvons d'abord les deux premières congruences. La condition
+$x \equiv 3 \pmod 5$ s'écrit $x = 3 + 5k$. En reportant dans la
+première, $3 + 5k \equiv 2 \pmod 3$, soit $2k \equiv -1 \equiv 2
+\pmod 3$, d'où $k \equiv 1 \pmod 3$ (on simplifie par $2$, qui est
+premier avec $3$). Avec $k = 1 + 3j$, on obtient $x = 8 + 15j$,
+c'est-à-dire $x \equiv 8 \pmod{15}$.
+
+On reporte dans la troisième : $8 + 15j \equiv 2 \pmod 7$. Comme
+$8 \equiv 1$ et $15 \equiv 1 \pmod 7$, cela donne $1 + j \equiv 2$,
+soit $j \equiv 1 \pmod 7$. Avec $j = 1 + 7i$, on obtient
+$x = 23 + 105i$. Les solutions sont les $x \equiv 23 \pmod{105}$ ; le
+plus petit nombre d'objets possible est $23$. On vérifie que
+$23 = 7 \times 3 + 2 = 4 \times 5 + 3 = 3 \times 7 + 2$.
+
+On peut aussi utiliser la formule de la démonstration. Pour les deux
+premières congruences, avec $m = 3$ et $n = 5$, l'égalité
+$3 \times 2 + 5 \times (-1) = 1$ donne $u = 2$, $v = -1$, et
+$x_0 = 2 \times 5 \times (-1) + 3 \times 3 \times 2 = -10 + 18 = 8$.
+:::
+
+Le théorème dit, en somme, que la donnée du reste modulo $m$ et du reste
+modulo $n$ détermine le reste modulo $mn$, et que toutes les paires de
+restes sont possibles. Le tableau \ref{tab:E-chinois} le montre pour
+$m = 3$ et $n = 5$ : chacun des $15$ entiers $0, 1, \dots, 14$ occupe
+une case différente, et toutes les cases sont remplies.
+
+::: {#tab:E-chinois}
+Les entiers de $0$ à $14$, rangés selon leur reste modulo $3$ (lignes) et leur reste modulo $5$ (colonnes). Chaque case contient exactement un entier : c'est le théorème des restes chinois pour $m = 3$ et $n = 5$.
+
+| | $\equiv 0 \pmod 5$ | $\equiv 1$ | $\equiv 2$ | $\equiv 3$ | $\equiv 4$ |
+|:-:|:-:|:-:|:-:|:-:|:-:|
+| $\equiv 0 \pmod 3$ | $0$ | $6$ | $12$ | $3$ | $9$ |
+| $\equiv 1$ | $10$ | $1$ | $7$ | $13$ | $4$ |
+| $\equiv 2$ | $5$ | $11$ | $2$ | $8$ | $14$ |
+:::
+
+On peut lire ce tableau en suivant les entiers dans l'ordre : on avance
+d'une ligne et d'une colonne à chaque pas, en revenant au début quand on
+sort du tableau, comme sur deux horloges qui tournent en même temps. Si
+les modules n'étaient pas premiers entre eux, ce parcours ne passerait
+pas par toutes les cases : modulo $2$ et $4$, par exemple, un entier
+pair n'est jamais congru à $1$ modulo $4$, et le système
+$x \equiv 0 \pmod 2$, $x \equiv 1 \pmod 4$ n'a aucune solution.
+
+::: {.corollary #cor:E-phi-multiplicative title="L'indicatrice d'Euler est multiplicative"}
+Si $\pgcd(m, n) = 1$, alors $\varphi(mn) = \varphi(m)\,\varphi(n)$.
+:::
+
+::: {.proof}
+Par le théorème des restes chinois, l'application qui associe à chaque
+entier $x \in \{0, 1, \dots, mn - 1\}$ le couple formé de son reste
+modulo $m$ et de son reste modulo $n$ est une bijection vers l'ensemble
+des couples $(r, s)$, avec $0 \leq r < m$ et $0 \leq s < n$ (comme dans
+le tableau \ref{tab:E-chinois}). Or $x$ est premier avec $mn$ si et
+seulement s'il est premier avec $m$ et avec $n$ (un nombre premier qui
+divise $mn$ divise $m$ ou $n$). Par ailleurs, $x$ est premier avec $m$
+si et seulement si son reste $r$ l'est, puisque $x$ et $r$ ont les
+mêmes diviseurs communs avec $m$ (lemme \ref{lem:E-pgcd-reste}) ; de
+même pour $n$. La bijection fait donc correspondre les entiers premiers
+avec $mn$ aux couples $(r, s)$ où $r$ est premier avec $m$ et $s$ premier
+avec $n$. Il y a $\varphi(m)$ choix pour $r$ et $\varphi(n)$ choix pour
+$s$, donc $\varphi(m)\varphi(n)$ couples. (On compte ici les entiers de
+$0$ à $mn - 1$ plutôt que de $1$ à $mn$, ce qui ne change rien : $0$ et
+$mn$ ne sont premiers avec $mn$ que si $mn = 1$, cas évident.)
+:::
+
+::: {.historical #hist:chinois title="Du Sunzi suanjing aux ordinateurs"}
+Le problème de Sunzi n'est accompagné que d'une méthode propre aux
+modules $3$, $5$ et $7$. La méthode générale, appelée dayan qiuyi shu
+(« méthode de la grande extension pour trouver l'unité »), est exposée
+en 1247 par Qin Jiushao dans ses Neuf sections de mathématiques ; elle
+revient à calculer des inverses modulaires par un procédé équivalent à
+l'algorithme d'Euclide étendu. En Europe, le résultat apparaît chez
+Fibonacci (1202), puis est démontré en toute généralité par Euler et par
+Gauss, qui lui consacre plusieurs articles des Disquisitiones. Le
+théorème sert aujourd'hui à accélérer les calculs sur de grands
+nombres : au lieu de calculer modulo $n = pq$, on calcule séparément
+modulo $p$ et modulo $q$, avec des nombres deux fois plus courts, puis on
+recolle les résultats. C'est ainsi que les logiciels effectuent le
+déchiffrement RSA, environ quatre fois plus vite qu'en travaillant
+directement modulo $n$.
+:::
+
+## Exercices {.unnumbered .exercices}
+
+:::: {.exercice #exo:E-divisibilite}
+Soient $a$, $b$ et $c$ des entiers, avec $a \neq 0$. Démontrer les
+énoncés suivants.
+
+a) Si $a \mid b$, alors $a \mid bc$.
+b) Si $b \neq 0$, alors $a \mid b$ et $b \mid c$ entraînent $a \mid c$.
+c) Si $a \mid b$ et $a \mid c$, alors $a \mid (bx + cy)$ pour tous les
+   entiers $x$ et $y$.
+d) Si $b \neq 0$, alors $a \mid b$ et $b \mid a$ entraînent $a = \pm b$.
+e) Si $c \neq 0$ et $a \mid b$, alors $ac \mid bc$.
+
+::: {.solution}
+a) Si $a \mid b$, il existe $k \in \Z$ tel que $b = ka$. Alors
+   $bc = kac = (kc)\,a$, où $kc \in \Z$. Donc $a \mid bc$.
+b) Il existe $k, j \in \Z$ tels que $b = ka$ et $c = jb$. Alors
+   $c = jka = (jk)\,a$, avec $jk \in \Z$ : $a$ divise $c$.
+c) Il existe $k, j \in \Z$ tels que $b = ka$ et $c = ja$. Pour tous
+   $x, y \in \Z$, $bx + cy = kax + jay = (kx + jy)\,a$, avec
+   $kx + jy \in \Z$. Donc $a \mid (bx + cy)$.
+d) Il existe $k, j \in \Z$ tels que $b = ka$ et $a = jb$. Alors
+   $b = jkb$, et puisque $b \neq 0$, $jk = 1$. Les seuls entiers dont le
+   produit vaut $1$ sont $j = k = 1$ et $j = k = -1$. Dans le premier
+   cas $a = b$, dans le second $a = -b$.
+e) Il existe $k \in \Z$ tel que $b = ka$. Alors $bc = k\,(ac)$. Comme
+   $a \neq 0$ et $c \neq 0$, on a $ac \neq 0$, et cette égalité dit
+   exactement que $ac \mid bc$.
+:::
+::::
+
+:::: {.exercice #exo:E-division}
+a) Effectuer la division euclidienne de $250$ par $13$, puis celle de
+   $-250$ par $13$.
+b) Montrer que le carré d'un entier est toujours congru à $0$ ou à $1$
+   modulo $4$. On pourra distinguer les cas selon le reste de la
+   division de l'entier par $2$.
+c) En déduire qu'aucun entier de la forme $4k + 3$ n'est une somme de
+   deux carrés d'entiers.
+
+::: {.solution}
+a) $250 = 13 \times 19 + 3$ : le quotient est $19$ et le reste $3$.
+   Pour $-250$, on a $-250 = 13 \times (-19) - 3$, qui ne convient pas
+   (reste négatif) ; on descend d'un multiple de $13$ :
+   $-250 = 13 \times (-20) + 10$, avec $0 \leq 10 < 13$. Le quotient est
+   $-20$ et le reste $10$.
+b) Tout entier $n$ s'écrit $n = 2m$ ou $n = 2m + 1$ (division
+   euclidienne par $2$). Dans le premier cas, $n^2 = 4m^2$, qui est
+   divisible par $4$. Dans le second, $n^2 = 4m^2 + 4m + 1 = 4(m^2 + m)
+   + 1$, dont le reste modulo $4$ est $1$.
+c) Par la partie b), $a^2$ et $b^2$ sont chacun congrus à $0$ ou à $1$
+   modulo $4$. Leur somme est donc congrue à $0$, $1$ ou $2$ modulo
+   $4$, mais jamais à $3$. Un entier de la forme $4k + 3$ ne peut donc
+   pas s'écrire $a^2 + b^2$. Par exemple, $3$, $7$, $11$ et $15$ ne sont
+   pas des sommes de deux carrés.
+:::
+::::
+
+:::: {.exercice #exo:E-premiers}
+a) À l'aide du lemme \ref{lem:E-diviseur-premier}, déterminer si $221$
+   et $223$ sont premiers. Combien de divisions faut-il effectuer, au
+   plus, dans chaque cas ?
+b) Factoriser $\num{6409}$ en nombres premiers, en justifiant
+   pourquoi on peut s'arrêter.
+c) Soit $n \geq 2$. Montrer que les $n - 1$ entiers consécutifs
+   $n! + 2, n! + 3, \dots, n! + n$ sont tous composés. Qu'en
+   déduit-on sur les écarts entre nombres premiers consécutifs ?
+
+::: {.solution}
+a) On a $14 < \sqrt{221} < 15$ et $14 < \sqrt{223} < 15$. Il suffit de
+   tester les nombres premiers $2, 3, 5, 7, 11, 13$, soit six divisions
+   au plus. Pour $221$, on trouve $221 = 13 \times 17$ : il est composé.
+   Pour $223$, aucun de ces six nombres ne divise $223$ (les restes sont
+   $1, 1, 3, 6, 3$ et $2$) ; par le point (ii) du lemme, $223$ est
+   premier.
+b) On cherche le plus petit diviseur premier de $\num{6409}$ parmi les
+   nombres premiers inférieurs à $\sqrt{6409} \approx \num{80.06}$. Ni
+   $2$, ni $3$ (somme des chiffres $19$), ni $5$, ni $7$, ni $11$ ne
+   conviennent, mais $\num{6409} = 13 \times 493$. On reprend avec
+   $493$ : son plus petit facteur premier est au moins $13$ (sinon il
+   diviserait aussi $\num{6409}$), et au plus $\sqrt{493} \approx
+   \num{22.2}$. On teste $13$, $17$ et $19$ : $493 = 17 \times 29$.
+   Enfin, $29$ est premier. Ainsi $\num{6409} = 13 \times 17 \times 29$.
+c) Pour $2 \leq k \leq n$, l'entier $k$ divise $n! = 1 \times 2 \times
+   \cdots \times n$, et il divise $k$ ; il divise donc la somme
+   $n! + k$. Comme $1 < k < n! + k$, cet entier est composé. On obtient
+   ainsi $n - 1$ entiers consécutifs sans aucun nombre premier. Puisque
+   $n$ est arbitraire, il existe des écarts aussi grands qu'on veut
+   entre deux nombres premiers consécutifs. Par exemple, avec $n = 5$,
+   les entiers $122, 123, 124, 125$ sont composés.
+:::
+::::
+
+:::: {.exercice #exo:E-premiers-4k3}
+Le but de cet exercice est d'adapter la démonstration d'Euclide pour
+montrer qu'il existe une infinité de nombres premiers de la forme
+$4k + 3$.
+
+a) Montrer qu'un nombre premier impair est congru à $1$ ou à $3$ modulo
+   $4$.
+b) Montrer que le produit de deux entiers congrus à $1$ modulo $4$ est
+   congru à $1$ modulo $4$. En déduire qu'un produit d'un nombre
+   quelconque de tels entiers est aussi congru à $1$ modulo $4$.
+c) Supposons qu'il n'y ait qu'un nombre fini de nombres premiers de la
+   forme $4k + 3$, soit $p_1, \dots, p_r$, et posons
+   $N = 4p_1 p_2 \cdots p_r - 1$. Montrer que $N$ possède un facteur
+   premier de la forme $4k + 3$, et conclure.
+d) Pourquoi l'argument ne fonctionne-t-il pas pour les nombres premiers
+   de la forme $4k + 1$ ?
+
+::: {.solution}
+a) Un entier est congru à $0$, $1$, $2$ ou $3$ modulo $4$. S'il est
+   congru à $0$ ou à $2$, il est pair. Un nombre premier impair est donc
+   congru à $1$ ou à $3$ modulo $4$.
+b) Si $a \equiv 1$ et $b \equiv 1 \pmod 4$, alors $ab \equiv 1 \times 1
+   = 1 \pmod 4$ par la règle du produit. Par récurrence, un produit de
+   $k$ facteurs congrus à $1$ est congru à $1$.
+c) On a $N \equiv -1 \equiv 3 \pmod 4$ et $N \geq 4 \times 3 - 1 =
+   11$. Comme $N$ est impair, tous ses facteurs premiers sont impairs,
+   donc congrus à $1$ ou à $3$ modulo $4$ par a). S'ils étaient tous
+   congrus à $1$, leur produit $N$ serait congru à $1$ par b), ce qui
+   n'est pas le cas. Donc $N$ a un facteur premier $p \equiv 3 \pmod 4$.
+   Par hypothèse, $p$ est l'un des $p_i$. Alors $p$ divise
+   $4p_1 \cdots p_r$ et $N$, donc leur différence, qui vaut $1$ :
+   c'est impossible. Il y a donc une infinité de nombres premiers de la
+   forme $4k + 3$.
+d) Si l'on part de nombres premiers $p_i \equiv 1 \pmod 4$ et qu'on
+   forme $N = 4p_1 \cdots p_r + 1 \equiv 1 \pmod 4$, rien n'oblige $N$ à
+   avoir un facteur premier congru à $1$ : un produit de deux nombres
+   congrus à $3$ est aussi congru à $1$ ($3 \times 3 = 9 \equiv 1$). Le
+   résultat reste vrai pour les nombres premiers de la forme $4k + 1$,
+   mais sa démonstration demande d'autres outils.
+:::
+::::
+
+:::: {.exercice #exo:E-euclide-bezout}
+À l'aide de l'algorithme d'Euclide et de calculs supplémentaires,
+répondre aux questions suivantes.
+
+a) Trouver $\pgcd(\num{42823}, \num{6409})$.
+b) Trouver des entiers $x$ et $y$ tels que
+   $\num{42823}\,x + \num{6409}\,y = 17$.
+c) Factoriser $\num{42823}$ et $\num{6409}$ en nombres premiers (pour
+   $\num{6409}$, voir l'exercice \ref{exo:E-premiers}).
+d) Retrouver le PGCD à partir des factorisations.
+
+::: {.solution}
+a) Les divisions successives sont
+   \begin{align*}
+     \num{42823} &= 6 \times \num{6409} + \num{4369},\\
+     \num{6409} &= 1 \times \num{4369} + \num{2040},\\
+     \num{4369} &= 2 \times \num{2040} + 289,\\
+     \num{2040} &= 7 \times 289 + 17,\\
+     289 &= 17 \times 17 + 0 .
+   \end{align*}
+   Le dernier reste non nul est $17$ : $\pgcd(\num{42823},
+   \num{6409}) = 17$.
+b) On remonte les divisions, en partant de l'avant-dernière :
+   \begin{align*}
+     17 &= \num{2040} - 7 \times 289\\
+        &= \num{2040} - 7\,(\num{4369} - 2 \times \num{2040})
+         = 15 \times \num{2040} - 7 \times \num{4369}\\
+        &= 15\,(\num{6409} - \num{4369}) - 7 \times \num{4369}
+         = 15 \times \num{6409} - 22 \times \num{4369}\\
+        &= 15 \times \num{6409} - 22\,(\num{42823} - 6 \times \num{6409})
+         = 147 \times \num{6409} - 22 \times \num{42823} .
+   \end{align*}
+   On peut donc prendre $x = -22$ et $y = 147$. Ce n'est pas la seule
+   possibilité : par la proposition \ref{prop:E-diophante}, les
+   solutions sont $x = -22 + 377t$ et $y = 147 - \num{2519}t$, où
+   $377 = \num{6409}/17$ et $\num{2519} = \num{42823}/17$.
+c) On a vu que $\num{6409} = 13 \times 17 \times 29$. Puisque $17$
+   divise $\num{42823}$ par a), on calcule $\num{42823} = 17 \times
+   \num{2519}$. Le plus petit facteur premier de $\num{2519}$ est au
+   plus $\sqrt{2519} \approx \num{50.2}$ ; on trouve
+   $\num{2519} = 11 \times 229$. Enfin, $229$ est premier (aucun des
+   nombres premiers $2, 3, 5, 7, 11, 13$, inférieurs à $\sqrt{229}
+   \approx \num{15.1}$, ne le divise). Ainsi
+   $\num{42823} = 11 \times 17 \times 229$.
+d) Le seul nombre premier commun aux deux factorisations est $17$, avec
+   l'exposant $1$ dans les deux cas. Par la
+   proposition \ref{prop:E-pgcd-ppcm}, le PGCD est $17^1 = 17$. On
+   remarque que connaître le PGCD à l'avance facilitait la
+   factorisation : il fournissait directement un facteur commun.
+:::
+::::
+
+:::: {.exercice #exo:E-pavage}
+Un artisan veut carreler un plancher rectangulaire de $\num{3.15}$ m sur
+$\num{1.35}$ m avec des tuiles carrées identiques, sans en découper
+aucune.
+
+a) Quelle est la plus grande dimension possible des tuiles, si leur côté
+   est un nombre entier de centimètres ? Combien en faudra-t-il ?
+b) Dessiner, à la manière de la figure \ref{fig:E-pavage}, le découpage
+   d'Euclide d'un rectangle $315 \times 135$, et faire le lien avec les
+   divisions de l'algorithme d'Euclide.
+c) L'artisan dispose en réalité de tuiles de $20$ cm de côté.
+   Peut-il carreler le plancher sans découpe ? Justifier à l'aide de la
+   proposition \ref{prop:E-pavage}.
+
+::: {.solution}
+a) En centimètres, le plancher mesure $315 \times 135$. Par la
+   proposition \ref{prop:E-pavage}, le plus grand côté possible est
+   $\pgcd(315, 135)$. L'algorithme d'Euclide donne $315 = 2 \times 135
+   + 45$ et $135 = 3 \times 45 + 0$ : le PGCD est $45$. Les tuiles
+   mesurent donc $45$ cm de côté, et il en faut
+   $\tfrac{315}{45} \times \tfrac{135}{45} = 7 \times 3 = 21$.
+b) On découpe d'abord deux carrés de côté $135$ (premier quotient $2$),
+   ce qui laisse une bande de $45 \times 135$ (premier reste $45$).
+   Cette bande se découpe exactement en trois carrés de côté $45$
+   (deuxième quotient $3$, reste nul). Le dessin compte donc deux grands
+   carrés côte à côte et une bande verticale formée de trois petits
+   carrés ; le côté des plus petits carrés est le PGCD.
+c) Non : $20$ ne divise ni $315$ ni $135$ (leurs restes dans la division
+   par $20$ valent $15$). Par la proposition \ref{prop:E-pavage}, des
+   carrés de côté $20$ ne peuvent pas paver le plancher. Plus
+   généralement, les seules tailles entières possibles sont les
+   diviseurs de $45$ : $1$, $3$, $5$, $9$, $15$ et $45$ cm.
+:::
+::::
+
+:::: {.exercice #exo:E-pgcd-ppcm}
+a) Calculer $\pgcd(360, 84)$ et $\ppcm(360, 84)$ à l'aide des
+   factorisations, et vérifier que leur produit vaut $360 \times 84$.
+b) Trouver tous les couples d'entiers positifs $(a, b)$, avec
+   $a \leq b$, tels que $\pgcd(a, b) = 12$ et $\ppcm(a, b) = 360$.
+
+::: {.solution}
+a) $360 = 2^3 \cdot 3^2 \cdot 5$ et $84 = 2^2 \cdot 3 \cdot 7$. Par la
+   proposition \ref{prop:E-pgcd-ppcm}, $\pgcd(360, 84) = 2^2 \cdot 3 =
+   12$ et $\ppcm(360, 84) = 2^3 \cdot 3^2 \cdot 5 \cdot 7 = 2520$. On a
+   bien $12 \times 2520 = \num{30240} = 360 \times 84$.
+b) Puisque $12$ divise $a$ et $b$, écrivons $a = 12a'$ et $b = 12b'$.
+   Les entiers $a'$ et $b'$ sont premiers entre eux, sinon un diviseur
+   commun $e > 1$ ferait de $12e$ un diviseur commun de $a$ et $b$
+   plus grand que $12$. Par la proposition \ref{prop:E-pgcd-ppcm},
+   $ab = 12 \times 360$, soit $144\,a'b' = 4320$, d'où $a'b' = 30$. Il
+   faut donc écrire $30 = 2 \cdot 3 \cdot 5$ comme produit de deux
+   facteurs premiers entre eux, $a' \leq b'$ ; chaque nombre premier va
+   entièrement dans l'un ou l'autre facteur. Les possibilités sont
+   $(1, 30)$, $(2, 15)$, $(3, 10)$ et $(5, 6)$. Les couples cherchés sont
+   $(12, 360)$, $(24, 180)$, $(36, 120)$ et $(60, 72)$. On vérifie par
+   exemple que $60 = 2^2 \cdot 3 \cdot 5$ et $72 = 2^3 \cdot 3^2$ ont pour
+   PGCD $2^2 \cdot 3 = 12$ et pour PPCM $2^3 \cdot 3^2 \cdot 5 = 360$.
+:::
+::::
+
+:::: {.exercice #exo:E-bezout}
+a) Montrer que, pour tout entier $n$, les entiers $n$ et $n + 1$ sont
+   premiers entre eux, ainsi que $2n + 1$ et $3n + 1$.
+b) L'équation $15x + 21y = 10$ a-t-elle des solutions entières ?
+c) Trouver toutes les solutions entières de $15x + 21y = 9$.
+d) On dispose d'un récipient de $5$ L et d'un récipient de $7$ L, sans
+   graduation, ainsi que d'un robinet et d'un évier. Expliquer comment
+   l'égalité $3 \times 5 - 2 \times 7 = 1$ suggère une façon d'obtenir
+   exactement $1$ L d'eau.
+
+::: {.solution}
+a) On a $(n + 1) \cdot 1 + n \cdot (-1) = 1$, et
+   $3\,(2n + 1) - 2\,(3n + 1) = 6n + 3 - 6n - 2 = 1$. Par le point (iii)
+   du corollaire \ref{cor:E-bezout}, les deux paires sont premières entre
+   elles.
+b) Non. On a $\pgcd(15, 21) = 3$, et $3$ divise $15x + 21y$ pour tous
+   les entiers $x$ et $y$ ; il ne peut donc pas diviser $10$.
+c) Puisque $3 \mid 9$, il y a des solutions. En divisant par $3$,
+   l'équation devient $5x + 7y = 3$. On a $5 \times 3 + 7 \times (-2) =
+   1$ (ou, par l'algorithme d'Euclide, $7 = 1 \times 5 + 2$,
+   $5 = 2 \times 2 + 1$, d'où $1 = 5 - 2 \times 2 = 5 - 2(7 - 5) = 3
+   \times 5 - 2 \times 7$). En multipliant par $3$, on obtient la solution
+   particulière $(x_0, y_0) = (9, -6)$. Par la
+   proposition \ref{prop:E-diophante}, avec $b/d = 7$ et $a/d = 5$, les
+   solutions sont
+   $$
+     x = 9 + 7t, \qquad y = -6 - 5t, \qquad t \in \Z .
+   $$
+   Avec $t = -1$, par exemple, $(x, y) = (2, -1)$ : $30 - 21 = 9$.
+d) L'égalité dit qu'en versant trois fois $5$ L dans un récipient et en
+   en retirant deux fois $7$ L, il reste $1$ L. Concrètement : on remplit
+   le récipient de $5$ L et on le vide dans celui de $7$ L ; on le
+   remplit de nouveau et on complète le récipient de $7$ L, ce qui laisse
+   $3$ L dans celui de $5$ L ; on vide le récipient de $7$ L dans l'évier
+   et on y verse les $3$ L ; on remplit une troisième fois le récipient
+   de $5$ L et on complète celui de $7$ L (il manque $4$ L), ce qui
+   laisse exactement $1$ L dans le récipient de $5$ L. On a bien rempli
+   trois fois le récipient de $5$ L et vidé deux fois le récipient de
+   $7$ L.
+:::
+::::
+
+:::: {.exercice #exo:E-gauss}
+a) Soient $a$, $b$ et $c$ des entiers non nuls. Montrer que si
+   $\pgcd(a, b) = 1$ et $\pgcd(a, c) = 1$, alors $\pgcd(a, bc) = 1$.
+b) Montrer par un exemple que l'hypothèse $\pgcd(a, b) = 1$ ne peut
+   pas être retirée du lemme de Gauss.
+c) Montrer que $\sqrt{2}$ est irrationnel. On supposera que
+   $\sqrt{2} = \tfrac{a}{b}$, avec $\pgcd(a, b) = 1$, et on utilisera
+   le lemme d'Euclide.
+d) Généraliser : si $p$ est un nombre premier, $\sqrt{p}$ est
+   irrationnel.
+
+::: {.solution}
+a) Par le théorème de Bachet--Bézout, il existe des entiers tels que
+   $au + bv = 1$ et $as + ct = 1$. En multipliant ces deux égalités,
+   $$
+     1 = (au + bv)(as + ct) = a\,(uas + uct + bvs) + bc\,(vt).
+   $$
+   On a écrit $1$ comme combinaison de $a$ et de $bc$ ; par le
+   point (iii) du corollaire \ref{cor:E-bezout}, $\pgcd(a, bc) = 1$.
+   (On peut aussi raisonner avec les nombres premiers : un nombre premier
+   qui diviserait $a$ et $bc$ diviserait $b$ ou $c$, par le lemme
+   d'Euclide.)
+b) $6$ divise $4 \times 3 = 12$, mais $6 \nmid 3$ ; ici
+   $\pgcd(6, 4) = 2 \neq 1$. Le nombre $6$ « se partage » entre les deux
+   facteurs : $2$ divise $4$ et $3$ divise $3$.
+c) Supposons que $\sqrt{2} = a/b$ avec $a$, $b$ entiers positifs
+   premiers entre eux (on peut toujours réduire une fraction). Alors
+   $a^2 = 2b^2$, donc $2 \mid a^2 = a \cdot a$. Par le lemme d'Euclide,
+   $2 \mid a$ : écrivons $a = 2c$. Alors $4c^2 = 2b^2$, soit
+   $b^2 = 2c^2$, et le même raisonnement donne $2 \mid b$. Ainsi $2$
+   divise $a$ et $b$, ce qui contredit $\pgcd(a, b) = 1$. Donc
+   $\sqrt{2}$ est irrationnel.
+d) Le raisonnement est identique, en remplaçant $2$ par $p$ : de
+   $a^2 = pb^2$, on tire $p \mid a$ (lemme d'Euclide), puis $a = pc$,
+   $b^2 = pc^2$ et $p \mid b$, ce qui est une contradiction. Le lemme
+   d'Euclide est essentiel : avec $4$ à la place de $p$, l'argument
+   échouerait (et, de fait, $\sqrt{4} = 2$ est rationnel), car $4 \mid
+   a^2$ n'entraîne pas $4 \mid a$.
+:::
+::::
+
+:::: {.exercice #exo:E-congruences}
+Soient $a$, $b$, $c$, $d$, $x$ et $y$ des entiers, et $m \geq 1$ un
+entier. Démontrer les énoncés suivants.
+
+a) Les énoncés $a \equiv b \pmod m$, $b \equiv a \pmod m$ et
+   $a - b \equiv 0 \pmod m$ sont équivalents.
+b) Si $a \equiv b \pmod m$ et $c \equiv d \pmod m$, alors
+   $a + c \equiv b + d \pmod m$.
+c) Si $a \equiv b \pmod m$ et $b \equiv c \pmod m$, alors
+   $a \equiv c \pmod m$.
+d) Si $ax \equiv ay \pmod m$ et $\pgcd(a, m) = 1$, alors
+   $x \equiv y \pmod m$.
+e) En général, $ax \equiv ay \pmod m$ n'entraîne pas
+   $x \equiv y \pmod m$.
+
+::: {.solution}
+a) Si $a \equiv b \pmod m$, alors $m \mid a - b$ par définition. Par le
+   point (ii) de la proposition \ref{prop:E-divisibilite}, $m$ divise
+   $(-1)(a - b) = b - a$, c'est-à-dire $b \equiv a \pmod m$. Le même
+   raisonnement, en échangeant $a$ et $b$, donne la réciproque. Par
+   ailleurs, $a - b \equiv 0 \pmod m$ signifie que $m$ divise
+   $(a - b) - 0 = a - b$, ce qui est exactement la définition de
+   $a \equiv b \pmod m$.
+b) Par hypothèse, $m$ divise $a - b$ et $c - d$. Il divise donc leur
+   somme $(a - b) + (c - d) = (a + c) - (b + d)$, d'où
+   $a + c \equiv b + d \pmod m$.
+c) Par hypothèse, $m$ divise $a - b$ et $b - c$, donc aussi leur somme,
+   $(a - b) + (b - c) = a - c$. Ainsi $a \equiv c \pmod m$.
+d) Par hypothèse, $m$ divise $ax - ay = a(x - y)$. Puisque
+   $\pgcd(a, m) = 1$, le lemme de Gauss donne $m \mid x - y$, d'où
+   $x \equiv y \pmod m$.
+e) Prenons $a = 2$, $x = 5$, $y = 0$ et $m = 10$. On a $ax = 10 \equiv
+   0 = ay \pmod{10}$, mais $5 \not\equiv 0 \pmod{10}$. L'hypothèse de d)
+   n'est pas satisfaite, puisque $\pgcd(2, 10) = 2$.
+:::
+::::
+
+:::: {.exercice #exo:E-criteres}
+On note $\overline{c_m \cdots c_1 c_0}$ l'entier dont l'écriture
+décimale est formée des chiffres $c_m, \dots, c_1, c_0$.
+
+a) Montrer que $\overline{c_m \cdots c_1 c_0} \equiv c_0 - c_1 + c_2 -
+   \cdots + (-1)^m c_m \pmod{11}$. En déduire un critère de divisibilité
+   par $11$.
+b) Les nombres $\num{123456789}$ et $\num{918082}$ sont-ils divisibles
+   par $9$ ? par $11$ ?
+c) Montrer qu'un nombre de quatre chiffres de la forme
+   $\overline{abba}$ (un palindrome, comme $3443$) est toujours
+   divisible par $11$.
+
+::: {.solution}
+a) Comme $10 \equiv -1 \pmod{11}$, on a $10^k \equiv (-1)^k \pmod{11}$
+   par le point (iii) de la proposition \ref{prop:E-congruence-proprietes}.
+   Par les règles de la somme et du produit,
+   $$
+     \overline{c_m \cdots c_0} = \sum_{k=0}^{m} c_k\,10^k
+     \equiv \sum_{k=0}^{m} (-1)^k c_k \pmod{11}.
+   $$
+   Un entier est donc divisible par $11$ si et seulement si la somme
+   alternée de ses chiffres, en partant des unités, est divisible
+   par $11$.
+b) Pour $\num{123456789}$, la somme des chiffres vaut $45$, qui est
+   divisible par $9$ : le nombre est divisible par $9$. La somme alternée
+   vaut $9 - 8 + 7 - 6 + 5 - 4 + 3 - 2 + 1 = 5$ : il n'est pas
+   divisible par $11$ (son reste modulo $11$ est $5$). Pour
+   $\num{918082}$, la somme des chiffres vaut $28 \equiv 1 \pmod 9$ : il
+   n'est pas divisible par $9$. La somme alternée vaut
+   $2 - 8 + 0 - 8 + 1 - 9 = -22$, divisible par $11$ : le nombre est
+   divisible par $11$ (en effet, $\num{918082} = 11 \times
+   \num{83462}$).
+c) La somme alternée des chiffres de $\overline{abba}$ vaut
+   $a - b + b - a = 0$, qui est divisible par $11$. Directement,
+   $\overline{abba} = 1001a + 110b = 11\,(91a + 10b)$.
+:::
+::::
+
+:::: {.exercice #exo:E-isbn}
+Un code ISBN-10, utilisé pour identifier les livres jusqu'en 2007, est
+une suite de dix chiffres $x_1 x_2 \cdots x_{10}$ (le dernier pouvant
+valoir $10$, noté X) qui vérifie
+$$
+  1 \cdot x_1 + 2 \cdot x_2 + 3 \cdot x_3 + \cdots + 10 \cdot x_{10}
+  \equiv 0 \pmod{11} .
+$$
+
+a) Trouver le chiffre de contrôle $x_{10}$ du code dont les neuf
+   premiers chiffres sont $2\,7\,6\,5\,4\,0\,9\,1\,2$. On pourra
+   remarquer que $10 \equiv -1 \pmod{11}$.
+b) Montrer que si l'on modifie un seul chiffre d'un code valide, le code
+   obtenu n'est plus valide. Quel résultat de l'annexe utilise-t-on ?
+c) Montrer que si l'on échange deux chiffres consécutifs différents
+   d'un code valide, le code obtenu n'est plus valide.
+d) Pourquoi a-t-on choisi le module $11$ plutôt que $10$, qui aurait
+   évité le symbole X ?
+
+::: {.solution}
+a) On calcule $S = 1 \cdot 2 + 2 \cdot 7 + 3 \cdot 6 + 4 \cdot 5 +
+   5 \cdot 4 + 6 \cdot 0 + 7 \cdot 9 + 8 \cdot 1 + 9 \cdot 2 = 2 + 14 +
+   18 + 20 + 20 + 0 + 63 + 8 + 18 = 163$. La condition s'écrit
+   $163 + 10\,x_{10} \equiv 0 \pmod{11}$. Comme $163 = 14 \times 11 + 9
+   \equiv 9$ et $10 \equiv -1$, elle devient $9 - x_{10} \equiv 0$, soit
+   $x_{10} = 9$. Le code est $2\,7\,6\,5\,4\,0\,9\,1\,2\,9$.
+b) Si l'on remplace le chiffre $x_i$ par $y_i \neq x_i$, la somme
+   pondérée change de $i\,(y_i - x_i)$. Pour que le nouveau code soit
+   valide, il faudrait que $11 \mid i\,(y_i - x_i)$. Par le lemme
+   d'Euclide ($11$ est premier), cela exigerait $11 \mid i$ ou
+   $11 \mid y_i - x_i$. Or $1 \leq i \leq 10$ et
+   $0 < |y_i - x_i| \leq 10$ : aucun de ces deux nombres n'est
+   divisible par $11$. L'erreur est donc toujours détectée.
+c) Si l'on échange $x_i$ et $x_{i+1}$, la somme pondérée change de
+   $$
+     \big(i\,x_{i+1} + (i+1)\,x_i\big) - \big(i\,x_i + (i+1)\,x_{i+1}\big)
+     = x_i - x_{i+1} .
+   $$
+   Comme $0 < |x_i - x_{i+1}| \leq 10$, cette variation n'est pas
+   divisible par $11$, et l'erreur est détectée.
+d) Le raisonnement de b) repose sur le fait que $11$ est premier. Modulo
+   $10$, il échouerait : remplacer $x_2 = 0$ par $y_2 = 5$ change la
+   somme de $2 \times 5 = 10 \equiv 0 \pmod{10}$, et l'erreur passerait
+   inaperçue. Le module premier $11$ garantit que tous les poids
+   $1, \dots, 10$ sont inversibles. Le prix à payer est un onzième
+   symbole, X, pour le chiffre de contrôle.
+:::
+::::
+
+:::: {.exercice #exo:E-congruences-lineaires}
+Résoudre chacune des congruences suivantes, sans calculatrice, ou
+justifier qu'elle n'a pas de solution.
+
+a) $15x \equiv 2 \pmod 4$
+b) $12x \equiv 4 \pmod 3$
+c) $2x \equiv 3 \pmod 6$
+d) $2x \equiv 3 \pmod 7$
+e) $6x \equiv 4 \pmod{10}$
+
+::: {.solution}
+a) Comme $15 \equiv -1 \pmod 4$, la congruence devient $-x \equiv 2$,
+   soit $x \equiv -2 \equiv 2 \pmod 4$. On vérifie : $15 \times 2 = 30
+   = 7 \times 4 + 2$.
+b) $12x \equiv 0 \pmod 3$ pour tout $x$, alors que $4 \equiv 1 \pmod 3$.
+   Il n'y a aucune solution, ce que confirme la
+   proposition \ref{prop:E-congruence-lineaire} : $\pgcd(12, 3) = 3$ ne
+   divise pas $4$.
+c) $\pgcd(2, 6) = 2$ ne divise pas $3$ : aucune solution. En effet,
+   $2x - 3$ est impair et ne peut pas être un multiple de $6$.
+d) $\pgcd(2, 7) = 1$, il y a une solution unique modulo $7$. L'inverse
+   de $2$ modulo $7$ est $4$ ($2 \times 4 = 8 \equiv 1$). En multipliant
+   par $4$, $x \equiv 12 \equiv 5 \pmod 7$. On vérifie : $2 \times 5 =
+   10 \equiv 3 \pmod 7$.
+e) $\pgcd(6, 10) = 2$ divise $4$ : il y a deux solutions modulo $10$. En
+   divisant par $2$, on obtient $3x \equiv 2 \pmod 5$. L'inverse de $3$
+   modulo $5$ est $2$, d'où $x \equiv 4 \pmod 5$. Les solutions modulo
+   $10$ sont $x \equiv 4$ et $x \equiv 9 \pmod{10}$ ($6 \times 4 = 24$ et
+   $6 \times 9 = 54$ sont bien congrus à $4$ modulo $10$).
+:::
+::::
+
+:::: {.exercice #exo:E-inverses}
+Trouver, s'ils existent, les inverses suivants.
+
+a) L'inverse de $12$ modulo $23$.
+b) L'inverse de $33$ modulo $114$.
+c) L'inverse de $101$ modulo $102$.
+d) L'inverse de $17$ modulo $43$, à l'aide de l'algorithme d'Euclide
+   étendu.
+
+::: {.solution}
+a) On remarque que $12 \times 2 = 24 = 23 + 1 \equiv 1 \pmod{23}$.
+   L'inverse est $2$. (L'algorithme d'Euclide donne la même chose :
+   $23 = 1 \times 12 + 11$, $12 = 1 \times 11 + 1$, d'où
+   $1 = 12 - 11 = 12 - (23 - 12) = 2 \times 12 - 23$.)
+b) $\pgcd(33, 114) = 3$, puisque $33 = 3 \times 11$ et $114 = 2 \times 3
+   \times 19$. Par la proposition \ref{prop:E-inverse}, $33$ n'est pas
+   inversible modulo $114$.
+c) $101 \equiv -1 \pmod{102}$, et $(-1)(-1) = 1$. Donc $101$ est son
+   propre inverse : $101^2 = \num{10201} = 100 \times 102 + 1$.
+d) $43 = 2 \times 17 + 9$, $17 = 1 \times 9 + 8$, $9 = 1 \times 8 + 1$.
+   En remontant,
+   $$
+     1 = 9 - 8 = 9 - (17 - 9) = 2 \times 9 - 17
+       = 2\,(43 - 2 \times 17) - 17 = 2 \times 43 - 5 \times 17 .
+   $$
+   Ainsi $17 \times (-5) \equiv 1 \pmod{43}$, et l'inverse est
+   $-5 \equiv 38$. On vérifie : $17 \times 38 = 646 = 15 \times 43 + 1$.
+:::
+::::
+
+:::: {.exercice #exo:E-fermat}
+a) Calculer le reste de la division de $3^{100}$ par $7$.
+b) Soit $p$ un nombre premier. Montrer que
+   $$
+     2^{p-1} + 3^{p-1} + \cdots + (p-1)^{p-1} \equiv -2 \pmod p .
+   $$
+c) Vérifier que $2^{10} \equiv 1 \pmod{341}$, et en déduire que
+   $2^{340} \equiv 1 \pmod{341}$. Que peut-on en conclure sur la
+   réciproque du petit théorème de Fermat, sachant que $341 = 11 \times
+   31$ ?
+
+::: {.solution}
+a) $7$ est premier et ne divise pas $3$, donc $3^6 \equiv 1 \pmod 7$.
+   Comme $100 = 16 \times 6 + 4$,
+   $3^{100} = (3^6)^{16} \cdot 3^4 \equiv 3^4 = 81 = 11 \times 7 + 4
+   \equiv 4 \pmod 7$. Le reste est $4$.
+b) La somme compte $p - 2$ termes, de $2^{p-1}$ à $(p-1)^{p-1}$. Chaque
+   base $k$ vérifie $2 \leq k \leq p - 1$, donc $p \nmid k$, et le petit
+   théorème de Fermat donne $k^{p-1} \equiv 1 \pmod p$. La somme est donc
+   congrue à $1 + 1 + \cdots + 1 = p - 2 \equiv -2 \pmod p$. (Pour
+   $p = 2$, la somme est vide et vaut $0 \equiv -2 \pmod 2$.) Par exemple,
+   pour $p = 5$ : $2^4 + 3^4 + 4^4 = 16 + 81 + 256 = 353 = 71 \times 5 -
+   2$.
+c) $2^{10} = 1024 = 3 \times 341 + 1$, donc $2^{10} \equiv 1
+   \pmod{341}$. Alors $2^{340} = (2^{10})^{34} \equiv 1^{34} = 1
+   \pmod{341}$. Le nombre $n = 341$ vérifie donc $2^{n-1} \equiv 1
+   \pmod n$, comme le ferait un nombre premier, et pourtant il est
+   composé. La réciproque du petit théorème de Fermat est fausse : la
+   congruence $2^{n-1} \equiv 1 \pmod n$ ne suffit pas à prouver que $n$
+   est premier. On dit que $341$ est un nombre pseudo-premier en base
+   $2$.
+:::
+::::
+
+:::: {.exercice #exo:E-divisibilite-polynomes}
+a) Montrer que, pour tout entier $n$, $n^5 - n$ est divisible par $30$.
+b) Montrer que, pour tout entier $n$, $n^2(n^4 - 1)$ est divisible par
+   $60$.
+
+::: {.solution}
+a) Par le corollaire \ref{cor:E-fermat}, appliqué à $p = 5$,
+   $n^5 \equiv n \pmod 5$, donc $5 \mid n^5 - n$. Pour $2$ et $3$, on
+   factorise :
+   $$
+     n^5 - n = n(n^4 - 1) = n(n^2 - 1)(n^2 + 1) = (n - 1)\,n\,(n + 1)\,(n^2 + 1).
+   $$
+   Le produit $(n-1)n(n+1)$ de trois entiers consécutifs contient un
+   multiple de $2$ et un multiple de $3$ ; il est donc divisible par $2$
+   et par $3$. (On peut aussi appliquer le corollaire \ref{cor:E-fermat}
+   avec $p = 2$ et $p = 3$.) Ainsi $2$, $3$ et $5$ divisent $n^5 - n$.
+   Comme ils sont premiers entre eux deux à deux, le
+   corollaire \ref{cor:E-produit-diviseurs}, appliqué deux fois, donne
+   $2 \times 3 \times 5 = 30 \mid n^5 - n$.
+b) On a $n^2(n^4 - 1) = n\,(n^5 - n)$, qui est divisible par $3$ et par
+   $5$ par la partie a). Montrons qu'il est divisible par $4$. Si $n$ est
+   pair, $n = 2k$ et $n^2 = 4k^2$ est divisible par $4$. Si $n$ est
+   impair, $n - 1$ et $n + 1$ sont deux nombres pairs, donc
+   $(n-1)(n+1) = n^2 - 1$ est divisible par $4$, et $n^4 - 1 = (n^2 -
+   1)(n^2 + 1)$ aussi. Dans les deux cas, $4 \mid n^2(n^4 - 1)$. Comme
+   $3$, $4$ et $5$ sont premiers entre eux deux à deux, on conclut que
+   $60 \mid n^2(n^4 - 1)$. Il ne suffisait pas de dire que $n^2$ est
+   pair : il ne l'est que si $n$ l'est. Par exemple, pour $n = 3$,
+   $9 \times 80 = 720 = 12 \times 60$.
+:::
+::::
+
+:::: {.exercice #exo:E-phi}
+a) Sans utiliser la proposition \ref{prop:E-phi}, montrer que, pour un
+   nombre premier $p$ et un entier $k \geq 1$,
+   $\varphi(p^k) = p^k - p^{k-1}$.
+b) Calculer $\varphi(12)$, $\varphi(100)$ et $\varphi(360)$.
+c) Dresser la liste des entiers de $1$ à $12$ premiers avec $12$, et
+   vérifier le théorème d'Euler pour chacun d'eux en calculant son carré
+   modulo $12$.
+
+::: {.solution}
+a) La valeur $\varphi(p^k)$ est le nombre d'entiers de $1$ à $p^k$
+   premiers avec $p^k$. Le seul facteur premier de $p^k$ étant $p$, un
+   entier est premier avec $p^k$ si et seulement s'il n'est pas
+   divisible par $p$. Les entiers de $1$ à $p^k$ divisibles par $p$ sont
+   $1 \cdot p, 2 \cdot p, 3 \cdot p, \dots, p^{k-1} \cdot p$ ; il y en a
+   $p^{k-1}$. Il reste donc $p^k - p^{k-1}$ entiers premiers avec $p^k$.
+b) $12 = 2^2 \cdot 3$ : $\varphi(12) = 12 \cdot \tfrac12 \cdot \tfrac23
+   = 4$. $100 = 2^2 \cdot 5^2$ : $\varphi(100) = 100 \cdot \tfrac12
+   \cdot \tfrac45 = 40$. $360 = 2^3 \cdot 3^2 \cdot 5$ :
+   $\varphi(360) = 360 \cdot \tfrac12 \cdot \tfrac23 \cdot \tfrac45 =
+   96$.
+c) Les entiers sont $1$, $5$, $7$ et $11$, et $\varphi(12) = 4$. Leurs
+   carrés sont $1$, $25 = 2 \times 12 + 1$, $49 = 4 \times 12 + 1$ et
+   $121 = 10 \times 12 + 1$ : tous congrus à $1$ modulo $12$. Par
+   conséquent, leurs puissances quatrièmes le sont aussi, ce qui vérifie
+   $a^{\varphi(12)} = a^4 \equiv 1 \pmod{12}$. On constate même que
+   l'exposant $2$ suffit ici : $\varphi(n)$ est un exposant qui
+   fonctionne toujours, mais pas forcément le plus petit.
+:::
+::::
+
+:::: {.exercice #exo:E-euler}
+a) Énoncer le théorème d'Euler.
+b) Trouver les deux derniers chiffres de $7^{222}$.
+c) Trouver les trois derniers chiffres de $43^{402}$, à l'aide d'une
+   calculatrice au besoin, mais pas d'un ordinateur.
+
+::: {.solution}
+a) Soit $n \geq 1$ un entier, et $a$ un entier tel que
+   $\pgcd(a, n) = 1$. Alors $a^{\varphi(n)} \equiv 1 \pmod n$, où
+   $\varphi(n)$ est le nombre d'entiers de $1$ à $n$ premiers avec $n$.
+b) Les deux derniers chiffres sont le reste modulo $100$. Comme
+   $\pgcd(7, 100) = 1$ et $\varphi(100) = 40$, on a $7^{40} \equiv 1
+   \pmod{100}$. Or $222 = 5 \times 40 + 22$, donc $7^{222} \equiv 7^{22}
+   \pmod{100}$. On peut aller plus vite en remarquant que $7^4 = 2401
+   \equiv 1 \pmod{100}$ ; comme $222 = 4 \times 55 + 2$,
+   $7^{222} \equiv 7^2 = 49 \pmod{100}$. Les deux derniers chiffres sont
+   $49$.
+c) Les trois derniers chiffres sont le reste modulo $1000$. On a
+   $\pgcd(43, 1000) = 1$ et $\varphi(1000) = 1000 \cdot \tfrac12 \cdot
+   \tfrac45 = 400$, donc $43^{400} \equiv 1 \pmod{1000}$. Ainsi
+   $43^{402} = 43^{400} \cdot 43^2 \equiv 43^2 = 1849 \equiv 849
+   \pmod{1000}$. Les trois derniers chiffres sont $849$. Avec Python, on
+   vérifie le résultat par `pow(43, 402, 1000)`, qui calcule directement
+   la puissance modulaire.
+:::
+::::
+
+:::: {.exercice #exo:E-chinois}
+Résoudre les systèmes de congruences suivants, sans calculatrice.
+
+a) $x \equiv 1 \pmod 2$, $x \equiv 1 \pmod 3$, $x \equiv 1 \pmod 4$.
+   Les modules sont-ils premiers entre eux deux à deux ? Comment
+   procéder ?
+b) $2x \equiv 3 \pmod 5$ et $3x \equiv 1 \pmod 8$.
+c) Une paysanne apporte des œufs au marché. Si elle les compte par deux,
+   par trois, par quatre, par cinq ou par six, il en reste toujours un ;
+   si elle les compte par sept, il n'en reste aucun. Quel est le plus
+   petit nombre d'œufs possible ?
+
+::: {.solution}
+a) Les modules $2$ et $4$ ne sont pas premiers entre eux, et le
+   théorème ne s'applique pas directement. On remarque que la condition
+   $x \equiv 1 \pmod 4$ entraîne $x \equiv 1 \pmod 2$ : la première
+   congruence est superflue. Il reste $x \equiv 1 \pmod 3$ et
+   $x \equiv 1 \pmod 4$, avec $\pgcd(3, 4) = 1$. La solution évidente
+   $x = 1$ est unique modulo $12$ : $x \equiv 1 \pmod{12}$. Plus
+   simplement, $x - 1$ doit être un multiple de $2$, $3$ et $4$, donc de
+   leur PPCM, $12$.
+b) On ramène d'abord chaque congruence à la forme $x \equiv \dots$.
+   L'inverse de $2$ modulo $5$ est $3$, donc $x \equiv 3 \times 3 = 9
+   \equiv 4 \pmod 5$. L'inverse de $3$ modulo $8$ est $3$
+   ($3 \times 3 = 9 \equiv 1$), donc $x \equiv 3 \pmod 8$. On écrit
+   $x = 3 + 8k$ ; alors $3 + 8k \equiv 4 \pmod 5$, soit $3k \equiv 1
+   \pmod 5$, d'où $k \equiv 2 \pmod 5$ ($3 \times 2 = 6 \equiv 1$). Avec
+   $k = 2 + 5j$, $x = 19 + 40j$ : $x \equiv 19 \pmod{40}$. On vérifie :
+   $2 \times 19 = 38 \equiv 3 \pmod 5$ et $3 \times 19 = 57 \equiv 1
+   \pmod 8$.
+c) Le nombre $x$ d'œufs vérifie $x - 1$ divisible par $2, 3, 4, 5$ et
+   $6$, donc par leur PPCM, $60$ : $x \equiv 1 \pmod{60}$. Il faut aussi
+   $x \equiv 0 \pmod 7$. Avec $x = 1 + 60k$, on obtient $1 + 60k \equiv
+   1 + 4k \equiv 0 \pmod 7$, soit $4k \equiv -1 \equiv 6 \pmod 7$.
+   L'inverse de $4$ modulo $7$ est $2$, d'où $k \equiv 12 \equiv 5
+   \pmod 7$. Les solutions sont $x = 301 + 420j$, et le plus petit
+   nombre d'œufs est $301 = 43 \times 7$.
+:::
+::::
+
+:::: {.exercice .classe #exo:reflexion-chE}
+Plusieurs notions de cette annexe sont enseignées, sous une forme plus
+élémentaire, au primaire et au secondaire : la division avec reste, les
+critères de divisibilité, les nombres premiers, le PGCD et le PPCM.
+
+a) Un élève du premier cycle calcule le PGCD de $84$ et de $126$ en
+   factorisant les deux nombres. Montrer comment l'algorithme d'Euclide,
+   présenté avec la figure \ref{fig:E-pavage}, permettrait d'obtenir le
+   même résultat. Quels avantages et quelles limites voyez-vous à chaque
+   méthode en classe ?
+b) La « preuve par neuf » permet de contrôler une multiplication : on
+   remplace chaque facteur et le résultat par la somme de leurs chiffres,
+   réduite modulo $9$, et on vérifie que l'égalité tient encore.
+   Expliquer pourquoi la méthode fonctionne, puis montrer par un exemple
+   qu'elle ne détecte pas toutes les erreurs.
+c) Proposer une activité, accessible à des élèves du secondaire, qui
+   fasse découvrir la démonstration d'Euclide sur l'infinitude des
+   nombres premiers.
+
+::: {.solution}
+Plusieurs réponses sont possibles ; en voici une.
+
+a) La factorisation donne $84 = 2^2 \cdot 3 \cdot 7$ et $126 = 2 \cdot
+   3^2 \cdot 7$, d'où $\pgcd = 2 \cdot 3 \cdot 7 = 42$. Avec l'algorithme
+   d'Euclide, $126 = 1 \times 84 + 42$ et $84 = 2 \times 42$ : le PGCD
+   est $42$. Sur du papier quadrillé, on découpe dans un rectangle
+   $126 \times 84$ un carré $84 \times 84$, puis la bande restante
+   $42 \times 84$ se découpe en deux carrés de côté $42$. La
+   factorisation est naturelle pour les élèves, réinvestit les nombres
+   premiers et donne aussi le PPCM, mais elle devient laborieuse pour
+   des nombres comme $\num{42823}$. L'algorithme d'Euclide est rapide et
+   ne demande que des divisions ; sa version géométrique donne du sens
+   au PGCD et rejoint les situations de dallage étudiées en classe. Son
+   inconvénient est que sa justification (lemme \ref{lem:E-pgcd-reste})
+   n'est pas évidente pour les élèves, même si le découpage en carrés la
+   rend visible.
+b) Une somme de chiffres est congrue au nombre lui-même modulo $9$
+   (exemple \ref{ex:E-congruences}). Si $a \times b = c$, la règle du
+   produit donne donc $s(a) \times s(b) \equiv s(c) \pmod 9$, où $s$
+   désigne la somme des chiffres. Si cette congruence est fausse, le
+   calcul est certainement erroné. La réciproque est fausse : la preuve
+   par neuf ne voit que les restes modulo $9$. Par exemple, pour
+   $23 \times 14 = 322$, le résultat erroné $232$ (chiffres permutés) a
+   la même somme de chiffres que $322$ et passe le test. De même, une
+   erreur qui modifie le résultat d'un multiple de $9$ (comme $331$ au
+   lieu de $322$) n'est pas détectée.
+c) On peut demander aux élèves de calculer $2 + 1$, $2 \times 3 + 1$,
+   $2 \times 3 \times 5 + 1$, $2 \times 3 \times 5 \times 7 + 1$, et de
+   vérifier si ces nombres ($3$, $7$, $31$, $211$) sont premiers, puis de
+   poursuivre jusqu'à $\num{30031}$, qui ne l'est pas. On leur fait
+   ensuite remarquer que la division de ces nombres par $2$, par $3$, par
+   $5$, … laisse toujours un reste $1$. La question « si quelqu'un
+   prétendait avoir la liste de tous les nombres premiers, comment le
+   contredire ? » amène alors l'argument d'Euclide. L'activité permet de
+   discuter de ce qu'est une démonstration par l'absurde, et de corriger
+   l'idée fausse selon laquelle le produit des premiers nombres premiers,
+   augmenté de $1$, est toujours premier (remarque
+   \ref{rem:E-euclide-N}).
+:::
+::::

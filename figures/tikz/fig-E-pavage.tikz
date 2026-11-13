@@ -1,0 +1,28 @@
+\begin{tikzpicture}[x=0.14cm, y=0.14cm]
+  % ── À gauche : le découpage d'Euclide du rectangle 42 × 30 ──────────
+  \begin{scope}
+    \draw[fig] (0,0) rectangle (30,30);
+    \node[etiq] at (15,15) {$30 \times 30$};
+    \draw[figim] (30,0) rectangle (42,12);
+    \draw[figim] (30,12) rectangle (42,24);
+    \node[etiq] at (36,6) {$12$};
+    \node[etiq] at (36,18) {$12$};
+    \draw[figaux] (30,24) rectangle (36,30);
+    \draw[figaux] (36,24) rectangle (42,30);
+    \node[etiq] at (33,27) {$6$};
+    \node[etiq] at (39,27) {$6$};
+    \draw[thick, sectioncolor] (0,0) rectangle (42,30);
+    \node[etiq, below] at (21,0) {$42$};
+    \node[etiq, left] at (0,15) {$30$};
+    \node[etiq] at (21,-6.5) {découpage d'Euclide};
+  \end{scope}
+  % ── À droite : pavage du même rectangle par des carrés de côté 6 ────
+  \begin{scope}[xshift=7.6cm]
+    \fill[figaux] (0,0) rectangle (42,30);
+    \draw[coveraccent!85!black, thick, step=6] (0,0) grid (42,30);
+    \draw[thick, sectioncolor] (0,0) rectangle (42,30);
+    \node[etiq, below] at (21,0) {$42 = 7 \times 6$};
+    \node[etiq, left] at (0,15) {$30 = 5 \times 6$};
+    \node[etiq] at (21,-6.5) {pavage par $35$ carrés de côté $6$};
+  \end{scope}
+\end{tikzpicture}
