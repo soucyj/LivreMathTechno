@@ -978,6 +978,73 @@ Le même raisonnement, modulo $3$, justifie le critère de divisibilité
 par $3$.
 :::
 
+:::: {.secondaire #rem:E-tour-magie title="Un tour de magie : deviner le chiffre biffé"}
+Ce tour, qui repose entièrement sur le critère de divisibilité par $9$,
+captive les élèves et leur donne une bonne raison de chercher à
+comprendre une propriété des congruences.
+
+\medskip
+
+Le déroulement. L'enseignant tourne le dos à la classe. Quelques élèves
+choisissent chacun un entier différent de $1$, sans le dire à voix haute,
+et la classe calcule le produit de tous ces nombres à la calculatrice.
+L'enseignant propose ensuite, sous un prétexte quelconque, de multiplier
+encore le résultat par un ou deux nombres : « multiplions par $18$, car
+nous sommes $18$ dans la classe », ou « multiplions par $3$ et par $6$,
+car il y a $3$ filles et $6$ garçons dans la première rangée ». Les élèves
+biffent alors tous les zéros du résultat, puis un autre chiffre de leur
+choix, et montrent à l'enseignant les chiffres qui restent, dans l'ordre
+qu'ils veulent. L'enseignant annonce aussitôt le chiffre biffé.
+
+\medskip
+
+Le secret. Le facteur ajouté par l'enseignant contient $9$ ($18 = 2
+\times 9$ et $3 \times 6 = 18$). Le produit $P$ est donc un multiple de
+$9$, et la somme de ses chiffres est congrue à $0$ modulo $9$
+(exemple \ref{ex:E-congruences}). Biffer les zéros ou mélanger les
+chiffres ne change pas cette somme. Si $S$ est la somme des chiffres
+montrés et $c$ le chiffre biffé, on a donc $S + c \equiv 0 \pmod 9$.
+Comme $c$ est compris entre $1$ et $9$ (les zéros ont déjà disparu),
+une seule valeur convient : $c$ est le nombre qui manque à $S$ pour
+atteindre le multiple de $9$ suivant, et $c = 9$ lorsque $S$ est
+lui-même un multiple de $9$.
+
+\medskip
+
+Un exemple. Les élèves choisissent $7$, $12$, $25$ et $13$, dont le
+produit vaut $\num{27300}$ ; multiplié par $18$, il donne
+$\num{491400}$. Une fois les zéros biffés, il reste $4914$. Un élève
+biffe le $1$ et montre $4$, $9$, $4$. L'enseignant calcule
+$4 + 9 + 4 = 17$ ; le multiple de $9$ suivant est $18$, donc le chiffre
+biffé est $1$. Si l'élève avait biffé le $9$, il aurait montré $4$, $1$,
+$4$, de somme $9$, et l'enseignant aurait répondu $9$.
+
+\medskip
+
+Un tour qui fonctionne presque sans aide. Le facteur ajouté par
+l'enseignant est une assurance, mais il est rarement nécessaire. Le
+produit est un multiple de $9$ dès que deux des nombres choisis sont des
+multiples de $3$, ou que l'un d'eux est un multiple de $9$. Chaque
+nombre a environ une chance sur trois d'être un multiple de $3$ ; avec
+une dizaine de nombres choisis au hasard, le produit est un multiple de
+$9$ dans plus de $90$ % des cas. Pour un premier essai, on peut donc tenter le tour
+sans rien ajouter, et garder le facteur $18$ pour les fois où il faut
+une réussite assurée. Une précaution pratique s'impose aussi : il faut
+limiter le nombre et la taille des facteurs, pour que le produit
+s'affiche en entier sur la calculatrice, sans passer en notation
+scientifique.
+
+\medskip
+
+Après le tour. On peut laisser les élèves chercher le secret, puis le
+leur faire refaire à tour de rôle. Le tour amène naturellement plusieurs
+questions. Pourquoi faut-il interdire de biffer un zéro ? (On ne pourrait
+pas distinguer un $0$ d'un $9$ biffé.) Fonctionnerait-il avec la somme des
+chiffres modulo $3$ ? (Non : un chiffre biffé entre $1$ et $9$ ne serait
+connu qu'à un multiple de $3$ près.) Pourquoi le nombre $18$
+convient-il, et pas $12$ ?
+::::
+
 ::: {.remark #rem:E-division-congruence title="On ne peut pas toujours simplifier"}
 L'addition, la soustraction et la multiplication se comportent bien,
 mais pas la division. On a $2 \times 3 \equiv 2 \times 8 \pmod{10}$,
@@ -1804,47 +1871,6 @@ d) L'égalité dit qu'en versant trois fois $5$ L dans un récipient et en
    laisse exactement $1$ L dans le récipient de $5$ L. On a bien rempli
    trois fois le récipient de $5$ L et vidé deux fois le récipient de
    $7$ L.
-:::
-::::
-
-:::: {.exercice #exo:E-gauss}
-a) Soient $a$, $b$ et $c$ des entiers non nuls. Montrer que si
-   $\pgcd(a, b) = 1$ et $\pgcd(a, c) = 1$, alors $\pgcd(a, bc) = 1$.
-b) Montrer par un exemple que l'hypothèse $\pgcd(a, b) = 1$ ne peut
-   pas être retirée du lemme de Gauss.
-c) Montrer que $\sqrt{2}$ est irrationnel. On supposera que
-   $\sqrt{2} = \tfrac{a}{b}$, avec $\pgcd(a, b) = 1$, et on utilisera
-   le lemme d'Euclide.
-d) Généraliser : si $p$ est un nombre premier, $\sqrt{p}$ est
-   irrationnel.
-
-::: {.solution}
-a) Par le théorème de Bachet--Bézout, il existe des entiers tels que
-   $au + bv = 1$ et $as + ct = 1$. En multipliant ces deux égalités,
-   $$
-     1 = (au + bv)(as + ct) = a\,(uas + uct + bvs) + bc\,(vt).
-   $$
-   On a écrit $1$ comme combinaison de $a$ et de $bc$ ; par le
-   point (iii) du corollaire \ref{cor:E-bezout}, $\pgcd(a, bc) = 1$.
-   (On peut aussi raisonner avec les nombres premiers : un nombre premier
-   qui diviserait $a$ et $bc$ diviserait $b$ ou $c$, par le lemme
-   d'Euclide.)
-b) $6$ divise $4 \times 3 = 12$, mais $6 \nmid 3$ ; ici
-   $\pgcd(6, 4) = 2 \neq 1$. Le nombre $6$ « se partage » entre les deux
-   facteurs : $2$ divise $4$ et $3$ divise $3$.
-c) Supposons que $\sqrt{2} = a/b$ avec $a$, $b$ entiers positifs
-   premiers entre eux (on peut toujours réduire une fraction). Alors
-   $a^2 = 2b^2$, donc $2 \mid a^2 = a \cdot a$. Par le lemme d'Euclide,
-   $2 \mid a$ : écrivons $a = 2c$. Alors $4c^2 = 2b^2$, soit
-   $b^2 = 2c^2$, et le même raisonnement donne $2 \mid b$. Ainsi $2$
-   divise $a$ et $b$, ce qui contredit $\pgcd(a, b) = 1$. Donc
-   $\sqrt{2}$ est irrationnel.
-d) Le raisonnement est identique, en remplaçant $2$ par $p$ : de
-   $a^2 = pb^2$, on tire $p \mid a$ (lemme d'Euclide), puis $a = pc$,
-   $b^2 = pc^2$ et $p \mid b$, ce qui est une contradiction. Le lemme
-   d'Euclide est essentiel : avec $4$ à la place de $p$, l'argument
-   échouerait (et, de fait, $\sqrt{4} = 2$ est rationnel), car $4 \mid
-   a^2$ n'entraîne pas $4 \mid a$.
 :::
 ::::
 
