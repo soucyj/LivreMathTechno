@@ -124,8 +124,12 @@ une loi de probabilité, et sa variance, que l'on note $\mathrm{Var}(X)$
 avec des majuscules, se calcule à partir de cette loi : c'est une
 quantité théorique. Dans ce chapitre, $x$ est une *variable
 statistique* : une simple colonne de nombres $x_1, \dots, x_n$ que l'on
-a observés, sans aucun hasard ni aucune loi. Sa variance $s_x^2$ est un
-nombre que l'on calcule directement à partir du tableau. Pour ne pas
+a observés. Ces données peuvent très bien provenir d'un processus
+aléatoire, par exemple d'un tirage au hasard de personnes dans une
+population. Une fois recueillies, cependant, leur moyenne et leur
+variance $s_x^2$ se calculent directement à partir du tableau : ces
+calculs descriptifs ne demandent aucune hypothèse sur une loi de
+probabilité sous-jacente. Pour ne pas
 confondre les deux notions, nous réservons les minuscules et les
 notations $\bar{x}$, $s_x^2$ et $s_{xy}$ aux données observées, et nous
 n'écrirons pas $\mathrm{Var}(x)$.
@@ -133,8 +137,13 @@ n'écrirons pas $\mathrm{Var}(x)$.
 Les deux notions sont tout de même liées. Si l'on choisit au hasard l'un
 des $n$ individus, chacun avec la probabilité $\frac1n$, et que l'on note
 $X$ la valeur de la variable pour cet individu, alors $X$ est une
-variable aléatoire, dont l'espérance est $\bar{x}$ et dont la variance
-est $\mathrm{Var}(X) = s_x^2$.
+variable aléatoire. Les $n$ individus jouent alors le rôle d'une
+population, et l'espérance $\mu$ et la variance $\sigma^2$ de $X$ sont
+des paramètres de cette population. Ces paramètres coïncident avec les
+statistiques calculées à partir du tableau : $\mu = \bar{x}$ et
+$\sigma^2 = \mathrm{Var}(X) = s_x^2$. C'est pourquoi les calculatrices
+notent $\sigma_x$ l'écart type obtenu en divisant par $n$
+(remarque \ref{rem:acp-n-moins-un}).
 :::
 
 ### Covariance et corrélation
@@ -205,18 +214,24 @@ est la moyenne des carrés des écarts. C'est notre situation, puisque
 nous cherchons à décrire la forme d'un nuage de points donné.
 
 Si les $n$ individus sont un *échantillon* tiré d'une population plus
-grande, dont on veut estimer la variance, on divise par $n - 1$. La
+grande, dont on veut estimer la variance, on divise habituellement par
+$n - 1$, du moins dans le cadre le plus courant d'un échantillon
+aléatoire simple. La
 raison est que l'on mesure les écarts à partir de la moyenne $\bar{x}$
 de l'échantillon, faute de connaître celle de la population. Or
 $\bar{x}$ est justement le nombre $c$ qui rend la somme $\sum (x_i -
 c)^2$ la plus petite possible : les écarts à $\bar{x}$ sont donc, dans
 l'ensemble, un peu plus petits que les écarts à la vraie moyenne, et la
 division par $n$ sous-estime la variance de la population. On montre
-qu'en moyenne, elle la sous-estime exactement par le facteur
-$\frac{n-1}{n}$, ce que la division par $n - 1$ corrige. On peut aussi
-remarquer que les $n$ écarts ont une somme nulle : dès que l'on en
-connaît $n - 1$, le dernier est déterminé, de sorte que la somme des
-carrés ne contient que $n - 1$ informations indépendantes.
+que, si les observations sont indépendantes et de même loi, elle la
+sous-estime en moyenne exactement par le facteur $\frac{n-1}{n}$, ce que
+la division par $n - 1$ corrige. D'autres plans d'échantillonnage
+demandent d'autres ajustements : lorsqu'on tire sans remise dans une
+population finie, par exemple, on applique parfois une correction pour
+population finie. On peut aussi remarquer que les $n$ écarts ont une
+somme nulle : dès que l'on en connaît $n - 1$, le dernier est
+déterminé. Seuls $n - 1$ écarts peuvent donc varier librement ; on dit
+que la somme des carrés compte $n - 1$ degrés de liberté.
 
 Pour les notes de mathématiques des six élèves, on obtient
 $\frac{300}{6} = 50$ en divisant par $n$, et $\frac{300}{5} = 60$ en
@@ -379,22 +394,25 @@ l'ombre du nuage est la plus longue.
 ::: {.example #ex:acp-trois-directions title="Trois directions pour les six élèves"}
 Comparons trois droites passant par le point moyen, de vecteurs
 directeurs unitaires $\vec{e}_1 = (1,0)$, $\vec{u} = \frac{1}{\sqrt2}(1,1)$
-et $\vec{w} = \frac{1}{\sqrt2}(1,-1)$. Pour $\vec{e}_1$ (la droite
-horizontale), $t_i$ est simplement l'écart $x_i - \bar{x}$, et la
-variance des projections est $s_x^2 = 50$. Pour $\vec{u}$, on obtient
-$t_i = \frac{1}{\sqrt2}\big((x_i - \bar{x}) + (y_i - \bar{y})\big)$,
-c'est-à-dire, pour les élèves $A$ à $F$,
-$$
-  \sqrt2\;(t_A, t_B, \dots, t_F) = (-13, -16, -11, 14, 13, 13),
-$$
-d'où
-$$
-  \frac16\sum t_i^2 = \frac{169 + 256 + 121 + 196 + 169 + 169}{6 \cdot 2}
-  = \frac{1080}{12} = 90 .
-$$
-Pour $\vec{w}$, on trouve de même $\sqrt2\;(t_A, \dots, t_F) = (-7, 2,
-5, -4, -1, 5)$ et une variance de $\frac{120}{12} = 10$. Enfin,
-$\frac16\sum \norme{\vec{x}_i}^2 = s_x^2 + s_y^2 = 100$. Pour la
+et $\vec{w} = \frac{1}{\sqrt2}(1,-1)$.
+
+* Pour $\vec{e}_1$ (la droite horizontale), $t_i$ est simplement l'écart
+  $x_i - \bar{x}$, et la variance des projections est $s_x^2 = 50$.
+* Pour $\vec{u}$, on obtient
+  $t_i = \frac{1}{\sqrt2}\big((x_i - \bar{x}) + (y_i - \bar{y})\big)$,
+  c'est-à-dire, pour les élèves $A$ à $F$,
+  $$
+    \sqrt2\;(t_A, t_B, \dots, t_F) = (-13, -16, -11, 14, 13, 13),
+  $$
+  d'où
+  $$
+    \frac16\sum t_i^2 = \frac{169 + 256 + 121 + 196 + 169 + 169}{6 \cdot 2}
+    = \frac{1080}{12} = 90 .
+  $$
+* Pour $\vec{w}$, on trouve de même $\sqrt2\;(t_A, \dots, t_F) = (-7, 2,
+  5, -4, -1, 5)$ et une variance de $\frac{120}{12} = 10$.
+
+Enfin, $\frac16\sum \norme{\vec{x}_i}^2 = s_x^2 + s_y^2 = 100$. Pour la
 direction $\vec{u}$, la relation \eqref{eq:acp-inertie}, divisée par $n$,
 s'écrit donc $100 = 90 + 10$ : la variance des projections vaut $90$, et
 la moyenne des carrés des distances à la droite vaut $10$. Pour
@@ -929,7 +947,8 @@ Soit $C$ la matrice de covariance d'un tableau centré $X$.
 ::: {.remark #rem:acp-reduire title="Faut-il toujours réduire les variables ?"}
 Non. Réduire, c'est décider que toutes les variables ont la même
 importance au départ : chacune reçoit une variance de $1$, quelle que
-soit sa dispersion réelle. Cette décision s'impose dans deux cas :
+soit sa dispersion réelle. Cette décision est généralement souhaitable
+dans deux cas :
 
 * lorsque les variables s'expriment dans des unités différentes
   (des millimètres et des grammes, des secondes et des mètres), car la
@@ -1414,7 +1433,8 @@ Il faut toutefois garder en tête les limites de la méthode. L'ACP est
 *linéaire* : elle cherche des droites et des plans, et elle passe à
 côté d'une structure courbe, comme un nuage disposé le long d'un arc de
 cercle. Elle est sensible aux unités et aux valeurs aberrantes, qui
-peuvent accaparer un axe à elles seules. Enfin, une grande variance
+peuvent accaparer un axe à elles seules
+(exercices \ref{exo:acp-extremes} et \ref{exo:acp-python-saisie}). Enfin, une grande variance
 n'est pas toujours synonyme d'information intéressante : la direction
 qui sépare deux groupes peut très bien être une direction de faible
 variance.
@@ -1546,6 +1566,9 @@ c) Interpréter chacun des trois axes principaux.
 d) Un élève a pour cotes $z$ les valeurs $(\num{1.5}\,;\ \num{0.5}\,;\ -1)$.
    Calculer ses coordonnées dans le plan des deux premiers axes, ainsi que
    le carré de la distance entre ce point et sa projection sur ce plan.
+e) On ne conserve que les deux premiers axes. Quelles cotes $z$
+   reconstruit-on pour cet élève ? Que représente le carré de la distance
+   calculé en d) ? Le comparer à $\lambda_3$ et interpréter.
 
 ::: {.solution}
 a) En développant selon la troisième ligne, $\dete(R - \lambda I) = (1 -
@@ -1574,6 +1597,17 @@ d) $y_1 = \frac{\num{1.5} + \num{0.5}}{\sqrt2} = \sqrt2 \approx \num{1.414}$
    de la distance au plan vaut $y_3^2 = \num{0.5}$. On vérifie que
    $y_1^2 + y_2^2 + y_3^2 = 2 + 1 + \num{0.5} = \num{3.5} = \num{1.5}^2 +
    \num{0.5}^2 + 1^2$.
+e) La reconstruction est $y_1\vec{v}_1 + y_2\vec{v}_2 = (1,1,0) +
+   (0,0,-1) = (1,1,-1)$. L'écart avec les cotes de départ est
+   $(\num{0.5}\,;\ -\num{0.5}\,;\ 0)$, dont le carré de la norme vaut
+   $\num{0.5}$ : le carré de la distance au plan est l'erreur quadratique
+   de reconstruction de cet élève. D'après le
+   théorème \ref{thm:acp-optimalite} (point 4), la moyenne de cette erreur
+   sur tous les élèves vaut $\lambda_3 = \num{0.2}$. Cet élève est donc
+   moins bien représenté que la moyenne par le plan principal. C'est
+   logique : il est nettement plus fort en mathématiques qu'en physique,
+   et cet écart est justement ce que mesure le troisième axe, celui que
+   l'on abandonne.
 :::
 ::::
 
@@ -1617,6 +1651,64 @@ d) La cote $z$ d'une valeur ne change pas si l'on multiplie la variable
    par une constante positive $c$ : $\frac{cx_i - c\bar{x}}{c\,s_x} =
    \frac{x_i - \bar{x}}{s_x}$. Le tableau réduit, donc la matrice de
    corrélation et toute l'ACP, sont inchangés.
+:::
+::::
+
+:::: {.exercice #exo:acp-extremes}
+On reprend les six élèves du tableau \ref{tab:acp-notes}, et on leur
+ajoute deux élèves atypiques, $G$ et $H$, dont les notes de
+mathématiques et de sciences sont $G = (70 + k,\ 75 - k)$ et
+$H = (70 - k,\ 75 + k)$, où $k > 0$.
+
+a) Vérifier que le point moyen est toujours $(70, 75)$, et calculer la
+   matrice de covariance $C_k$ des huit élèves en fonction de $k$.
+b) Montrer que, quel que soit $k$, les vecteurs propres de $C_k$ sont
+   encore $\vec{u} = \frac{1}{\sqrt2}(1,1)$ et
+   $\vec{w} = \frac{1}{\sqrt2}(1,-1)$, et calculer les valeurs propres
+   associées.
+c) On prend $k = 12$. Calculer le coefficient de corrélation, déterminer
+   l'axe principal et la proportion de la variance qu'il explique.
+   Comparer avec les résultats obtenus pour les six élèves.
+d) À partir de quelle valeur de $k$ l'axe principal bascule-t-il de
+   $\vec{u}$ à $\vec{w}$ ? Que peut-on en conclure sur la sensibilité de
+   l'ACP aux valeurs extrêmes ?
+
+::: {.solution}
+a) Les écarts de $G$ et de $H$ au point $(70, 75)$ sont $(k, -k)$ et
+   $(-k, k)$, de somme nulle : le point moyen ne change pas. Les sommes
+   des carrés et des produits des écarts deviennent $300 + 2k^2$ (pour
+   chaque variable) et $240 - 2k^2$, d'où
+   $$
+     C_k = \frac18\mat{300 + 2k^2}{240 - 2k^2}{240 - 2k^2}{300 + 2k^2} .
+   $$
+b) Une matrice de la forme $\mat{\alpha}{\beta}{\beta}{\alpha}$ vérifie
+   $C(1,1) = (\alpha + \beta)(1,1)$ et $C(1,-1) = (\alpha - \beta)(1,-1)$.
+   Les vecteurs propres sont donc $\vec{u}$ et $\vec{w}$, de valeurs
+   propres $\lambda_{\vec{u}} = \frac{540}{8} = \num{67.5}$, qui ne dépend
+   pas de $k$, et $\lambda_{\vec{w}} = \frac{60 + 4k^2}{8} = \num{7.5} +
+   \frac{k^2}{2}$. Les élèves $G$ et $H$ se projettent au point moyen sur
+   l'axe dirigé par $\vec{u}$, mais très loin sur l'axe dirigé par
+   $\vec{w}$.
+c) Pour $k = 12$, $G = (82, 63)$ et $H = (58, 87)$. On a
+   $s_x^2 = s_y^2 = \frac{588}{8} = \num{73.5}$ et
+   $s_{xy} = \frac{240 - 288}{8} = -6$, d'où
+   $r_{xy} = \frac{-6}{\num{73.5}} \approx -\num{0.08}$. Les valeurs propres
+   sont $\lambda_{\vec{w}} = \num{79.5}$ et $\lambda_{\vec{u}} = \num{67.5}$ :
+   l'axe principal est maintenant dirigé par $\vec{w}$, et il n'explique
+   que $\frac{\num{79.5}}{147} \approx \SI{54}{\percent}$ de la variance.
+   Pour les six élèves, la corrélation valait $\num{0.8}$, et l'axe
+   dirigé par $\vec{u}$ expliquait $\SI{90}{\percent}$ de la variance.
+   Deux élèves sur huit ont suffi à effacer la tendance commune aux six
+   autres.
+d) L'axe bascule lorsque $\num{7.5} + \frac{k^2}{2} > \num{67.5}$,
+   c'est-à-dire lorsque $k^2 > 120$, soit $k > \sqrt{120} \approx
+   \num{10.95}$ ; c'est exactement le moment où $s_{xy}$ devient négative.
+   Comme les variances et les covariances sont des moyennes de carrés et
+   de produits d'écarts, un point très éloigné du centre pèse beaucoup
+   plus lourd que les autres : quelques valeurs extrêmes peuvent modifier
+   les axes à elles seules. Avant d'interpréter une ACP, il faut donc
+   regarder le nuage et repérer les individus atypiques, puis se demander
+   s'il s'agit d'erreurs ou d'observations réelles.
 :::
 ::::
 
@@ -1824,6 +1916,73 @@ d) Le programme suivant effectue la vérification.
    ```
 
    Les deux nombres valent $\num{0.4737}$.
+:::
+::::
+
+:::: {.exercice .python #exo:acp-python-saisie}
+On reprend les quatre variables de l'exercice \ref{exo:acp-python-masse}
+(tableau `X4`). Lors de la saisie des données, on a inscrit par erreur une
+masse de $\num{42000}$ g au lieu de $\num{4200}$ g pour le manchot de la
+ligne $18$ (un manchot Adélie de l'île Torgersen).
+
+a) Introduire cette erreur dans une copie du tableau :
+   `X4e = X4.copy()` puis `X4e[18, 3] = 42000`. Comparer l'écart type de
+   la masse, ainsi que son coefficient de corrélation avec la longueur de
+   la nageoire, avant et après l'erreur.
+b) Effectuer l'ACP réduite des données erronées. Comparer les valeurs
+   propres, les proportions de variance expliquée et les deux premiers
+   vecteurs propres avec ceux de l'exercice \ref{exo:acp-python-masse}.
+c) Calculer les coordonnées de ce manchot dans le plan principal, et les
+   comparer à celles des autres manchots.
+d) Calculer les cotes $z$ de toutes les mesures. Comment cette erreur
+   aurait-elle pu être détectée avant l'ACP ? Pourquoi la réduction des
+   variables ne protège-t-elle pas contre une telle erreur ?
+
+::: {.solution}
+Le programme suivant effectue les calculs.
+
+```{.python}
+X4e = X4.copy()
+X4e[18, 3] = 42000                       # erreur de saisie
+print(X4[:, 3].std(), X4e[:, 3].std())
+print(np.corrcoef(X4[:, 2], X4[:, 3])[0, 1],
+      np.corrcoef(X4e[:, 2], X4e[:, 3])[0, 1])
+valeurs, V, Y = acp(X4e)
+print(valeurs, valeurs / valeurs.sum())
+print(V[:, :2])
+print(Y[18, :2], np.abs(np.delete(Y, 18, axis=0)[:, :2]).max(axis=0))
+Z = (X4e - X4e.mean(axis=0)) / X4e.std(axis=0)
+print(np.abs(Z).max(axis=0))
+```
+
+a) L'écart type de la masse passe d'environ $801$ g à environ
+   $\num{2192}$ g, presque trois fois plus, à cause d'un seul manchot sur
+   $342$. La corrélation entre la masse et la nageoire chute de
+   $\num{0.871}$ à $\num{0.293}$.
+b) Les valeurs propres deviennent $\num{2.117}$, $\num{0.961}$,
+   $\num{0.700}$ et $\num{0.222}$, soit $\SI{52.9}{\percent}$,
+   $\SI{24.0}{\percent}$, $\SI{17.5}{\percent}$ et $\SI{5.6}{\percent}$ ; le
+   plan principal ne conserve plus que $\SI{77.0}{\percent}$ de la
+   variance, au lieu de $\SI{88.2}{\percent}$. Au signe près, le premier
+   vecteur propre devient $(\num{0.54}\,;\ -\num{0.46}\,;\ \num{0.64}\,;
+   \ \num{0.31})$ : la masse, qui y avait un poids comparable à celui de
+   la nageoire, n'y joue plus qu'un rôle secondaire, et l'axe de
+   « taille » est affaibli. Le deuxième vecteur propre,
+   $\pm(\num{0.14}\,;\ \num{0.56}\,;\ -\num{0.10}\,;\ \num{0.81})$, est
+   maintenant dominé par la masse : un axe entier sert en bonne partie à
+   décrire une seule valeur erronée.
+c) Sur le deuxième axe, ce manchot a une coordonnée d'environ $\num{15.3}$
+   en valeur absolue, alors que celles de tous les autres manchots
+   restent inférieures à $\num{1.32}$. Il est isolé, très loin du reste
+   du nuage.
+d) La cote $z$ de la masse erronée vaut environ $\num{17.2}$, alors
+   qu'aucune autre mesure ne dépasse $3$ en valeur absolue. Un simple
+   examen des valeurs extrêmes de chaque variable (avec `X4e.max(axis=0)`,
+   un histogramme ou les cotes $z$) aurait révélé l'erreur : aucun manchot
+   ne pèse $42$ kg. La réduction ne protège pas, car elle divise la
+   masse par un écart type lui-même gonflé par l'erreur ; elle met les
+   variables à la même échelle, mais ne change pas la position relative
+   d'un individu aberrant, qui reste à $17$ écarts types du centre.
 :::
 ::::
 

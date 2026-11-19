@@ -1,0 +1,260 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Des données dans l'espace : les manchots}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Les manchots de l'archipel Palmer}
+  \small
+  \begin{itemize}
+    \item 2007--2009 : Kristen Gorman et ses collègues (station Palmer,
+      Antarctique) mesurent des centaines de manchots de trois espèces :
+      Adélie, à jugulaire, papou. Données libres, très utilisées pour
+      enseigner la statistique.
+    \item $n=342$ manchots, trois variables en millimètres : longueur du bec,
+      hauteur du bec, longueur de la nageoire. Chaque manchot est un point
+      de $\R^3$.
+  \end{itemize}
+  \vspace{2pt}
+  \scriptsize Tableau 5.2 --- Un manchot de chaque espèce ; moyennes et écarts
+  types sur les $342$ manchots.
+  \begin{center}
+    \footnotesize
+    \begin{tabular}{llccc}
+      \toprule
+      & Espèce & Longueur du bec & Hauteur du bec & Nageoire \\
+      \midrule
+      manchot 1 & Adélie & $\num{39.1}$ & $\num{18.7}$ & $181$ \\
+      manchot 153 & papou & $\num{46.1}$ & $\num{13.2}$ & $211$ \\
+      manchot 277 & à jugulaire & $\num{46.5}$ & $\num{17.9}$ & $192$ \\
+      \midrule
+      moyenne & & $\num{43.92}$ & $\num{17.15}$ & $\num{200.92}$ \\
+      écart type & & $\num{5.45}$ & $\num{1.97}$ & $\num{14.04}$ \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Figure 5.6 --- Les manchots en perspective}
+  \begin{columns}[c]
+    \begin{column}{0.6\textwidth}
+      \FigLivre[0.75\textheight]{fig-acp-manchots-3d}
+    \end{column}
+    \begin{column}{0.38\textwidth}
+      \small
+      \begin{itemize}
+        \item Une perspective n'est qu'une projection sur le plan de la
+          page : un point de vue parmi d'autres.
+        \item Cette vue suggère trois groupes, mais on ne peut pas y lire
+          les trois mesures d'un manchot : deux points alignés dans la
+          direction du regard sont dessinés au même endroit.
+        \item Sur un écran, on fait tourner le nuage ; sur papier, il faut
+          choisir.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Figure 5.7 --- Oublier une variable}
+  \FigLivre[0.5\textheight]{fig-acp-manchots-plans}
+  \small
+  \begin{itemize}
+    \item Longueur et hauteur du bec : trois groupes distincts (Adélie : bec
+      court et haut ; papou : long et mince ; à jugulaire : long et haut).
+    \item Hauteur du bec et nageoire : les papous se détachent, mais Adélie
+      et à jugulaire se confondent --- on ne soupçonnerait pas deux espèces.
+    \item Le choix du plan n'est pas anodin, et rien n'oblige à se limiter
+      aux plans de coordonnées.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Quel est le meilleur plan ?}
+  \begin{itemize}
+    \item On ne peut pas demander à la méthode de séparer les espèces : elle
+      ne les connaît pas. Les couleurs ont été ajoutées après coup ; dans la
+      plupart des applications, il n'y a aucune étiquette.
+    \item On reprend le critère de la section précédente :
+      \begin{itemize}
+        \item le plan qui passe au plus près des points ;
+        \item ou, ce qui revient au même, celui sur lequel le nuage projeté
+          est le plus étalé.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Projeter sur un plan}
+  \small Soit $\Plan$ un plan passant par l'origine, de base orthonormée
+  $(\vec a,\vec b)$ :
+  \[
+    \proj_{\Plan}\vec x=(\vec x\cdot\vec a)\,\vec a+(\vec x\cdot\vec b)\,\vec b .
+  \]
+  \begin{itemize}
+    \item $\vec x-\proj_{\Plan}\vec x$ est orthogonal à $\vec a$ et à
+      $\vec b$, donc au plan ; sa norme est la distance $d$ de $\vec x$ au
+      plan.
+    \item $\vec x\cdot\vec a$ et $\vec x\cdot\vec b$ : les coordonnées du
+      point projeté, que l'on porte en abscisse et en ordonnée.
+    \item Pythagore :
+      $\norme{\vec x}^2=(\vec x\cdot\vec a)^2+(\vec x\cdot\vec b)^2+d^2$.
+  \end{itemize}
+  Pour un nuage centré, le meilleur plan maximise donc
+  \[
+    \frac1n\sum_{i=1}^n\Big((\vec x_i\cdot\vec a)^2+(\vec x_i\cdot\vec b)^2\Big)
+    =\vec a^{\mathsf T}C\,\vec a+\vec b^{\mathsf T}C\,\vec b,
+  \]
+  où $C$ est la matrice de covariance $3\times3$ (variances sur la
+  diagonale, covariances ailleurs).
+\end{frame}
+
+\begin{frame}{Un problème d'unités : réduire les variables}
+  \small
+  \begin{itemize}
+    \item Écarts types : nageoire $\num{14.04}$ mm, hauteur du bec
+      $\num{1.97}$ mm. À elle seule, la nageoire contribue
+      $\num{14.04}^2\approx197$ des quelque $231$ mm$^2$ de variance totale.
+    \item Le meilleur plan serait imposé par la nageoire parce qu'elle est
+      plus grande, pas plus informative. Pire avec des unités différentes
+      (mm et g) : le résultat dépendrait des unités (exercice 5.4).
+  \end{itemize}
+  \begin{Enonce}{Réduire}
+    On divise chaque écart à la moyenne par l'écart type :
+    $z_i=\dfrac{x_i-\bar x}{s_x}$, la \defi{cote $z$} de $x_i$ (sans unité :
+    le nombre d'écarts types qui la séparent de la moyenne). Une variable
+    \defi{centrée réduite} a une moyenne $0$ et une variance $1$.
+  \end{Enonce}
+  La covariance de deux variables réduites est leur corrélation : la
+  matrice de covariance des variables réduites est la \defi{matrice de
+  corrélation} $R$.
+\end{frame}
+
+\begin{frame}{La matrice de corrélation des manchots}
+  Dans l'ordre : longueur du bec, hauteur du bec, nageoire.
+  \[
+    R=\begin{pmatrix}
+      1 & -\num{0.235} & \num{0.656}\\
+      -\num{0.235} & 1 & -\num{0.584}\\
+      \num{0.656} & -\num{0.584} & 1
+    \end{pmatrix}
+  \]
+  \begin{itemize}
+    \item Les coefficients diagonaux valent $1$.
+    \item Les manchots à longue nageoire ont tendance à avoir un bec long
+      ($r=\num{0.656}$) et mince ($r=-\num{0.584}$).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Pour la classe 5.3 --- La cote $z$ et la cote R}
+  \begin{Classe}{La cote $z$ et la cote R}
+    \begin{itemize}
+      \item La cote de rendement au collégial (cote R), qui sert à
+        l'admission dans les programmes contingentés, est construite à
+        partir de la cote $z$ d'un étudiant dans chacun de ses groupes-cours.
+      \item C'est exactement l'idée de la réduction : une note de $75$ ne
+        vaut pas la même chose dans un groupe de moyenne $65$ que dans un
+        groupe de moyenne $85$.
+      \item En classe : « ai-je mieux réussi en mathématiques ou en
+        français ? »
+    \end{itemize}
+  \end{Classe}
+\end{frame}
+
+\begin{frame}{Le meilleur plan}
+  \small Comme dans le plan : la meilleure droite est dirigée par le vecteur
+  propre de $R$ de la plus grande valeur propre ; le meilleur plan est
+  engendré par les vecteurs propres des deux plus grandes valeurs propres
+  (théorème 5.4). $R$ est symétrique : ces vecteurs propres sont
+  orthogonaux (théorème spectral D.4).
+  \[
+    \lambda_1=\num{2.003},\qquad\lambda_2=\num{0.767},\qquad\lambda_3=\num{0.230}
+    \qquad(\text{somme }3=\tr R),
+  \]
+  \[
+    \vec v_1=\coliii{\num{0.551}}{-\num{0.512}}{\num{0.659}},\qquad
+    \vec v_2=\coliii{\num{0.657}}{\num{0.753}}{\num{0.036}},\qquad
+    \vec v_3=\coliii{-\num{0.514}}{\num{0.413}}{\num{0.752}} .
+  \]
+  \begin{itemize}
+    \item Le plan de $\vec v_1$ et $\vec v_2$ conserve
+      $\frac{\num{2.003}+\num{0.767}}{3}\approx\SI{92.3}{\percent}$ de la
+      variance totale.
+    \item Le plan de $\vec v_2$ et $\vec v_3$ : seulement
+      $\SI{33.2}{\percent}$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Figure 5.8 --- Le meilleur et le pire plan}
+  \FigLivre[0.6\textheight]{fig-acp-manchots-acp}
+  \small À gauche, le plan des deux premiers vecteurs propres : les trois
+  espèces apparaissent clairement, alors que la méthode ignorait leur
+  existence. À droite, le plan des deux derniers : le nuage est écrasé, et
+  Adélie et papous y sont indiscernables.
+\end{frame}
+
+\begin{frame}{Interpréter les nouveaux axes}
+  \[
+    y_1=\num{0.551}\,z_{\text{long.\ bec}}-\num{0.512}\,z_{\text{haut.\ bec}}
+      +\num{0.659}\,z_{\text{nageoire}}
+  \]
+  \begin{itemize}
+    \item Grand pour un manchot à long bec mince et à longue nageoire : le
+      profil du papou, à droite de la figure.
+  \end{itemize}
+  \[
+    y_2\approx\num{0.657}\,z_{\text{long.\ bec}}+\num{0.753}\,z_{\text{haut.\ bec}}
+  \]
+  \begin{itemize}
+    \item Ne dépend presque pas de la nageoire : la taille du bec, dans ses
+      deux dimensions. Sépare les manchots à jugulaire (bec long et haut)
+      des Adélie.
+  \end{itemize}
+  \vspace{4pt}
+  Trois mesures corrélées remplacées par deux nouvelles variables,
+  combinaisons linéaires des premières, qui résument l'essentiel de
+  l'information.
+\end{frame}
+
+\begin{frame}{À vous de chercher le meilleur plan}
+  \begin{columns}[c]
+    \begin{column}{0.62\textwidth}
+      \begin{Outil}{Application interactive : l'ACP des manchots}
+        \small
+        \begin{itemize}
+          \item Le plan de projection est le plan de l'écran : en faisant
+            tourner le nuage, on choisit un plan.
+          \item À côté : l'ombre du nuage sur ce plan, et la part de la
+            variance qu'il conserve.
+          \item Chercher d'abord un bon point de vue à la main, puis comparer
+            avec les plans engendrés par deux vecteurs propres de $R$.
+          \item Le calcul se fait dans le navigateur : quelques secondes de
+            chargement.
+        \end{itemize}
+      \end{Outil}
+    \end{column}
+    \begin{column}{0.34\textwidth}
+      \centering
+      \href{\urlappli}{\qrcode[height=3.2cm]{\urlappli}}\\[6pt]
+      \href{\urlappli}{%
+        \begin{tikzpicture}
+          \node[fill=coveraccent, text=white, rounded corners=3pt,
+            inner xsep=8pt, inner ysep=5pt, font=\sffamily\small]
+            {Ouvrir l'application \ $\blacktriangleright$};
+        \end{tikzpicture}}\\[4pt]
+      {\tiny\color{gray}soucyj.github.io/LivreMathTechno/\\applications/acp-manchots/}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Outil 5.1 --- Faire tourner un nuage de points}
+  \begin{Outil}{Faire tourner un nuage de points}
+    \begin{itemize}
+      \item Les calculatrices 3D de GeoGebra et de Desmos tracent un nuage
+        de points de l'espace à partir d'une liste de triplets : y coller
+        les mesures des manchots et chercher le point de vue où les espèces
+        se séparent le mieux.
+      \item En Python : \texttt{plotly.express.scatter\_3d}, que l'on fait
+        pivoter à la souris.
+      \item En dimension supérieure : Embedding Projector de TensorFlow
+        (\url{https://projector.tensorflow.org}) calcule l'ACP et affiche la
+        projection sur les trois premiers axes, dans une vue que l'on fait
+        tourner.
+    \end{itemize}
+  \end{Outil}
+\end{frame}

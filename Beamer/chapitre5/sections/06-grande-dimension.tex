@@ -1,0 +1,206 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Au-delà de trois dimensions}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Le décathlon}
+  \small
+  \begin{itemize}
+    \item Dix épreuves sur deux jours : quatre courses ($100$ m, $400$ m,
+      $110$ m haies, $1500$ m), trois sauts (longueur, hauteur, perche),
+      trois lancers (poids, disque, javelot).
+    \item $41$ résultats de 2004 : Décastar de Talence et Jeux olympiques
+      d'Athènes. Chaque résultat est un point de $\R^{10}$ ; aucun dessin
+      direct n'est possible.
+  \end{itemize}
+  \scriptsize Tableau 5.3 --- Quelques décathloniens en 2004 (secondes pour les
+  courses, mètres pour les sauts et les lancers).
+  \begin{center}
+    \scriptsize
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{lcccccccccc}
+      \toprule
+      Athlète & $100$ & Long. & Poids & Haut. & $400$ & Haies & Disque & Perche & Jav. & $1500$ \\
+      \midrule
+      Sebrle & $\num{10.85}$ & $\num{7.84}$ & $\num{16.36}$ & $\num{2.12}$ & $\num{48.36}$ & $\num{14.05}$ & $\num{48.72}$ & $\num{5.00}$ & $\num{70.52}$ & $\num{280.01}$ \\
+      Karpov & $\num{10.50}$ & $\num{7.81}$ & $\num{15.93}$ & $\num{2.09}$ & $\num{46.81}$ & $\num{13.97}$ & $\num{51.65}$ & $\num{4.60}$ & $\num{55.54}$ & $\num{278.11}$ \\
+      Drews & $\num{10.87}$ & $\num{7.38}$ & $\num{13.07}$ & $\num{1.88}$ & $\num{48.51}$ & $\num{14.01}$ & $\num{40.11}$ & $\num{5.00}$ & $\num{51.53}$ & $\num{274.21}$ \\
+      Casarsa & $\num{11.36}$ & $\num{6.68}$ & $\num{14.92}$ & $\num{1.94}$ & $\num{53.20}$ & $\num{15.39}$ & $\num{48.66}$ & $\num{4.40}$ & $\num{58.62}$ & $\num{296.12}$ \\
+      \midrule
+      moyenne & $\num{11.00}$ & $\num{7.26}$ & $\num{14.48}$ & $\num{1.98}$ & $\num{49.62}$ & $\num{14.61}$ & $\num{44.33}$ & $\num{4.76}$ & $\num{58.32}$ & $\num{279.02}$ \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+  \small Unités et dispersions différentes : on réduit ; la variance totale
+  vaut $10$.
+\end{frame}
+
+\begin{frame}[fragile]{Programme 5.3 --- L'ACP du décathlon}
+\begin{lstlisting}
+deca = pd.read_csv("decathlon.csv", index_col=0)
+X = deca.iloc[:, :10].to_numpy()        # les dix épreuves
+valeurs, vecteurs, Y = acp(X)
+print("valeurs propres :", valeurs.round(2))
+print("% cumulés :", (100 * np.cumsum(valeurs) / valeurs.sum()).round(1))
+r = np.corrcoef(Y[:, 0], deca["Points"])[0, 1]
+print("corrélation y1 / points :", round(r, 3))
+\end{lstlisting}
+  \vspace{4pt}
+  \small Sortie (la fonction \texttt{acp} est celle du programme 5.1) :
+  \begin{center}
+    \footnotesize
+    \begin{tabular}{lcccccccccc}
+      \toprule
+      $k$ & $1$ & $2$ & $3$ & $4$ & $5$ & $6$ & $7$ & $8$ & $9$ & $10$ \\
+      \midrule
+      $\lambda_k$ & $\num{3.27}$ & $\num{1.74}$ & $\num{1.40}$ & $\num{1.06}$ & $\num{0.68}$ & $\num{0.60}$ & $\num{0.45}$ & $\num{0.40}$ & $\num{0.21}$ & $\num{0.18}$ \\
+      \% cumulé & $\num{32.7}$ & $\num{50.1}$ & $\num{64.1}$ & $\num{74.7}$ & $\num{81.6}$ & $\num{87.5}$ & $\num{92.1}$ & $\num{96.0}$ & $\num{98.2}$ & $100$ \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+  Corrélation entre $y_1$ et le total officiel des points : $\num{0.956}$.
+\end{frame}
+
+\begin{frame}{Figure 5.9 --- Le diagramme des éboulis}
+  \begin{columns}[c]
+    \begin{column}{0.55\textwidth}
+      \FigLivre[0.62\textheight]{fig-acp-eboulis}
+      \scriptsize La droite pointillée : le seuil du critère de Kaiser.
+    \end{column}
+    \begin{column}{0.43\textwidth}
+      \small
+      \begin{itemize}
+        \item Beaucoup moins tranché que pour les manchots : le plan
+          principal ne conserve qu'environ la moitié de l'information
+          ($\SI{32.7}{\percent}+\SI{17.4}{\percent}$).
+        \item Kaiser retiendrait quatre axes ; il en faudrait cinq pour
+          dépasser $\SI{80}{\percent}$.
+        \item Pas un échec : une information sur les données. Les dix
+          épreuves sont assez indépendantes ; on ne résume pas un
+          décathlonien par deux nombres.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Lire le plan principal}
+  \begin{columns}[c]
+    \begin{column}{0.4\textwidth}
+      \scriptsize Tableau 5.4 --- Les deux premiers vecteurs propres.
+      \begin{center}
+        \scriptsize
+        \begin{tabular}{lcc}
+          \toprule
+          Épreuve & $\vec v_1$ & $\vec v_2$ \\
+          \midrule
+          $100$ m & $-\num{0.428}$ & $\num{0.142}$ \\
+          saut en longueur & $\num{0.410}$ & $-\num{0.262}$ \\
+          lancer du poids & $\num{0.344}$ & $\num{0.454}$ \\
+          saut en hauteur & $\num{0.316}$ & $\num{0.266}$ \\
+          $400$ m & $-\num{0.376}$ & $\num{0.432}$ \\
+          $110$ m haies & $-\num{0.413}$ & $\num{0.174}$ \\
+          lancer du disque & $\num{0.305}$ & $\num{0.460}$ \\
+          saut à la perche & $\num{0.028}$ & $-\num{0.137}$ \\
+          lancer du javelot & $\num{0.153}$ & $\num{0.241}$ \\
+          $1500$ m & $-\num{0.032}$ & $\num{0.360}$ \\
+          \bottomrule
+        \end{tabular}
+      \end{center}
+    \end{column}
+    \begin{column}{0.58\textwidth}
+      \small
+      \begin{itemize}
+        \item Premier axe : vitesse ($100$ m, haies, $400$ m) négative, saut
+          en longueur positif. Un bon temps est un temps court : à droite,
+          les athlètes qui courent vite et sautent loin. La performance
+          générale.
+        \item Second axe : les lancers (poids, disque), mais aussi le $400$ m
+          et le $1500$ m. En haut : puissants, mais relativement lents sur
+          les courses longues (Casarsa : disque à $\num{48.66}$ m,
+          $400$ m en $\num{53.20}$ s).
+        \item La perche, aux deux composantes faibles, est mal représentée :
+          c'est le troisième axe qui la décrit.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Figure 5.10 --- Les athlètes dans le plan principal}
+  \begin{columns}[c]
+    \begin{column}{0.58\textwidth}
+      \FigLivre[0.72\textheight]{fig-acp-decathlon}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \small
+      \begin{itemize}
+        \item La première composante a été calculée sans le barème officiel,
+          qui convertit chaque performance en points selon des tables
+          complexes.
+        \item Pourtant, sa corrélation avec le total des points vaut
+          $\num{0.956}$ : les trois médaillés d'Athènes, Sebrle, Clay et
+          Karpov, sont les trois points les plus à droite.
+        \item L'ACP a retrouvé seule ce que signifie « être un bon
+          décathlonien ».
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{D'autres applications}
+  \begin{itemize}
+    \item Génétique : Novembre et ses collègues (2008), près de
+      $\num{1400}$ Européens décrits par environ $\num{200000}$ marqueurs.
+      Dans le plan principal, convenablement tourné, le nuage reproduit la
+      carte de l'Europe.
+    \item Images : une photo de $100\times100$ pixels est un point de
+      $\R^{\num{10000}}$. Les vecteurs propres d'un grand nombre de visages
+      sont des « visages propres » (eigenfaces) ; quelques dizaines de
+      coordonnées suffisent à bien décrire un visage.
+    \item Compresser des données, éliminer du bruit, réduire le nombre de
+      variables avant une autre méthode d'apprentissage automatique.
+    \item Souvent la première chose que l'on fait devant un nouveau jeu de
+      données.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Les limites de la méthode}
+  \begin{itemize}
+    \item L'ACP est linéaire : elle cherche des droites et des plans, et
+      passe à côté d'une structure courbe (un nuage le long d'un arc de
+      cercle).
+    \item Elle est sensible aux unités (remarque 5.4) et aux valeurs
+      aberrantes, qui peuvent accaparer un axe à elles seules :
+      \begin{itemize}
+        \item deux élèves atypiques ajoutés aux six font passer la
+          corrélation de $\num{0.8}$ à environ $-\num{0.08}$ et basculer
+          l'axe principal (exercice 5.5) ;
+        \item une masse de manchot saisie à $\num{42000}$ g au lieu de
+          $\num{4200}$ g s'empare du deuxième axe, même après réduction
+          (exercice 5.10).
+      \end{itemize}
+      Avant d'interpréter : regarder les données et repérer les individus
+      atypiques.
+    \item Une grande variance n'est pas toujours une information
+      intéressante : la direction qui sépare deux groupes peut être une
+      direction de faible variance.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Pour la classe 5.4 --- Des données réelles en classe}
+  \begin{Classe}{Des données réelles en classe}
+    \small
+    \begin{itemize}
+      \item Le programme insiste sur l'interprétation de données et le regard
+        critique sur l'information statistique.
+      \item Sans algèbre linéaire : distribuer les mesures d'une cinquantaine
+        de manchots, sans l'espèce. Quel nuage de points, pour quelle paire
+        de variables, montre le mieux qu'il y a « plusieurs sortes » de
+        manchots ?
+      \item L'idée centrale du chapitre : un même ensemble de données,
+        regardé sous différents angles, peut révéler ou cacher sa structure.
+      \item Élèves plus avancés : un tableur pour calculer les cotes $z$, et
+        constater que les variables réduites deviennent comparables.
+      \item Construire un « score » combinant plusieurs épreuves d'éducation
+        physique, et le comparer à une simple somme des cotes $z$.
+    \end{itemize}
+  \end{Classe}
+\end{frame}

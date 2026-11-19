@@ -8,7 +8,7 @@
 #
 #  À lancer APRÈS « quarto render », qui recrée _book/.
 #  Le site du cours (dépôt MAT-2901) renvoie à ces fichiers :
-#    presentations/chapitre1.pdf … chapitre4.pdf
+#    presentations/chapitre1.pdf … chapitre5.pdf
 #    presentations/laboratoire-latex.pdf
 #    presentations/labo-latex/01-minimal.tex, 02-activite.tex, 03-examen.tex
 # ═══════════════════════════════════════════════════════════════════════

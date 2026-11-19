@@ -1,0 +1,250 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{L'analyse en composantes principales}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Le tableau centré et la matrice de covariance}
+  \small $n$ individus, $p$ variables. Après avoir centré chaque variable
+  (et l'avoir réduite, s'il y a lieu), on range les données dans une
+  matrice $X$ de taille $n\times p$ ; la ligne $i$ est
+  $\vec x_i^{\mathsf T}$. La somme des lignes est le vecteur nul.
+  \begin{Enonce}{Définition 5.4 --- Matrice de covariance}
+    La \defi{matrice de covariance} du tableau centré $X$ est la matrice
+    $p\times p$
+    \[
+      C=\frac1n\,X^{\mathsf T}X .
+    \]
+    Son coefficient $(j,k)$ est $c_{jk}=\frac1n\sum_{i=1}^n x_{ij}x_{ik}$, la
+    covariance des variables $j$ et $k$ ; ses coefficients diagonaux sont
+    les variances. Si les variables ont été réduites, $C$ est la matrice de
+    corrélation.
+  \end{Enonce}
+\end{frame}
+
+\begin{frame}{Proposition 5.3 --- Propriétés de la matrice de covariance}
+  \begin{Enonce}{Proposition 5.3 --- Propriétés de la matrice de covariance}
+    Soit $C$ la matrice de covariance d'un tableau centré $X$.
+    \begin{enumerate}
+      \item $C$ est symétrique.
+      \item Pour tout $\vec u\in\R^p$ unitaire, $\vec u^{\mathsf T}C\,\vec u$
+        est la variance des projections $t_i=\vec x_i\cdot\vec u$ sur la
+        droite engendrée par $\vec u$. En particulier,
+        $\vec u^{\mathsf T}C\,\vec u\geq0$.
+      \item Les valeurs propres de $C$ sont réelles et positives ou nulles,
+        et leur somme est la \defi{variance totale}
+        $c_{11}+\dots+c_{pp}$, la moyenne des carrés des distances au point
+        moyen.
+    \end{enumerate}
+  \end{Enonce}
+  \begin{AuTableau}
+    \footnotesize (1) $C^{\mathsf T}=\frac1nX^{\mathsf T}X=C$. (2)
+    $\vec u^{\mathsf T}C\vec u=\frac1n(X\vec u)\cdot(X\vec u)=\frac1n\sum t_i^2$.
+    (3) Théorème spectral ; $\lambda=\vec v^{\mathsf T}C\vec v\geq0$ ;
+    $\tr(QDQ^{\mathsf T})=\tr(D)$.
+  \end{AuTableau}
+\end{frame}
+
+\begin{frame}{Remarque 5.4 --- Faut-il toujours réduire les variables ?}
+  \begin{Rem}{Remarque 5.4}
+    Non. Réduire, c'est donner à chaque variable la même importance au
+    départ (une variance de $1$). C'est généralement souhaitable :
+    \begin{itemize}
+      \item lorsque les unités diffèrent (mm et g, secondes et mètres) : la
+        variance totale additionnerait des quantités incomparables, et le
+        résultat dépendrait des unités (exercices 5.4 et 5.9) ;
+      \item lorsque les ordres de grandeur sont si différents que la plus
+        dispersée imposerait le premier axe (la nageoire et le bec).
+    \end{itemize}
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Remarque 5.4 (suite) --- Quand ne pas réduire}
+  \begin{Rem}{Remarque 5.4 (suite)}
+    Même unité et dispersions comparables : les différences de variance
+    font partie de ce qu'on veut décrire, et la réduction les efface.
+    \begin{itemize}
+      \item Des positions dans l'espace : réduire étire chaque axe, et
+        déforme le nuage.
+      \item Un examen où tous ont à peu près la même note : réduit, il
+        pèserait autant que les autres, et ses petits écarts, dus en partie
+        au hasard, seraient amplifiés.
+      \item Une variable constante ne peut pas être réduite : son écart type
+        est nul.
+    \end{itemize}
+    Les deux analyses ne donnent pas les mêmes axes : l'une diagonalise la
+    matrice de covariance, l'autre la matrice de corrélation. Il faut donc
+    toujours préciser laquelle on a effectuée. Dans le doute, et dès que les
+    unités diffèrent, on réduit (c'est ce que font par défaut plusieurs
+    logiciels).
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Définition 5.5 --- Analyse en composantes principales}
+  \small Théorème spectral : $C=QDQ^{\mathsf T}$, colonnes de $Q$
+  orthonormées, $\lambda_1\geq\lambda_2\geq\dots\geq\lambda_p\geq0$.
+  \begin{Enonce}{Définition 5.5 --- Analyse en composantes principales}
+    Soit $X$ un tableau centré, $C$ sa matrice de covariance, et
+    $(\vec v_1,\dots,\vec v_p)$ une base orthonormée de vecteurs propres de
+    $C$, associés à $\lambda_1\geq\dots\geq\lambda_p$.
+    \begin{enumerate}
+      \item La droite engendrée par $\vec v_k$ est le $k$\ap{e} \defi{axe
+        principal}.
+      \item La $k$\ap{e} \defi{composante principale} est la variable $y_k$
+        de valeurs $y_{ik}=\vec x_i\cdot\vec v_k$ ; matriciellement, $Y=XQ$.
+      \item La \defi{proportion de variance expliquée} par le $k$\ap{e} axe
+        est $\dfrac{\lambda_k}{\lambda_1+\dots+\lambda_p}$.
+    \end{enumerate}
+  \end{Enonce}
+  \small Vocabulaire variable : « composantes principales » désigne parfois
+  les $\vec v_k$, et les logiciels appellent les $y_{ik}$ des scores.
+  L'essentiel : distinguer les directions $\vec v_k\in\R^p$ des
+  coordonnées $y_{ik}$ des individus.
+\end{frame}
+
+\begin{frame}{Théorème 5.4 --- Propriétés de l'ACP}
+  \begin{Enonce}{Théorème 5.4 --- Propriétés de l'ACP}
+    \footnotesize
+    \begin{enumerate}
+      \item Chaque $y_k$ est de moyenne nulle et de variance $\lambda_k$.
+      \item Deux composantes principales distinctes sont non corrélées.
+      \item Pour tout $q\leq p$, parmi les sous-espaces de dimension $q$,
+        $\Span\{\vec v_1,\dots,\vec v_q\}$ est celui sur lequel la variance
+        du nuage projeté est la plus grande ; elle vaut
+        $\lambda_1+\dots+\lambda_q$.
+      \item De façon équivalente, si l'on remplace chaque individu par sa
+        projection sur ce sous-espace, la moyenne des carrés des distances
+        vaut $\lambda_{q+1}+\dots+\lambda_p$, et aucun autre sous-espace de
+        dimension $q$ ne fait mieux.
+    \end{enumerate}
+  \end{Enonce}
+  \begin{AuTableau}
+    \scriptsize (1)--(2) $\frac1n(X\vec v_j)\cdot(X\vec v_k)=\lambda_k\,\vec v_j\cdot\vec v_k$.
+    (3) Pour $q=1$ : $\vec u=\sum c_j\vec v_j$ donne
+    $\vec u^{\mathsf T}C\vec u=\sum\lambda_jc_j^2\leq\lambda_1$ --- une moyenne
+    des valeurs propres pondérée par des poids $c_j^2$ de somme $1$. Pour
+    $q$ quelconque : des poids entre $0$ et $1$, de somme $q$. (4)
+    Pythagore.
+  \end{AuTableau}
+\end{frame}
+
+\begin{frame}{Des variables redondantes, des composantes qui ne le sont pas}
+  \begin{itemize}
+    \item Les variables de départ sont souvent fortement corrélées, donc
+      redondantes : la longueur du bec et celle de la nageoire disent en
+      partie la même chose.
+    \item Les composantes principales sont non corrélées (point 2) : chacune
+      apporte une information que les précédentes ne contenaient pas.
+    \item Le point 4 mesure ce que l'on perd : la moyenne des carrés des
+      erreurs de reconstruction est la somme des valeurs propres
+      abandonnées.
+    \item Mais c'est une moyenne : un individu particulier peut être bien
+      plus mal représenté que les autres (exercice 5.3 e).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Algorithme 5.1 --- Analyse en composantes principales}
+  \begin{Algo}{Algorithme 5.1 --- Analyse en composantes principales}
+    Partant d'un tableau de $n$ individus et de $p$ variables :
+    \begin{enumerate}
+      \item centrer chaque variable ; si les unités diffèrent, ou si les
+        dispersions sont très différentes, réduire aussi ;
+      \item calculer la matrice de covariance $C=\frac1nX^{\mathsf T}X$ ;
+      \item calculer les valeurs propres et des vecteurs propres unitaires
+        de $C$, par ordre décroissant des valeurs propres ;
+      \item choisir le nombre $q$ d'axes à conserver ;
+      \item calculer $y_{ik}=\vec x_i\cdot\vec v_k$ et représenter le nuage
+        projeté, par exemple dans le plan des deux premiers axes ;
+      \item interpréter les axes à l'aide des composantes des vecteurs
+        propres.
+    \end{enumerate}
+  \end{Algo}
+\end{frame}
+
+\begin{frame}{Combien d'axes conserver ?}
+  Pas de règle universelle ; trois critères courants :
+  \begin{itemize}
+    \item une proportion fixée de la variance totale, par exemple
+      $\SI{80}{\percent}$ ou $\SI{90}{\percent}$ ;
+    \item le \defi{diagramme des éboulis} : les valeurs propres par ordre
+      décroissant, et un « coude » au-delà duquel elles diminuent lentement
+      (souvent du bruit) ;
+    \item pour des données réduites, le \defi{critère de Kaiser} : garder les
+      axes de valeur propre supérieure à $1$. La variance totale vaut $p$ ;
+      un axe sous $1$ résume moins qu'une seule variable de départ.
+  \end{itemize}
+  \vspace{4pt}
+  Pour visualiser, la question est tranchée d'avance : $q=2$ (ou $3$). Il
+  faut alors garder en tête la proportion de variance conservée : elle dit
+  jusqu'à quel point le dessin est fidèle.
+\end{frame}
+
+\begin{frame}{Remarque 5.5 --- Le signe des axes est arbitraire}
+  \begin{Rem}{Remarque 5.5}
+    \begin{itemize}
+      \item Un vecteur propre unitaire peut être remplacé par son opposé
+        (exercice 4.1).
+      \item Changer $\vec v_k$ en $-\vec v_k$ change le signe de tous les
+        $y_{ik}$ : la figure est retournée selon le $k$\ap{e} axe, sans rien
+        changer à l'interprétation.
+      \item Deux logiciels, ou deux versions d'un même logiciel, peuvent
+        produire des figures symétriques l'une de l'autre.
+      \item Dans les notes, on a choisi les signes qui rendent les figures
+        plus lisibles (les papous à droite).
+    \end{itemize}
+  \end{Rem}
+\end{frame}
+
+\begin{frame}[fragile]{Programme 5.1 --- L'ACP avec Python}
+  \begin{columns}[T]
+    \begin{column}{0.66\textwidth}
+\begin{lstlisting}
+import numpy as np
+import pandas as pd
+url =("https://raw.githubusercontent.com/allisonhorst/"
+       "palmerpenguins/main/inst/extdata/penguins.csv")
+manchots = pd.read_csv(url).dropna(subset=["bill_length_mm"])
+X = manchots[["bill_length_mm", "bill_depth_mm",
+              "flipper_length_mm"]].to_numpy()
+def acp(X, reduire=True):
+    Z = X - X.mean(axis=0)               # centrer
+    if reduire:
+        Z = Z / X.std(axis=0)            # réduire : cotes z
+    C = Z.T @ Z / len(Z)                 # matrice de covariance
+    valeurs, vecteurs = np.linalg.eigh(C)
+    ordre = np.argsort(valeurs)[::-1]    # ordre décroissant
+    valeurs, vecteurs = valeurs[ordre], vecteurs[:, ordre]
+    return valeurs, vecteurs, Z @ vecteurs
+valeurs, vecteurs, Y = acp(X)
+print(valeurs, valeurs / valeurs.sum())
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \footnotesize
+      \begin{itemize}
+        \item \texttt{pandas} lit le fichier ; \texttt{dropna} élimine les
+          deux manchots aux mesures manquantes.
+        \item \texttt{np.linalg.eigh} (matrices symétriques) renvoie les
+          valeurs propres par ordre croissant : on les remet dans l'ordre
+          décroissant avec \texttt{np.argsort}.
+        \item Sortie : valeurs propres $[\num{2.003}\ \ \num{0.767}\ \ \num{0.23}]$,
+          proportions $[\num{0.668}\ \ \num{0.256}\ \ \num{0.077}]$.
+        \item Le premier vecteur propre sort avec le signe opposé : les
+          papous sont à gauche (remarque 5.5).
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Remarque 5.6 --- L'ACP en pratique}
+  \begin{Rem}{Remarque 5.6}
+    \begin{itemize}
+      \item Les bibliothèques spécialisées, comme \texttt{scikit-learn},
+        effectuent l'ACP sans programmer les calculs.
+      \item Avec \texttt{PCA().fit(Z)} : l'attribut
+        \texttt{explained\_variance\_ratio\_} donne les proportions de
+        variance expliquée, la méthode \texttt{transform} calcule les
+        composantes principales.
+      \item Attention : \texttt{explained\_variance\_} divise par $n-1$
+        (remarque 5.2). Les proportions, elles, ne changent pas.
+    \end{itemize}
+  \end{Rem}
+\end{frame}

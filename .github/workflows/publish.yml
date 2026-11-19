@@ -71,7 +71,7 @@ jobs:
             kvoptions kvsetkeys listings ltxcmds lualatex-math pdfcol \
             pdfescape pdftexcmds refcount rerunfilecheck sansmathaccent \
             stringenc tcolorbox tikzfill translator trimspaces \
-            uniquecounter url varwidth lm lm-math
+            uniquecounter url varwidth lm lm-math qrcode
 
       - name: Compiler les présentations Beamer
         run: ./_outils/compiler-presentations.sh _book/presentations

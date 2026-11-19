@@ -1,0 +1,75 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Sous quel angle regarder un nuage de points ?}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Un tableau de données est un nuage de points}
+  \begin{itemize}
+    \item Deux notes par élève (mathématiques, sciences) : chaque élève est
+      un point du plan, la classe est un nuage de points.
+    \item Trois mesures par manchot : un nuage de $\R^3$. Les dix épreuves
+      d'un décathlon : $\R^{10}$. Des centaines de milliers de marqueurs
+      génétiques : une dimension gigantesque.
+    \item Dans le plan, un coup d'œil suffit pour repérer une tendance, des
+      groupes, un point isolé.
+    \item Mais nos yeux s'arrêtent à la dimension $3$ --- et sur une page ou
+      un écran, nous ne voyons jamais qu'une projection sur un plan.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{La photographie d'une théière}
+  \begin{columns}[c]
+    \begin{column}{0.55\textwidth}
+      \begin{itemize}
+        \item Photographiée de dessus : un disque.
+        \item Photographiée de côté : on reconnaît le bec et l'anse.
+        \item Deux projections du même objet ; l'une est beaucoup plus
+          informative que l'autre.
+      \end{itemize}
+      \vspace{6pt}
+      L'analyse en composantes principales (ACP) répond à la question
+      correspondante pour un nuage de points :
+      \begin{center}
+        \color{sectioncolor}sous quel angle faut-il le regarder pour en
+        voir le plus possible ?
+      \end{center}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \FigBox[0.55\textheight]{%
+        \begin{tikzpicture}
+          % vue de dessus
+          \draw[fig] (0,2.6) circle (0.8);
+          \node[etiq, gray] at (0,1.55) {vue de dessus};
+          % vue de côté
+          \begin{scope}[yshift=-0.2cm]
+            \draw[fig] (-0.8,0) .. controls (-0.9,0.9) and (0.9,0.9) .. (0.8,0)
+              .. controls (0.6,-0.45) and (-0.6,-0.45) .. (-0.8,0) -- cycle;
+            \draw[fig] (0.78,0.25) .. controls (1.2,0.4) and (1.35,0.7) .. (1.55,0.85)
+              -- (1.5,0.95) .. controls (1.2,0.75) and (1,0.6) .. (0.72,0.5);
+            \draw[steelblue4, thick] (-0.8,0.35) .. controls (-1.35,0.45) and (-1.35,-0.15) .. (-0.78,-0.12);
+            \draw[fig] (-0.15,0.66) rectangle (0.15,0.8);
+            \node[etiq, gray] at (0,-0.75) {vue de côté};
+          \end{scope}
+        \end{tikzpicture}}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Le chemin du chapitre}
+  L'ACP cherche la droite, puis le plan, puis le sous-espace de petite
+  dimension sur lequel la projection du nuage déforme le moins les données.
+  La réponse : les vecteurs propres d'une matrice symétrique, la matrice
+  de covariance.
+  \vspace{6pt}
+  \begin{enumerate}
+    \item un peu de statistique descriptive (secondaire) ;
+    \item six élèves : la droite qui représente le mieux un nuage du plan
+      --- projection orthogonale et théorème de Pythagore ;
+    \item les manchots de l'Antarctique : le meilleur plan dans $\R^3$ ;
+    \item l'ACP en toute généralité, et le calcul avec Python ;
+    \item un peu d'histoire ;
+    \item au-delà de trois dimensions : le décathlon.
+  \end{enumerate}
+  \vspace{4pt}
+  Deux sujets réunis : la statistique du secondaire et les vecteurs
+  propres de l'annexe D.
+\end{frame}

@@ -1,0 +1,274 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{La droite qui représente le mieux un nuage}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Deux façons de mesurer l'écart à une droite}
+  \small
+  \begin{itemize}
+    \item Droite de régression des moindres carrés : minimise la somme des
+      carrés des écarts verticaux. Elle répond à une question de
+      prédiction : connaissant $x$, quel $y$ prévoir ? Pente
+      $a=s_{xy}/s_x^2=\num{0.8}$, d'où $y=\num{0.8}\,x+19$.
+    \item Prédire $x$ à partir de $y$ : écarts horizontaux, autre droite,
+      $y=\num{1.25}\,x-\num{12.5}$ !
+    \item Pour décrire la forme du nuage, sans privilégier de variable :
+      distances perpendiculaires à la droite.
+  \end{itemize}
+  \FigLivre[0.48\textheight]{fig-acp-residus}
+  \centering\scriptsize Figure 5.2 --- Écarts verticaux (régression) et
+  distances perpendiculaires : deux droites différentes.
+\end{frame}
+
+\begin{frame}{Définition 5.3 --- Droite d'ajustement orthogonal}
+  \begin{Enonce}{Définition 5.3 --- Droite d'ajustement orthogonal}
+    Soit $\vec x_1,\dots,\vec x_n$ des points du plan (ou de $\R^p$), et
+    $\mathcal D$ une droite. Notons $d_i$ la distance de $\vec x_i$ à sa
+    projection orthogonale sur $\mathcal D$. La droite qui rend la somme
+    \[
+      S(\mathcal D)=d_1^2+d_2^2+\dots+d_n^2
+    \]
+    la plus petite possible s'appelle la \defi{droite d'ajustement
+    orthogonal} du nuage, ou \defi{axe principal}.
+  \end{Enonce}
+  \begin{itemize}
+    \item Comme les droites de régression, elle passe par le point moyen
+      (admis) : sinon, on pourrait la translater pour la rapprocher des
+      points.
+    \item On centre donc les données, par exemple $\vec x_A=(-10,-3)$, et on
+      cherche parmi les droites $\Span\{\vec u\}$, $\norme{\vec u}=1$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Projeter sur une droite : le théorème de Pythagore}
+  \begin{columns}[c]
+    \begin{column}{0.55\textwidth}
+      \small Projection orthogonale (définition D.4) :
+      \[
+        \proj_{\vec u}\vec x_i=(\vec x_i\cdot\vec u)\,\vec u=t_i\,\vec u,
+        \qquad t_i=\vec x_i\cdot\vec u .
+      \]
+      $t_i$ : la position, le long de la droite, de l'« ombre » de
+      $\vec x_i$. Triangle rectangle :
+      \[
+        \norme{\vec x_i}^2=t_i^2+d_i^2. \tag{5.1}
+      \]
+      L'hypoténuse $\norme{\vec x_i}$ (distance au point moyen) ne dépend pas
+      de la droite : quand la droite pivote, si $t_i$ s'allonge, $d_i$
+      raccourcit.
+    \end{column}
+    \begin{column}{0.43\textwidth}
+      \FigLivre[0.6\textheight]{fig-acp-pythagore}
+      \scriptsize Figure 5.3 --- La projection de $\vec x_i$ sur la droite
+      engendrée par $\vec u$.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{L'observation clé du chapitre}
+  En additionnant (5.1) sur tous les points :
+  \[
+    \underbrace{\sum_{i=1}^n\norme{\vec x_i}^2}_{\text{ne dépend pas de }\vec u}
+    =\sum_{i=1}^n t_i^2+\sum_{i=1}^n d_i^2 . \tag{5.2}
+  \]
+  Les $t_i$ ont une moyenne nulle
+  ($\frac1n\sum t_i=\big(\frac1n\sum\vec x_i\big)\cdot\vec u=0$) :
+  $\frac1n\sum t_i^2$ est la variance des projections.
+  \begin{Enonce}{Proposition 5.1 --- Deux problèmes équivalents}
+    Pour un nuage centré, la droite $\Span\{\vec u\}$ qui minimise la somme
+    des carrés des distances des points à la droite est aussi celle qui
+    maximise la variance des projections des points sur la droite.
+  \end{Enonce}
+  \small La droite passe au plus près des points $\iff$ les points
+  projetés sont le plus étalés possible : l'ombre du nuage est la plus
+  longue.
+\end{frame}
+
+\begin{frame}{Exemple 5.1 --- Trois directions pour les six élèves}
+  \small Trois droites par le point moyen : $\vec e_1=(1,0)$,
+  $\vec u=\frac1{\sqrt2}(1,1)$, $\vec w=\frac1{\sqrt2}(1,-1)$.
+  \begin{itemize}
+    \item $\vec e_1$ (horizontale) : $t_i=x_i-\bar x$, variance des
+      projections $s_x^2=50$.
+    \item $\vec u$ : $t_i=\frac1{\sqrt2}\big((x_i-\bar x)+(y_i-\bar y)\big)$,
+      \[
+        \sqrt2\,(t_A,\dots,t_F)=(-13,-16,-11,14,13,13),\qquad
+        \frac16\sum t_i^2=\frac{1080}{12}=90 .
+      \]
+    \item $\vec w$ : $\sqrt2\,(t_A,\dots,t_F)=(-7,2,5,-4,-1,5)$, variance
+      $\frac{120}{12}=10$.
+  \end{itemize}
+  \vspace{2pt}
+  Variance totale : $\frac16\sum\norme{\vec x_i}^2=s_x^2+s_y^2=100$. Divisée
+  par $n$, la relation (5.2) donne :
+  \begin{itemize}
+    \item pour $\vec u$ : $100=90+10$ (projections $90$, distances $10$) ;
+    \item pour $\vec w$ : $100=10+90$.
+  \end{itemize}
+  La direction $\vec u$ est de loin la meilleure des trois.
+\end{frame}
+
+\begin{frame}{La variance dans une direction quelconque}
+  Avec $\vec x_i=(a_i,b_i)$ et $\vec u=(u_1,u_2)$, $t_i=a_iu_1+b_iu_2$ :
+  \[
+    \frac1n\sum_{i=1}^n t_i^2
+    =s_x^2\,u_1^2+2s_{xy}\,u_1u_2+s_y^2\,u_2^2
+    =\vec u^{\mathsf T}C\,\vec u, \tag{5.3}
+  \]
+  où
+  \[
+    C=\mat{s_x^2}{s_{xy}}{s_{xy}}{s_y^2}
+    \qquad\text{(six élèves : }C=\mat{50}{40}{40}{50}\text{)}.
+  \]
+  \begin{itemize}
+    \item $C$ est la \defi{matrice de covariance} : les variances sur la
+      diagonale, la covariance ailleurs.
+    \item $C$ est symétrique.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Une fonction de l'angle}
+  \begin{columns}[c]
+    \begin{column}{0.4\textwidth}
+      \small Avec $\vec u=(\cos\theta,\sin\theta)$ :
+      \begin{align*}
+        f(\theta)&=50\cos^2\theta+80\cos\theta\sin\theta+50\sin^2\theta\\
+                 &=50+40\sin(2\theta).
+      \end{align*}
+      \begin{itemize}
+        \item Maximum $90$ pour $\theta=45^\circ$.
+        \item Minimum $10$ pour $\theta=135^\circ$.
+      \end{itemize}
+      La droite d'ajustement orthogonal : pente $1$, par $(70,75)$, soit
+      $y=x+5$.
+    \end{column}
+    \begin{column}{0.58\textwidth}
+      \FigLivre[0.6\textheight]{fig-acp-angle}
+      \scriptsize Figure 5.4 --- Projections sur les droites d'angle
+      $45^\circ$ (étalées) et $135^\circ$ (tassées) ; la variance $f(\theta)$.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Pour la classe 5.2 --- Une fonction sinusoïdale}
+  \begin{Classe}{Une fonction sinusoïdale}
+    \begin{itemize}
+      \item $f(\theta)=50+40\sin(2\theta)$ : une fonction sinusoïdale de
+        cinquième secondaire (SN), de valeur moyenne $50$, d'amplitude $40$
+        et de période $180^\circ$.
+      \item La période s'explique sans calcul : un demi-tour ramène une
+        droite sur elle-même.
+      \item Le problème d'optimisation est accessible à un élève du
+        secondaire, pourvu qu'on lui fournisse l'expression de $f$.
+      \item Activité : chercher la meilleure droite par essais, en la faisant
+        tourner autour du point moyen dans GeoGebra.
+    \end{itemize}
+  \end{Classe}
+\end{frame}
+
+\begin{frame}{Le lien avec les vecteurs propres}
+  \small $C=\mat{50}{40}{40}{50}$ a pour valeurs propres $\lambda_1=90$ et
+  $\lambda_2=10$, de vecteurs propres $(1,1)$ et $(1,-1)$ (comme
+  l'exemple D.7 : $C=10\mat{5}{4}{4}{5}$). L'axe principal est porté par le
+  vecteur propre de la plus grande valeur propre, qui est la variance
+  maximale.
+  \vspace{4pt}
+
+  Ce n'est pas une coïncidence. Pour $C$ symétrique quelconque et
+  $f(\theta)=\vec u^{\mathsf T}C\,\vec u$, avec
+  $\vec u'(\theta)=(-\sin\theta,\cos\theta)\perp\vec u$ :
+  \[
+    f'(\theta)=2\,\vec u'\cdot C\vec u .
+  \]
+  \begin{AuTableau}[Calcul au tableau]
+    \footnotesize Dérivée d'un produit, puis symétrie :
+    $\vec u^{\mathsf T}C\vec u'=\vec u'^{\mathsf T}C^{\mathsf T}\vec u=\vec u'^{\mathsf T}C\vec u$.
+  \end{AuTableau}
+  \begin{itemize}
+    \item $f'=0\iff C\vec u\perp\vec u'\iff C\vec u$ parallèle à $\vec u$
+      $\iff C\vec u=\lambda\vec u$.
+    \item Dans une direction propre, $f=\vec u\cdot\lambda\vec u=\lambda$ :
+      la variance est la valeur propre.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Théorème 5.2 --- La droite d'ajustement orthogonal}
+  \begin{Enonce}{Théorème 5.2 --- La droite d'ajustement orthogonal}
+    Soit un nuage du plan, de point moyen $M$ et de matrice de covariance
+    $C$, et $\lambda_1\geq\lambda_2$ les valeurs propres de $C$, de vecteurs
+    propres unitaires $\vec v_1$ et $\vec v_2$.
+    \begin{enumerate}
+      \item La droite d'ajustement orthogonal passe par $M$ et est dirigée
+        par $\vec v_1$.
+      \item La variance des projections sur cette droite vaut $\lambda_1$ ;
+        la moyenne des carrés des distances à la droite vaut $\lambda_2$.
+      \item La variance totale $s_x^2+s_y^2$ est égale à
+        $\lambda_1+\lambda_2$.
+    \end{enumerate}
+  \end{Enonce}
+  \begin{AuTableau}
+    \footnotesize (1) Proposition 5.1 et étude de $f$ : continue et
+    périodique, elle atteint son maximum là où $f'=0$, dans une direction
+    propre. (3) La trace. (2) Diviser (5.2) par $n$ :
+    $(s_x^2+s_y^2)-\lambda_1=\lambda_2$.
+  \end{AuTableau}
+\end{frame}
+
+\begin{frame}{La forme du nuage}
+  \begin{columns}[c]
+    \begin{column}{0.42\textwidth}
+      \small
+      \begin{itemize}
+        \item Variance totale $100=90+10$ : l'axe principal
+          \defi{explique} $\SI{90}{\percent}$ de la variance.
+        \item Remplacer chaque point par sa projection ne fait perdre que
+          $\SI{10}{\percent}$ de la dispersion.
+        \item Le nuage ressemble à une ellipse dirigée par les vecteurs
+          propres, de demi-axes proportionnels à $\sqrt{\lambda_1}$ et
+          $\sqrt{\lambda_2}$.
+        \item L'axe principal $y=x+5$ est entre les deux droites de
+          régression.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.56\textwidth}
+      \FigLivre[0.58\textheight]{fig-acp-axes-principaux}
+      \scriptsize Figure 5.5 --- L'ellipse de demi-axes $2\sqrt{90}$ et
+      $2\sqrt{10}$ ; l'axe principal et les deux droites de régression.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Niveau général et préférence}
+  Les coordonnées sur les deux axes principaux :
+  \[
+    t_i=\tfrac1{\sqrt2}\big((x_i-70)+(y_i-75)\big),\qquad
+    t_i'=\tfrac1{\sqrt2}\big((x_i-70)-(y_i-75)\big).
+  \]
+  \begin{itemize}
+    \item $t_i$ est proportionnel à la somme des écarts : le niveau
+      général de l'élève.
+    \item $t_i'$ est proportionnel à la différence : positif pour un élève
+      relativement plus fort en mathématiques qu'en sciences.
+    \item Un simple changement de base orthonormée (une rotation de
+      $45^\circ$ du repère) : aucune information perdue, mais
+      l'information est rangée par ordre d'importance.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Remarque 5.3 --- Régression ou axe principal ?}
+  \begin{Rem}{Remarque 5.3}
+    \begin{itemize}
+      \item L'axe principal est toujours entre les deux droites de
+        régression ; les trois sont confondues seulement si les points sont
+        alignés.
+      \item Les droites de régression sont « tirées » vers l'horizontale ou
+        la verticale : la régression vers la moyenne de Galton (taille des
+        enfants et des parents).
+      \item Pour prédire une variable à partir d'une autre : la régression.
+        Pour décrire un nuage sans privilégier de variable : l'axe
+        principal.
+      \item Une faiblesse de l'axe principal : il dépend des unités de mesure
+        (exercice 5.4), contrairement à la droite de régression et au
+        coefficient de corrélation.
+    \end{itemize}
+  \end{Rem}
+\end{frame}

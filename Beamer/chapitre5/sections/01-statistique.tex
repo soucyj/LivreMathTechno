@@ -1,0 +1,178 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Un peu de statistique descriptive}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Individus, variables et tableau de données}
+  \begin{itemize}
+    \item Individus : les objets mesurés (élèves, manchots, athlètes).
+      Variables : les grandeurs mesurées (note, longueur, temps).
+    \item $p$ variables sur $n$ individus : un tableau à $n$ lignes et $p$
+      colonnes ; chaque individu est un point de $\R^p$.
+  \end{itemize}
+  \begin{columns}[c]
+    \begin{column}{0.5\textwidth}
+      \scriptsize Tableau 5.1 --- Six élèves (données fictives) ; $n=6$,
+      $p=2$.
+      \begin{center}
+        \scriptsize
+        \begin{tabular}{ccccc}
+          \toprule
+          Élève & Math. $x$ & Sc. $y$ & $x-\bar x$ & $y-\bar y$ \\
+          \midrule
+          $A$ & $60$ & $72$ & $-10$ & $-3$ \\
+          $B$ & $63$ & $66$ & $-7$ & $-9$ \\
+          $C$ & $67$ & $67$ & $-3$ & $-8$ \\
+          $D$ & $75$ & $84$ & $5$ & $9$ \\
+          $E$ & $76$ & $82$ & $6$ & $7$ \\
+          $F$ & $79$ & $79$ & $9$ & $4$ \\
+          \midrule
+          Moyenne & $70$ & $75$ & $0$ & $0$ \\
+          \bottomrule
+        \end{tabular}
+      \end{center}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \FigLivre[0.5\textheight]{fig-acp-notes}
+      \scriptsize Figure 5.1 --- Le nuage et son point moyen $M$.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Définition 5.1 --- Moyenne, variance, écart type}
+  \begin{Enonce}{Définition 5.1 --- Moyenne, variance, écart type}
+    Soit $x_1,\dots,x_n$ les valeurs d'une variable $x$ sur $n$ individus.
+    La \defi{moyenne} de $x$ est $\bar x=\frac1n\sum_{i=1}^n x_i$. La
+    \defi{variance} est la moyenne des carrés des écarts à la moyenne, et
+    l'\defi{écart type} est sa racine carrée :
+    \[
+      s_x^2=\frac1n\sum_{i=1}^n(x_i-\bar x)^2,\qquad s_x=\sqrt{s_x^2}.
+    \]
+    Le point $M=(\bar x_1,\dots,\bar x_p)$ est le \defi{point moyen} (centre
+    de gravité) du nuage.
+  \end{Enonce}
+  \small Pour les mathématiques :
+  $s_x^2=\frac{100+49+9+25+36+81}{6}=\frac{300}{6}=50$,
+  $s_x\approx\num{7.07}$. De même $s_y^2=50$.
+  \vspace{2pt}
+
+  Centrer : remplacer $x_i$ par $x_i-\bar x$, c'est déplacer l'origine au
+  point moyen. La variance ne change pas.
+\end{frame}
+
+\begin{frame}{Remarque 5.1 --- Variable statistique ou variable aléatoire ?}
+  \begin{Rem}{Remarque 5.1}
+    \small
+    \begin{itemize}
+      \item Variable aléatoire $X$ (chapitre 4) : décrite par une loi ; sa
+        variance $\mathrm{Var}(X)$ est une quantité théorique.
+      \item Ici, $x$ est une variable statistique : une colonne de nombres
+        observés. Les données peuvent provenir d'un processus aléatoire
+        (un tirage de personnes dans une population), mais une fois
+        recueillies, $\bar x$ et $s_x^2$ se calculent à partir du tableau,
+        sans aucune hypothèse sur une loi de probabilité.
+      \item Notations : minuscules, $\bar x$, $s_x^2$, $s_{xy}$ pour les
+        données ; jamais $\mathrm{Var}(x)$.
+      \item Le lien : tirons au hasard l'un des $n$ individus (probabilité
+        $\frac1n$ chacun). Les $n$ individus jouent le rôle d'une
+        population ; ses paramètres coïncident avec les statistiques du
+        tableau : $\mu=\bar x$ et $\sigma^2=\mathrm{Var}(X)=s_x^2$ --- d'où la
+        touche $\sigma_x$ des calculatrices.
+    \end{itemize}
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Définition 5.2 --- Covariance, coefficient de corrélation}
+  \begin{Enonce}{Définition 5.2 --- Covariance, coefficient de corrélation}
+    La \defi{covariance} de deux variables $x$ et $y$ mesurées sur les mêmes
+    $n$ individus est
+    \[
+      s_{xy}=\frac1n\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y).
+    \]
+    Si $s_x,s_y\neq0$, le \defi{coefficient de corrélation linéaire} est
+    $r_{xy}=\dfrac{s_{xy}}{s_x\,s_y}$.
+  \end{Enonce}
+  \small
+  \begin{itemize}
+    \item Le signe de $(x_i-\bar x)(y_i-\bar y)$ dépend du quadrant
+      (figure 5.1) : positif en haut à droite et en bas à gauche.
+    \item Six élèves, tous dans les quadrants « positifs » :
+      $s_{xy}=\frac{30+63+24+45+42+36}{6}=\frac{240}{6}=40$ et
+      $r_{xy}=\frac{40}{\sqrt{50}\sqrt{50}}=\num{0.8}$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{La corrélation est un cosinus}
+  Rangeons les écarts dans deux vecteurs de $\R^n$ :
+  \[
+    \vec a=(x_1-\bar x,\dots,x_n-\bar x),\qquad
+    \vec b=(y_1-\bar y,\dots,y_n-\bar y).
+  \]
+  Alors $s_{xy}=\frac1n\,\vec a\cdot\vec b$, $s_x=\frac1{\sqrt n}\norme{\vec a}$,
+  $s_y=\frac1{\sqrt n}\norme{\vec b}$, et
+  \[
+    r_{xy}=\frac{\vec a\cdot\vec b}{\norme{\vec a}\,\norme{\vec b}}=\cos\theta .
+  \]
+  \begin{itemize}
+    \item Donc $-1\leq r_{xy}\leq1$.
+    \item $r_{xy}=\pm1$ : $\vec a$ et $\vec b$ colinéaires, points
+      parfaitement alignés.
+    \item $r_{xy}=0$ : vecteurs orthogonaux ; variables \defi{non corrélées}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Remarque 5.2 --- Diviser par $n$ ou par $n-1$ ?}
+  \begin{Rem}{Remarque 5.2}
+    \small
+    \begin{itemize}
+      \item Décrire la dispersion des $n$ individus eux-mêmes : on divise par
+        $n$. C'est notre situation : décrire la forme d'un nuage donné.
+      \item Estimer la variance d'une population à partir d'un échantillon :
+        on divise habituellement par $n-1$, du moins pour un échantillon
+        aléatoire simple.
+        \begin{itemize}
+          \item Les écarts à $\bar x$ sont un peu plus petits que les écarts
+            à la vraie moyenne ($\bar x$ minimise $\sum(x_i-c)^2$).
+          \item Si les observations sont indépendantes et de même loi, la
+            division par $n$ sous-estime en moyenne la variance par le
+            facteur $\frac{n-1}{n}$.
+          \item D'autres plans d'échantillonnage demandent d'autres
+            ajustements (correction pour population finie, lors d'un tirage
+            sans remise).
+        \end{itemize}
+      \item Les $n$ écarts ont une somme nulle : seuls $n-1$ peuvent varier
+        librement ; la somme des carrés compte $n-1$ degrés de liberté.
+    \end{itemize}
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Remarque 5.2 (suite) --- Ce que calculent nos outils}
+  \begin{Rem}{Remarque 5.2 (suite)}
+    \begin{itemize}
+      \item Six élèves : $\frac{300}{6}=50$ en divisant par $n$,
+        $\frac{300}{5}=60$ en divisant par $n-1$. Écart notable pour un petit
+        tableau, négligeable si $n$ est grand.
+      \item Calculatrices : touche $\sigma_x$ (division par $n$, notre $s_x$),
+        touche $s_x$ (par $n-1$). Python : \texttt{np.var} divise par $n$ ;
+        \texttt{np.cov} et \texttt{pandas} par $n-1$.
+      \item Pour l'ACP, aucune importance : les valeurs propres sont
+        multipliées par $\frac{n}{n-1}$, les vecteurs propres et les
+        proportions ne changent pas.
+    \end{itemize}
+  \end{Rem}
+\end{frame}
+
+\begin{frame}{Pour la classe 5.1 --- La statistique à deux variables au secondaire}
+  \begin{Classe}{La statistique à deux variables au secondaire}
+    \small
+    \begin{itemize}
+      \item Deuxième cycle : nuages de points, estimation de la corrélation,
+        droite de régression (méthode de Mayer, méthode médiane-médiane).
+      \item Le point moyen apparaît dans la méthode de Mayer (points moyens
+        de deux sous-groupes).
+      \item La corrélation est souvent estimée par la forme du nuage :
+        longueur et largeur du rectangle ou de l'ellipse qui l'entoure.
+      \item L'ACP donne un sens précis à ces deux dimensions : elles
+        deviendront les racines carrées de deux valeurs propres.
+    \end{itemize}
+  \end{Classe}
+\end{frame}

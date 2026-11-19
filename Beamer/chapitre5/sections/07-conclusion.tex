@@ -1,0 +1,64 @@
+% ═══════════════════════════════════════════════════════════════════════
+\section{Synthèse}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Ce qu'il faut retenir}
+  \small
+  \begin{itemize}
+    \item Un tableau de données est un nuage de points ; on ne le voit
+      qu'en projection.
+    \item Pythagore : minimiser les distances au sous-espace revient à
+      maximiser la variance du nuage projeté.
+    \item La variance dans la direction $\vec u$ est $\vec u^{\mathsf T}C\,\vec u$ ;
+      ses extremums sont dans les directions propres de la matrice de
+      covariance $C$, et valent les valeurs propres.
+    \item ACP : diagonaliser $C$ (théorème spectral), ranger
+      $\lambda_1\geq\dots\geq\lambda_p$, projeter sur
+      $\vec v_1,\dots,\vec v_q$ ; les composantes principales sont non
+      corrélées, de variances $\lambda_k$.
+    \item La proportion $\frac{\lambda_1+\dots+\lambda_q}{\lambda_1+\dots+\lambda_p}$
+      dit jusqu'à quel point le dessin est fidèle ; l'erreur de
+      reconstruction moyenne est $\lambda_{q+1}+\dots+\lambda_p$.
+    \item Réduire (matrice de corrélation) dès que les unités ou les
+      ordres de grandeur diffèrent ; se méfier des valeurs aberrantes.
+    \item Interpréter les axes à l'aide des composantes des vecteurs
+      propres : « niveau général », « taille du bec », « performance ».
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Des notions du secondaire aux applications modernes}
+  \small
+  \begin{center}
+  \begin{tabular}{ll}
+    \toprule
+    Notion du secondaire & Rôle dans l'ACP \\
+    \midrule
+    nuage de points, corrélation & le point de départ ; la forme du nuage \\
+    droite de régression & un point de comparaison avec l'axe principal \\
+    cote $z$ & réduire les variables \\
+    fonction sinusoïdale & la variance selon l'angle d'une droite \\
+    vecteurs, produit scalaire & projeter \\
+    théorème de Pythagore & l'équivalence des deux problèmes \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{6pt}
+  Une méthode de 1901, devenue l'un des outils les plus employés de la
+  statistique et de la science des données : le calcul de quelques vecteurs
+  propres d'une matrice symétrique.
+\end{frame}
+
+\begin{frame}{Et maintenant}
+  \begin{itemize}
+    \item Les démonstrations laissées « au tableau » sont toutes dans les
+      notes de cours, avec tous les détails.
+    \item Exercices du chapitre (avec solutions complètes) : calculs à la
+      main (5.1 à 5.6), dont les valeurs extrêmes (5.5) ; programmes Python
+      (5.7 à 5.11), dont l'erreur de saisie (5.10) ; réflexion pour la
+      classe (5.12).
+    \item L'application interactive des manchots est sur le site des notes :
+      \href{\urlappli}{\color{sectioncolor}ouvrir l'application}.
+    \item Les rappels d'algèbre linéaire (projection orthogonale, valeurs
+      propres, théorème spectral) sont à l'annexe D.
+  \end{itemize}
+\end{frame}

@@ -1,0 +1,301 @@
+% ═══════════════════════════════════════════════════════════════════════
+%  preambule.tex — Réglages, couleurs et raccourcis communs du diaporama
+%  du chapitre 5 (« L'analyse en composantes principales »).
+%  Ce fichier est autonome : il ne dépend d'aucun fichier du livre.
+% ═══════════════════════════════════════════════════════════════════════
+
+% ── Encodage, langue, polices (lualatex, comme le livre) ───────────────
+\usepackage{fontspec}
+\usepackage[french]{babel}
+
+\setmainfont{TeX Gyre Termes}
+\IfFontExistsTF{Fira Sans}
+  {\setsansfont{Fira Sans}[Scale=MatchLowercase]}
+  {\setsansfont{TeX Gyre Heros}[Scale=MatchLowercase]}
+\usefonttheme{professionalfonts}
+\renewcommand{\familydefault}{\sfdefault}
+
+\usepackage{amsmath}   % avant unicode-math (sinon \underbrace est cassé)
+\usepackage{mathtools}
+\usepackage{unicode-math}
+\IfFontExistsTF{NewCMMath-Book.otf}
+  {\setmathfont{NewCMMath-Book}}
+  {\setmathfont{Latin Modern Math}}
+
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{siunitx}
+\sisetup{output-decimal-marker = {,}, exponent-product = \times,
+         group-separator = {\,}, group-minimum-digits = 4}
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{calc, arrows.meta, angles, quotes, patterns, positioning,
+                decorations.markings, backgrounds, fit, shapes.geometric}
+
+% ── Palette (identique à celle du livre, livrejs.cls) ──────────────────
+\definecolor{sectioncolor}{RGB}{28, 63, 110}   % bleu foncé — titres
+\definecolor{thmboxbg}{RGB}{228, 238, 252}     % bleu pâle — énoncés
+\definecolor{coveraccent}{RGB}{196, 142, 58}   % or chaud — accent
+\definecolor{secboxbg}{RGB}{253, 240, 219}     % ocre pâle — « Pour la classe »
+\definecolor{steelblue4}{HTML}{36648B}         % figures : objet de départ
+\definecolor{firebrick3}{HTML}{CD3333}         % figures : objet image
+\definecolor{demobg}{RGB}{247, 247, 247}       % fond neutre — « au tableau »
+\definecolor{bgpage}{RGB}{253, 253, 252}       % fond de diapositive, légèrement chaud
+
+% ── Thème beamer : sobre, cohérent avec le livre ────────────────────────
+\usecolortheme{default}
+\setbeamercolor{palette primary}{bg=sectioncolor, fg=white}
+\setbeamercolor{palette secondary}{bg=sectioncolor, fg=white}
+\setbeamercolor{palette tertiary}{bg=sectioncolor, fg=white}
+\setbeamercolor{title}{fg=sectioncolor}
+\setbeamercolor{frametitle}{bg=sectioncolor, fg=white}
+\setbeamercolor{structure}{fg=sectioncolor}
+\setbeamercolor{section in toc}{fg=sectioncolor}
+\setbeamercolor{subsection in toc}{fg=black}
+\setbeamercolor{background canvas}{bg=bgpage}
+\setbeamercolor{footline}{fg=gray, bg=bgpage}
+\setbeamercolor{block title}{bg=sectioncolor, fg=white}
+\setbeamercolor{block body}{bg=thmboxbg, fg=black}
+\setbeamercolor{item}{fg=sectioncolor}
+\setbeamercolor{itemize item}{fg=coveraccent}
+\setbeamercolor{itemize subitem}{fg=sectioncolor}
+\setbeamertemplate{itemize item}{\raise0.3ex\hbox{\small$\blacktriangleright$}}
+\setbeamertemplate{itemize subitem}{\raise0.3ex\hbox{\footnotesize$\bullet$}}
+\setbeamertemplate{navigation symbols}{}
+\setbeamerfont{frametitle}{series=\bfseries}
+\setbeamertemplate{frametitle}{%
+  \vskip-1ex
+  \begin{beamercolorbox}[wd=\paperwidth,ht=3.8ex,dp=1.3ex,leftskip=1em,rightskip=1em]{frametitle}
+    \bfseries\strut\insertframetitle
+  \end{beamercolorbox}
+  \vskip3pt
+}
+\setbeamertemplate{footline}{%
+  \leavevmode
+  \hbox{\begin{beamercolorbox}[wd=\paperwidth,ht=2.4ex,dp=1ex,leftskip=1em,rightskip=1em]{footline}
+    {\scriptsize\color{gray}Chapitre 5 --- L'analyse en composantes principales
+    \hfill \insertshorttitle{} \hfill \insertframenumber/\inserttotalframenumber}
+  \end{beamercolorbox}}%
+}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamertemplate{section in toc}{%
+  \inserttocsectionnumber.~\inserttocsection\par\vskip0.15em}
+
+% ── Page de section : diapositive de transition ────────────────────────
+\AtBeginSection[]{%
+  \begin{frame}[plain,c]
+    \begin{center}
+      {\color{coveraccent}\rule{0.25\textwidth}{1.2pt}}\\[10pt]
+      {\usebeamerfont{frametitle}\usebeamercolor[fg]{title}%
+       \Large\bfseries\color{sectioncolor}\insertsectionhead}\\[10pt]
+      {\color{sectioncolor}\rule{0.45\textwidth}{0.5pt}}
+    \end{center}
+  \end{frame}
+}
+\AtBeginSubsection[]{%
+  \begin{frame}[plain,c]
+    \begin{center}
+      {\large\color{gray}\insertsectionhead}\\[4pt]
+      {\Large\bfseries\color{coveraccent}\insertsubsectionhead}
+    \end{center}
+  \end{frame}
+}
+
+% ── Raccourcis mathématiques repris du livre (autonomes) ────────────────
+\newcommand{\Plan}{\Pi}
+\newcommand{\Transf}{\mathcal{T}}
+\newcommand{\Aff}{\mathcal{A}}
+\newcommand{\Sim}{\mathcal{S}}
+\newcommand{\Iso}{\mathcal{I}}
+\newcommand{\mat}[4]{\begin{pmatrix}#1 & #2\\ #3 & #4\end{pmatrix}}
+\newcommand{\col}[2]{\begin{pmatrix}#1\\ #2\end{pmatrix}}
+\newcommand{\coliii}[3]{\begin{pmatrix}#1\\ #2\\ #3\end{pmatrix}}
+\newcommand{\norme}[1]{\lVert #1 \rVert}
+\newcommand{\Aire}{\operatorname{Aire}}
+\newcommand{\dete}{\operatorname{det}}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\DeclareMathOperator{\R}{\mathbb{R}}
+\DeclareMathOperator{\Rs}{\mathbb{R}^{\star}}
+\newcommand{\intff}[2]{\mathopen{[}{#1},{#2}\mathclose{]}}
+\newcommand{\intoo}[2]{\mathopen{]}{#1},{#2}\mathclose{[}}
+\newcommand{\defi}[1]{{\color{coveraccent}#1}}
+\newcommand{\intfo}[2]{\mathopen{[}{#1},{#2}\mathclose{[}}
+\DeclareMathOperator{\N}{\mathbb{N}}
+\DeclareMathOperator{\Ns}{\mathbb{N}^{\star}}
+\DeclareMathOperator{\Q}{\mathbb{Q}}
+
+% ── Raccourcis propres au chapitre 2 (identiques à macros-livre.tex) ────
+\newcommand{\dE}{d_E}                         % distance euclidienne
+\newcommand{\dT}{d_T}                         % taxi-distance (Manhattan)
+\newcommand{\dHam}{d_{\mathrm{Ham}}}          % distance de Hamming
+\newcommand{\dH}{d_H}                         % distance de Hausdorff
+\newcommand{\boule}[2]{B(#1, #2)}             % boule ouverte
+\newcommand{\Vois}[2]{#1^{\oplus #2}}         % epsilon-voisinage (Minkowski)
+\newcommand{\Comp}[1]{\mathcal{K}(#1)}        % compacts non vides de E
+\newcommand{\comp}[1]{\mathopen{}#1\mathclose{}^{\mathsf{c}}}
+
+% Images bitmap (portraits, figures Python) reprises du livre.
+\graphicspath{{../../figures/portraits/}{../../figures/python/}}
+
+% ── Styles TikZ communs à toutes les figures (identiques au livre) ──────
+\tikzset{
+  axe/.style        = {-{Stealth[length=2mm]}, gray!70, thin},
+  quadrillage/.style= {gray!22, very thin},
+  fig/.style        = {fill=steelblue4!22, draw=steelblue4, thick,
+                       line join=round},
+  figim/.style      = {fill=firebrick3!22, draw=firebrick3, thick,
+                       line join=round},
+  figaux/.style     = {fill=coveraccent!22, draw=coveraccent!85!black,
+                       thick, line join=round},
+  pt/.style         = {circle, fill=sectioncolor, inner sep=1.1pt},
+  ptim/.style       = {circle, fill=firebrick3, inner sep=1.1pt},
+  fleche/.style     = {-{Stealth[length=2.4mm]}, sectioncolor, thick},
+  etiq/.style       = {font=\scriptsize, inner sep=1.5pt},
+  droite/.style     = {sectioncolor!70, thick, dashed},
+}
+\newcommand{\repere}[4]{%
+  \draw[quadrillage] (#1,#3) grid (#2,#4);
+  \draw[axe] (#1,0) -- (#2+0.35,0) node[etiq, below] {$x$};
+  \draw[axe] (0,#3) -- (0,#4+0.35) node[etiq, left] {$y$};}
+\newcommand{\motifF}{(0,0) -- (0.3,0) -- (0.3,0.55) -- (0.6,0.55) --
+  (0.6,0.75) -- (0.3,0.75) -- (0.3,0.85) -- (0.75,0.85) -- (0.75,1) --
+  (0,1) -- cycle}
+
+% ── Boîtes d'énoncés (même esprit que le livre : fond bleu pâle) ────────
+\tcbset{
+  boxenonce/.style={
+    enhanced, breakable, colback=thmboxbg, colframe=sectioncolor,
+    boxrule=0.6pt, arc=2pt, left=9pt, right=9pt, top=6pt, bottom=6pt,
+    fonttitle=\bfseries\sffamily, coltitle=white,
+    colbacktitle=sectioncolor, attach boxed title to top left,
+    boxed title style={arc=1pt, boxrule=0pt, left=6pt, right=6pt,
+      top=3pt, bottom=3pt},
+    title style={sharp corners},
+  },
+  boxclasse/.style={
+    enhanced, breakable, colback=secboxbg, colframe=coveraccent,
+    boxrule=0.6pt, arc=2pt, left=9pt, right=9pt, top=6pt, bottom=6pt,
+    fonttitle=\bfseries\sffamily, coltitle=white,
+    colbacktitle=coveraccent, attach boxed title to top left,
+    boxed title style={arc=1pt, boxrule=0pt, left=6pt, right=6pt,
+      top=3pt, bottom=3pt},
+  },
+  boxrem/.style={
+    enhanced, breakable, colback=white, colframe=steelblue4,
+    boxrule=0pt, leftrule=3pt, arc=0pt, left=9pt, right=9pt,
+    top=5pt, bottom=5pt,
+    colbacktitle=white, coltitle=steelblue4, toptitle=2pt,
+    bottomtitle=0pt, fonttitle=\bfseries\sffamily,
+  },
+  boxoutil/.style={
+    enhanced, breakable, colback=white, colframe=steelblue4,
+    boxrule=0.6pt, arc=2pt, left=9pt, right=9pt, top=6pt, bottom=6pt,
+    fonttitle=\bfseries\sffamily, coltitle=white,
+    colbacktitle=steelblue4, attach boxed title to top left,
+    boxed title style={arc=1pt, boxrule=0pt, left=6pt, right=6pt,
+      top=3pt, bottom=3pt},
+  },
+  boxtableau/.style={
+    enhanced, breakable, colback=demobg, colframe=firebrick3,
+    boxrule=0pt, leftrule=4pt, arc=0pt, left=10pt, right=10pt,
+    top=7pt, bottom=7pt,
+  },
+}
+
+% Environnements : titre = « Type N.M — description », fourni en argument.
+\newtcolorbox{Enonce}[1]{boxenonce, title={#1}}
+\newtcolorbox{Classe}[1]{boxclasse, title={Pour la classe --- #1}}
+\newtcolorbox{Outil}[1]{boxoutil, title={Outil --- #1}}
+\newtcolorbox{Rem}[1]{boxrem, title={#1}}
+
+% « Démonstration au tableau » : marqueur + rappel très court de l'idée.
+\newenvironment{AuTableau}[1][Démonstration au tableau]{%
+  \begin{tcolorbox}[boxtableau]
+  \bfseries\sffamily\color{firebrick3}\MakeUppercase{#1}\par\nointerlineskip
+  \vspace{4pt}\normalfont\rmfamily\upshape\mdseries\color{black}
+}{%
+  \end{tcolorbox}
+}
+
+% Petit renvoi discret vers le numéro du livre, en fin de bloc de titre.
+\newcommand{\refnotes}[1]{{\scriptsize\color{gray} (notes de cours, #1)}}
+
+% Insère une figure (tikzpicture ou image) en la contraignant à la fois
+% en largeur et en hauteur, sans distorsion : \FigBox[hauteur max]{contenu}.
+
+% ── Raccourcis supplémentaires (identiques à macros-livre.tex / commandesJS.sty)
+\newcommand{\dims}{\dim_{\mathrm{sim}}}       % dimension de similitude
+\DeclareMathOperator{\eu}{e}
+\def\siecle#1{\textsc{\romannumeral #1}\textsuperscript{e}~siècle}
+\newcommand{\ap}[1]{\textsuperscript{#1}}
+\renewcommand{\P}[1]{\mathbb{P}\mathopen{}\left(#1\right)\mathclose{}}
+\newcommand{\Es}[1]{\mathbb{E}\mathopen{}\left(#1\right)\mathclose{}}
+\definecolor{vertpiece}{RGB}{58, 125, 68}     % 4e couleur des « pièces »
+
+% Styles TikZ des chapitres 3 et 4 (identiques au livre)
+\tikzset{
+  fractale/.style   = {fill=sectioncolor},
+  nuage/.style      = {fill=sectioncolor},
+  courbe/.style     = {sectioncolor, thin, line join=round},
+  piece1/.style     = {fill=firebrick3},
+  piece2/.style     = {fill=steelblue4},
+  piece3/.style     = {fill=coveraccent},
+  piece4/.style     = {fill=vertpiece},
+  trait1/.style     = {firebrick3, thick, line join=round},
+  trait2/.style     = {steelblue4, thick, line join=round},
+  trait3/.style     = {coveraccent, thick, line join=round},
+  trait4/.style     = {vertpiece, thick, line join=round},
+  chaosvers/.style  = {gray!60, dashed, thin},
+  chaospas/.style   = {-{Stealth[length=2.2mm]}, firebrick3, thick},
+  etat/.style       = {circle, draw=sectioncolor, thick, fill=steelblue4!10,
+                       minimum size=9mm, inner sep=1pt, font=\small},
+  pageweb/.style    = {etat, minimum size=7.5mm},
+  lien/.style       = {-{Stealth[length=2.2mm]}, thick, sectioncolor!85!black},
+  lien2/.style      = {{Stealth[length=2.2mm]}-{Stealth[length=2.2mm]}, thick,
+                       sectioncolor!85!black},
+  proba/.style      = {font=\scriptsize, fill=white, inner sep=1pt},
+}
+
+% Les figures du livre chargent leurs données par \input{figures/...} :
+% on cherche aussi ces fichiers à la racine du dépôt.
+\makeatletter
+\def\input@path{{../../}}
+\makeatother
+
+% Algorithmes en pseudo-code (même esprit que les boîtes d'énoncés)
+\newtcolorbox{Algo}[1]{boxoutil, title={#1}}
+
+% Code Python (sans gras ni italique)
+\usepackage{listings}
+\lstset{language=Python, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{sectioncolor}, commentstyle=\color{gray},
+  stringstyle=\color{firebrick3}, columns=fullflexible, keepspaces=true,
+  showstringspaces=false, upquote=true, frame=leftline,
+  rulecolor=\color{steelblue4}, framerule=2pt, xleftmargin=0pt, framexleftmargin=6pt,
+  literate={é}{{\'e}}1 {è}{{\`e}}1 {à}{{\`a}}1 {ç}{{\c c}}1 {ê}{{\^e}}1}
+
+\newcommand{\FigBox}[2][0.56\textheight]{%
+  \begin{center}
+    \adjustbox{max width=\linewidth, max height=#1}{#2}
+  \end{center}}
+
+% ── Ajouts propres au chapitre 5 (ACP) ──────────────────────────────────
+% Les figures du chapitre (figures/tikz/fig-acp-*.tikz) utilisent pgfplots,
+% comme le livre (livrejs.cls).
+\usepackage{pgfplots}
+\usepgfplotslibrary{groupplots}
+\pgfplotsset{compat=1.18}
+\DeclareMathOperator{\proj}{proj}            % projection orthogonale
+\DeclareMathOperator{\Span}{span}            % espace engendré
+\DeclareMathOperator{\tr}{tr}                % trace
+
+% Lien vers l'application interactive des manchots (version shinylive du
+% site du livre), avec un code QR pour les téléphones des étudiants.
+\usepackage{qrcode}
+\newcommand{\urlappli}{https://soucyj.github.io/LivreMathTechno/applications/acp-manchots/}
+
+% Insère une figure du livre : \FigLivre[hauteur max]{nom du fichier .tikz}
+\newcommand{\FigLivre}[2][0.62\textheight]{%
+  \FigBox[#1]{\input{figures/tikz/#2.tikz}}}
