@@ -20,7 +20,7 @@
   \begin{columns}[c]
     \begin{column}{0.55\textwidth}
       \begin{itemize}
-        \item Photographiée de dessus : un disque.
+        \item Photographiée de dessus : un disque, d'où dépassent à peine le bec et l'anse.
         \item Photographiée de côté : on reconnaît le bec et l'anse.
         \item Deux projections du même objet ; l'une est beaucoup plus
           informative que l'autre.
@@ -37,7 +37,14 @@
       \FigBox[0.55\textheight]{%
         \begin{tikzpicture}
           % vue de dessus
-          \draw[fig] (0,2.6) circle (0.8);
+          \begin{scope}[yshift=2.6cm]
+            % bec verseur (effilé) et anse (vue par la tranche)
+            \draw[fig] (0.7,0.13) -- (1.55,0.05) -- (1.55,-0.05) -- (0.7,-0.13) -- cycle;
+            \draw[fig, rounded corners=1pt] (-1.24,-0.05) rectangle (-0.7,0.05);
+            % corps et poignée du couvercle
+            \draw[fig] (0,0) circle (0.8);
+            \draw[fig] (0,0) circle (0.15);
+          \end{scope}
           \node[etiq, gray] at (0,1.55) {vue de dessus};
           % vue de côté
           \begin{scope}[yshift=-0.2cm]

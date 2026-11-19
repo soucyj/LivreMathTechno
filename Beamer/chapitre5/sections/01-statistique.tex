@@ -66,17 +66,19 @@
       \item Variable aléatoire $X$ (chapitre 4) : décrite par une loi ; sa
         variance $\mathrm{Var}(X)$ est une quantité théorique.
       \item Ici, $x$ est une variable statistique : une colonne de nombres
-        observés. Les données peuvent provenir d'un processus aléatoire
-        (un tirage de personnes dans une population), mais une fois
-        recueillies, $\bar x$ et $s_x^2$ se calculent à partir du tableau,
-        sans aucune hypothèse sur une loi de probabilité.
+        observés. Même si les données viennent d'un tirage au hasard,
+        $\bar x$ et $s_x^2$ se calculent à partir du tableau, sans
+        hypothèse sur une loi.
       \item Notations : minuscules, $\bar x$, $s_x^2$, $s_{xy}$ pour les
         données ; jamais $\mathrm{Var}(x)$.
       \item Le lien : tirons au hasard l'un des $n$ individus (probabilité
-        $\frac1n$ chacun). Les $n$ individus jouent le rôle d'une
-        population ; ses paramètres coïncident avec les statistiques du
-        tableau : $\mu=\bar x$ et $\sigma^2=\mathrm{Var}(X)=s_x^2$ --- d'où la
+        $\frac1n$ chacun) et notons $X$ sa valeur. La loi de $X$ vient du
+        tableau ; le calcul théorique redonne les statistiques :
+        $\mu=\Es{X}=\bar x$ et $\sigma^2=\mathrm{Var}(X)=s_x^2$ --- d'où la
         touche $\sigma_x$ des calculatrices.
+      \item Pour une population plus vaste dont les $n$ individus sont un
+        échantillon, la variance est inconnue : $s_x^2$ ne fait que
+        l'estimer (remarque 5.2).
     \end{itemize}
   \end{Rem}
 \end{frame}

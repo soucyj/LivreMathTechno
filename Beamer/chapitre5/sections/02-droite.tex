@@ -261,8 +261,8 @@
         régression ; les trois sont confondues seulement si les points sont
         alignés.
       \item Les droites de régression sont « tirées » vers l'horizontale ou
-        la verticale : la régression vers la moyenne de Galton (taille des
-        enfants et des parents).
+        la verticale : la régression vers la moyenne (diapositives
+        suivantes).
       \item Pour prédire une variable à partir d'une autre : la régression.
         Pour décrire un nuage sans privilégier de variable : l'axe
         principal.
@@ -271,4 +271,47 @@
         coefficient de corrélation.
     \end{itemize}
   \end{Rem}
+\end{frame}
+
+\begin{frame}{Pourquoi deux droites de régression ?}
+  \small
+  \begin{itemize}
+    \item Deux questions différentes :
+      \begin{itemize}
+        \item prédire $y$ connaissant $x$ : seule l'erreur sur $y$ compte,
+          écarts verticaux ;
+        \item prédire $x$ connaissant $y$ : écarts horizontaux ;
+        \item décrire le nuage (axe principal) : écarts perpendiculaires,
+          $x$ et $y$ jouent le même rôle.
+      \end{itemize}
+    \item Six élèves : $y=\num{0.8}\,x+19$ (de $y$ selon $x$), $y=x+5$
+      (axe principal), $y=\num{1.25}\,x-\num{12.5}$ (de $x$ selon $y$).
+    \item Un élève à $80$ en mathématiques ($+10$) :
+      \begin{itemize}
+        \item note prédite en sciences : $75+\num{0.8}\times10=83$ ($+8$
+          seulement ; l'axe principal donnerait $85$) ;
+        \item à partir de $83$ en sciences, note prédite en mathématiques :
+          $70+\num{0.8}\times8=\num{76.4}$, et non $80$.
+      \end{itemize}
+    \item Chaque prédiction rapproche de la moyenne : une seule droite ne
+      peut pas servir dans les deux sens.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{La régression vers la moyenne}
+  \begin{itemize}
+    \item Tranches verticales du nuage : la droite de régression de $y$
+      selon $x$ passe à peu près par la moyenne des $y$ de chaque tranche.
+    \item Dans une tranche, les points s'étalent autour de l'axe principal ;
+      la corrélation n'étant pas parfaite, leur moyenne est plus proche de
+      $\bar y$ que l'axe : la droite est tirée vers l'horizontale.
+    \item En écarts types : un écart de $k$ écarts types sur $x$ fait
+      prédire $r_{xy}\,k$ écarts types sur $y$. Comme $|r_{xy}|<1$, la
+      prédiction est moins extrême que la donnée.
+    \item Galton (1886) : les enfants de parents très grands sont grands,
+      mais en moyenne moins grands que leurs parents.
+    \item Pas un resserrement des tailles : l'effet joue dans les deux sens
+      (les parents d'enfants très grands sont moins grands que leurs
+      enfants). Ce sont les deux droites de régression.
+  \end{itemize}
 \end{frame}

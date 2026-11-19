@@ -134,15 +134,28 @@ confondre les deux notions, nous réservons les minuscules et les
 notations $\bar{x}$, $s_x^2$ et $s_{xy}$ aux données observées, et nous
 n'écrirons pas $\mathrm{Var}(x)$.
 
-Les deux notions sont tout de même liées. Si l'on choisit au hasard l'un
-des $n$ individus, chacun avec la probabilité $\frac1n$, et que l'on note
-$X$ la valeur de la variable pour cet individu, alors $X$ est une
-variable aléatoire. Les $n$ individus jouent alors le rôle d'une
-population, et l'espérance $\mu$ et la variance $\sigma^2$ de $X$ sont
-des paramètres de cette population. Ces paramètres coïncident avec les
-statistiques calculées à partir du tableau : $\mu = \bar{x}$ et
-$\sigma^2 = \mathrm{Var}(X) = s_x^2$. C'est pourquoi les calculatrices
-notent $\sigma_x$ l'écart type obtenu en divisant par $n$
+Les deux notions sont tout de même liées, à condition de bien choisir
+la variable aléatoire. Choisissons au hasard l'un des $n$ individus du
+tableau, chacun avec la probabilité $\frac1n$, et notons $X$ la valeur
+de la variable pour cet individu. La loi de $X$ est construite à partir
+du tableau : $X$ prend les valeurs $x_1, \dots, x_n$, chacune avec la
+probabilité $\frac1n$. Son espérance $\mu$ et sa variance $\sigma^2$
+restent des quantités théoriques, calculées à partir de cette loi, mais
+le calcul redonne exactement les statistiques du tableau :
+$$
+  \mu = \Es{X} = \sum_{i=1}^{n} \frac1n\,x_i = \bar{x},
+  \qquad
+  \sigma^2 = \mathrm{Var}(X) = \sum_{i=1}^{n} \frac1n\,(x_i - \mu)^2 = s_x^2 .
+$$
+Les $n$ individus jouent ainsi le rôle d'une population entière, dont
+$\bar{x}$ et $s_x^2$ sont les paramètres. C'est pourquoi les
+calculatrices notent $\sigma_x$ l'écart type obtenu en divisant par $n$.
+
+Cette égalité ne vaut que pour cette variable $X$ particulière. Si les
+$n$ individus forment un échantillon tiré d'une population plus vaste,
+la variable aléatoire qui décrit la mesure d'un individu pris au hasard
+dans cette population a une variance inconnue, qui ne coïncide pas avec
+$s_x^2$ : les données permettent seulement de l'estimer
 (remarque \ref{rem:acp-n-moins-un}).
 :::
 
@@ -579,10 +592,44 @@ l'information par ordre d'importance.
 La figure \ref{fig:acp-axes-principaux} illustre un fait général :
 l'axe principal se situe toujours entre les deux droites de régression,
 et les trois droites sont confondues seulement lorsque les points sont
-parfaitement alignés. Les droites de régression sont « tirées » vers
-l'horizontale ou vers la verticale, un phénomène que Francis Galton a
-appelé, en étudiant la taille des enfants en fonction de celle de leurs
-parents, la *régression vers la moyenne* [@Galton1886]. Le choix
+parfaitement alignés.
+
+Pourquoi deux droites de régression ? Parce qu'elles répondent à deux
+questions différentes. La droite de régression de $y$ selon $x$ sert à
+prédire $y$ lorsque $x$ est connu : seule l'erreur commise sur $y$
+compte, d'où les écarts verticaux. La droite de régression de $x$ selon
+$y$ sert à prédire $x$ lorsque $y$ est connu ; elle minimise les écarts
+horizontaux. Seul l'axe principal traite les deux variables de façon
+symétrique.
+
+Les droites de régression sont « tirées » vers l'horizontale ou vers la
+verticale. Découpons le nuage en tranches verticales : la droite de
+régression de $y$ selon $x$ passe, à peu près, par la moyenne des $y$ de
+chaque tranche. Dans une tranche, les points s'étalent de part et
+d'autre de l'axe principal et, comme la corrélation n'est pas parfaite,
+leur moyenne est plus proche de la moyenne générale $\bar{y}$ que ne
+l'indique l'axe. Pour les six élèves, un élève qui a $80$ en
+mathématiques, soit $10$ points au-dessus de la moyenne, reçoit une note
+prédite en sciences de $75 + \num{0.8} \times 10 = 83$, seulement $8$
+points au-dessus de la moyenne, alors que l'axe principal indiquerait
+$85$. Si l'on prédit ensuite la note de mathématiques à partir de $83$ en
+sciences, avec l'autre droite, on obtient
+$70 + \num{0.8} \times 8 = \num{76.4}$, et non $80$ : chaque prédiction
+rapproche de la moyenne. En unités d'écart type, un écart de $k$ écarts
+types sur $x$ fait prédire un écart de $r_{xy}\,k$ écarts types sur $y$ ;
+comme $|r_{xy}| < 1$, la prédiction est toujours moins extrême que la
+donnée de départ.
+
+Francis Galton a observé ce phénomène en étudiant la taille des enfants
+en fonction de celle de leurs parents [@Galton1886] : les enfants de
+parents très grands sont grands, mais en moyenne moins grands que leurs
+parents. Il l'a appelé la *régression vers la moyenne*, d'où le nom de
+la méthode. Il ne s'agit pas d'un resserrement des tailles d'une
+génération à l'autre, puisque l'effet joue aussi dans l'autre sens : les
+parents d'enfants très grands sont, en moyenne, moins grands que leurs
+enfants. Ce sont exactement les deux droites de régression.
+
+Le choix
 entre les deux méthodes dépend de la question posée : pour *prédire*
 une variable à partir d'une autre, on utilise la régression ; pour
 *décrire* un nuage sans privilégier de variable, l'axe principal. Il
